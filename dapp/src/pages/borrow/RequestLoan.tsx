@@ -1,17 +1,28 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactSlider from "react-slider";
 import { useQuery } from "urql";
 import { BigNumber, ethers } from "ethers";
-import { useAccount, useNetwork } from "wagmi";
+import {
+  erc20ABI,
+  erc721ABI,
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from "wagmi";
 import {
   useNftyLendingCreateLoan,
   usePrepareNftyLendingCreateLoan,
 } from "../../../../wagmi-generated";
-import { getProtocolChain } from "@/helpers/ProtocolDefaults";
+import {
+  getProtocolAddress,
+  getProtocolChain,
+} from "@/helpers/ProtocolDefaults";
 import { RequestLoanDocument } from "../../../.graphclient";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Loading } from "@/components/Loading";
 import { toast } from "@/helpers/Toast";
+import * as deployments from "../../../../deployments.json";
 
 type RequestLoanForm = {
   nftCollateralId: string;
@@ -23,6 +34,7 @@ type RequestLoanForm = {
 export const RequestLoan = () => {
   const { id } = useParams();
   const { address } = useAccount();
+  const navigate = useNavigate();
 
   // Data to populate page
   const [result] = useQuery({
@@ -49,6 +61,62 @@ export const RequestLoan = () => {
 
   // Wagmi hooks
   const { chain } = useNetwork();
+
+  // Approve $NFTY transfer
+  const { config: nftyApprovalConfig, error: nftyApprovalError } =
+    usePrepareContractWrite({
+      // @ts-ignore
+      address: deployments.nftyToken.address,
+      abi: erc20ABI,
+      functionName: "approve",
+      // TODO: hardcoded amount for now, fix this
+      args: [getProtocolAddress(chain?.id), ethers.utils.parseUnits("100", 18)],
+      chainId: chain?.id,
+    });
+  const {
+    write: nftyApprovalWrite,
+    data: nftyApprovalData,
+    isLoading: nftyApprovalLoading,
+  } = useContractWrite({
+    ...nftyApprovalConfig,
+    onSettled(data, error) {
+      toast({
+        title: "Token Approval",
+        content: error ? error?.message : data?.hash,
+        alertType: error ? "alert-danger" : "alert-success",
+      });
+    },
+  });
+
+  // Approve NFT transfer
+  const { config: nftApprovalConfig, error: nftApprovalError } =
+    usePrepareContractWrite({
+      // @ts-ignore
+      address: result.data?.liquidityShop?.nftCollection.id,
+      abi: erc721ABI,
+      functionName: "approve",
+      args: [
+        getProtocolAddress(chain?.id),
+        BigNumber.from(watch("nftCollateralId")),
+      ],
+      chainId: chain?.id,
+    });
+  const {
+    write: nftApprovalWrite,
+    data: nftApprovalData,
+    isLoading: nftApprovalLoading,
+  } = useContractWrite({
+    ...nftApprovalConfig,
+    onSettled(data, error) {
+      toast({
+        title: "Token Approval",
+        content: error ? error?.message : data?.hash,
+        alertType: error ? "alert-danger" : "alert-success",
+      });
+    },
+  });
+
+  // Create loan
   const {
     config: createLoanConfig,
     error: prepareError,
@@ -74,17 +142,22 @@ export const RequestLoan = () => {
   const { write: createLoanWrite } = useNftyLendingCreateLoan({
     ...createLoanConfig,
     onSettled(data, error) {
-      toast({
-        title: "Request Loan",
-        content: error ? error?.message : data?.hash,
-        alertType: error ? "alert-danger" : "alert-success",
-      });
+      if (error)
+        toast({
+          title: "Request Loan",
+          content: error ? error?.message : data?.hash,
+          alertType: error ? "alert-danger" : "alert-success",
+        });
+      else navigate("/borrow/dashboard");
     },
   });
 
   // On form submit
-  const onSubmit: SubmitHandler<RequestLoanForm> = (data: RequestLoanForm) =>
+  const onSubmit: SubmitHandler<RequestLoanForm> = (data: RequestLoanForm) => {
+    nftApprovalWrite?.();
+    nftyApprovalWrite?.();
     createLoanWrite?.();
+  };
 
   const maxOffer = result?.data
     ? parseFloat(

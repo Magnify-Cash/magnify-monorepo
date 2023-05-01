@@ -971,7 +971,7 @@ contract NFTYLending is
         );
 
         // transfer Nft to escrow
-        IERC721(liquidityShop.nftCollection).transferFrom(
+        IERC721(liquidityShop.nftCollection).safeTransferFrom(
             _borrower,
             address(this),
             _offer.nftCollateralId
