@@ -107,6 +107,7 @@ query LendingDashboard($walletAddress: Bytes!) {
     duration
     amount
     startTime
+    status
     liquidityShop {
       nftCollection {
         name
@@ -122,6 +123,7 @@ query BorrowingDashboard($walletAddress: Bytes!) {
     duration
     amount
     startTime
+    status
     liquidityShop {
       nftCollection {
         name
