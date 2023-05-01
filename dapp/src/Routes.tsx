@@ -27,7 +27,7 @@ function Router() {
               element={<Pages.RequestLoanSuccess />}
             />
             <Route path="dashboard" element={<Pages.BorrowingDashboard />} />
-            <Route path="make-payment" element={<Pages.MakePayment />} />
+            <Route path="make-payment/:id" element={<Pages.MakePayment />} />
           </Route>
           {/* End Borrow */}
 

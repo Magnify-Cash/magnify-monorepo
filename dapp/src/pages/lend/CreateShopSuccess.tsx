@@ -48,7 +48,7 @@ export const CreateShopSuccess = () => {
               </p>
               <div className="my-30">
                 <Link
-                  to="/borrow/request-loan/"
+                  to="/lend/manage-shops"
                   className="btn btn-primary btn-lg btn-block"
                 >
                   View Shop

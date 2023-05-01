@@ -315,7 +315,7 @@ export const ManageShops = () => {
           ))}
 
           <div className="p-10 text-muted text-center">
-            Total {result.data?.liquidityShops.length} Shops
+            Total {result.data?.liquidityShops.length || 0} Shops
           </div>
         </div>
         {/* Content end */}
