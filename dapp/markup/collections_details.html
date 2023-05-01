@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" spellcheck="false">
+	<head>
+		<!-- Meta tags -->
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<!-- Title -->
+		<title>NFTY Finance - Decentralized, comprehensive liquidity solutions for NFTs</title>
+
+		<!-- Halfmoon CSS -->
+		<link href="css/halfmoon.min.css" rel="stylesheet" />
+
+		<!-- SocialPass CSS theme -->
+		<link href="css/nftyfi-theme.css" rel="stylesheet" />
+
+		<!-- Font Awesome 6 -->
+		<script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<!-- Page wrapper start -->
+		<div class="page-wrapper with-sidebar" data-hm-sidebar-type="overlayed-md-down">
+			<!-- Sidebar start -->
+			<nav class="sidebar min-vh-100 d-flex flex-column">
+				<div class="sidebar-menu mt-0">
+					<!-- Sidebar brand start -->
+					<a href="#" class="sidebar-brand m-0 hs-75 mb-20">
+						<img src="images/logo.svg" class="mx-auto pe-none hidden-dm" alt="Logo">
+						<img src="images/logo_white.svg" class="mx-auto pe-none hidden-lm" alt="Logo">
+					</a>
+					<!-- Sidebar brand end -->
+
+					<!-- Sidebar links start -->
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-house-blank"></i>
+						</span>
+						Dashboard
+					</a>
+					<div class="sidebar-title text-primary mt-20">Borrow</div>
+					<a href="#" class="sidebar-link d-flex align-items-center active">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-folders"></i>
+						</span>
+						Collections
+					</a>
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-chart-line"></i>
+						</span>
+						Loan Activity
+					</a>
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-square-list"></i>
+						</span>
+						Pending Approvals
+					</a>
+					<div class="sidebar-title text-primary mt-20">Lend</div>
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-hexagon-plus"></i>
+						</span>
+						Create Liquidity Shop
+					</a>
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-hexagon-vertical-nft"></i>
+						</span>
+						Manage Liquidity Shops
+					</a>
+					<a href="#" class="sidebar-link d-flex align-items-center">
+						<span class="ws-25 flex-shrink-0 fs-base-p2 me-10">
+							<i class="fa-light fa-square-list"></i>
+						</span>
+						Pending Approvals
+					</a>
+					<!-- Sidebar links end -->
+				</div>
+				<div class="dropdown-content mt-auto fs-base-n2">
+					<div class="d-flex align-items-center pb-10">
+						<a href="#" class="btn btn-sm w-50 me-5 px-5">
+							<i class="fa-light fa-external-link me-5"></i>
+							Stake NFTY
+						</a>
+						<a href="#" class="btn btn-sm w-50 ms-5 px-5">
+							<i class="fa-light fa-external-link me-5"></i>
+							Get NFTY
+						</a>
+					</div>
+				</div>
+			</nav>
+			<!-- Sidebar end -->
+
+			<!-- Content wrapper start -->
+			<div class="content-wrapper min-vh-100 d-flex flex-column">
+				<!-- Navbar start -->
+				<nav class="hs-75 d-flex align-items-center px-content">
+					<!-- Menu toggle start -->
+					<button class="btn btn-sm btn-square rounded-circle d-md-none" data-hm-toggle="sidebar">
+						<i class="fa-regular fa-bars"></i>
+						<span class="visually-hidden">Toggle sidebar</span>
+					</button>
+					<!-- Menu toggle end -->
+
+					<!-- Brand start -->
+					<div class="ws-50 ms-20 d-md-none">
+						<img src="images/icon.svg" alt="icon" class="d-block w-100">
+					</div>
+					<!-- Brand end -->
+
+					<!-- Dark mode toggle start -->
+					<button class="btn btn-sm btn-square rounded-circle ms-auto" data-hm-toggle="dark-mode">
+						<i class="fa-solid fa-moon"></i>
+						<span class="visually-hidden">Toggle dark mode</span>
+					</button>
+					<!-- Dark mode toggle end -->
+
+					<!-- Notifications start -->
+					<div class="dropdown with-arrow ms-10">
+						<button class="btn btn-sm btn-square rounded-circle" data-hm-toggle="dropdown" id="notifications-dropdown-toggle" aria-expanded="false">
+							<i class="fa-regular fa-bell"></i>
+							<span class="visually-hidden">Notifications</span>
+						</button>
+						<div class="dropdown-menu dropdown-menu-center ws-250" aria-labelledby="notifications-dropdown-toggle">
+							<div class="dropdown-content text-center">
+								<div class="text-primary">
+									<i class="fa-light fa-folder-open"></i>
+								</div>
+								<div class="mt-10 text-muted">
+									No new notifications.
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Notifications end -->
+
+					<!-- Connect wallet button start -->
+					<button class="btn btn-primary ms-10 ws-100 w-sm-auto text-truncate">
+						<span class="d-none d-md-inline">Connect </span>Wallet
+						<i class="fa-solid fa-plus ms-5"></i>
+					</button>
+					<!-- Connect wallet button end -->
+				</nav>
+				<!-- Navbar end -->
+
+				<!-- Main content start -->
+				<div class="container-xl">
+					<div class="px-xxl-50">
+						<!-- Header start -->
+						<div class="content mb-0 text-base">
+							<a href="#" class="link-reset text-decoration-none fw-bold d-inline-flex align-items-center">
+								<i class="fa-solid fa-circle-arrow-left fs-base-p4 text-primary me-10"></i>
+								Back to Explore
+							</a>
+						</div>
+						<div class="card mt-15">
+							<div class="row">
+								<div class="col-md-auto flex-shrink-0 align-self-center">
+									<div class="ws-100 hs-100 rounded-circle mx-auto d-flex align-items-center justify-content-center overflow-hidden bg-primary-striped">
+										<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+									</div>
+								</div>
+								<div class="col-md align-self-center text-center text-md-start pt-20 pt-md-0 ps-md-20">
+									<h1 class="text-strong fw-700 display-6 m-0">
+										<span class="text-primary">Doodles</span> Liquidity Shops
+									</h1>
+									<p class="text-muted mt-5 mb-0">
+										Find the Liquidity Shop best suited for you. 
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="row row-eq-spacing-lg mb-0">
+							<div class="col-lg-8">
+								<div class="content">
+									<h5 class="text-strong fw-700 fsr-6 m-0">
+										Total
+									</h5>
+									<div class="mt-5">
+										<strong class="text-primary">
+											<i class="fa-regular fa-shop"></i> 6
+										</strong>
+										<span class="text-muted">Shops</span>
+									</div>
+								</div>	
+							</div>
+							<div class="col-lg-4 align-self-center">
+								<div class="position-relative">
+									<input type="text" name="search-shops" id="search-shops" class="form-control rounded-pill ps-40" placeholder="Search Shops">
+									<label for="search-shops" class="position-absolute top-50 start-0 translate-y-middle text-primary mx-10">
+										<i class="fa-regular fa-search"></i>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!-- Header end -->
+
+						<!-- Content start -->
+						<div class="row g-content m-0">
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-pink hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">The NFTY Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													The NFTY Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By NFTY Finance
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-purple hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">My First Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													My First Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By DIA
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-green hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">Doodles Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													Doodles Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By Doodles
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-yellow hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">The NFTY Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													The NFTY Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By NFTY Finance
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-red hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">My First Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													My First Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By DIA
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+
+							<!-- Card start -->
+							<div class="col-sm-6 col-md-8 offset-md-2 col-lg-6 offset-lg-0 col-xl-4">
+								<a href="#" class="card card-link p-0 overflow-hidden border-0">
+									<div class="shop-header-blue hs-75 p-10 d-flex justify-content-start align-items-end overflow-hidden">
+										<strong class="shop-name py-5 px-10 lh-sm rounded-3 fs-base-p2">Doodles Shop</strong>
+									</div>
+									<div class="p-15">
+										<div class="d-flex align-items-center">
+											<div class="ws-50 hs-50 d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0 rounded-circle bg-gray-very-light-lm bg-dark-gray-very-dim-dm">
+												<img src="images/placeholder/doodles.png" alt="image" class="d-block w-auto h-100">
+											</div>
+											<div class="ps-10 text-truncate">
+												<div class="fw-bold text-strong text-truncate">
+													Doodles Shop
+												</div>
+												<div class="text-muted fs-base-n2 text-truncate">
+													By Doodles
+												</div>
+											</div>
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Interest Rates
+										</div>
+										<div class="text-truncate text-warning-dim-lm text-warning-light-dm fw-bold">
+											<i class="fa-regular fa-badge-percent me-5"></i>
+											12 - 30%
+										</div>
+										<div class="text-truncate text-muted fs-base-n2 mt-15">
+											Available Liquidity
+										</div>
+										<div class="text-truncate text-success fw-bold">
+											<i class="fa-regular fa-piggy-bank me-5"></i>
+											$50,000
+										</div>
+									</div>
+									<div class="show-on-hover position-absolute z-1 w-100 start-0 bottom-0 bg-primary text-on-primary text-center py-15 fw-bold">
+										Borrow Now
+									</div>
+								</a>
+							</div>
+							<!-- Card end -->
+						</div>
+						<!-- Content end -->
+					</div>
+				</div>
+				<!-- Main content end -->
+
+				<!-- Footer start -->
+				<div class="content text-center text-muted mt-auto mb-15 pt-50 fs-base-n2">
+					<a href="#" class="d-inline-block link-reset text-decoration-none mx-10 my-5">Terms & Conditions</a>
+					<a href="#" class="d-inline-block link-reset text-decoration-none mx-10 my-5">Privacy Policy</a>
+					<a href="#" class="d-inline-block link-reset text-decoration-none mx-10 my-5">About NFTY</a>
+					<a href="#" class="d-inline-block link-reset text-decoration-none mx-10 my-5">FAQs</a>
+				</div>
+				<!-- Footer end -->
+			</div>
+			<!-- Content wrapper end -->
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- Halfmoon JS -->
+		<script src="js/halfmoon.js"></script>
+
+		<!-- Script useful for debugging/testing -->
+		<script type="text/javascript">
+			/**
+			 * Handle the keydown event (only on debug mode).
+			 *
+			 * This is used to create the dark mode and sidebar toggle shortcuts.
+			 * These shortcuts are very useful for testing.
+			 */
+			document.addEventListener("keydown", function (event) {
+				if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+					event = event || window.event;
+
+					if (!(event.ctrlKey || event.metaKey)) {
+						// Toggle dark mode when [shift] + [D] keys are pressed
+						if (event.shiftKey && event.which == 68) {
+							halfmoon.toggleDarkMode();
+						}
+
+						// Toggle sidebar when [shift] + [S] keys are pressed
+						if (event.shiftKey && event.which == 83) {
+							halfmoon.toggleSidebar();
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+</html>

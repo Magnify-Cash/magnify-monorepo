@@ -1,0 +1,131 @@
+query ExploreCollections {
+  nftCollections {
+    id
+    name
+    image
+    liquidityShops {
+      id
+    }
+  }
+}
+
+query ExploreShops($nftCollectionAddress: ID!) {
+  nftCollection(id: $nftCollectionAddress) {
+    name
+    image
+    liquidityShops {
+      id
+      name
+      balance
+      owner
+      interestA
+      interestB
+      interestC
+      erc20 {
+        decimals
+      }
+    }
+  }
+}
+
+query RequestLoan($liquidityShopId: ID!, $walletAddress: Bytes!) {
+  liquidityShop(id: $liquidityShopId) {
+    name
+    owner
+    interestA
+    interestB
+    interestC
+    balance
+    maxOffer
+    nftCollection {
+      id
+      name
+      image
+      nfts(where: { owner: $walletAddress }) {
+        tokenId
+      }
+    }
+    erc20 {
+      name
+      symbol
+      decimals
+    }
+  }
+}
+
+query ManageShops($walletAddress: Bytes!) {
+  liquidityShops(where: { owner: $walletAddress }) {
+    id
+    name
+    balance
+    status
+    nftCollection {
+      name
+    }
+    erc20 {
+      decimals
+    }
+  }
+}
+
+query CreateShop {
+  nftCollections(where: { allowed: true }) {
+    id
+    name
+  }
+  erc20S(where: { allowed: true }) {
+    id
+    name
+    symbol
+    minimumBasketSize
+    minimumPaymentAmount
+    decimals
+  }
+}
+
+query CreateShopConfirm($erc20Id: ID!) {
+  erc20(id: $erc20Id) {
+    symbol
+    decimals
+  }
+}
+
+query CreateShopSuccess($erc20Id: ID!, $nftCollectionId: ID!) {
+  erc20(id: $erc20Id) {
+    symbol
+  }
+  nftCollection(id: $nftCollectionId) {
+    symbol
+    name
+  }
+}
+
+query LendingDashboard($walletAddress: Bytes!) {
+  loans(where: { lender: $walletAddress }) {
+    borrower
+    nftyNotesId
+    duration
+    amount
+    startTime
+    liquidityShop {
+      nftCollection {
+        name
+      }
+    }
+  }
+}
+
+query BorrowingDashboard($walletAddress: Bytes!) {
+  loans(where: { borrower: $walletAddress }) {
+    lender
+    nftyNotesId
+    duration
+    amount
+    startTime
+    liquidityShop {
+      nftCollection {
+        name
+      }
+    }
+  }
+}

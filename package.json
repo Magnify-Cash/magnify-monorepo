@@ -1,0 +1,19 @@
+{
+  "name": "nftyfinance-monorepo",
+  "version": "0.0.1",
+  "private": "true",
+  "scripts": {
+    "contracts": "yarn workspace nftyfinance-contracts",
+    "dapp": "yarn workspace nftyfinance-dapp",
+    "faucet": "yarn workspace nftyfinance-faucet",
+    "subgraph": "yarn workspace nftyfinance-subgraph",
+    "graph-node": "cd ../graph-node/docker && rm -rf data && docker compose down && docker compose up",
+    "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local"
+  },
+  "workspaces": [
+    "contracts",
+    "dapp",
+    "faucet",
+    "subgraph"
+  ]
+}

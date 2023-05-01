@@ -1,0 +1,148 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: NFTYLending
+    network: mainnet
+    source:
+      abi: NFTYLending
+      address: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933"
+      startBlock: 30
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - LiquidityShop
+        - ProtocolParams
+        - Erc20
+        - NftCollection
+        - Loan
+      abis:
+        - name: NFTYLending
+          file: ../contracts/artifacts/contracts/loans/NFTYLending.sol/NFTYLending.json
+        - name: ERC20
+          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: ERC721
+          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
+      eventHandlers:
+        - event: Erc20Set(indexed address,bool,uint256,uint256)
+          handler: handleErc20Set
+        - event: FeeExpirationSet(uint256)
+          handler: handleFeeExpirationSet
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleLiquidatedOverdueLoan
+        - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
+          handler: handleLiquidityAddedToShop
+        - event: LiquidityShopCashOut(indexed address,uint256,uint256)
+          handler: handleLiquidityShopCashOut
+        - event: LiquidityShopCreated(indexed address,indexed address,indexed
+            address,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
+          handler: handleLiquidityShopCreated
+        - event: LiquidityShopFrozen(indexed address,uint256,uint256)
+          handler: handleLiquidityShopFrozen
+        - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
+          handler: handleLiquidityShopUnfrozen
+        - event: LoanOriginationFeesSet(uint256)
+          handler: handleLoanOriginationFeesSet
+        - event: NftSet(indexed address,bool,string)
+          handler: handleNftSet
+        - event: OfferAccepted(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleOfferAccepted
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PaidBackLoan(indexed address,indexed
+            address,uint256,uint256,uint256,uint256,uint256,uint256)
+          handler: handlePaidBackLoan
+        - event: Paused(address)
+          handler: handlePaused
+        - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handlePaymentMade
+        - event: PlatformFeesSet((uint256,uint256,uint256))
+          handler: handlePlatformFeesSet
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ./src/nfty-lending.ts
+  - kind: ethereum/contract
+    name: PromissoryNote
+    network: mainnet
+    source:
+      abi: PromissoryNote
+      address: "0x09635F643e140090A9A8Dcd712eD6285858ceBef"
+      startBlock: 28
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Loan
+      abis:
+        - name: PromissoryNote
+          file: ../contracts/artifacts/contracts/loans/NFTYNotes.sol/NFTYNotes.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/promissory-note.ts
+  - kind: ethereum/contract
+    name: ObligationReceipt
+    network: mainnet
+    source:
+      abi: ObligationReceipt
+      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d"
+      startBlock: 29
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Loan
+      abis:
+        - name: ObligationReceipt
+          file: ../contracts/artifacts/contracts/loans/NFTYNotes.sol/NFTYNotes.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/obligation-receipt.ts
+  - kind: ethereum/contract
+    name: Doodles
+    network: mainnet
+    source:
+      abi: ERC721
+      address: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f"
+      startBlock: 25
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Nft
+      abis:
+        - name: ERC721
+          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/nft.ts
+  - kind: ethereum/contract
+    name: PolygonPunks
+    network: mainnet
+    source:
+      abi: ERC721
+      address: "0x4A679253410272dd5232B3Ff7cF5dbB88f295319"
+      startBlock: 26
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Nft
+      abis:
+        - name: ERC721
+          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/nft.ts

@@ -1,0 +1,86 @@
+enum LiquidityShopStatus {
+  ACTIVE
+  INACTIVE
+  FROZEN
+}
+
+type LiquidityShop @entity {
+  id: ID!
+  erc20: Erc20!
+  nftCollection: NftCollection!
+  owner: Bytes! # address
+  automaticApproval: Boolean! # bool
+  allowRefinancingTerms: Boolean! # bool
+  balance: BigInt! # uint256
+  maxOffer: BigInt! # uint256
+  interestA: BigInt! # uint256
+  interestB: BigInt! # uint256
+  interestC: BigInt! # uint256
+  name: String! # string
+  status: LiquidityShopStatus! # LiquidityShopStatus
+  loans: [Loan!]! @derivedFrom(field: "liquidityShop")
+}
+
+type ProtocolParams @entity {
+  id: ID!
+  owner: Bytes! # address
+  paused: Boolean! # bool
+  loanOriginationFeePercentage: BigInt! # uint256
+  lenderFeePercentage: BigInt! # uint256
+  borrowerFeePercentage: BigInt! # uint256
+  platformFeePercentage: BigInt! # uint256
+  feeExpirationTime: BigInt! # uint256
+}
+
+type Erc20 @entity {
+  id: ID!
+  liquidityShops: [LiquidityShop!]! @derivedFrom(field: "erc20")
+  name: String! # string
+  symbol: String! # string
+  decimals: Int! # uint8
+  totalSupply: BigInt! # uint256
+  allowed: Boolean! # bool
+  minimumBasketSize: BigInt! # uint256
+  minimumPaymentAmount: BigInt! # uint256
+}
+
+type NftCollection @entity {
+  id: ID!
+  liquidityShops: [LiquidityShop!]! @derivedFrom(field: "nftCollection")
+  name: String! # string
+  symbol: String! # string
+  allowed: Boolean! # bool
+  image: String! # string
+  nfts: [Nft!]! @derivedFrom(field: "nftCollection")
+}
+
+enum LoanStatus {
+  ACTIVE
+  RESOLVED
+  INACTIVE
+}
+
+type Loan @entity {
+  id: ID!
+  liquidityShop: LiquidityShop!
+  amount: BigInt! # uint256
+  remainder: BigInt! # uint256
+  duration: BigInt! # uint256
+  startTime: BigInt! # uint256
+  nftCollateralId: BigInt! # uint256
+  fee: BigInt! # uint256
+  nftyNotesId: BigInt! # uint64
+  status: LoanStatus! # LoanStatus
+  lenderFeePercentage: BigInt! # uint256
+  borrowerFeePercentage: BigInt! # uint256
+  platformFeePercentage: BigInt! # uint256
+  lender: Bytes! # address
+  borrower: Bytes! # address
+}
+
+type Nft @entity {
+  id: ID!
+  nftCollection: NftCollection!
+  tokenId: BigInt! # uint256
+  owner: Bytes! # address
+}

@@ -1,0 +1,52 @@
+{
+  "goerli": {
+    "NFTYLending": {
+      "address": "0xF4F1C3db0205d055f5A081482e0A84Ff71c42102",
+      "startBlock": 8346711
+    },
+    "PromissoryNote": {
+      "address": "0x9bF9f2A1218F5A74A1E96DC580460Be558f4379e",
+      "startBlock": 8346599
+    },
+    "ObligationReceipt": {
+      "address": "0xf98b84404995b0168EE23685CaC3c9Dd013400F3",
+      "startBlock": 8346610
+    }
+  },
+  "mumbai": {
+    "NFTYLending": {
+      "address": "0x348db0CDC8031901d126878bF0DF663FbB5afc1e",
+      "startBlock": 34480511
+    },
+    "PromissoryNote": {
+      "address": "0xBDb5c047951CB813FFe877BD2FD812E21D22CD9D",
+      "startBlock": 34480488
+    },
+    "ObligationReceipt": {
+      "address": "0x7f5241868898479073Cb705cDB7C321CF2e9930c",
+      "startBlock": 34480480
+    }
+  },
+  "mainnet": {
+    "NFTYLending": {
+      "address": "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
+      "startBlock": 30
+    },
+    "PromissoryNote": {
+      "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+      "startBlock": 28
+    },
+    "ObligationReceipt": {
+      "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      "startBlock": 29
+    },
+    "Doodles": {
+      "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+      "startBlock": 25
+    },
+    "PolygonPunks": {
+      "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
+      "startBlock": 26
+    }
+  }
+}
