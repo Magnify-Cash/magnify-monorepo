@@ -81,13 +81,16 @@ export function handleLiquidityShopUnfrozen(
 
 export function handleOfferAccepted(event: OfferAccepted): void {
   const loan = new Loan(event.params.loanId.toString());
-  loan.liquidityShop = event.params.liquidityShopId.toString();
-  loan.nftyNotesId = event.params.nftyNotesId;
 
   // Get loan details
   const nftyLendingContract = NFTYLending.bind(event.address);
   const loanDetails = nftyLendingContract.loans(event.params.loanId);
+
+  // Enter loan details
+  loan.liquidityShop = event.params.liquidityShopId.toString();
+  loan.nftyNotesId = event.params.nftyNotesId;
   loan.amount = loanDetails.getAmount();
+  loan.remainder = loanDetails.getAmount();
   loan.duration = loanDetails.getDuration();
   loan.fee = loanDetails.getFee();
   loan.startTime = loanDetails.getStartTime();
@@ -97,6 +100,7 @@ export function handleOfferAccepted(event: OfferAccepted): void {
   loan.lenderFeePercentage = loanDetails.getPlatformFees().lenderPercentage;
   loan.lender = event.params.lender;
   loan.borrower = event.params.borrower;
+  loan.nftCollateralId = loanDetails.getNftCollateralId();
 
   // Save entity
   loan.save();

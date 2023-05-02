@@ -27,7 +27,6 @@ export const CreateShop = () => {
 
   // GraphQL fetch and parsing
   const [result] = useQuery({ query: CreateShopDocument });
-  console.log(result);
 
   // Dynamic part of form that depends on selected ERC20
   const selectedErc20 = result.data?.erc20S.filter(
