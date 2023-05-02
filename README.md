@@ -1,4 +1,5 @@
 # nftyfinance-monorepo
+
 Monorepo for all NFTY Finance related development
 
 ## Repo structure
@@ -8,6 +9,7 @@ This is a monorepo which uses [yarn workspaces](https://classic.yarnpkg.com/lang
 You can run yarn commands within a subproject directly from the root. As an example, to run the `start` command inside the `contracts` subproject, you can run `yarn contracts start`.
 
 Currently there are 4 subprojects
+
 - contracts
 - subgraph
 - faucet
@@ -22,6 +24,7 @@ Currently there are 4 subprojects
 3. Build graph-node images locally following [these](https://github.com/graphprotocol/graph-node/tree/master/docker#running-graph-node-on-an-macbook-m1) steps. **Note**: you have to increase memory allowance of Docker to 8GB from Preferences→Resources for this step. After this step is done you can decrease it back to the default 4GB.
 
 ### Starting a local development stack
+
 1. Run `yarn install` to install all dependencies.
 2. Run `yarn contracts start` to bring up local hardhat chain.
 3. Run `yarn graph-node` to bring up local graph stack. Wait until the logs say `Downloading latest blocks from Ethereum, this may take a few minutes...`.
@@ -30,6 +33,11 @@ Currently there are 4 subprojects
 The environment is now ready. Now you can run `yarn faucet start` to start the faucet, and// or run `yarn dapp start` to start the dapp.
 
 **Notes:**
+
 - Anytime you have made changes in the contracts, run `yarn deploy:local` again.
 - If you close the hardhat chain process, you have to restart the `graph-node` script too.
 - The scripts will work only if you have this repo and the graph-node repo in the same directory.
+
+### Running tests
+
+Run `yarn contracts test` to run all smart contract tests. To target specific tests, e.g. to run tests with the name `NFTYNotes` you can run `yarn contracts test --grep "NFTYNotes"`.
