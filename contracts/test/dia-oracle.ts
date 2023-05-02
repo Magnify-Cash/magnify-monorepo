@@ -39,7 +39,7 @@ describe("DIA Oracle V2", () => {
     }
   });
 
-  it("should fail to set price from non-oracle-updater", async () => {
+  it("should fail to set price from non oracle updater", async () => {
     const { diaOracle, alice } = await loadFixture(deployContractFixture);
 
     const currency = "NFTY/USD";
@@ -54,7 +54,7 @@ describe("DIA Oracle V2", () => {
     ).to.be.reverted;
   });
 
-  it("should fail to update oracle-updater from non-oracle-updater", async () => {
+  it("should fail to update oracle updater from non oracle updater", async () => {
     const { diaOracle, alice, bob } = await loadFixture(deployContractFixture);
 
     await expect(
@@ -62,7 +62,7 @@ describe("DIA Oracle V2", () => {
     ).to.be.reverted;
   });
 
-  it("should update oracle-updater", async () => {
+  it("should update oracle updater", async () => {
     const { diaOracle, alice } = await loadFixture(deployContractFixture);
 
     const tx = await diaOracle.updateOracleUpdaterAddress(alice.address);
