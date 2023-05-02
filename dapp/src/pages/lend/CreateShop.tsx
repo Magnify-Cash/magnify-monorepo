@@ -91,7 +91,7 @@ export const CreateShop = () => {
                   <label className="form-label">Select Collection</label>
                   <select
                     className="form-select form-select-lg"
-                    {...register("nftCollection")}
+                    {...register("nftCollection", { required: true })}
                   >
                     <option value="">Select NFT Collection</option>
                     {result.data?.nftCollections.map((item) => (
