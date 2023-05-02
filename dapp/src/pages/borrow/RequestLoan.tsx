@@ -229,7 +229,10 @@ export const RequestLoan = () => {
                     <div className="col-lg-4 px-10 my-10 my-lg-20">
                       <div className="text-truncate text-success fw-bold fs-base-p8">
                         <i className="fa-regular fa-piggy-bank me-5"></i>$
-                        {result.data?.liquidityShop?.balance}
+                        {ethers.utils.formatUnits(
+                          result.data?.liquidityShop?.balance,
+                          result.data?.liquidityShop?.erc20.decimals
+                        )}
                       </div>
                       <div className="text-truncate text-muted">
                         Available Liquidity

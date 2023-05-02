@@ -143,7 +143,9 @@ const ShopRow = ({
           <div className="text-muted fs-base-n2 d-lg-none lh-sm mb-5">
             Initially Deposited
           </div>
-          <div className="text-truncate">{balance}</div>
+          <div className="text-truncate">
+            {ethers.utils.formatUnits(balance, erc20Decimals)}
+          </div>
         </div>
       </div>
       <div className="col-6 col-md-3 col-lg-2 align-self-center">
@@ -151,7 +153,9 @@ const ShopRow = ({
           <div className="text-muted fs-base-n2 d-lg-none lh-sm mb-5">
             Remaining Balance
           </div>
-          <div className="text-truncate">{balance}</div>
+          <div className="text-truncate">
+            {ethers.utils.formatUnits(balance, erc20Decimals)}
+          </div>
         </div>
       </div>
       <div className="col-lg-4 align-self-center">
