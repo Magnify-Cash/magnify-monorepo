@@ -72,6 +72,7 @@ query CreateShop {
   nftCollections(where: { allowed: true }) {
     id
     name
+    symbol
   }
   erc20S(where: { allowed: true }) {
     id
@@ -80,23 +81,6 @@ query CreateShop {
     minimumBasketSize
     minimumPaymentAmount
     decimals
-  }
-}
-
-query CreateShopConfirm($erc20Id: ID!) {
-  erc20(id: $erc20Id) {
-    symbol
-    decimals
-  }
-}
-
-query CreateShopSuccess($erc20Id: ID!, $nftCollectionId: ID!) {
-  erc20(id: $erc20Id) {
-    symbol
-  }
-  nftCollection(id: $nftCollectionId) {
-    symbol
-    name
   }
 }
 

@@ -1,4 +1,3 @@
-import { CreateShopConfirmDocument } from "../../../.graphclient";
 import {
   getProtocolAddress,
   getProtocolChain,
@@ -12,7 +11,6 @@ import { Web3Button } from "@/components";
 import { BigNumber, ethers } from "ethers";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
 import { useNetwork } from "wagmi";
 import {
   erc20ABI,
@@ -21,17 +19,12 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from "wagmi";
-import { CreateShopForm } from "./CreateShop";
+import { CreateShopState } from "./CreateShop";
 
 export const CreateShopConfirm = () => {
   // hooks
   const navigate = useNavigate();
-  const state = useLocation().state as CreateShopForm;
-
-  const [result] = useQuery({
-    query: CreateShopConfirmDocument,
-    variables: { erc20Id: state.erc20 },
-  });
+  const state = useLocation().state as CreateShopState;
 
   // web3 hooks
   const { chain } = useNetwork();
@@ -41,7 +34,7 @@ export const CreateShopConfirm = () => {
   // check how many tokens have been approved
   const { data: allowanceData, refetch: allowanceRefetch } = useContractRead({
     // @ts-ignore
-    address: state.erc20,
+    address: state.form.erc20,
     abi: erc20ABI,
     functionName: "allowance",
     args: [address!, getProtocolAddress(chain?.id)],
@@ -53,14 +46,14 @@ export const CreateShopConfirm = () => {
   const { config: approvalConfig, error: approvalError } =
     usePrepareContractWrite({
       // @ts-ignore
-      address: state.erc20,
+      address: state.form.erc20,
       abi: erc20ABI,
       functionName: "approve",
       args: [
         getProtocolAddress(chain?.id),
         ethers.utils.parseUnits(
-          state.shopAmount?.toString(),
-          result.data?.erc20?.decimals
+          state.form.shopAmount?.toString(),
+          state.erc20.decimals
         ),
       ],
       chainId: chain?.id,
@@ -90,21 +83,21 @@ export const CreateShopConfirm = () => {
   } = usePrepareNftyLendingCreateLiquidityShop({
     chainId: getProtocolChain(chain?.id),
     args: [
-      state.shopName, // string calldata _name,
+      state.form.shopName, // string calldata _name,
       // @ts-ignore
-      state.erc20, // address _erc20,
+      state.form.erc20, // address _erc20,
       // @ts-ignore
-      state.nftCollection, // address _nftCollection,
+      state.form.nftCollection, // address _nftCollection,
       ethers.utils.parseUnits(
-        state.shopAmount.toString(),
-        result.data?.erc20?.decimals
+        state.form.shopAmount.toString(),
+        state.erc20.decimals
       ), // uint256 _liquidityAmount,
-      BigNumber.from(state.interestA), // uint256 _interestA,
-      BigNumber.from(state.interestB), // uint256 _interestB,
-      BigNumber.from(state.interestC), // uint256 _interestC,
+      BigNumber.from(state.form.interestA), // uint256 _interestA,
+      BigNumber.from(state.form.interestB), // uint256 _interestB,
+      BigNumber.from(state.form.interestC), // uint256 _interestC,
       ethers.utils.parseUnits(
-        state.offerAmount.toString(),
-        result.data?.erc20?.decimals
+        state.form.offerAmount.toString(),
+        state.erc20.decimals
       ), // uint256 _maxOffer,
       true, // bool _automaticApproval,
       false, // bool _allowRefinancingTerms
@@ -122,7 +115,7 @@ export const CreateShopConfirm = () => {
       else {
         navigate("/lend/create-shop/success", {
           state: {
-            shopInfo: state,
+            ...state,
             createShopTx: data?.hash,
           },
         });
@@ -147,8 +140,8 @@ export const CreateShopConfirm = () => {
       allowanceData &&
       allowanceData <
         ethers.utils.parseUnits(
-          state.shopAmount.toString(),
-          result.data?.erc20?.decimals
+          state.form.shopAmount.toString(),
+          state.erc20.decimals
         )
     ) {
       return (
@@ -159,7 +152,7 @@ export const CreateShopConfirm = () => {
             onClick={() => approvalWrite?.()}
             className="btn btn-primary btn-lg btn-block"
           >
-            {`Approve ${state.shopAmount} ${result.data?.erc20?.symbol}`}
+            {`Approve ${state.form.shopAmount} ${state.erc20.symbol}`}
           </Web3Button>
         </div>
       );
@@ -172,8 +165,8 @@ export const CreateShopConfirm = () => {
       allowanceData &&
       allowanceData >=
         ethers.utils.parseUnits(
-          state.shopAmount.toString(),
-          result.data?.erc20?.decimals
+          state.form.shopAmount.toString(),
+          state.erc20.decimals
         ) &&
       createShopErrorBool
     ) {
@@ -185,7 +178,7 @@ export const CreateShopConfirm = () => {
             onClick={() => createShopWrite?.()}
             className="btn btn-primary btn-lg btn-block"
           >
-            Not enough {result.data?.erc20?.symbol} tokens
+            Not enough {state.erc20.symbol} tokens
           </Web3Button>
         </div>
       );
@@ -197,8 +190,8 @@ export const CreateShopConfirm = () => {
       allowanceData &&
       allowanceData >=
         ethers.utils.parseUnits(
-          state.shopAmount.toString(),
-          result.data?.erc20?.decimals
+          state.form.shopAmount.toString(),
+          state.erc20.decimals
         )
     ) {
       return (
@@ -250,30 +243,32 @@ export const CreateShopConfirm = () => {
               </p>
               <div className="row mt-40 mb-10">
                 <div className="col-lg-6 text-muted">Shop Name</div>
-                <div className="col-lg-6 text-lg-end">{state.shopName}</div>
+                <div className="col-lg-6 text-lg-end">
+                  {state.form.shopName}
+                </div>
               </div>
               <hr />
               <div className="row my-10">
                 <div className="col-lg-6 text-muted">Collection Ratio</div>
                 <div className="col-lg-6 text-lg-end">
-                  1 {result.data?.erc20?.symbol} = {state.offerAmount}{" "}
-                  {result.data?.erc20?.symbol}
+                  1 {state.erc20.symbol} = {state.form.offerAmount}{" "}
+                  {state.erc20.symbol}
                 </div>
               </div>
               <hr />
               <div className="row my-10">
                 <div className="col-lg-6 text-muted">Shop Amount</div>
                 <div className="col-lg-6 text-lg-end">
-                  {state.shopAmount} {result.data?.erc20?.symbol}
+                  {state.form.shopAmount} {state.erc20.symbol}
                 </div>
               </div>
               <hr />
               <div className="row my-10">
                 <div className="col-lg-6 text-muted">Interest Rates</div>
                 <div className="col-lg-6 text-lg-end">
-                  {state.interestA}% (30d), &nbsp;
-                  {state.interestB}% (60d), &nbsp;
-                  {state.interestC}% (90d)
+                  {state.form.interestA}% (30d), &nbsp;
+                  {state.form.interestB}% (60d), &nbsp;
+                  {state.form.interestC}% (90d)
                 </div>
               </div>
               <form className="mt-40" onSubmit={(e) => e.preventDefault()}>

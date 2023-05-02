@@ -1,34 +1,20 @@
 import { useLocation, Link } from "react-router-dom";
 import { useTransaction } from "wagmi";
 import { useNetwork } from "wagmi";
-import { CreateShopForm } from "./CreateShop";
-import { useQuery } from "urql";
-import { CreateShopSuccessDocument } from "../../../.graphclient";
-import { Loading } from "@/components";
+import { CreateShopState } from "./CreateShop";
 
-type State = {
-  shopInfo: CreateShopForm;
+interface State extends CreateShopState {
   createShopTx: `0x{string}`;
-};
+}
 
 export const CreateShopSuccess = () => {
   const state = useLocation()?.state as State;
-
-  const [result] = useQuery({
-    query: CreateShopSuccessDocument,
-    variables: {
-      erc20Id: state.shopInfo.erc20,
-      nftCollectionId: state.shopInfo.nftCollection,
-    },
-  });
 
   // wagmi hooks
   const { data } = useTransaction({
     hash: state.createShopTx,
   });
   const { chain } = useNetwork();
-
-  if (result.fetching) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -60,14 +46,13 @@ export const CreateShopSuccess = () => {
               <div className="row mt-20">
                 <div className="col-lg-6 text-muted">NFT Collection</div>
                 <div className="col-lg-6 text-lg-end">
-                  {result.data?.nftCollection?.symbol} (
-                  {result.data?.nftCollection?.name})
+                  {state.nftCollection.symbol} ({state.nftCollection.name})
                 </div>
               </div>
               <div className="row mt-20">
                 <div className="col-lg-6 text-muted">Amount Deposited</div>
                 <div className="col-lg-6 text-lg-end">
-                  {state.shopInfo.shopAmount} {result.data?.erc20?.symbol}
+                  {state.form.shopAmount} {state.erc20.symbol}
                 </div>
               </div>
               <div className="row mt-20">

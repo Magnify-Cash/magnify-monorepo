@@ -1,10 +1,11 @@
 import { CreateShopDocument } from "../../../.graphclient";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useForm } from "react-hook-form";
 import { ethers } from "ethers";
+import { useEffect } from "react";
 
-export type CreateShopForm = {
+type CreateShopForm = {
   shopName: string;
   nftCollection: string;
   erc20: string;
@@ -15,18 +16,46 @@ export type CreateShopForm = {
   interestC: number;
 };
 
+export type CreateShopState = {
+  form: CreateShopForm;
+  erc20: {
+    symbol: string;
+    decimals: number;
+  };
+  nftCollection: {
+    symbol: string;
+    name: string;
+  };
+};
+
 export const CreateShop = () => {
   // Hooks
   const navigate = useNavigate();
+  const state = useLocation().state as CreateShopState;
+
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { isValid },
-  } = useForm<CreateShopForm>();
+  } = useForm<CreateShopForm>({
+    // Take default values from state if available
+    defaultValues: state?.form,
+  });
 
-  // GraphQL fetch and parsing
+  // GraphQL fetch
   const [result] = useQuery({ query: CreateShopDocument });
+
+  // After GraphQL is done loading, set form values that depend on GraphQL
+  useEffect(() => {
+    if (state?.form && !result.fetching) {
+      setValue("erc20", state.form.erc20, { shouldValidate: true });
+      setValue("nftCollection", state.form.nftCollection, {
+        shouldValidate: true,
+      });
+    }
+  }, [result.fetching]);
 
   // Dynamic part of form that depends on selected ERC20
   const selectedErc20 = result.data?.erc20S.filter(
@@ -34,14 +63,21 @@ export const CreateShop = () => {
   )[0];
 
   // Create Liquidity Shop Form
-  const onSubmit = (data: CreateShopForm) => {
+  const onSubmit = (form: CreateShopForm) => {
     if (!isValid) {
       console.log("Form is not valid");
       return;
     }
 
+    // Navigate to confirm page with all data
     navigate("/lend/create-shop/confirm", {
-      state: data,
+      state: {
+        form,
+        erc20: selectedErc20,
+        nftCollection: result.data?.nftCollections.filter(
+          (x) => x.id == form.nftCollection
+        )[0],
+      },
     });
   };
 
