@@ -5,3 +5,4 @@ cache
 wagmi-generated.ts
 .env
 deployments.json
+graph-node

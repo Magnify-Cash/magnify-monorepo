@@ -21,11 +21,11 @@ Currently there are 4 subprojects
 2. Clone the [graph-node](https://github.com/graphprotocol/graph-node) repo alongside this repo, i.e. in the same directory this repo is in.
 3. Build graph-node images locally following [these](https://github.com/graphprotocol/graph-node/tree/master/docker#running-graph-node-on-an-macbook-m1) steps. **Note**: you have to increase memory allowance of Docker to 8GB from Preferences→Resources for this step. After this step is done you can decrease it back to the default 4GB.
 
-### Starting a local development stack 
-
-1. Run `yarn contracts start` to bring up local hardhat chain.
-2. Run `yarn graph-node` to bring up local graph stack. Wait until the logs say `Downloading latest blocks from Ethereum, this may take a few minutes...`.
-3. Run `yarn deploy:local`. This will deploy a fresh version of the all contracts and subgraph.
+### Starting a local development stack
+1. Run `yarn install` to install all dependencies.
+2. Run `yarn contracts start` to bring up local hardhat chain.
+3. Run `yarn graph-node` to bring up local graph stack. Wait until the logs say `Downloading latest blocks from Ethereum, this may take a few minutes...`.
+4. Run `yarn deploy:local`. This will deploy a fresh version of the all contracts and subgraph.
 
 The environment is now ready. Now you can run `yarn faucet start` to start the faucet, and// or run `yarn dapp start` to start the dapp.
 
