@@ -2,6 +2,8 @@ import { LendingDashboardDocument } from "../../../.graphclient";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import dayjs from "dayjs";
+import { truncate } from "truncate-ethereum-address";
+import { ethers } from "ethers";
 
 type Loan = {
   nftCollectionName: string;
@@ -11,6 +13,7 @@ type Loan = {
   apr: number;
   duration: number;
   dueDate: Date;
+  erc20Decimals: number;
 };
 
 const PendingLoanRow = ({
@@ -21,6 +24,7 @@ const PendingLoanRow = ({
   apr,
   dueDate,
   duration,
+  erc20Decimals,
 }: Loan) => {
   return (
     <div className="row border-bottom">
@@ -38,7 +42,7 @@ const PendingLoanRow = ({
             Borrower/Token ID
           </div>
           <div>
-            <div>{borrower}</div>
+            <div>{truncate(borrower)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>
@@ -51,7 +55,7 @@ const PendingLoanRow = ({
             Amount/APR
           </div>
           <div>
-            <div>${amount}</div>
+            <div>${ethers.utils.formatUnits(amount, erc20Decimals)}</div>
             <div className="text-muted fs-base-n2">APR: {apr}%</div>
           </div>
         </div>
@@ -87,6 +91,7 @@ const ActiveLoanRow = ({
   apr,
   dueDate,
   duration,
+  erc20Decimals,
 }: Loan) => {
   return (
     <div className="row border-bottom">
@@ -104,7 +109,7 @@ const ActiveLoanRow = ({
             Borrower/Token ID
           </div>
           <div>
-            <div>{borrower}</div>
+            <div>{truncate(borrower)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>
@@ -117,7 +122,7 @@ const ActiveLoanRow = ({
             Amount/APR
           </div>
           <div>
-            <div>${amount}</div>
+            <div>${ethers.utils.formatUnits(amount, erc20Decimals)}</div>
             <div className="text-muted fs-base-n2">APR: {apr}%</div>
           </div>
         </div>
@@ -281,6 +286,7 @@ export const LendingDashboard = () => {
                   .unix(x.startTime)
                   .add(x.duration, "days")
                   .toDate(),
+                erc20Decimals: x.liquidityShop.erc20.decimals,
               }}
             />
           ))}

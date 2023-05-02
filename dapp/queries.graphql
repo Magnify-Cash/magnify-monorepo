@@ -112,6 +112,9 @@ query LendingDashboard($walletAddress: Bytes!) {
       nftCollection {
         name
       }
+      erc20 {
+        decimals
+      }
     }
   }
 }
@@ -127,6 +130,9 @@ query BorrowingDashboard($walletAddress: Bytes!) {
     liquidityShop {
       nftCollection {
         name
+      }
+      erc20 {
+        decimals
       }
     }
   }

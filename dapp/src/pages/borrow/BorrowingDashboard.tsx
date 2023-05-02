@@ -4,6 +4,8 @@ import { useAccount } from "wagmi";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { Loading } from "@/components";
+import { truncate } from "truncate-ethereum-address";
+import { ethers } from "ethers";
 
 type Loan = {
   nftCollectionName: string;
@@ -14,6 +16,7 @@ type Loan = {
   dueDate: Date;
   duration: number;
   status: string;
+  erc20Decimals: number;
 };
 
 const LoanRow = ({
@@ -25,6 +28,7 @@ const LoanRow = ({
   dueDate,
   duration,
   status,
+  erc20Decimals,
 }: Loan) => {
   return (
     <div className="row border-bottom">
@@ -42,7 +46,7 @@ const LoanRow = ({
             Lender/Token ID
           </div>
           <div>
-            <div>{lender}</div>
+            <div>{truncate(lender)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>
@@ -55,7 +59,7 @@ const LoanRow = ({
             Amount/APR
           </div>
           <div>
-            <div>${amount}</div>
+            <div>${ethers.utils.formatUnits(amount, erc20Decimals)}</div>
             <div className="text-muted fs-base-n2">APR: {apr}%</div>
           </div>
         </div>
@@ -176,6 +180,7 @@ export const BorrowingDashboard = () => {
                     .toDate(),
                   duration: x.duration,
                   status: x.status,
+                  erc20Decimals: x.liquidityShop.erc20.decimals,
                 }}
               />
             ))}
@@ -239,6 +244,7 @@ export const BorrowingDashboard = () => {
                     .toDate(),
                   duration: x.duration,
                   status: x.status,
+                  erc20Decimals: x.liquidityShop.erc20.decimals,
                 }}
               />
             ))}
