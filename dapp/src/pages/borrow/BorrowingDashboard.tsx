@@ -4,8 +4,8 @@ import { useAccount } from "wagmi";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { Loading } from "@/components";
-import { truncate } from "truncate-ethereum-address";
 import { ethers } from "ethers";
+import { truncateAddress } from "@/helpers/utils";
 
 type Loan = {
   nftCollectionName: string;
@@ -46,7 +46,7 @@ const LoanRow = ({
             Lender/Token ID
           </div>
           <div>
-            <div>{truncate(lender)}</div>
+            <div>{truncateAddress(lender)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>

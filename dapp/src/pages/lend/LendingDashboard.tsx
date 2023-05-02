@@ -2,8 +2,8 @@ import { LendingDashboardDocument } from "../../../.graphclient";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import dayjs from "dayjs";
-import { truncate } from "truncate-ethereum-address";
 import { ethers } from "ethers";
+import { truncateAddress } from "@/helpers/utils";
 
 type Loan = {
   nftCollectionName: string;
@@ -42,7 +42,7 @@ const PendingLoanRow = ({
             Borrower/Token ID
           </div>
           <div>
-            <div>{truncate(borrower)}</div>
+            <div>{truncateAddress(borrower)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>
@@ -109,7 +109,7 @@ const ActiveLoanRow = ({
             Borrower/Token ID
           </div>
           <div>
-            <div>{truncate(borrower)}</div>
+            <div>{truncateAddress(borrower)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
               {tokenId.toString()}
             </div>
