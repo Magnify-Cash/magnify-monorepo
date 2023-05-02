@@ -1,6 +1,5 @@
 export { Base } from "./Base";
 export { Home } from "./Home";
-export { Dashboard } from "./Dashboard";
 
 export { ExploreCollections } from "./borrow/ExploreCollections";
 export { ExploreShops } from "./borrow/ExploreShops";
