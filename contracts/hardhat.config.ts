@@ -1,12 +1,9 @@
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-web3";
+import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
-import "@typechain/hardhat";
 import { config as dotEnvConfig } from "dotenv";
 import "hardhat-contract-sizer";
 import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/types";
-import "solidity-coverage";
 
 // Import tasks
 import "./tasks/configure-nft-collection";
@@ -39,6 +36,7 @@ const config: HardhatUserConfig = {
     },
     testnet: {
       url: "https://matic-mumbai.chainstacklabs.com",
+      // @ts-ignore
       accounts: [process.env.PRIVATE_KEY],
     },
     goerli: {
@@ -46,6 +44,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: "https://matic-mumbai.chainstacklabs.com",
+      // @ts-ignore
       accounts: [process.env.PRIVATE_KEY],
     },
     mainnet: {

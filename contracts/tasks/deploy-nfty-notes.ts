@@ -1,5 +1,3 @@
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-web3";
 import { task, types } from "hardhat/config";
 import { NFTYNotes__factory } from "../../typechain-types";
 

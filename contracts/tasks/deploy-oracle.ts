@@ -1,5 +1,3 @@
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-web3";
 import { task } from "hardhat/config";
 import { DIAOracleV2__factory } from "../../typechain-types";
 

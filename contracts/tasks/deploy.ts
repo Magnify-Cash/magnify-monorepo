@@ -1,6 +1,3 @@
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-web3";
-import "@openzeppelin/hardhat-upgrades";
 import { task } from "hardhat/config";
 import { NFTYLending__factory } from "../../typechain-types";
 import { readFile, writeFile } from "fs/promises";
