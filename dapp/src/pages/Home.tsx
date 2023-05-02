@@ -1,5 +1,6 @@
+import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi'
-
+import { Wallet } from '@/components';
 
 export const Home = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
@@ -59,10 +60,7 @@ export const Home = () => {
                     Connect your wallet to get started on borrowing lending and staking with NFTY Finance.
                   </p>
                   <div className="text-center mt-30">
-                    <button className="btn btn-primary">
-                      <i className="fa-solid fa-plus me-5"></i>
-                      Connect Wallet
-                    </button>
+                    <Wallet />
                   </div>
                 </div>
               </div>
@@ -108,10 +106,10 @@ export const Home = () => {
                 Get started as a borrower and get loans against your NFTs.
               </p>
               <div className="text-center mt-30">
-                <button className="btn">
+                <Link className="btn" to="/borrow/explore-collections">
                   Start Borrowing
                   <i className="fa-solid fa-arrow-right ms-5"></i>
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -122,10 +120,10 @@ export const Home = () => {
                 Get started as a lender to create shops and issue loans.
               </p>
               <div className="text-center mt-30">
-                <button className="btn">
+                <Link className="btn" to="/lend/create-shop">
                   Start Lending
                   <i className="fa-solid fa-arrow-right ms-5"></i>
-                </button>
+                </Link>
               </div>
             </div>
           </div>
