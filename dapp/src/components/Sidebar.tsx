@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export const Sidebar = () => {
   const activeClass = "sidebar-link d-flex align-items-center active";
@@ -8,7 +8,7 @@ export const Sidebar = () => {
     <nav className="sidebar min-vh-100 d-flex flex-column">
       <div className="sidebar-menu mt-0">
         {/* Sidebar brand start */}
-        <a href="/" className="sidebar-brand m-0 hs-75 mb-20">
+        <Link to="/" className="sidebar-brand m-0 hs-75 mb-20">
           <img
             src="/images/logo.svg"
             className="mx-auto pe-none hidden-dm"
@@ -19,7 +19,7 @@ export const Sidebar = () => {
             className="mx-auto pe-none hidden-lm"
             alt="Logo"
           />
-        </a>
+        </Link>
         {/* Sidebar brand end */}
 
         {/* Sidebar links start */}
