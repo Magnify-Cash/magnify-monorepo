@@ -243,7 +243,7 @@ export const CreateShopConfirm = () => {
               </p>
               <div className="row mt-40 mb-10">
                 <div className="col-lg-6 text-muted">Shop Name</div>
-                <div className="col-lg-6 text-lg-end">
+                <div className="col-lg-6 text-lg-end text-truncate">
                   {state.form.shopName}
                 </div>
               </div>
