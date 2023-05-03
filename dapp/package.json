@@ -5,7 +5,6 @@
     "build:graphclient": "graphclient build && rm .graphclient/package.json",
     "start": "yarn build:graphclient && vite",
     "build": "yarn build:graphclient && tsc && vite build",
-    "build:pages": "ln -s ../yarn.lock yarn.lock; yarn build:graphclient && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
