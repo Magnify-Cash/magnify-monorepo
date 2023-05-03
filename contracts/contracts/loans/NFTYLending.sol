@@ -80,7 +80,7 @@ contract NFTYLending is
     /**
      * @notice The percentage of fees that the borrower will pay for each loan
      */
-    uint256 private loanOriginationFeePercentage;
+    uint256 public loanOriginationFeePercentage;
 
     /**
      * @notice The percentage of fees that will be used when asking for a loan
@@ -419,13 +419,6 @@ contract NFTYLending is
         platformFees.platformPercentage = _platformFees.platformPercentage;
 
         emit PlatformFeesSet(platformFees);
-    }
-
-    /**
-     * @notice Function that returns loan origination fee
-     */
-    function getLoanOriginationFees() external view returns (uint256) {
-        return loanOriginationFeePercentage;
     }
 
     /**
