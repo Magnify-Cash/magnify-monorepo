@@ -269,25 +269,17 @@ contract NFTYLending is
     );
 
     /**
-     * @notice Event that will be emitted every time an admin changes contract fees
-     *
-     * @param platformFees The percentage of fees for each participant
-     */
-    event PlatformFeesSet(PlatformFees platformFees);
-
-    /**
-     * @notice Event that will be emitted every time an admin changes the contract loan origination fee
-     *
-     * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
-     */
-    event LoanOriginationFeesSet(uint256 loanOriginationFees);
-
-    /**
-     * @notice Event that will be emitted every time an admin changes the expiration time for token conversions obtained through an oracle
+     * @notice Event that will be emitted every time an admin updates protocol parameters
      *
      * @param feeExpirationTime The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
+     * @param platformFees The percentage of fees for each participant
+     * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
      */
-    event FeeExpirationSet(uint256 feeExpirationTime);
+    event ProtocolParamsSet(
+        uint256 feeExpirationTime,
+        PlatformFees platformFees,
+        uint256 loanOriginationFees
+    );
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -314,7 +306,6 @@ contract NFTYLending is
         __Ownable_init();
         __Pausable_init();
 
-        loanOriginationFeePercentage = 1;
         require(_nftyTokenContract != address(0), "nfty contract is zero addr");
         nftyTokenContract = _nftyTokenContract;
 
@@ -333,14 +324,15 @@ contract NFTYLending is
         require(_oracle != address(0), "oracle is zero addr");
         oracle = _oracle;
 
-        feeExpirationTime = 480;
-
-        setPlatformFees(
+        // Set default protocol params
+        setProtocolParams(
+            480,
             PlatformFees({
                 lenderPercentage: 30,
                 borrowerPercentage: 30,
                 platformPercentage: 40
-            })
+            }),
+            1
         );
     }
 
@@ -381,28 +373,23 @@ contract NFTYLending is
     /**
      * @notice This function allows the admin of the contract to modify the max acceptable amount of time passed since the oracle price was last updated.
      *
-     * @param _feeExpirationTime The new max acceptable amount of time passed in seconds
-     *
+     * @param _feeExpirationTime Max acceptable amount of time passed since the oracle price was last updated
+     * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
+     * @param _loanOriginationFees Percentage of fees that the lender will receive in tokens once an offer is accepted.
      * Emits an {FeeExpirationSet} event.
      */
-    function setFeeExpiration(uint256 _feeExpirationTime) external onlyOwner {
+    function setProtocolParams(
+        uint256 _feeExpirationTime,
+        PlatformFees memory _platformFees,
+        uint256 _loanOriginationFees
+    ) public onlyOwner {
+        // Set fee expiration
         require(_feeExpirationTime > 0, "expiration = 0");
         // TODO: Uncomment the following in production.
         // require(_feeExpirationTime <= 24 hours, "expiration > 24hs");
         feeExpirationTime = _feeExpirationTime;
-        emit FeeExpirationSet(_feeExpirationTime);
-    }
 
-    /**
-     * @notice Function that allows admins to change the percentage of lender, platform and borrowers fees
-     *
-     * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
-     *
-     * Emits an {PlatformFeesSet} event.
-     */
-    function setPlatformFees(
-        PlatformFees memory _platformFees
-    ) public onlyOwner {
+        // Set platform fees
         require(
             _platformFees.lenderPercentage +
                 (_platformFees.borrowerPercentage) +
@@ -414,28 +401,15 @@ contract NFTYLending is
         require(_platformFees.borrowerPercentage > 0, "borrower fee < 1%");
         require(_platformFees.platformPercentage > 0, "platform fee < 1%");
 
-        platformFees.lenderPercentage = _platformFees.lenderPercentage;
-        platformFees.borrowerPercentage = _platformFees.borrowerPercentage;
-        platformFees.platformPercentage = _platformFees.platformPercentage;
-
-        emit PlatformFeesSet(platformFees);
-    }
-
-    /**
-     * @notice Function that allows admins to change the percentage of lender, platform and borrowers' fees
-     *
-     * @param _loanOriginationFees Percentage of fees that the lender will receive in tokens once an offer is accepted.
-     * Maximum value is 10%.
-     *
-     * Emits an {LoanOriginationFeesSet} event.
-     */
-    function setLoanOriginationFees(
-        uint256 _loanOriginationFees
-    ) external onlyOwner {
+        // Set loan origination fees
         require(_loanOriginationFees <= 10, "fee > 10%");
         loanOriginationFeePercentage = _loanOriginationFees;
 
-        emit LoanOriginationFeesSet(_loanOriginationFees);
+        emit ProtocolParamsSet(
+            _feeExpirationTime,
+            _platformFees,
+            _loanOriginationFees
+        );
     }
 
     /**
