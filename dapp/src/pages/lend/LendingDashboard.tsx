@@ -1,9 +1,15 @@
 import { LendingDashboardDocument } from "../../../.graphclient";
 import { useQuery } from "urql";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import dayjs from "dayjs";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { truncateAddress } from "@/helpers/utils";
+import { getProtocolChain } from "@/helpers/ProtocolDefaults";
+import { toast } from "@/helpers/Toast";
+import {
+  usePrepareNftyLendingLiquidateOverdueLoan,
+  useNftyLendingLiquidateOverdueLoan,
+} from "../../../../wagmi-generated";
 
 type Loan = {
   nftCollectionName: string;
@@ -93,6 +99,28 @@ const ActiveLoanRow = ({
   duration,
   erc20Decimals,
 }: Loan) => {
+  const { chain } = useNetwork();
+
+  // Liquidate Hook ************************************************************************
+  const { config: liquidateConfig, error: liquidateError } =
+    usePrepareNftyLendingLiquidateOverdueLoan({
+      chainId: getProtocolChain(chain?.id),
+      args: [
+        BigNumber.from(tokenId), // Loan ID
+      ],
+    });
+  const { write: liquidateWrite, isLoading: liquidateLoading } =
+    useNftyLendingLiquidateOverdueLoan({
+      ...liquidateConfig,
+      onSettled(data, error) {
+        toast({
+          title: "Liquidate Overdue Loan",
+          content: error ? error?.message : data?.hash,
+          alertType: error ? "alert-danger" : "alert-success",
+        });
+      },
+    });
+
   return (
     <div className="row border-bottom">
       <div className="col-6 col-lg-2 align-self-lg-center">

@@ -29,24 +29,24 @@
   },
   "mainnet": {
     "NFTYLending": {
-      "address": "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
-      "startBlock": 30
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "startBlock": 11
     },
     "PromissoryNote": {
-      "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
-      "startBlock": 28
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "startBlock": 7
     },
     "ObligationReceipt": {
-      "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
-      "startBlock": 29
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "startBlock": 8
     },
     "Doodles": {
-      "address": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
-      "startBlock": 25
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "startBlock": 4
     },
     "PolygonPunks": {
-      "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
-      "startBlock": 26
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "startBlock": 5
     }
   }
 }
