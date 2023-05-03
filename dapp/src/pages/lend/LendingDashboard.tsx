@@ -119,7 +119,7 @@ const ActiveLoanRow = ({
           alertType: error ? "alert-danger" : "alert-success",
         });
       },
-    });
+  });
 
   return (
     <div className="row border-bottom">
@@ -168,24 +168,16 @@ const ActiveLoanRow = ({
           </div>
         </div>
       </div>
-      {
-        // Due date is past current time
-        dueDate.getTime() > new Date().getTime() ? (
-          <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
-            <div className="p-10 d-flex align-items-center">
-              <button className="btn btn-warning btn-sm w-50 mx-auto">
-                Liquidate
-              </button>
-            </div>
+        <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
+          <div className="p-10 d-flex align-items-center">
+            <button
+              onClick={() => liquidateWrite?.()}
+              disabled={dueDate.getTime() > new Date().getTime()}
+              className="btn btn-warning btn-sm w-50 mx-auto">
+              Liquidate
+            </button>
           </div>
-        ) : (
-          <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
-            <div className="p-10 d-flex align-items-center">
-              <div className="text-center w-100">N/A</div>
-            </div>
-          </div>
-        )
-      }
+        </div>
     </div>
   );
 };

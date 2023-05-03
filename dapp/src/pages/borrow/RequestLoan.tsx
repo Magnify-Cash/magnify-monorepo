@@ -79,13 +79,6 @@ export const RequestLoan = () => {
     isLoading: nftyApprovalLoading,
   } = useContractWrite({
     ...nftyApprovalConfig,
-    onSettled(data, error) {
-      toast({
-        title: "Token Approval",
-        content: error ? error?.message : data?.hash,
-        alertType: error ? "alert-danger" : "alert-success",
-      });
-    },
   });
 
   // Approve NFT transfer
@@ -107,13 +100,6 @@ export const RequestLoan = () => {
     isLoading: nftApprovalLoading,
   } = useContractWrite({
     ...nftApprovalConfig,
-    onSettled(data, error) {
-      toast({
-        title: "Token Approval",
-        content: error ? error?.message : data?.hash,
-        alertType: error ? "alert-danger" : "alert-success",
-      });
-    },
   });
 
   // Create loan
