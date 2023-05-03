@@ -100,26 +100,31 @@ const ActiveLoanRow = ({
   erc20Decimals,
 }: Loan) => {
   const { chain } = useNetwork();
+  const overdue = dueDate.getTime() <= new Date().getTime();
 
   // Liquidate Hook ************************************************************************
-  const { config: liquidateConfig, error: liquidateError } =
-    usePrepareNftyLendingLiquidateOverdueLoan({
-      chainId: getProtocolChain(chain?.id),
-      args: [
-        BigNumber.from(tokenId), // Loan ID
-      ],
+  // Note: Avoid running hook unless loan is overdue
+  let liquidateWrite: any;
+  if (overdue){
+    const { config: liquidateConfig, error: liquidateError } =
+      usePrepareNftyLendingLiquidateOverdueLoan({
+        chainId: getProtocolChain(chain?.id),
+        args: [
+          BigNumber.from(tokenId), // Loan ID
+        ],
+      });
+    const { write: liquidateWrite, isLoading: liquidateLoading } =
+      useNftyLendingLiquidateOverdueLoan({
+        ...liquidateConfig,
+        onSettled(data, error) {
+          toast({
+            title: "Liquidate Overdue Loan",
+            content: error ? error?.message : data?.hash,
+            alertType: error ? "alert-danger" : "alert-success",
+          });
+        },
     });
-  const { write: liquidateWrite, isLoading: liquidateLoading } =
-    useNftyLendingLiquidateOverdueLoan({
-      ...liquidateConfig,
-      onSettled(data, error) {
-        toast({
-          title: "Liquidate Overdue Loan",
-          content: error ? error?.message : data?.hash,
-          alertType: error ? "alert-danger" : "alert-success",
-        });
-      },
-  });
+  }
 
   return (
     <div className="row border-bottom">
@@ -172,7 +177,7 @@ const ActiveLoanRow = ({
           <div className="p-10 d-flex align-items-center">
             <button
               onClick={() => liquidateWrite?.()}
-              disabled={dueDate.getTime() > new Date().getTime()}
+              disabled={!overdue}
               className="btn btn-warning btn-sm w-50 mx-auto">
               Liquidate
             </button>
