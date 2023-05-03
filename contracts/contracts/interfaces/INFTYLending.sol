@@ -88,54 +88,6 @@ interface INFTYLending {
     }
 
     /**
-     * @notice Struct used to store ERC20 data in the escrow contract
-     *
-     * @param allowed Value that indicates whether the collection is whitelisted or not
-     * @param minimumBasketSize The minimum amount of tokens that a lender should send to create a liquidity shop
-     * @param minimumPaymentAmount The minimum amount of tokens that a borrower should send to pay back a loan
-     */
-    struct Erc20 {
-        bool allowed;
-        uint256 minimumBasketSize;
-        uint256 minimumPaymentAmount;
-    }
-
-    /**
-     * @notice Struct used to receive whitelisted ERC20s in the escrow constructor
-     *
-     * @param addr The address of the ERC20 contract
-     * @param minBasket The minimum amount of tokens that a lender should send to create a liquidity shop
-     * @param minPayment The minimum amount of tokens that a borrower should send to pay back a loan
-     */
-    struct WhitelistedErc20 {
-        address addr;
-        uint256 minBasket;
-        uint256 minPayment;
-    }
-
-    /**
-     * @notice Struct used to store NFT data in the escrow contract
-     *
-     * @param allowed Value that indicates whether the collection is whitelisted or not
-     * @param image The url of the image that will be shown for that NFT collection
-     */
-    struct Nft {
-        bool allowed;
-        string image;
-    }
-
-    /**
-     * @notice Struct used to receive whitelisted NFTs in the escrow constructor
-     *
-     * @param addr The address of the NFT contract
-     * @param image The url of the image that will be shown for that NFT collection
-     */
-    struct WhitelistedNft {
-        address addr;
-        string img;
-    }
-
-    /**
      * @notice Struct used to receive store Platform fees
      *
      * @param lenderPercentage The percentage of fees that the lender will receive for each loan

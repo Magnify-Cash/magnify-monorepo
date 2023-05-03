@@ -58,26 +58,6 @@ contract NFTYLending is
     mapping(uint256 => Loan) public loans;
 
     /**
-     * @notice Mapping for registered ERC20s which can be used as currency in liquidity shops
-     */
-    mapping(address => Erc20) public erc20s;
-
-    /**
-     * @notice Enumerable Set that stores all currently whitelisted ERC20 addresses
-     */
-    EnumerableSet.AddressSet private whitelistedErc20s;
-
-    /**
-     * @notice Mapping for registered NFT collections which can be used as collaterals in liquidity shops
-     */
-    mapping(address => Nft) public nfts;
-
-    /**
-     * @notice Enumerable Set that stores all currently whitelisted NFTs addresses
-     */
-    EnumerableSet.AddressSet private whitelistedNfts;
-
-    /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
     address public promissoryNoteToken;
@@ -289,30 +269,6 @@ contract NFTYLending is
     );
 
     /**
-     * @notice Event that will be emitted every time there is a change on the registered ERC20s applied by an admin
-     *
-     * @param addr The address of the ERC20 contract
-     * @param allowed Value that indicates whether the collection is whitelisted or not
-     * @param minimumBasketSize The minimum amount of tokens that a lender should send to create a liquidity shop
-     * @param minimumPaymentAmount The minimum amount of tokens that a borrower should send to pay back a loan
-     */
-    event Erc20Set(
-        address indexed addr,
-        bool allowed,
-        uint256 minimumBasketSize,
-        uint256 minimumPaymentAmount
-    );
-
-    /**
-    Event that will be emitted every time there is a change on the registered NFTs applied by an admin
-    *
-    * @param addr The address of the NFT contract
-    * @param allowed Value that indicates whether the collection is whitelisted or not
-    * @param image The url of the image that will be shown for that NFT collection
-    */
-    event NftSet(address indexed addr, bool allowed, string image);
-
-    /**
      * @notice Event that will be emitted every time an admin changes contract fees
      *
      * @param platformFees The percentage of fees for each participant
@@ -344,16 +300,12 @@ contract NFTYLending is
     /**
      * @notice Sets the admin of the contract.
      *
-     * @param _whitelistedErc20s Whitelisted ERC20s
-     * @param _whitelistedNfts Whitelisted NFTs
      * @param _promissoryNoteToken Promissory note ERC721 address
      * @param _obligationReceiptToken Obligation receipt ERC721 address
      * @param _nftyTokenContract Address of the contract to be used for fees on this contract
      * @param _oracle Address of the oracle to be used for fee calculation
      */
     function initialize(
-        WhitelistedErc20[] memory _whitelistedErc20s,
-        WhitelistedNft[] memory _whitelistedNfts,
         address _promissoryNoteToken,
         address _obligationReceiptToken,
         address _nftyTokenContract,
@@ -365,23 +317,6 @@ contract NFTYLending is
         loanOriginationFeePercentage = 1;
         require(_nftyTokenContract != address(0), "nfty contract is zero addr");
         nftyTokenContract = _nftyTokenContract;
-
-        for (uint256 i = 0; i < _whitelistedErc20s.length; i++) {
-            setErc20(
-                _whitelistedErc20s[i].addr,
-                Erc20(
-                    true,
-                    _whitelistedErc20s[i].minBasket,
-                    _whitelistedErc20s[i].minPayment
-                )
-            );
-        }
-        for (uint256 i = 0; i < _whitelistedNfts.length; i++) {
-            setNft(
-                _whitelistedNfts[i].addr,
-                Nft(true, _whitelistedNfts[i].img)
-            );
-        }
 
         require(
             _promissoryNoteToken != address(0),
@@ -406,39 +341,6 @@ contract NFTYLending is
                 borrowerPercentage: 30,
                 platformPercentage: 40
             })
-        );
-    }
-
-    /**
-     * @notice This function returns whether or not an ERC20 is allowed on this contract
-     *
-     * @param _address Address of the ERC20 to be added or changed
-     * @param _erc20 Registered data for the ERC20: whitelist status, minimum basket size and minimum pay back amount
-     * @return ret Returns true if the whitelisted ERC20s set was changed, false otherwise
-     *
-     * Emits an {Erc20Set} event.
-     */
-    function setErc20(
-        address _address,
-        Erc20 memory _erc20
-    ) public onlyOwner returns (bool ret) {
-        require(_address != address(0), "erc20 is zero addr");
-        require(_erc20.minimumBasketSize != 0, "basketSize = 0");
-        require(_erc20.minimumPaymentAmount != 0, "paymentAmount = 0");
-
-        erc20s[_address] = _erc20;
-
-        if (_erc20.allowed) {
-            ret = whitelistedErc20s.add(_address);
-        } else {
-            ret = whitelistedErc20s.remove(_address);
-        }
-
-        emit Erc20Set(
-            _address,
-            _erc20.allowed,
-            _erc20.minimumBasketSize,
-            _erc20.minimumPaymentAmount
         );
     }
 
@@ -474,82 +376,6 @@ contract NFTYLending is
             ? true
             : false;
         return (price, inTime);
-    }
-
-    /**
-     * @notice This function returns all currently whitelisted ERC20s on this contract
-     */
-    function getWhitelistedErc20s()
-        external
-        view
-        returns (WhitelistedErc20[] memory)
-    {
-        WhitelistedErc20[]
-            memory whitelistedErc20Result = new WhitelistedErc20[](
-                whitelistedErc20s.length()
-            );
-
-        for (uint256 i = 0; i < whitelistedErc20s.length(); i++) {
-            Erc20 memory erc20 = erc20s[whitelistedErc20s.at(i)];
-            whitelistedErc20Result[i] = WhitelistedErc20(
-                whitelistedErc20s.at(i),
-                erc20.minimumBasketSize,
-                erc20.minimumPaymentAmount
-            );
-        }
-
-        return whitelistedErc20Result;
-    }
-
-    /**
-     * @notice This function allows the admin of the contract to add or remove NFTs from the contract whitelist,
-     * as well as set or update their image
-     *
-     * @param _address Address of the NFT to be added or changed
-     * @param _nft Registered data for the NFT: whitelist status and image URL
-     * @return ret Returns true if the whitelisted NFTs set was changed, false otherwise
-     *
-     * Emits an {NFTSet} event.
-     */
-    function setNft(
-        address _address,
-        Nft memory _nft
-    ) public onlyOwner returns (bool ret) {
-        require(_address != address(0), "nft is zero addr");
-        require(bytes(_nft.image).length > 0, "empty image");
-
-        nfts[_address] = _nft;
-
-        if (_nft.allowed) {
-            ret = whitelistedNfts.add(_address);
-        } else {
-            ret = whitelistedNfts.remove(_address);
-        }
-
-        emit NftSet(_address, _nft.allowed, _nft.image);
-    }
-
-    /**
-     * @notice This function returns all currently whitelisted NFTs on this contract
-     */
-    function getWhitelistedNfts()
-        external
-        view
-        returns (WhitelistedNft[] memory)
-    {
-        WhitelistedNft[] memory whitelistedNftsResult = new WhitelistedNft[](
-            whitelistedNfts.length()
-        );
-
-        for (uint256 i = 0; i < whitelistedNfts.length(); i++) {
-            Nft memory nft = nfts[whitelistedNfts.at(i)];
-            whitelistedNftsResult[i] = WhitelistedNft(
-                whitelistedNfts.at(i),
-                nft.image
-            );
-        }
-
-        return whitelistedNftsResult;
     }
 
     /**
@@ -651,13 +477,7 @@ contract NFTYLending is
         uint256 _maxOffer,
         bool _automaticApproval,
         bool _allowRefinancingTerms
-    ) external override whenNotPaused nonReentrant {
-        require(erc20s[_erc20].allowed, "unallowed erc20");
-        require(
-            erc20s[_erc20].minimumBasketSize <= _liquidityAmount,
-            "amount < min basket size"
-        );
-        require(nfts[_nftCollection].allowed, "unallowed nft");
+    ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
         require(_maxOffer > 0, "max offer = 0");
         require(_interestA > 0, "interestA = 0");
@@ -1240,17 +1060,7 @@ contract NFTYLending is
         ];
 
         require(loan.remainder >= _amount, "payment amount > debt");
-
-        if (
-            loan.remainder >= erc20s[liquidityShop.erc20].minimumPaymentAmount
-        ) {
-            require(
-                _amount >= erc20s[liquidityShop.erc20].minimumPaymentAmount,
-                "insufficient payment amount"
-            );
-        } else {
-            require(_amount == loan.remainder, "insufficient payment amount");
-        }
+        require(_amount == loan.remainder, "insufficient payment amount");
 
         loan.remainder = loan.remainder - (_amount);
 
