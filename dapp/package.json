@@ -2,9 +2,11 @@
   "name": "nftyfinance-dapp",
   "version": "0.0.1",
   "scripts": {
+    "prepare:local": "cp local.graphclientrc.yml .graphclientrc.yml",
+    "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml",
     "build:graphclient": "graphclient build && rm .graphclient/package.json",
-    "start": "yarn build:graphclient && vite",
-    "build": "yarn build:graphclient && tsc && vite build",
+    "start": "yarn prepare:local && yarn build:graphclient && vite",
+    "build": "yarn prepare:prod && yarn build:graphclient && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

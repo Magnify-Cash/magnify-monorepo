@@ -25,6 +25,14 @@
     "ObligationReceipt": {
       "address": "0x7f5241868898479073Cb705cDB7C321CF2e9930c",
       "startBlock": 34480480
+    },
+    "Doodles": {
+      "address": "0x5c4967db6be9db2cb5672488fae1634a19636e70",
+      "startBlock": 34348658
+    },
+    "PolygonPunks": {
+      "address": "0x709d7e16a75abf20c16655fd553e4959b34636ba",
+      "startBlock": 34348662
     }
   },
   "mainnet": {

@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: NFTYLending
-    network: mainnet
+    network: mumbai
     source:
       abi: NFTYLending
-      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
-      startBlock: 11
+      address: "0x348db0CDC8031901d126878bF0DF663FbB5afc1e"
+      startBlock: 34480511
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -68,11 +68,11 @@ dataSources:
       file: ./src/nfty-lending.ts
   - kind: ethereum/contract
     name: PromissoryNote
-    network: mainnet
+    network: mumbai
     source:
       abi: PromissoryNote
-      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F"
-      startBlock: 7
+      address: "0xBDb5c047951CB813FFe877BD2FD812E21D22CD9D"
+      startBlock: 34480488
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -88,11 +88,11 @@ dataSources:
       file: ./src/promissory-note.ts
   - kind: ethereum/contract
     name: ObligationReceipt
-    network: mainnet
+    network: mumbai
     source:
       abi: ObligationReceipt
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
-      startBlock: 8
+      address: "0x7f5241868898479073Cb705cDB7C321CF2e9930c"
+      startBlock: 34480480
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -108,11 +108,11 @@ dataSources:
       file: ./src/obligation-receipt.ts
   - kind: ethereum/contract
     name: Doodles
-    network: mainnet
+    network: mumbai
     source:
       abi: ERC721
-      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
-      startBlock: 4
+      address: "0x5c4967db6be9db2cb5672488fae1634a19636e70"
+      startBlock: 34348658
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -128,11 +128,11 @@ dataSources:
       file: ./src/nft.ts
   - kind: ethereum/contract
     name: PolygonPunks
-    network: mainnet
+    network: mumbai
     source:
       abi: ERC721
-      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
-      startBlock: 5
+      address: "0x709d7e16a75abf20c16655fd553e4959b34636ba"
+      startBlock: 34348662
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
