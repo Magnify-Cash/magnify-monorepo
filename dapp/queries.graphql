@@ -105,6 +105,7 @@ query LendingDashboard($walletAddress: Bytes!) {
 
 query BorrowingDashboard($walletAddress: Bytes!) {
   loans(where: { borrower: $walletAddress }) {
+    id
     lender
     nftyNotesId
     duration
@@ -119,5 +120,27 @@ query BorrowingDashboard($walletAddress: Bytes!) {
         decimals
       }
     }
+  }
+}
+
+query MakePayment($loanId: ID!) {
+  loan(id: $loanId) {
+    liquidityShop {
+      nftCollection {
+        name
+      }
+      erc20 {
+        id
+        decimals
+        symbol
+        minimumPaymentAmount
+      }
+    }
+    duration
+    amount
+    startTime
+    remainder
+    nftCollateralId
+    nftyNotesId
   }
 }

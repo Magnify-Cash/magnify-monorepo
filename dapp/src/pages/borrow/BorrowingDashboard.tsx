@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import { truncateAddress } from "@/helpers/utils";
 
 type Loan = {
+  loanId: number;
   nftCollectionName: string;
   lender: string;
   tokenId: BigInt;
@@ -20,6 +21,7 @@ type Loan = {
 };
 
 const LoanRow = ({
+  loanId,
   nftCollectionName,
   lender,
   tokenId,
@@ -81,7 +83,7 @@ const LoanRow = ({
         <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
           <div className="p-10 text-center">
             <Link
-              to={`/borrow/make-payment/${1}`}
+              to={`/borrow/make-payment/${loanId}`}
               className="btn btn-success btn-sm ws-150 mw-100"
             >
               Pay Now
@@ -181,6 +183,7 @@ export const BorrowingDashboard = () => {
                   duration: x.duration,
                   status: x.status,
                   erc20Decimals: x.liquidityShop.erc20.decimals,
+                  loanId: parseInt(x.id),
                 }}
               />
             ))}
@@ -245,6 +248,7 @@ export const BorrowingDashboard = () => {
                   duration: x.duration,
                   status: x.status,
                   erc20Decimals: x.liquidityShop.erc20.decimals,
+                  loanId: parseInt(x.id),
                 }}
               />
             ))}
