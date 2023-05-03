@@ -41,7 +41,7 @@ contract NFTYLending is
     /**
      * @notice Unique identifier for liquidity shops
      */
-    Counters.Counter private shopIdCounter;
+    Counters.Counter private liquidityShopIdCounter;
     /**
      * @notice Unique identifier for loans
      */
@@ -60,12 +60,12 @@ contract NFTYLending is
     /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
-    address public promissoryNoteToken;
+    address public promissoryNote;
 
     /**
      * @notice The address of the ERC721 to generate obligation receipts for borrowers
      */
-    address public obligationReceiptToken;
+    address public obligationReceipt;
 
     /**
      * @notice The address of the oracle to be used for fees
@@ -75,12 +75,12 @@ contract NFTYLending is
     /**
      * @notice The address of the NFTY Token contract to use for borrower fees
      */
-    address public nftyTokenContract;
+    address public nftyToken;
 
     /**
      * @notice The percentage of fees that the borrower will pay for each loan
      */
-    uint256 public loanOriginationFeePercentage;
+    uint256 public loanOriginationFee;
 
     /**
      * @notice The percentage of fees that will be used when asking for a loan
@@ -103,7 +103,7 @@ contract NFTYLending is
     /**
      * @notice The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
      */
-    uint256 public feeExpirationTime;
+    uint256 public oraclePriceExpirationDuration;
 
     /* *********** */
     /* EVENTS */
@@ -292,34 +292,31 @@ contract NFTYLending is
     /**
      * @notice Sets the admin of the contract.
      *
-     * @param _promissoryNoteToken Promissory note ERC721 address
-     * @param _obligationReceiptToken Obligation receipt ERC721 address
-     * @param _nftyTokenContract Address of the contract to be used for fees on this contract
+     * @param _promissoryNote Promissory note ERC721 address
+     * @param _obligationReceipt Obligation receipt ERC721 address
+     * @param _nftyToken Address of the contract to be used for fees on this contract
      * @param _oracle Address of the oracle to be used for fee calculation
      */
     function initialize(
-        address _promissoryNoteToken,
-        address _obligationReceiptToken,
-        address _nftyTokenContract,
+        address _promissoryNote,
+        address _obligationReceipt,
+        address _nftyToken,
         address _oracle
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
 
-        require(_nftyTokenContract != address(0), "nfty contract is zero addr");
-        nftyTokenContract = _nftyTokenContract;
+        require(_nftyToken != address(0), "nfty contract is zero addr");
+        nftyToken = _nftyToken;
+
+        require(_promissoryNote != address(0), "promissory note is zero addr");
+        promissoryNote = _promissoryNote;
 
         require(
-            _promissoryNoteToken != address(0),
-            "promissory note is zero addr"
-        );
-        promissoryNoteToken = _promissoryNoteToken;
-
-        require(
-            _obligationReceiptToken != address(0),
+            _obligationReceipt != address(0),
             "obligation receipt is zero addr"
         );
-        obligationReceiptToken = _obligationReceiptToken;
+        obligationReceipt = _obligationReceipt;
 
         require(_oracle != address(0), "oracle is zero addr");
         oracle = _oracle;
@@ -373,27 +370,27 @@ contract NFTYLending is
     /**
      * @notice This function allows the admin of the contract to modify the max acceptable amount of time passed since the oracle price was last updated.
      *
-     * @param _feeExpirationTime Max acceptable amount of time passed since the oracle price was last updated
+     * @param _oraclePriceExpirationDuration Max acceptable amount of time passed since the oracle price was last updated
      * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
-     * @param _loanOriginationFees Percentage of fees that the lender will receive in tokens once an offer is accepted.
+     * @param _loanOriginationFee Percentage of fees that the lender will receive in tokens once an offer is accepted.
      * Emits an {FeeExpirationSet} event.
      */
     function setProtocolParams(
-        uint256 _feeExpirationTime,
+        uint256 _oraclePriceExpirationDuration,
         PlatformFees memory _platformFees,
-        uint256 _loanOriginationFees
+        uint256 _loanOriginationFee
     ) public onlyOwner {
         // Set fee expiration
-        require(_feeExpirationTime > 0, "expiration = 0");
+        require(_oraclePriceExpirationDuration > 0, "expiration = 0");
         // TODO: Uncomment the following in production.
         // require(_feeExpirationTime <= 24 hours, "expiration > 24hs");
-        feeExpirationTime = _feeExpirationTime;
+        oraclePriceExpirationDuration = _oraclePriceExpirationDuration;
 
         // Set platform fees
         require(
             _platformFees.lenderPercentage +
-                (_platformFees.borrowerPercentage) +
-                (_platformFees.platformPercentage) ==
+                _platformFees.borrowerPercentage +
+                _platformFees.platformPercentage ==
                 100,
             "fees do not add up to 100%"
         );
@@ -402,13 +399,13 @@ contract NFTYLending is
         require(_platformFees.platformPercentage > 0, "platform fee < 1%");
 
         // Set loan origination fees
-        require(_loanOriginationFees <= 10, "fee > 10%");
-        loanOriginationFeePercentage = _loanOriginationFees;
+        require(_loanOriginationFee <= 10, "fee > 10%");
+        loanOriginationFee = _loanOriginationFee;
 
         emit ProtocolParamsSet(
-            _feeExpirationTime,
+            _oraclePriceExpirationDuration,
             _platformFees,
-            _loanOriginationFees
+            _loanOriginationFee
         );
     }
 
@@ -451,8 +448,8 @@ contract NFTYLending is
         require(_interestB > 0, "interestB = 0");
         require(_interestC > 0, "interestC = 0");
 
-        shopIdCounter.increment();
-        uint256 liquidityShopId = shopIdCounter.current();
+        liquidityShopIdCounter.increment();
+        uint256 liquidityShopId = liquidityShopIdCounter.current();
 
         LiquidityShop memory newLiquidityShop = LiquidityShop({
             erc20: _erc20,
@@ -614,13 +611,12 @@ contract NFTYLending is
         uint256 _nftyNotesId
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(promissoryNoteToken).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_nftyNotesId),
             "invalid promissory note"
         );
 
-        (address loanCoordinator, uint256 loanId) = NFTYNotes(
-            promissoryNoteToken
-        ).notes(_nftyNotesId);
+        (address loanCoordinator, uint256 loanId) = NFTYNotes(promissoryNote)
+            .notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
 
         Loan storage loan = loans[loanId];
@@ -632,7 +628,7 @@ contract NFTYLending is
             "loan does not match NFTYNote"
         );
         require(
-            NFTYNotes(promissoryNoteToken).ownerOf(_nftyNotesId) == msg.sender,
+            NFTYNotes(promissoryNote).ownerOf(_nftyNotesId) == msg.sender,
             "not promissory note owner"
         );
 
@@ -660,9 +656,9 @@ contract NFTYLending is
             .safeTransferFrom(address(this), msg.sender, loan.nftCollateralId);
 
         // burn both promissory note and obligation receipt
-        NFTYNotes(promissoryNoteToken).burn(_nftyNotesId);
-        if (NFTYNotes(obligationReceiptToken).exists(_nftyNotesId)) {
-            NFTYNotes(obligationReceiptToken).burn(_nftyNotesId);
+        NFTYNotes(promissoryNote).burn(_nftyNotesId);
+        if (NFTYNotes(obligationReceipt).exists(_nftyNotesId)) {
+            NFTYNotes(obligationReceipt).burn(_nftyNotesId);
         }
     }
 
@@ -745,13 +741,13 @@ contract NFTYLending is
             nftyNotesId
         );
 
-        NFTYNotes(promissoryNoteToken).mint(
+        NFTYNotes(promissoryNote).mint(
             liquidityShop.owner,
             nftyNotesId,
             abi.encode(loanIdCounter.current())
         );
 
-        NFTYNotes(obligationReceiptToken).mint(
+        NFTYNotes(obligationReceipt).mint(
             _borrower,
             nftyNotesId,
             abi.encode(loanIdCounter.current())
@@ -765,14 +761,14 @@ contract NFTYLending is
         );
 
         // transfer lender fees to lender
-        IERC20Upgradeable(nftyTokenContract).safeTransferFrom(
+        IERC20Upgradeable(nftyToken).safeTransferFrom(
             _borrower,
             liquidityShop.owner,
             lenderFees
         );
 
         // transfer borrower and platform fees to escrow
-        IERC20Upgradeable(nftyTokenContract).safeTransferFrom(
+        IERC20Upgradeable(nftyToken).safeTransferFrom(
             _borrower,
             address(this),
             borrowerFees + (escrowFees)
@@ -834,27 +830,22 @@ contract NFTYLending is
     ) public view returns (uint256) {
         (uint256 nftyToUSD, bool nftyInTime) = getPriceIfNotOlderThan(
             string(
-                abi.encodePacked(
-                    IERC20Metadata(nftyTokenContract).symbol(),
-                    "/USD"
-                )
+                abi.encodePacked(IERC20Metadata(nftyToken).symbol(), "/USD")
             ),
-            uint128(feeExpirationTime)
+            uint128(oraclePriceExpirationDuration)
         );
         require(nftyToUSD != 0, "missing NFTY price");
         require(nftyInTime, "NFTY price too old");
 
         (uint256 erc20ToUSD, bool erc20InTime) = getPriceIfNotOlderThan(
             string(abi.encodePacked(IERC20Metadata(currency).symbol(), "/USD")),
-            uint128(feeExpirationTime)
+            uint128(oraclePriceExpirationDuration)
         );
         require(erc20ToUSD != 0, "missing ERC20 price");
         require(erc20InTime, "ERC20 price too old");
 
         return
-            ((amount * (erc20ToUSD)) *
-                (loanOriginationFeePercentage) *
-                (10 ** 18)) /
+            ((amount * (erc20ToUSD)) * (loanOriginationFee) * (10 ** 18)) /
             (10 ** (IERC20Metadata(currency).decimals()) * (nftyToUSD) * (100));
     }
 
@@ -973,11 +964,11 @@ contract NFTYLending is
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(obligationReceiptToken).exists(_nftyNotesId),
+            NFTYNotes(obligationReceipt).exists(_nftyNotesId),
             "invalid obligation receipt"
         );
         require(
-            NFTYNotes(promissoryNoteToken).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_nftyNotesId),
             "invalid promissory note"
         );
 
@@ -986,10 +977,10 @@ contract NFTYLending is
         address loanCoordinator;
 
         (loanCoordinator, loanIdObligationReceipt) = NFTYNotes(
-            obligationReceiptToken
+            obligationReceipt
         ).notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
-        (loanCoordinator, loanIdPromissoryNote) = NFTYNotes(promissoryNoteToken)
+        (loanCoordinator, loanIdPromissoryNote) = NFTYNotes(promissoryNote)
             .notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
         require(
@@ -1005,9 +996,10 @@ contract NFTYLending is
             "loan does not match NFTYNote"
         );
 
-        address obligationReceiptHolder = NFTYNotes(obligationReceiptToken)
-            .ownerOf(loan.nftyNotesId);
-        address promissoryNoteHolder = NFTYNotes(promissoryNoteToken).ownerOf(
+        address obligationReceiptHolder = NFTYNotes(obligationReceipt).ownerOf(
+            loan.nftyNotesId
+        );
+        address promissoryNoteHolder = NFTYNotes(promissoryNote).ownerOf(
             loan.nftyNotesId
         );
 
@@ -1066,7 +1058,7 @@ contract NFTYLending is
                 loan.nftCollateralId
             );
 
-            IERC20Upgradeable(nftyTokenContract).safeTransfer(
+            IERC20Upgradeable(nftyToken).safeTransfer(
                 obligationReceiptHolder,
                 borrowerFees
             );
@@ -1079,8 +1071,8 @@ contract NFTYLending is
             );
 
             // burn both promissory note and obligation receipt
-            NFTYNotes(obligationReceiptToken).burn(loan.nftyNotesId);
-            NFTYNotes(promissoryNoteToken).burn(loan.nftyNotesId);
+            NFTYNotes(obligationReceipt).burn(loan.nftyNotesId);
+            NFTYNotes(promissoryNote).burn(loan.nftyNotesId);
         }
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransferFrom(
@@ -1106,6 +1098,6 @@ contract NFTYLending is
 
         platformBalance = 0;
 
-        IERC20Upgradeable(nftyTokenContract).safeTransfer(_receiver, amount);
+        IERC20Upgradeable(nftyToken).safeTransfer(_receiver, amount);
     }
 }
