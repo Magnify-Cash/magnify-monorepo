@@ -8,7 +8,6 @@ function Router() {
         <Route path="/" element={<Pages.Base />}>
           {/* General */}
           <Route index element={<Pages.Home />} />
-          <Route path="dashboard" element={<Pages.Dashboard />} />
           {/* End General */}
 
           {/* Borrow */}
