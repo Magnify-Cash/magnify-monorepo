@@ -2,6 +2,7 @@
   "name": "nftyfinance-dapp",
   "version": "0.0.1",
   "scripts": {
+    "contracts": "yarn wagmi generate",
     "prepare:local": "cp local.graphclientrc.yml .graphclientrc.yml",
     "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml && graphclient build",
     "build:graphclient": "graphclient build && rm .graphclient/package.json",
