@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "prepare:local": "cp local.graphclientrc.yml .graphclientrc.yml",
-    "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml && graphclient build && rm /opt/buildhome/repo/.graphclient/package.json",
+    "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml && graphclient build",
     "build:graphclient": "graphclient build && rm .graphclient/package.json",
     "start": "yarn prepare:local && yarn build:graphclient && vite",
     "build:local": "yarn prepare:local && tsc && vite build",
