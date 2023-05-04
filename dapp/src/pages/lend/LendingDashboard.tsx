@@ -9,7 +9,7 @@ import { toast } from "@/helpers/Toast";
 import {
   usePrepareNftyLendingLiquidateOverdueLoan,
   useNftyLendingLiquidateOverdueLoan,
-} from "../../../../wagmi-generated";
+} from  "@/wagmi/generated";
 
 type Loan = {
   nftCollectionName: string;

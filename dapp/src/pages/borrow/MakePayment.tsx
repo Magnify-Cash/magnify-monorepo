@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import {
   useNftyLendingPayBackLoan,
   usePrepareNftyLendingPayBackLoan,
-} from "../../../../wagmi-generated";
+} from "@/wagmi/generated";
 import {
   getProtocolAddress,
   getProtocolChain,

@@ -13,7 +13,7 @@ import {
 import {
   useNftyLendingCreateLoan,
   usePrepareNftyLendingCreateLoan,
-} from "../../../../wagmi-generated";
+} from "@/wagmi/generated";
 import {
   getProtocolAddress,
   getProtocolChain,

@@ -13,7 +13,7 @@ import {
   useNftyLendingFreezeLiquidityShop,
   usePrepareNftyLendingUnfreezeLiquidityShop,
   useNftyLendingUnfreezeLiquidityShop,
-} from "../../../../wagmi-generated";
+} from "@/wagmi/generated";
 import { getProtocolChain } from "@/helpers/ProtocolDefaults";
 import { toast } from "@/helpers/Toast";
 
