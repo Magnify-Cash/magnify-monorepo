@@ -17,7 +17,7 @@
     "moduleResolution": "Node",
     "noEmit": true,
     "paths": {
-      "@/*": ["./dapp/src/*"]
+       "@/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -25,5 +25,5 @@
     "target": "ESNext",
     "useDefineForClassFields": true
   },
-  "include": ["dapp", "faucet", "contracts/wagmi.config.ts", "environment.d.ts"]
+  "include": ["src"]
 }
