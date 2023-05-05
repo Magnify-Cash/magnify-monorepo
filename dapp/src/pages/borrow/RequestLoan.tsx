@@ -22,7 +22,6 @@ import { RequestLoanDocument } from "../../../.graphclient";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Loading } from "@/components/Loading";
 import { toast } from "@/helpers/Toast";
-import * as deployments from "../../../../deployments.json";
 
 type RequestLoanForm = {
   nftCollateralId: string;
@@ -65,8 +64,7 @@ export const RequestLoan = () => {
   // Approve $NFTY transfer
   const { config: nftyApprovalConfig, error: nftyApprovalError } =
     usePrepareContractWrite({
-      // @ts-ignore
-      address: deployments.nftyToken.address,
+      address: import.meta.env.VITE_NFTY_TOKEN_ADDRESS,
       abi: erc20ABI,
       functionName: "approve",
       // TODO: hardcoded amount for now, fix this
