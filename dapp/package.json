@@ -4,7 +4,7 @@
   "scripts": {
     "prepare:local": "cp local.graphclientrc.yml .graphclientrc.yml",
     "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml",
-    "build:graphclient": "graphclient build && rm .graphclient/package.json",
+    "build:graphclient": "graphclient build && rm -f .graphclient/package.json",
     "start": "yarn prepare:local && yarn build:graphclient && vite",
     "build:local": "yarn prepare:local && yarn build:graphclient && tsc && vite build",
     "build:prod": "yarn prepare:prod && yarn build:graphclient && tsc && vite build",
