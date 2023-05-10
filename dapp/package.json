@@ -2,13 +2,12 @@
   "name": "nftyfinance-dapp",
   "version": "0.0.1",
   "scripts": {
-    "contracts": "yarn wagmi generate",
     "prepare:local": "cp local.graphclientrc.yml .graphclientrc.yml",
-    "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml && graphclient build",
+    "prepare:prod": "cp prod.graphclientrc.yml .graphclientrc.yml",
     "build:graphclient": "graphclient build && rm .graphclient/package.json",
     "start": "yarn prepare:local && yarn build:graphclient && vite",
-    "build:local": "yarn prepare:local && tsc && vite build",
-    "build:prod": "yarn prepare:prod && tsc && vite build",
+    "build:local": "yarn prepare:local && yarn build:graphclient && tsc && vite build",
+    "build:prod": "yarn prepare:prod && yarn build:graphclient && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -34,7 +33,6 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-slider": "^1.3.1",
     "@vitejs/plugin-react": "^4.0.0",
-    "@wagmi/cli": "^0.1.15",
     "typescript": "^5.0.4",
     "vite": "^4.3.3"
   },

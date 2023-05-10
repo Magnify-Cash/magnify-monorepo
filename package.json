@@ -8,7 +8,9 @@
     "faucet": "yarn workspace nftyfinance-faucet",
     "subgraph": "yarn workspace nftyfinance-subgraph",
     "graph-node": "cd ../graph-node/docker && rm -rf data && docker compose down && docker compose up",
-    "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local"
+    "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local",
+    "build:dapp": "yarn contracts build && yarn dapp build:prod",
+    "build:faucet": "yarn contracts build && yarn faucet build"
   },
   "workspaces": [
     "contracts",
