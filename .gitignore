@@ -4,6 +4,5 @@ artifacts
 cache
 wagmi-generated.ts
 .env
-deployments.json
 graph-node
 **.DS_Store
