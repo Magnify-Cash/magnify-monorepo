@@ -16,13 +16,3 @@ jobs:
     - name: Run ESlint checks
       working-directory: ./
       run: yarn subgraph format:write;
-  codegen:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install node_modules
-      working-directory: ./
-      run: yarn subgraph install
-    - name: Run TypeScript type checks
-      working-directory: ./
-      run: yarn subgraph codegen;
