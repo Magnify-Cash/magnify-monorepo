@@ -11,18 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: ./dapp
-      run: yarn install
+      working-directory: ./
+      run: yarn dapp install
     - name: Run ESlint checks
-      working-directory: ./dapp
-      run: yarn format:write;
+      working-directory: ./
+      run: yarn dapp format:write;
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: ./dapp
-      run: yarn install
+      working-directory: ./
+      run: yarn dapp install
     - name: Run TypeScript type checks
-      working-directory: ./dapp
-      run: yarn tsc;
+      working-directory: ./
+      run: yarn dapp tsc;

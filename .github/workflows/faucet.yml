@@ -11,18 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: ./faucet
-      run: yarn install
+      working-directory: ./
+      run: yarn faucet install
     - name: Run ESlint checks
-      working-directory: ./faucet
-      run: yarn format:write;
+      working-directory: ./
+      run: yarn faucet format:write;
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Install node_modules
-      working-directory: ./faucet
-      run: yarn install
+      working-directory: ./
+      run: yarn faucet install
     - name: Run TypeScript type checks
-      working-directory: ./faucet
-      run: yarn tsc;
+      working-directory: ./
+      run: yarn faucet tsc;
