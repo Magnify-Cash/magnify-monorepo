@@ -1,4 +1,4 @@
-name: Scanner App CI
+name: Subgraph CI
 on:
   pull_request:
     branches: [ master ]

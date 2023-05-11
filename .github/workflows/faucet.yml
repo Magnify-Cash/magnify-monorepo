@@ -1,4 +1,4 @@
-name: Scanner App CI
+name: Faucet CI
 on:
   pull_request:
     branches: [ master ]
