@@ -2,7 +2,6 @@ node_modules
 typechain-types
 artifacts
 cache
-wagmi-generated.ts
 .env
 graph-node
 **.DS_Store
