@@ -6,6 +6,7 @@
     "build": "yarn hardhat clean && yarn hardhat compile && yarn wagmi generate",
     "start": "yarn hardhat node",
     "test": "yarn hardhat test",
+    "generate": "yarn wagmi generate",
     "deploy:local": "yarn hardhat clean && yarn hardhat compile && yarn hardhat deploy --network localhost && yarn wagmi generate"
   },
   "devDependencies": {
