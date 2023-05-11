@@ -156,7 +156,7 @@ interface INFTYLending {
 
     function addLiquidityToShop(uint256 _id, uint256 _amount) external;
 
-    function liquidityShopCashOut(uint256 _id) external;
+    function cashOutLiquidityShop(uint256 _id, uint256 _amount) external;
 
     function freezeLiquidityShop(uint256 _id) external;
 

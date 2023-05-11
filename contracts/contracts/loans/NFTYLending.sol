@@ -159,12 +159,12 @@ contract NFTYLending is
      *
      * @param owner The address of the owner of the liquidity shop
      * @param id Identifier for the liquidity shop
-     * @param cashoutAmount Balance withdrawn for this shop
+     * @param amount Amount withdrawn
      */
     event LiquidityShopCashOut(
         address indexed owner,
         uint256 id,
-        uint256 cashoutAmount
+        uint256 amount
     );
 
     /**
@@ -526,26 +526,27 @@ contract NFTYLending is
     /**
      * @notice This function is called to cash out a liquidity shop
      * @param _id The id of the liquidity shop to be cashout
+     * @param _amount Amount to withdraw from the liquidity shop
      *
      * Emits an {LiquidityShopCashOut} event.
      */
-    function liquidityShopCashOut(
-        uint256 _id
+    function cashOutLiquidityShop(
+        uint256 _id,
+        uint256 _amount
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
         require(liquidityShop.owner != address(0), "invalid shop id");
         require(msg.sender == liquidityShop.owner, "caller is not owner");
-        require(liquidityShop.balance > 0, "shop balance = 0");
+        require(liquidityShop.balance < _amount, "insufficient ship balance");
 
-        uint256 cashoutAmount = liquidityShop.balance;
-        liquidityShop.balance = 0;
+        liquidityShop.balance = liquidityShop.balance - _amount;
 
-        emit LiquidityShopCashOut(liquidityShop.owner, _id, cashoutAmount);
+        emit LiquidityShopCashOut(liquidityShop.owner, _id, _amount);
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             liquidityShop.owner,
-            cashoutAmount
+            _amount
         );
     }
 
