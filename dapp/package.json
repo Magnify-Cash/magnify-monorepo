@@ -8,7 +8,10 @@
     "start": "yarn prepare:local && yarn build:graphclient && vite",
     "build:local": "yarn prepare:local && yarn build:graphclient && tsc && vite build",
     "build:prod": "yarn prepare:prod && yarn build:graphclient && tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "rome format ./src",
+    "format:write": "rome format ./src --write",
+    "lint": "rome check ./src "
   },
   "dependencies": {
     "@graphprotocol/client-urql": "^1.0.18",
@@ -33,6 +36,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-slider": "^1.3.1",
     "@vitejs/plugin-react": "^4.0.0",
+    "rome": "^12.0.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.3"
   },
