@@ -16,6 +16,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "noEmit": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": ["./dapp/src/*"]
     },
