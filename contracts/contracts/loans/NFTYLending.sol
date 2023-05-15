@@ -143,6 +143,28 @@ contract NFTYLending is
     );
 
     /**
+     * @notice Event that will be emitted every time a liquidity shop is updated
+     * @param id The liquidity shop ID
+     * @param name The name of the liquidity shop
+     * @param interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
+     * @param interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
+     * @param interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
+     * @param maxOffer The max offer set for the NFT collection, valued in the ERC20 tokens set for the liquidity shop
+     * @param automaticApproval Whether or not this liquidity shop will accept offers automatically
+     * @param allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
+     */
+    event LiquidityShopUpdated(
+        uint256 id,
+        string name,
+        uint256 interestA,
+        uint256 interestB,
+        uint256 interestC,
+        uint256 maxOffer,
+        bool automaticApproval,
+        bool allowRefinancingTerms
+    );
+
+    /**
      * @notice Event that will be emitted every time liquidity is added to a shop
      *
      * @param owner The address of the owner of the liquidity shop
@@ -509,6 +531,59 @@ contract NFTYLending is
             msg.sender,
             address(this),
             _liquidityAmount
+        );
+    }
+
+    /**
+     * @notice Updates a liquidity shop
+     * @param _id ID of the liquidity shop to be updated
+     * @param _name The new name of the liquidity shop
+     * @param _interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
+     * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
+     * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
+     * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
+     * @param _automaticApproval Whether or not this liquidity shop will accept offers automatically
+     * @param _allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
+     * @dev Emits an `LiquidityShopUpdated` event.
+     */
+    function updateLiquidityShop(
+        uint256 _id,
+        string calldata _name,
+        uint256 _interestA,
+        uint256 _interestB,
+        uint256 _interestC,
+        uint256 _maxOffer,
+        bool _automaticApproval,
+        bool _allowRefinancingTerms
+    ) external override whenNotPaused nonReentrant {
+        LiquidityShop storage liquidityShop = liquidityShops[_id];
+
+        require(liquidityShop.owner != address(0), "invalid shop id");
+        require(liquidityShop.owner == msg.sender, "caller is not owner");
+
+        require(bytes(_name).length > 0, "empty shop name");
+        require(_maxOffer > 0, "max offer = 0");
+        require(_interestA > 0, "interestA = 0");
+        require(_interestB > 0, "interestB = 0");
+        require(_interestC > 0, "interestC = 0");
+
+        liquidityShop.maxOffer = _maxOffer;
+        liquidityShop.name = _name;
+        liquidityShop.interestA = _interestA;
+        liquidityShop.interestB = _interestB;
+        liquidityShop.interestC = _interestC;
+        liquidityShop.automaticApproval = _automaticApproval;
+        liquidityShop.allowRefinancingTerms = _allowRefinancingTerms;
+
+        emit LiquidityShopUpdated(
+            _id,
+            _name,
+            _interestA,
+            _interestB,
+            _interestC,
+            _maxOffer,
+            _automaticApproval,
+            _allowRefinancingTerms
         );
     }
 

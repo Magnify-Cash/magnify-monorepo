@@ -156,6 +156,17 @@ interface INFTYLending {
         bool _allowRefinancingTerms
     ) external;
 
+    function updateLiquidityShop(
+        uint256 _id,
+        string calldata _name,
+        uint256 _interestA,
+        uint256 _interestB,
+        uint256 _interestC,
+        uint256 _maxOffer,
+        bool _automaticApproval,
+        bool _allowRefinancingTerms
+    ) external;
+
     function addLiquidityToShop(uint256 _id, uint256 _amount) external;
 
     function cashOutLiquidityShop(uint256 _id, uint256 _amount) external;

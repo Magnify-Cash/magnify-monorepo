@@ -5,6 +5,7 @@ import {
   LiquidityAddedToShop,
   LiquidityShopCashOut,
   LiquidityShopCreated,
+  LiquidityShopUpdated,
   LiquidityShopFrozen,
   LiquidityShopUnfrozen,
   NFTYLending,
@@ -63,6 +64,20 @@ export function handleLiquidityShopCreated(event: LiquidityShopCreated): void {
   liquidityShop.interestC = event.params.interestC;
   liquidityShop.name = event.params.name;
   liquidityShop.status = "ACTIVE";
+
+  liquidityShop.save();
+}
+
+export function handleLiquidityShopUpdated(event: LiquidityShopUpdated): void {
+  const liquidityShop = new LiquidityShop(event.params.id.toString());
+
+  liquidityShop.name = event.params.name;
+  liquidityShop.automaticApproval = event.params.automaticApproval;
+  liquidityShop.allowRefinancingTerms = event.params.allowRefinancingTerms;
+  liquidityShop.maxOffer = event.params.maxOffer;
+  liquidityShop.interestA = event.params.interestA;
+  liquidityShop.interestB = event.params.interestB;
+  liquidityShop.interestC = event.params.interestC;
 
   liquidityShop.save();
 }
