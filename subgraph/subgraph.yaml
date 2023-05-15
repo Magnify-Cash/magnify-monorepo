@@ -27,10 +27,8 @@ dataSources:
         - name: ERC721
           file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
       eventHandlers:
-        - event: Erc20Set(indexed address,bool,uint256,uint256)
-          handler: handleErc20Set
-        - event: FeeExpirationSet(uint256)
-          handler: handleFeeExpirationSet
+        - event: ProtocolParamsSet(uint256,(uint256,uint256,uint256),uint256)
+          handler: handleProtocolParamsSet
         - event: Initialized(uint8)
           handler: handleInitialized
         - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256,uint256)
@@ -46,10 +44,6 @@ dataSources:
           handler: handleLiquidityShopFrozen
         - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
           handler: handleLiquidityShopUnfrozen
-        - event: LoanOriginationFeesSet(uint256)
-          handler: handleLoanOriginationFeesSet
-        - event: NftSet(indexed address,bool,string)
-          handler: handleNftSet
         - event: OfferAccepted(indexed address,indexed address,uint256,uint256,uint256)
           handler: handleOfferAccepted
         - event: OwnershipTransferred(indexed address,indexed address)
@@ -61,8 +55,6 @@ dataSources:
           handler: handlePaused
         - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
           handler: handlePaymentMade
-        - event: PlatformFeesSet((uint256,uint256,uint256))
-          handler: handlePlatformFeesSet
         - event: Unpaused(address)
           handler: handleUnpaused
       file: ./src/nfty-lending.ts
@@ -106,43 +98,3 @@ dataSources:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
       file: ./src/obligation-receipt.ts
-  - kind: ethereum/contract
-    name: Doodles
-    network: mumbai
-    source:
-      abi: ERC721
-      address: "0x5c4967db6be9db2cb5672488fae1634a19636e70"
-      startBlock: 34348658
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Nft
-      abis:
-        - name: ERC721
-          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-      file: ./src/nft.ts
-  - kind: ethereum/contract
-    name: PolygonPunks
-    network: mumbai
-    source:
-      abi: ERC721
-      address: "0x709d7e16a75abf20c16655fd553e4959b34636ba"
-      startBlock: 34348662
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Nft
-      abis:
-        - name: ERC721
-          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-      file: ./src/nft.ts

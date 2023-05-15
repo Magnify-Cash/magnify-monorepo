@@ -1,7 +1,5 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
-  Erc20Set,
-  FeeExpirationSet,
   Initialized,
   LiquidatedOverdueLoan,
   LiquidityAddedToShop,
@@ -9,16 +7,14 @@ import {
   LiquidityShopCreated,
   LiquidityShopFrozen,
   LiquidityShopUnfrozen,
-  LoanOriginationFeesSet,
-  NftSet,
   NFTYLending,
   OfferAccepted,
   OwnershipTransferred,
   PaidBackLoan,
   Paused,
   PaymentMade,
-  PlatformFeesSet,
   Unpaused,
+  ProtocolParamsSet,
 } from "../generated/NFTYLending/NFTYLending";
 import { ERC20 } from "../generated/NFTYLending/ERC20";
 import { ERC721 } from "../generated/NFTYLending/ERC721";
@@ -33,6 +29,26 @@ import {
 // Liquidity shop related events
 
 export function handleLiquidityShopCreated(event: LiquidityShopCreated): void {
+  // Create ERC20 instance
+  const erc20 = new Erc20(event.params.erc20.toHex());
+  const erc20Contract = ERC20.bind(event.params.erc20);
+
+  erc20.name = erc20Contract.name();
+  erc20.symbol = erc20Contract.symbol();
+  erc20.decimals = erc20Contract.decimals();
+
+  erc20.save();
+
+  // Create NftCollection instance
+  const nftCollection = new NftCollection(event.params.nftCollection.toHex());
+  const erc721Contract = ERC721.bind(event.params.nftCollection);
+
+  nftCollection.name = erc721Contract.name();
+  nftCollection.symbol = erc721Contract.symbol();
+
+  nftCollection.save();
+
+  // Create LiquidityShop instance
   const liquidityShop = new LiquidityShop(event.params.id.toString());
 
   liquidityShop.erc20 = event.params.erc20.toHex();
@@ -143,74 +159,34 @@ export function handleInitialized(event: Initialized): void {
     .platformFees()
     .getLenderPercentage();
   protocolParams.loanOriginationFeePercentage =
-    nftyLendingContract.getLoanOriginationFees();
+    nftyLendingContract.loanOriginationFee();
   protocolParams.paused = false;
-  protocolParams.feeExpirationTime = nftyLendingContract.feeExpirationTime();
+  protocolParams.oraclePriceExpirationDuration =
+    nftyLendingContract.oraclePriceExpirationDuration();
   protocolParams.owner = nftyLendingContract.owner();
   protocolParams.oracle = nftyLendingContract.oracle();
-  protocolParams.nftyToken = nftyLendingContract.nftyTokenContract();
-  protocolParams.promissoryNote = nftyLendingContract.promissoryNoteToken();
-  protocolParams.obligationReceipt = nftyLendingContract.promissoryNoteToken();
+  protocolParams.nftyToken = nftyLendingContract.nftyToken();
+  protocolParams.promissoryNote = nftyLendingContract.promissoryNote();
+  protocolParams.obligationReceipt = nftyLendingContract.obligationReceipt();
 
   // Save entity
   protocolParams.save();
 }
 
-export function handleErc20Set(event: Erc20Set): void {
-  // Get event parameters
-  const erc20 = new Erc20(event.params.addr.toHex());
-  erc20.allowed = event.params.allowed;
-  erc20.minimumBasketSize = event.params.minimumBasketSize;
-  erc20.minimumPaymentAmount = event.params.minimumPaymentAmount;
-
-  // Get ERC20 token details
-  const erc20Contract = ERC20.bind(event.params.addr);
-  erc20.name = erc20Contract.name();
-  erc20.symbol = erc20Contract.symbol();
-  erc20.decimals = erc20Contract.decimals();
-  erc20.totalSupply = erc20Contract.totalSupply();
-
-  // Save entity
-  erc20.save();
-}
-
-export function handleNftSet(event: NftSet): void {
-  const nftCollection = new NftCollection(event.params.addr.toHex());
-  nftCollection.allowed = event.params.allowed;
-  nftCollection.image = event.params.image;
-
-  // Get ERC721 token details
-  const erc721Contract = ERC721.bind(event.params.addr);
-  nftCollection.name = erc721Contract.name();
-  nftCollection.symbol = erc721Contract.symbol();
-
-  // Save entity
-  nftCollection.save();
-}
-
-export function handleFeeExpirationSet(event: FeeExpirationSet): void {
+export function handleProtocolParamsSet(event: ProtocolParamsSet): void {
   const protocolParams = new ProtocolParams("0");
-  protocolParams.feeExpirationTime = event.params.feeExpirationTime;
-  protocolParams.save();
-}
 
-export function handleLoanOriginationFeesSet(
-  event: LoanOriginationFeesSet
-): void {
-  const protocolParams = new ProtocolParams("0");
-  protocolParams.loanOriginationFeePercentage =
-    event.params.loanOriginationFees;
-  protocolParams.save();
-}
-
-export function handlePlatformFeesSet(event: PlatformFeesSet): void {
-  const protocolParams = new ProtocolParams("0");
-  protocolParams.platformFeePercentage =
-    event.params.platformFees.platformPercentage;
+  protocolParams.oraclePriceExpirationDuration =
+    event.params.oraclePriceExpirationDuration;
   protocolParams.borrowerFeePercentage =
     event.params.platformFees.borrowerPercentage;
   protocolParams.lenderFeePercentage =
     event.params.platformFees.lenderPercentage;
+  protocolParams.platformFeePercentage =
+    event.params.platformFees.platformPercentage;
+  protocolParams.loanOriginationFeePercentage =
+    event.params.loanOriginationFees;
+
   protocolParams.save();
 }
 
@@ -241,9 +217,10 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     .platformFees()
     .getLenderPercentage();
   protocolParams.loanOriginationFeePercentage =
-    nftyLendingContract.getLoanOriginationFees();
+    nftyLendingContract.loanOriginationFee();
   protocolParams.paused = false;
-  protocolParams.feeExpirationTime = nftyLendingContract.feeExpirationTime();
+  protocolParams.oraclePriceExpirationDuration =
+    nftyLendingContract.oraclePriceExpirationDuration();
   protocolParams.owner = nftyLendingContract.owner();
 
   protocolParams.owner = event.params.newOwner;
