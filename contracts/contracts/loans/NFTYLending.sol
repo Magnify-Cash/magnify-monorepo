@@ -41,7 +41,7 @@ contract NFTYLending is
     /**
      * @notice Unique identifier for liquidity shops
      */
-    Counters.Counter private shopIdCounter;
+    Counters.Counter private liquidityShopIdCounter;
     /**
      * @notice Unique identifier for loans
      */
@@ -58,34 +58,14 @@ contract NFTYLending is
     mapping(uint256 => Loan) public loans;
 
     /**
-     * @notice Mapping for registered ERC20s which can be used as currency in liquidity shops
-     */
-    mapping(address => Erc20) public erc20s;
-
-    /**
-     * @notice Enumerable Set that stores all currently whitelisted ERC20 addresses
-     */
-    EnumerableSet.AddressSet private whitelistedErc20s;
-
-    /**
-     * @notice Mapping for registered NFT collections which can be used as collaterals in liquidity shops
-     */
-    mapping(address => Nft) public nfts;
-
-    /**
-     * @notice Enumerable Set that stores all currently whitelisted NFTs addresses
-     */
-    EnumerableSet.AddressSet private whitelistedNfts;
-
-    /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
-    address public promissoryNoteToken;
+    address public promissoryNote;
 
     /**
      * @notice The address of the ERC721 to generate obligation receipts for borrowers
      */
-    address public obligationReceiptToken;
+    address public obligationReceipt;
 
     /**
      * @notice The address of the oracle to be used for fees
@@ -95,12 +75,12 @@ contract NFTYLending is
     /**
      * @notice The address of the NFTY Token contract to use for borrower fees
      */
-    address public nftyTokenContract;
+    address public nftyToken;
 
     /**
      * @notice The percentage of fees that the borrower will pay for each loan
      */
-    uint256 private loanOriginationFeePercentage;
+    uint256 public loanOriginationFee;
 
     /**
      * @notice The percentage of fees that will be used when asking for a loan
@@ -123,7 +103,7 @@ contract NFTYLending is
     /**
      * @notice The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
      */
-    uint256 public feeExpirationTime;
+    uint256 public oraclePriceExpirationDuration;
 
     /* *********** */
     /* EVENTS */
@@ -179,12 +159,12 @@ contract NFTYLending is
      *
      * @param owner The address of the owner of the liquidity shop
      * @param id Identifier for the liquidity shop
-     * @param cashoutAmount Balance withdrawn for this shop
+     * @param amount Amount withdrawn
      */
     event LiquidityShopCashOut(
         address indexed owner,
         uint256 id,
-        uint256 cashoutAmount
+        uint256 amount
     );
 
     /**
@@ -289,49 +269,17 @@ contract NFTYLending is
     );
 
     /**
-     * @notice Event that will be emitted every time there is a change on the registered ERC20s applied by an admin
-     *
-     * @param addr The address of the ERC20 contract
-     * @param allowed Value that indicates whether the collection is whitelisted or not
-     * @param minimumBasketSize The minimum amount of tokens that a lender should send to create a liquidity shop
-     * @param minimumPaymentAmount The minimum amount of tokens that a borrower should send to pay back a loan
-     */
-    event Erc20Set(
-        address indexed addr,
-        bool allowed,
-        uint256 minimumBasketSize,
-        uint256 minimumPaymentAmount
-    );
-
-    /**
-    Event that will be emitted every time there is a change on the registered NFTs applied by an admin
-    *
-    * @param addr The address of the NFT contract
-    * @param allowed Value that indicates whether the collection is whitelisted or not
-    * @param image The url of the image that will be shown for that NFT collection
-    */
-    event NftSet(address indexed addr, bool allowed, string image);
-
-    /**
-     * @notice Event that will be emitted every time an admin changes contract fees
-     *
-     * @param platformFees The percentage of fees for each participant
-     */
-    event PlatformFeesSet(PlatformFees platformFees);
-
-    /**
-     * @notice Event that will be emitted every time an admin changes the contract loan origination fee
-     *
-     * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
-     */
-    event LoanOriginationFeesSet(uint256 loanOriginationFees);
-
-    /**
-     * @notice Event that will be emitted every time an admin changes the expiration time for token conversions obtained through an oracle
+     * @notice Event that will be emitted every time an admin updates protocol parameters
      *
      * @param feeExpirationTime The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
+     * @param platformFees The percentage of fees for each participant
+     * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
      */
-    event FeeExpirationSet(uint256 feeExpirationTime);
+    event ProtocolParamsSet(
+        uint256 feeExpirationTime,
+        PlatformFees platformFees,
+        uint256 loanOriginationFees
+    );
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -344,101 +292,44 @@ contract NFTYLending is
     /**
      * @notice Sets the admin of the contract.
      *
-     * @param _whitelistedErc20s Whitelisted ERC20s
-     * @param _whitelistedNfts Whitelisted NFTs
-     * @param _promissoryNoteToken Promissory note ERC721 address
-     * @param _obligationReceiptToken Obligation receipt ERC721 address
-     * @param _nftyTokenContract Address of the contract to be used for fees on this contract
+     * @param _promissoryNote Promissory note ERC721 address
+     * @param _obligationReceipt Obligation receipt ERC721 address
+     * @param _nftyToken Address of the contract to be used for fees on this contract
      * @param _oracle Address of the oracle to be used for fee calculation
      */
     function initialize(
-        WhitelistedErc20[] memory _whitelistedErc20s,
-        WhitelistedNft[] memory _whitelistedNfts,
-        address _promissoryNoteToken,
-        address _obligationReceiptToken,
-        address _nftyTokenContract,
+        address _promissoryNote,
+        address _obligationReceipt,
+        address _nftyToken,
         address _oracle
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
 
-        loanOriginationFeePercentage = 1;
-        require(_nftyTokenContract != address(0), "nfty contract is zero addr");
-        nftyTokenContract = _nftyTokenContract;
+        require(_nftyToken != address(0), "nfty contract is zero addr");
+        nftyToken = _nftyToken;
 
-        for (uint256 i = 0; i < _whitelistedErc20s.length; i++) {
-            setErc20(
-                _whitelistedErc20s[i].addr,
-                Erc20(
-                    true,
-                    _whitelistedErc20s[i].minBasket,
-                    _whitelistedErc20s[i].minPayment
-                )
-            );
-        }
-        for (uint256 i = 0; i < _whitelistedNfts.length; i++) {
-            setNft(
-                _whitelistedNfts[i].addr,
-                Nft(true, _whitelistedNfts[i].img)
-            );
-        }
+        require(_promissoryNote != address(0), "promissory note is zero addr");
+        promissoryNote = _promissoryNote;
 
         require(
-            _promissoryNoteToken != address(0),
-            "promissory note is zero addr"
-        );
-        promissoryNoteToken = _promissoryNoteToken;
-
-        require(
-            _obligationReceiptToken != address(0),
+            _obligationReceipt != address(0),
             "obligation receipt is zero addr"
         );
-        obligationReceiptToken = _obligationReceiptToken;
+        obligationReceipt = _obligationReceipt;
 
         require(_oracle != address(0), "oracle is zero addr");
         oracle = _oracle;
 
-        feeExpirationTime = 480;
-
-        setPlatformFees(
+        // Set default protocol params
+        setProtocolParams(
+            480,
             PlatformFees({
                 lenderPercentage: 30,
                 borrowerPercentage: 30,
                 platformPercentage: 40
-            })
-        );
-    }
-
-    /**
-     * @notice This function returns whether or not an ERC20 is allowed on this contract
-     *
-     * @param _address Address of the ERC20 to be added or changed
-     * @param _erc20 Registered data for the ERC20: whitelist status, minimum basket size and minimum pay back amount
-     * @return ret Returns true if the whitelisted ERC20s set was changed, false otherwise
-     *
-     * Emits an {Erc20Set} event.
-     */
-    function setErc20(
-        address _address,
-        Erc20 memory _erc20
-    ) public onlyOwner returns (bool ret) {
-        require(_address != address(0), "erc20 is zero addr");
-        require(_erc20.minimumBasketSize != 0, "basketSize = 0");
-        require(_erc20.minimumPaymentAmount != 0, "paymentAmount = 0");
-
-        erc20s[_address] = _erc20;
-
-        if (_erc20.allowed) {
-            ret = whitelistedErc20s.add(_address);
-        } else {
-            ret = whitelistedErc20s.remove(_address);
-        }
-
-        emit Erc20Set(
-            _address,
-            _erc20.allowed,
-            _erc20.minimumBasketSize,
-            _erc20.minimumPaymentAmount
+            }),
+            1
         );
     }
 
@@ -477,110 +368,29 @@ contract NFTYLending is
     }
 
     /**
-     * @notice This function returns all currently whitelisted ERC20s on this contract
-     */
-    function getWhitelistedErc20s()
-        external
-        view
-        returns (WhitelistedErc20[] memory)
-    {
-        WhitelistedErc20[]
-            memory whitelistedErc20Result = new WhitelistedErc20[](
-                whitelistedErc20s.length()
-            );
-
-        for (uint256 i = 0; i < whitelistedErc20s.length(); i++) {
-            Erc20 memory erc20 = erc20s[whitelistedErc20s.at(i)];
-            whitelistedErc20Result[i] = WhitelistedErc20(
-                whitelistedErc20s.at(i),
-                erc20.minimumBasketSize,
-                erc20.minimumPaymentAmount
-            );
-        }
-
-        return whitelistedErc20Result;
-    }
-
-    /**
-     * @notice This function allows the admin of the contract to add or remove NFTs from the contract whitelist,
-     * as well as set or update their image
-     *
-     * @param _address Address of the NFT to be added or changed
-     * @param _nft Registered data for the NFT: whitelist status and image URL
-     * @return ret Returns true if the whitelisted NFTs set was changed, false otherwise
-     *
-     * Emits an {NFTSet} event.
-     */
-    function setNft(
-        address _address,
-        Nft memory _nft
-    ) public onlyOwner returns (bool ret) {
-        require(_address != address(0), "nft is zero addr");
-        require(bytes(_nft.image).length > 0, "empty image");
-
-        nfts[_address] = _nft;
-
-        if (_nft.allowed) {
-            ret = whitelistedNfts.add(_address);
-        } else {
-            ret = whitelistedNfts.remove(_address);
-        }
-
-        emit NftSet(_address, _nft.allowed, _nft.image);
-    }
-
-    /**
-     * @notice This function returns all currently whitelisted NFTs on this contract
-     */
-    function getWhitelistedNfts()
-        external
-        view
-        returns (WhitelistedNft[] memory)
-    {
-        WhitelistedNft[] memory whitelistedNftsResult = new WhitelistedNft[](
-            whitelistedNfts.length()
-        );
-
-        for (uint256 i = 0; i < whitelistedNfts.length(); i++) {
-            Nft memory nft = nfts[whitelistedNfts.at(i)];
-            whitelistedNftsResult[i] = WhitelistedNft(
-                whitelistedNfts.at(i),
-                nft.image
-            );
-        }
-
-        return whitelistedNftsResult;
-    }
-
-    /**
      * @notice This function allows the admin of the contract to modify the max acceptable amount of time passed since the oracle price was last updated.
      *
-     * @param _feeExpirationTime The new max acceptable amount of time passed in seconds
-     *
+     * @param _oraclePriceExpirationDuration Max acceptable amount of time passed since the oracle price was last updated
+     * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
+     * @param _loanOriginationFee Percentage of fees that the lender will receive in tokens once an offer is accepted.
      * Emits an {FeeExpirationSet} event.
      */
-    function setFeeExpiration(uint256 _feeExpirationTime) external onlyOwner {
-        require(_feeExpirationTime > 0, "expiration = 0");
+    function setProtocolParams(
+        uint256 _oraclePriceExpirationDuration,
+        PlatformFees memory _platformFees,
+        uint256 _loanOriginationFee
+    ) public onlyOwner {
+        // Set fee expiration
+        require(_oraclePriceExpirationDuration > 0, "expiration = 0");
         // TODO: Uncomment the following in production.
         // require(_feeExpirationTime <= 24 hours, "expiration > 24hs");
-        feeExpirationTime = _feeExpirationTime;
-        emit FeeExpirationSet(_feeExpirationTime);
-    }
+        oraclePriceExpirationDuration = _oraclePriceExpirationDuration;
 
-    /**
-     * @notice Function that allows admins to change the percentage of lender, platform and borrowers fees
-     *
-     * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
-     *
-     * Emits an {PlatformFeesSet} event.
-     */
-    function setPlatformFees(
-        PlatformFees memory _platformFees
-    ) public onlyOwner {
+        // Set platform fees
         require(
             _platformFees.lenderPercentage +
-                (_platformFees.borrowerPercentage) +
-                (_platformFees.platformPercentage) ==
+                _platformFees.borrowerPercentage +
+                _platformFees.platformPercentage ==
                 100,
             "fees do not add up to 100%"
         );
@@ -588,35 +398,15 @@ contract NFTYLending is
         require(_platformFees.borrowerPercentage > 0, "borrower fee < 1%");
         require(_platformFees.platformPercentage > 0, "platform fee < 1%");
 
-        platformFees.lenderPercentage = _platformFees.lenderPercentage;
-        platformFees.borrowerPercentage = _platformFees.borrowerPercentage;
-        platformFees.platformPercentage = _platformFees.platformPercentage;
+        // Set loan origination fees
+        require(_loanOriginationFee <= 10, "fee > 10%");
+        loanOriginationFee = _loanOriginationFee;
 
-        emit PlatformFeesSet(platformFees);
-    }
-
-    /**
-     * @notice Function that returns loan origination fee
-     */
-    function getLoanOriginationFees() external view returns (uint256) {
-        return loanOriginationFeePercentage;
-    }
-
-    /**
-     * @notice Function that allows admins to change the percentage of lender, platform and borrowers' fees
-     *
-     * @param _loanOriginationFees Percentage of fees that the lender will receive in tokens once an offer is accepted.
-     * Maximum value is 10%.
-     *
-     * Emits an {LoanOriginationFeesSet} event.
-     */
-    function setLoanOriginationFees(
-        uint256 _loanOriginationFees
-    ) external onlyOwner {
-        require(_loanOriginationFees <= 10, "fee > 10%");
-        loanOriginationFeePercentage = _loanOriginationFees;
-
-        emit LoanOriginationFeesSet(_loanOriginationFees);
+        emit ProtocolParamsSet(
+            _oraclePriceExpirationDuration,
+            _platformFees,
+            _loanOriginationFee
+        );
     }
 
     /**
@@ -651,21 +441,15 @@ contract NFTYLending is
         uint256 _maxOffer,
         bool _automaticApproval,
         bool _allowRefinancingTerms
-    ) external override whenNotPaused nonReentrant {
-        require(erc20s[_erc20].allowed, "unallowed erc20");
-        require(
-            erc20s[_erc20].minimumBasketSize <= _liquidityAmount,
-            "amount < min basket size"
-        );
-        require(nfts[_nftCollection].allowed, "unallowed nft");
+    ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
         require(_maxOffer > 0, "max offer = 0");
         require(_interestA > 0, "interestA = 0");
         require(_interestB > 0, "interestB = 0");
         require(_interestC > 0, "interestC = 0");
 
-        shopIdCounter.increment();
-        uint256 liquidityShopId = shopIdCounter.current();
+        liquidityShopIdCounter.increment();
+        uint256 liquidityShopId = liquidityShopIdCounter.current();
 
         LiquidityShop memory newLiquidityShop = LiquidityShop({
             erc20: _erc20,
@@ -742,26 +526,27 @@ contract NFTYLending is
     /**
      * @notice This function is called to cash out a liquidity shop
      * @param _id The id of the liquidity shop to be cashout
+     * @param _amount Amount to withdraw from the liquidity shop
      *
      * Emits an {LiquidityShopCashOut} event.
      */
-    function liquidityShopCashOut(
-        uint256 _id
+    function cashOutLiquidityShop(
+        uint256 _id,
+        uint256 _amount
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
         require(liquidityShop.owner != address(0), "invalid shop id");
         require(msg.sender == liquidityShop.owner, "caller is not owner");
-        require(liquidityShop.balance > 0, "shop balance = 0");
+        require(liquidityShop.balance < _amount, "insufficient ship balance");
 
-        uint256 cashoutAmount = liquidityShop.balance;
-        liquidityShop.balance = 0;
+        liquidityShop.balance = liquidityShop.balance - _amount;
 
-        emit LiquidityShopCashOut(liquidityShop.owner, _id, cashoutAmount);
+        emit LiquidityShopCashOut(liquidityShop.owner, _id, _amount);
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             liquidityShop.owner,
-            cashoutAmount
+            _amount
         );
     }
 
@@ -827,13 +612,12 @@ contract NFTYLending is
         uint256 _nftyNotesId
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(promissoryNoteToken).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_nftyNotesId),
             "invalid promissory note"
         );
 
-        (address loanCoordinator, uint256 loanId) = NFTYNotes(
-            promissoryNoteToken
-        ).notes(_nftyNotesId);
+        (address loanCoordinator, uint256 loanId) = NFTYNotes(promissoryNote)
+            .notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
 
         Loan storage loan = loans[loanId];
@@ -845,7 +629,7 @@ contract NFTYLending is
             "loan does not match NFTYNote"
         );
         require(
-            NFTYNotes(promissoryNoteToken).ownerOf(_nftyNotesId) == msg.sender,
+            NFTYNotes(promissoryNote).ownerOf(_nftyNotesId) == msg.sender,
             "not promissory note owner"
         );
 
@@ -873,9 +657,9 @@ contract NFTYLending is
             .safeTransferFrom(address(this), msg.sender, loan.nftCollateralId);
 
         // burn both promissory note and obligation receipt
-        NFTYNotes(promissoryNoteToken).burn(_nftyNotesId);
-        if (NFTYNotes(obligationReceiptToken).exists(_nftyNotesId)) {
-            NFTYNotes(obligationReceiptToken).burn(_nftyNotesId);
+        NFTYNotes(promissoryNote).burn(_nftyNotesId);
+        if (NFTYNotes(obligationReceipt).exists(_nftyNotesId)) {
+            NFTYNotes(obligationReceipt).burn(_nftyNotesId);
         }
     }
 
@@ -958,13 +742,13 @@ contract NFTYLending is
             nftyNotesId
         );
 
-        NFTYNotes(promissoryNoteToken).mint(
+        NFTYNotes(promissoryNote).mint(
             liquidityShop.owner,
             nftyNotesId,
             abi.encode(loanIdCounter.current())
         );
 
-        NFTYNotes(obligationReceiptToken).mint(
+        NFTYNotes(obligationReceipt).mint(
             _borrower,
             nftyNotesId,
             abi.encode(loanIdCounter.current())
@@ -978,14 +762,14 @@ contract NFTYLending is
         );
 
         // transfer lender fees to lender
-        IERC20Upgradeable(nftyTokenContract).safeTransferFrom(
+        IERC20Upgradeable(nftyToken).safeTransferFrom(
             _borrower,
             liquidityShop.owner,
             lenderFees
         );
 
         // transfer borrower and platform fees to escrow
-        IERC20Upgradeable(nftyTokenContract).safeTransferFrom(
+        IERC20Upgradeable(nftyToken).safeTransferFrom(
             _borrower,
             address(this),
             borrowerFees + (escrowFees)
@@ -1047,27 +831,22 @@ contract NFTYLending is
     ) public view returns (uint256) {
         (uint256 nftyToUSD, bool nftyInTime) = getPriceIfNotOlderThan(
             string(
-                abi.encodePacked(
-                    IERC20Metadata(nftyTokenContract).symbol(),
-                    "/USD"
-                )
+                abi.encodePacked(IERC20Metadata(nftyToken).symbol(), "/USD")
             ),
-            uint128(feeExpirationTime)
+            uint128(oraclePriceExpirationDuration)
         );
         require(nftyToUSD != 0, "missing NFTY price");
         require(nftyInTime, "NFTY price too old");
 
         (uint256 erc20ToUSD, bool erc20InTime) = getPriceIfNotOlderThan(
             string(abi.encodePacked(IERC20Metadata(currency).symbol(), "/USD")),
-            uint128(feeExpirationTime)
+            uint128(oraclePriceExpirationDuration)
         );
         require(erc20ToUSD != 0, "missing ERC20 price");
         require(erc20InTime, "ERC20 price too old");
 
         return
-            ((amount * (erc20ToUSD)) *
-                (loanOriginationFeePercentage) *
-                (10 ** 18)) /
+            ((amount * (erc20ToUSD)) * (loanOriginationFee) * (10 ** 18)) /
             (10 ** (IERC20Metadata(currency).decimals()) * (nftyToUSD) * (100));
     }
 
@@ -1186,11 +965,11 @@ contract NFTYLending is
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(obligationReceiptToken).exists(_nftyNotesId),
+            NFTYNotes(obligationReceipt).exists(_nftyNotesId),
             "invalid obligation receipt"
         );
         require(
-            NFTYNotes(promissoryNoteToken).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_nftyNotesId),
             "invalid promissory note"
         );
 
@@ -1199,10 +978,10 @@ contract NFTYLending is
         address loanCoordinator;
 
         (loanCoordinator, loanIdObligationReceipt) = NFTYNotes(
-            obligationReceiptToken
+            obligationReceipt
         ).notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
-        (loanCoordinator, loanIdPromissoryNote) = NFTYNotes(promissoryNoteToken)
+        (loanCoordinator, loanIdPromissoryNote) = NFTYNotes(promissoryNote)
             .notes(_nftyNotesId);
         require(address(this) == loanCoordinator, "not loan coordinator");
         require(
@@ -1218,9 +997,10 @@ contract NFTYLending is
             "loan does not match NFTYNote"
         );
 
-        address obligationReceiptHolder = NFTYNotes(obligationReceiptToken)
-            .ownerOf(loan.nftyNotesId);
-        address promissoryNoteHolder = NFTYNotes(promissoryNoteToken).ownerOf(
+        address obligationReceiptHolder = NFTYNotes(obligationReceipt).ownerOf(
+            loan.nftyNotesId
+        );
+        address promissoryNoteHolder = NFTYNotes(promissoryNote).ownerOf(
             loan.nftyNotesId
         );
 
@@ -1240,17 +1020,7 @@ contract NFTYLending is
         ];
 
         require(loan.remainder >= _amount, "payment amount > debt");
-
-        if (
-            loan.remainder >= erc20s[liquidityShop.erc20].minimumPaymentAmount
-        ) {
-            require(
-                _amount >= erc20s[liquidityShop.erc20].minimumPaymentAmount,
-                "insufficient payment amount"
-            );
-        } else {
-            require(_amount == loan.remainder, "insufficient payment amount");
-        }
+        require(_amount == loan.remainder, "insufficient payment amount");
 
         loan.remainder = loan.remainder - (_amount);
 
@@ -1289,7 +1059,7 @@ contract NFTYLending is
                 loan.nftCollateralId
             );
 
-            IERC20Upgradeable(nftyTokenContract).safeTransfer(
+            IERC20Upgradeable(nftyToken).safeTransfer(
                 obligationReceiptHolder,
                 borrowerFees
             );
@@ -1302,8 +1072,8 @@ contract NFTYLending is
             );
 
             // burn both promissory note and obligation receipt
-            NFTYNotes(obligationReceiptToken).burn(loan.nftyNotesId);
-            NFTYNotes(promissoryNoteToken).burn(loan.nftyNotesId);
+            NFTYNotes(obligationReceipt).burn(loan.nftyNotesId);
+            NFTYNotes(promissoryNote).burn(loan.nftyNotesId);
         }
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransferFrom(
@@ -1329,6 +1099,6 @@ contract NFTYLending is
 
         platformBalance = 0;
 
-        IERC20Upgradeable(nftyTokenContract).safeTransfer(_receiver, amount);
+        IERC20Upgradeable(nftyToken).safeTransfer(_receiver, amount);
     }
 }

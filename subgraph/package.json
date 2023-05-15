@@ -5,10 +5,16 @@
     "codegen": "graph codegen",
     "deploy:goerli": "graph codegen && graph deploy --node https://api.studio.thegraph.com/deploy/ nftyfinance-goerli --network goerli",
     "deploy:mumbai": "graph codegen && graph deploy --node https://api.studio.thegraph.com/deploy/ nftyfinance-mumbai --network mumbai",
-    "deploy:local": "graph codegen && graph remove --node http://localhost:8020/ nftyfinance-local && graph create --node http://localhost:8020/ nftyfinance-local && graph deploy -l 0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 nftyfinance-local --network mainnet"
+    "deploy:local": "graph codegen && graph remove --node http://localhost:8020/ nftyfinance-local && graph create --node http://localhost:8020/ nftyfinance-local && graph deploy -l 0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 nftyfinance-local --network mainnet",
+    "format": "rome format ./src",
+    "format:write": "rome format ./src --write",
+    "lint": "rome check ./src "
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.48.0",
     "@graphprotocol/graph-ts": "0.29.3"
+  },
+  "devDependencies": {
+    "rome": "^12.0.0"
   }
 }

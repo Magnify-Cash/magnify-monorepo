@@ -9,7 +9,7 @@ import { toast } from "@/helpers/Toast";
 import {
   usePrepareNftyLendingLiquidateOverdueLoan,
   useNftyLendingLiquidateOverdueLoan,
-} from  "@/wagmi/generated";
+} from "../../../../wagmi-generated";
 
 type Loan = {
   nftCollectionName: string;
@@ -105,7 +105,7 @@ const ActiveLoanRow = ({
   // Liquidate Hook ************************************************************************
   // Note: Avoid running hook unless loan is overdue
   let liquidateWrite: any;
-  if (overdue){
+  if (overdue) {
     const { config: liquidateConfig, error: liquidateError } =
       usePrepareNftyLendingLiquidateOverdueLoan({
         chainId: getProtocolChain(chain?.id),
@@ -123,7 +123,7 @@ const ActiveLoanRow = ({
             alertType: error ? "alert-danger" : "alert-success",
           });
         },
-    });
+      });
   }
 
   return (
@@ -173,16 +173,17 @@ const ActiveLoanRow = ({
           </div>
         </div>
       </div>
-        <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
-          <div className="p-10 d-flex align-items-center">
-            <button
-              onClick={() => liquidateWrite?.()}
-              disabled={!overdue}
-              className="btn btn-warning btn-sm w-50 mx-auto">
-              Liquidate
-            </button>
-          </div>
+      <div className="col-sm-10 col-md-8 col-lg-4 align-self-center mx-auto">
+        <div className="p-10 d-flex align-items-center">
+          <button
+            onClick={() => liquidateWrite?.()}
+            disabled={!overdue}
+            className="btn btn-warning btn-sm w-50 mx-auto"
+          >
+            Liquidate
+          </button>
         </div>
+      </div>
     </div>
   );
 };

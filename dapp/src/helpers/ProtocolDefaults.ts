@@ -5,7 +5,7 @@ import {
   NFTY_FINANCE_GOERLI_GRAPH,
   NFTY_FINANCE_MUMBAI_GRAPH,
 } from "@/constants";
-import { nftyLendingAddress } from "@/wagmi/generated";
+import { nftyLendingAddress } from "../../../wagmi-generated";
 
 export const getProtocolAddress = (chainId: any) =>
   nftyLendingAddress[chainId ?? NFTY_FINANCE_DEFAULT_CHAIN];

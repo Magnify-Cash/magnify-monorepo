@@ -6,7 +6,7 @@ import { toast } from "@/helpers/Toast";
 import {
   usePrepareNftyLendingCreateLiquidityShop,
   useNftyLendingCreateLiquidityShop,
-} from "@/wagmi/generated";
+} from "../../../../wagmi-generated";
 import { Web3Button } from "@/components";
 import { BigNumber, ethers } from "ethers";
 import { useEffect } from "react";

@@ -6,8 +6,6 @@ import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/types";
 
 // Import tasks
-import "./tasks/configure-nft-collection";
-import "./tasks/configure-token";
 import "./tasks/deploy-nft-collection";
 import "./tasks/deploy-nfty-notes";
 import "./tasks/deploy-oracle";
