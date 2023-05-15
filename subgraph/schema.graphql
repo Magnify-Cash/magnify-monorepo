@@ -30,6 +30,10 @@ type ProtocolParams @entity {
   borrowerFeePercentage: BigInt! # uint256
   platformFeePercentage: BigInt! # uint256
   feeExpirationTime: BigInt! # uint256
+  promissoryNote: Bytes! # address
+  obligationReceipt: Bytes! # address
+  oracle: Bytes! # address
+  nftyToken: Bytes! # address
 }
 
 type Erc20 @entity {

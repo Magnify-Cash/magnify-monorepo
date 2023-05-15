@@ -147,6 +147,10 @@ export function handleInitialized(event: Initialized): void {
   protocolParams.paused = false;
   protocolParams.feeExpirationTime = nftyLendingContract.feeExpirationTime();
   protocolParams.owner = nftyLendingContract.owner();
+  protocolParams.oracle = nftyLendingContract.oracle();
+  protocolParams.nftyToken = nftyLendingContract.nftyTokenContract();
+  protocolParams.promissoryNote = nftyLendingContract.promissoryNoteToken();
+  protocolParams.obligationReceipt = nftyLendingContract.promissoryNoteToken();
 
   // Save entity
   protocolParams.save();
