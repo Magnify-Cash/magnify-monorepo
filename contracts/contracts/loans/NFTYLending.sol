@@ -6,19 +6,21 @@ import "./NFTYNotes.sol";
 import "../interfaces/INFTYLending.sol";
 import "../interfaces/IDIAOracleV2.sol";
 
-import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
@@ -27,6 +29,7 @@ contract NFTYLending is
     Initializable,
     OwnableUpgradeable,
     ERC721HolderUpgradeable,
+    ERC1155HolderUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable
 {
@@ -421,6 +424,7 @@ contract NFTYLending is
      * @param _name The name of this liquidity shop
      * @param _erc20 The ERC20 that will be accepted for loans in this liquidity shop
      * @param _nftCollection The NFT contract address that will be accepted as collateral for loans in this liquidity shop
+     * @param _nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
      * @param _liquidityAmount The initial balance of this liquidity shop
      * @param _interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
      * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
@@ -434,6 +438,7 @@ contract NFTYLending is
         string calldata _name,
         address _erc20,
         address _nftCollection,
+        bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
         uint256 _interestA,
         uint256 _interestB,
@@ -448,12 +453,30 @@ contract NFTYLending is
         require(_interestB > 0, "interestB = 0");
         require(_interestC > 0, "interestC = 0");
 
+        if (_nftCollectionIsErc1155)
+            require(
+                ERC165Checker.supportsInterface(
+                    _nftCollection,
+                    type(IERC1155).interfaceId
+                ),
+                "invalid nft collection"
+            );
+        else
+            require(
+                ERC165Checker.supportsInterface(
+                    _nftCollection,
+                    type(IERC721).interfaceId
+                ),
+                "invalid nft collection"
+            );
+
         liquidityShopIdCounter.increment();
         uint256 liquidityShopId = liquidityShopIdCounter.current();
 
         LiquidityShop memory newLiquidityShop = LiquidityShop({
             erc20: _erc20,
             nftCollection: _nftCollection,
+            nftCollectionIsErc1155: _nftCollectionIsErc1155,
             owner: msg.sender,
             interestA: _interestA,
             interestB: _interestB,
@@ -653,8 +676,24 @@ contract NFTYLending is
             loan.nftCollateralId
         );
 
-        IERC721(liquidityShops[loan.liquidityShopId].nftCollection)
-            .safeTransferFrom(address(this), msg.sender, loan.nftCollateralId);
+        LiquidityShop storage liquidityShop = liquidityShops[
+            loan.liquidityShopId
+        ];
+
+        if (liquidityShop.nftCollectionIsErc1155)
+            IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+                address(this),
+                msg.sender,
+                loan.nftCollateralId,
+                1,
+                ""
+            );
+        else
+            IERC721(liquidityShop.nftCollection).safeTransferFrom(
+                address(this),
+                msg.sender,
+                loan.nftCollateralId
+            );
 
         // burn both promissory note and obligation receipt
         NFTYNotes(promissoryNote).burn(_nftyNotesId);
@@ -755,11 +794,20 @@ contract NFTYLending is
         );
 
         // transfer Nft to escrow
-        IERC721(liquidityShop.nftCollection).safeTransferFrom(
-            _borrower,
-            address(this),
-            _offer.nftCollateralId
-        );
+        if (liquidityShop.nftCollectionIsErc1155)
+            IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+                _borrower,
+                address(this),
+                _offer.nftCollateralId,
+                1,
+                ""
+            );
+        else
+            IERC721(liquidityShop.nftCollection).safeTransferFrom(
+                _borrower,
+                address(this),
+                _offer.nftCollateralId
+            );
 
         // transfer lender fees to lender
         IERC20Upgradeable(nftyToken).safeTransferFrom(
@@ -1065,11 +1113,20 @@ contract NFTYLending is
             );
 
             // send NFT collateral to obligation receipt holder
-            IERC721(liquidityShop.nftCollection).safeTransferFrom(
-                address(this),
-                obligationReceiptHolder,
-                loan.nftCollateralId
-            );
+            if (liquidityShop.nftCollectionIsErc1155)
+                IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+                    address(this),
+                    obligationReceiptHolder,
+                    loan.nftCollateralId,
+                    1,
+                    ""
+                );
+            else
+                IERC721(liquidityShop.nftCollection).safeTransferFrom(
+                    address(this),
+                    obligationReceiptHolder,
+                    loan.nftCollateralId
+                );
 
             // burn both promissory note and obligation receipt
             NFTYNotes(obligationReceipt).burn(loan.nftyNotesId);

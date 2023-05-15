@@ -75,6 +75,7 @@ interface INFTYLending {
     struct LiquidityShop {
         address erc20;
         address nftCollection;
+        bool nftCollectionIsErc1155;
         address owner;
         bool automaticApproval;
         bool allowRefinancingTerms;
@@ -145,6 +146,7 @@ interface INFTYLending {
         string calldata _name,
         address _erc20,
         address _nftCollection,
+        bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
         uint256 _interestA,
         uint256 _interestB,
