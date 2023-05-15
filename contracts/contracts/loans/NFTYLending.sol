@@ -274,12 +274,12 @@ contract NFTYLending is
     /**
      * @notice Event that will be emitted every time an admin updates protocol parameters
      *
-     * @param feeExpirationTime The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
+     * @param oraclePriceExpirationDuration The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
      * @param platformFees The percentage of fees for each participant
      * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
      */
     event ProtocolParamsSet(
-        uint256 feeExpirationTime,
+        uint256 oraclePriceExpirationDuration,
         PlatformFees platformFees,
         uint256 loanOriginationFees
     );
