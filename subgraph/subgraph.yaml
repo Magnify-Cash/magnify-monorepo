@@ -40,6 +40,8 @@ dataSources:
         - event: LiquidityShopCreated(indexed address,indexed address,indexed
             address,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
           handler: handleLiquidityShopCreated
+        - event: LiquidityShopUpdated(uint256,string,uint256,uint256,uint256,uint256,bool,bool)
+          handler: handleLiquidityShopUpdated
         - event: LiquidityShopFrozen(indexed address,uint256,uint256)
           handler: handleLiquidityShopFrozen
         - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
