@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import "erc721a/contracts/ERC721A.sol";
 
-contract TestNFTCollection is ERC721A {
+contract TestERC721 is ERC721A {
     string public baseURI;
 
     constructor(

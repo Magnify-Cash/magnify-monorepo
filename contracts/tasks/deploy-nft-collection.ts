@@ -1,5 +1,5 @@
 import { task, types } from "hardhat/config";
-import { TestNFTCollection__factory } from "../../typechain-types";
+import { TestERC721__factory } from "../../typechain-types";
 
 // Task to deploy test ERC721 NFT collection
 task("deploy-nft-collection", "Deploys a test ERC721 NFT collection contract")
@@ -26,15 +26,11 @@ task("deploy-nft-collection", "Deploys a test ERC721 NFT collection contract")
   )
   .setAction(async ({ name, symbol, baseuri }, hre) => {
     // Deploy contract
-    const TestNftCollection = (await hre.ethers.getContractFactory(
-      "TestNFTCollection"
-    )) as TestNFTCollection__factory;
-    const testNftCollection = await TestNftCollection.deploy(
-      name,
-      symbol,
-      baseuri
-    );
-    await testNftCollection.deployed();
+    const TestERC721 = (await hre.ethers.getContractFactory(
+      "TestERC721"
+    )) as TestERC721__factory;
+    const testErc721 = await TestERC721.deploy(name, symbol, baseuri);
+    await testErc721.deployed();
 
     // Print details and return
     console.log(`
@@ -42,7 +38,7 @@ task("deploy-nft-collection", "Deploys a test ERC721 NFT collection contract")
     Name: ${name}
     Symbol: $${symbol}
     Base URI: ${baseuri}
-    Address: ${testNftCollection.address}
+    Address: ${testErc721.address}
     `);
-    return testNftCollection;
+    return testErc721;
   });

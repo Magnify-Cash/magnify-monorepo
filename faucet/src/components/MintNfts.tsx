@@ -3,8 +3,8 @@ import { useWaitForTransaction } from "wagmi";
 import { config } from "../config";
 import { useForm } from "react-hook-form";
 import {
-  usePrepareTestNftCollectionMint,
-  useTestNftCollectionMint,
+  usePrepareTestErc721Mint,
+  useTestErc721Mint,
 } from "../../../wagmi-generated";
 import { BigNumber } from "ethers";
 
@@ -23,10 +23,10 @@ export const MintNfts = () => {
 
   // WAGMI hooks
   const {
-    config: testNftCollectionMintConfig,
+    config: testErc721MintConfig,
     error: prepareError,
     isError: isPrepareError,
-  } = usePrepareTestNftCollectionMint({
+  } = usePrepareTestErc721Mint({
     chainId: config.chainId,
     // @ts-ignore
     address: watch("nftAddress"),
@@ -41,7 +41,7 @@ export const MintNfts = () => {
     write,
     error: writeError,
     isError: isWriteError,
-  } = useTestNftCollectionMint(testNftCollectionMintConfig);
+  } = useTestErc721Mint(testErc721MintConfig);
 
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
