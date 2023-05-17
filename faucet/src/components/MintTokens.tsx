@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useWaitForTransaction } from "wagmi";
 import {
-  usePrepareTestTokenMint,
-  useTestTokenMint,
+  usePrepareTestErc20Mint,
+  useTestErc20Mint,
 } from "../../../wagmi-generated";
 import { useForm } from "react-hook-form";
 import { config } from "../config";
@@ -23,10 +23,10 @@ export const MintTokens = () => {
 
   // WAGMI hooks
   const {
-    config: testTokenMintConfig,
+    config: testErc20MintConfig,
     error: prepareError,
     isError: isPrepareError,
-  } = usePrepareTestTokenMint({
+  } = usePrepareTestErc20Mint({
     chainId: config.chainId,
     // @ts-ignore
     address: watch("tokenAddress"),
@@ -42,7 +42,7 @@ export const MintTokens = () => {
     write,
     error: writeError,
     isError: isWriteError,
-  } = useTestTokenMint(testTokenMintConfig);
+  } = useTestErc20Mint(testErc20MintConfig);
 
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
