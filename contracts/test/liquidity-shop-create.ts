@@ -1,45 +1,28 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const { MINIMUM_BASKET_SIZE, SHOP_STATUS } = require("./utils/consts");
-const { deployEscrow } = require("./utils/funcs");
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { deployNftyLendingWithTestTokens } from "./fixtures";
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { MINIMUM_BASKET_SIZE, SHOP_STATUS } from "./utils/consts";
 
 describe("Create liquidity shop", function () {
-  // create shop params
-  const validName = "My Shop";
-  const validLiquidity = MINIMUM_BASKET_SIZE; // initial liquidity for the shop, in shop currency tokens
-  const validInterestA = 20; // interest rate for the shop, in percentage (i.e. 20%)
-  const validInterestB = 30;
-  const validInterestC = 40;
-  const validMaxOffer = 10000; // Max offer for the NFT collection accepted as loan collateral, in shop currency tokens
-  const validAutomaticApproval = true; // checks whether valid offers can be automatically accepted without intervention from the shop owner
-  const validAllowRefinancing = false; // unimplemented feature
+  it("should fail for zero address ERC20", async function () {
+    const { nftyLending, erc721 } = await loadFixture(
+      deployNftyLendingWithTestTokens
+    );
 
-  before(async function () {
-    [owner, bob, alice] = await ethers.getSigners();
-
-    [
-      this.escrow,
-      this.promissoryNote,
-      this.obligationReceipt,
-      this.nftyToken,
-      this.currency,
-      this.nftCollection,
-    ] = await deployEscrow();
-  });
-
-  it("should fail for invalid ERC20", async function () {
     await expect(
-      this.escrow.createLiquidityShop(
-        validName,
-        ethers.constants.AddressZero, // zero address is not and can never be whitelisted
-        this.nftCollection.address,
-        validLiquidity,
-        validInterestA,
-        validInterestB,
-        validInterestC,
-        validMaxOffer,
-        validAutomaticApproval,
-        validAllowRefinancing
+      nftyLending.createLiquidityShop(
+        "My Shop",
+        ethers.constants.AddressZero, // zero address
+        erc721.address,
+        false,
+        10000,
+        10,
+        20,
+        30,
+        1000,
+        true,
+        false
       )
     ).to.be.revertedWith("unallowed erc20");
   });
