@@ -474,6 +474,7 @@ contract NFTYLending is
         require(_interestA > 0, "interestA = 0");
         require(_interestB > 0, "interestB = 0");
         require(_interestC > 0, "interestC = 0");
+        require(_erc20 != address(0), "unallowed erc20");
 
         if (_nftCollectionIsErc1155)
             require(
