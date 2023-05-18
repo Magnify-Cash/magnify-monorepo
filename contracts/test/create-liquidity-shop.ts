@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { LiquidityShopStatus } from "./utils/consts";
 
-describe("Create liquidity shop", function () {
+describe("Create liquidity shop", () => {
   const name = "My Shop";
   const liquidityAmount = 10000;
   const maxOffer = 1000;

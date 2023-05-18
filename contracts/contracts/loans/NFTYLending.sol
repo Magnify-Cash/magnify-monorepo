@@ -638,7 +638,7 @@ contract NFTYLending is
 
         require(liquidityShop.owner != address(0), "invalid shop id");
         require(msg.sender == liquidityShop.owner, "caller is not owner");
-        require(liquidityShop.balance < _amount, "insufficient ship balance");
+        require(liquidityShop.balance > _amount, "insufficient shop balance");
 
         liquidityShop.balance = liquidityShop.balance - _amount;
 

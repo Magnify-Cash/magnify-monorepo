@@ -3,8 +3,8 @@ import { LiquidityShopStatus } from "./utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { createLiquidityShop } from "./fixtures";
 
-describe("Freeze liquidity shop", function () {
-  it("should fail for invalid id", async () => {
+describe("Freeze liquidity shop", () => {
+  it("should fail for invalid shop id", async () => {
     const { liquidityShopId, nftyLending } = await loadFixture(
       createLiquidityShop
     );
