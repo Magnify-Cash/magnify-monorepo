@@ -1,11 +1,11 @@
 export enum LiquidityShopStatus {
-  Active = 0,
+  Active,
   Inactive,
   Frozen,
 }
 
 export enum LoanStatus {
-  Active = 0,
+  Active,
   Resolved,
   Inactive,
 }

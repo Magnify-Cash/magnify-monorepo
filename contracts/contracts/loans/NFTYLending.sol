@@ -186,7 +186,7 @@ contract NFTYLending is
      * @param id Identifier for the liquidity shop
      * @param amount Amount withdrawn
      */
-    event LiquidityShopCashOut(
+    event LiquidityShopCashedOut(
         address indexed owner,
         uint256 id,
         uint256 amount
@@ -509,7 +509,7 @@ contract NFTYLending is
             balance: _liquidityAmount,
             automaticApproval: _automaticApproval,
             allowRefinancingTerms: _allowRefinancingTerms,
-            status: LiquidityShopStatus.ACTIVE,
+            status: LiquidityShopStatus.Active,
             name: _name
         });
         liquidityShops[liquidityShopId] = newLiquidityShop;
@@ -642,7 +642,7 @@ contract NFTYLending is
 
         liquidityShop.balance = liquidityShop.balance - _amount;
 
-        emit LiquidityShopCashOut(liquidityShop.owner, _id, _amount);
+        emit LiquidityShopCashedOut(liquidityShop.owner, _id, _amount);
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             liquidityShop.owner,
@@ -662,11 +662,11 @@ contract NFTYLending is
         require(liquidityShop.owner != address(0), "invalid shop id");
         require(msg.sender == liquidityShop.owner, "caller is not owner");
         require(
-            liquidityShop.status == LiquidityShopStatus.ACTIVE,
+            liquidityShop.status == LiquidityShopStatus.Active,
             "shop not active"
         );
 
-        liquidityShop.status = LiquidityShopStatus.FROZEN;
+        liquidityShop.status = LiquidityShopStatus.Frozen;
 
         emit LiquidityShopFrozen(
             liquidityShop.owner,
@@ -689,11 +689,11 @@ contract NFTYLending is
         require(liquidityShop.owner != address(0), "invalid shop id");
         require(msg.sender == liquidityShop.owner, "caller is not owner");
         require(
-            liquidityShop.status == LiquidityShopStatus.FROZEN,
+            liquidityShop.status == LiquidityShopStatus.Frozen,
             "shop not frozen"
         );
 
-        liquidityShop.status = LiquidityShopStatus.ACTIVE;
+        liquidityShop.status = LiquidityShopStatus.Active;
 
         emit LiquidityShopUnfrozen(
             liquidityShop.owner,
@@ -723,7 +723,7 @@ contract NFTYLending is
         Loan storage loan = loans[loanId];
 
         require(loan.liquidityShopId > 0, "non-existent loan");
-        require(loan.status == LoanStatus.ACTIVE, "loan not active");
+        require(loan.status == LoanStatus.Active, "loan not active");
         require(
             loan.nftyNotesId == _nftyNotesId,
             "loan does not match NFTYNote"
@@ -739,7 +739,7 @@ contract NFTYLending is
             "loan not yet expired"
         );
 
-        loan.status = LoanStatus.RESOLVED;
+        loan.status = LoanStatus.Resolved;
 
         uint256 borrowerFees = (loan.fee *
             (loan.platformFees.borrowerPercentage)) / (100);
@@ -794,7 +794,7 @@ contract NFTYLending is
         require(liquidityShop.owner != address(0), "invalid shop id");
 
         require(
-            liquidityShop.status == LiquidityShopStatus.ACTIVE,
+            liquidityShop.status == LiquidityShopStatus.Active,
             "shop must be active"
         );
         require(_offer.loanDuration != 0, "loan duration = 0");
@@ -930,7 +930,7 @@ contract NFTYLending is
             startTime: block.timestamp,
             nftCollateralId: _offer.nftCollateralId,
             fee: _fees,
-            status: LoanStatus.ACTIVE,
+            status: LoanStatus.Active,
             liquidityShopId: _offer.shopId,
             nftyNotesId: _nftyNotesId,
             platformFees: PlatformFees({
@@ -1116,7 +1116,7 @@ contract NFTYLending is
 
         Loan storage loan = loans[loanIdObligationReceipt];
         require(loan.liquidityShopId > 0, "non-existent loan");
-        require(loan.status == LoanStatus.ACTIVE, "loan not active");
+        require(loan.status == LoanStatus.Active, "loan not active");
         require(
             loan.nftyNotesId == _nftyNotesId,
             "loan does not match NFTYNote"
@@ -1158,7 +1158,7 @@ contract NFTYLending is
         );
 
         if (loan.remainder == 0) {
-            loan.status = LoanStatus.RESOLVED;
+            loan.status = LoanStatus.Resolved;
 
             // calculate and send fees to obligation receipt holder
             uint256 borrowerFees = (loan.fee *

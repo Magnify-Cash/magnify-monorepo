@@ -10,17 +10,17 @@ interface INFTYLending {
     // Enum for liquidity shop statuses
     // When first created a liquidity shop is ACTIVE, its owner can then set it as FROZEN
     enum LiquidityShopStatus {
-        ACTIVE,
-        INACTIVE,
-        FROZEN
+        Active,
+        Inactive,
+        Frozen
     }
 
     // Enum for loan statuses
     // When first created a Loan is ACTIVE by default, once the loan is resolved it becomes RESOLVED
     enum LoanStatus {
-        ACTIVE,
-        RESOLVED,
-        INACTIVE
+        Active,
+        Resolved,
+        Inactive
     }
 
     /* *********** */
