@@ -1,9 +1,9 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { deployNftyLendingWithTestTokens } from "./fixtures";
+import { deployNftyLendingWithTestTokens } from "../fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { LiquidityShopStatus } from "./utils/consts";
+import { LiquidityShopStatus } from "../utils/consts";
 
 describe("Create liquidity shop", () => {
   const name = "My Shop";

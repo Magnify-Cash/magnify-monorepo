@@ -26,5 +26,5 @@
     "target": "ESNext",
     "useDefineForClassFields": true
   },
-  "include": ["dapp", "faucet", "contracts/wagmi.config.ts", "environment.d.ts"]
+  "include": ["dapp", "faucet", "contracts", "environment.d.ts"]
 }

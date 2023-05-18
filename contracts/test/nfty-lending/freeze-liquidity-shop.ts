@@ -1,7 +1,7 @@
 import { expect } from "chai";
-import { LiquidityShopStatus } from "./utils/consts";
+import { LiquidityShopStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { createLiquidityShop } from "./fixtures";
+import { createLiquidityShop } from "../fixtures";
 
 describe("Freeze liquidity shop", () => {
   it("should fail for invalid shop id", async () => {
