@@ -3,7 +3,7 @@ import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { deployNftyLendingWithTestTokens } from "./fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { SHOP_STATUS } from "./utils/consts";
+import { LiquidityShopStatus } from "./utils/consts";
 
 describe("Create liquidity shop", function () {
   const name = "My Shop";
@@ -293,7 +293,7 @@ describe("Create liquidity shop", function () {
     expect(liquidityShop.interestC).to.equal(interestC);
     expect(liquidityShop.maxOffer).to.equal(maxOffer);
     expect(liquidityShop.name).to.equal(name);
-    expect(liquidityShop.status).to.equal(SHOP_STATUS.ACTIVE);
+    expect(liquidityShop.status).to.equal(LiquidityShopStatus.Active);
     expect(liquidityShop.automaticApproval).to.equal(automaticApproval);
     expect(liquidityShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
   });
@@ -367,7 +367,7 @@ describe("Create liquidity shop", function () {
     expect(liquidityShop.interestC).to.equal(interestC);
     expect(liquidityShop.maxOffer).to.equal(maxOffer);
     expect(liquidityShop.name).to.equal(name);
-    expect(liquidityShop.status).to.equal(SHOP_STATUS.ACTIVE);
+    expect(liquidityShop.status).to.equal(LiquidityShopStatus.Active);
     expect(liquidityShop.automaticApproval).to.equal(automaticApproval);
     expect(liquidityShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
   });
