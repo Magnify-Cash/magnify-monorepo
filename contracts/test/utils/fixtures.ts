@@ -7,7 +7,7 @@ import {
   TestERC1155__factory,
   TestERC20__factory,
   TestERC721__factory,
-} from "../../typechain-types";
+} from "../../../typechain-types";
 
 export const deployNftyLending = async () => {
   // $NFTY token

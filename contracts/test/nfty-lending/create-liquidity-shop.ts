@@ -1,6 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { deployNftyLendingWithTestTokens } from "../fixtures";
+import { deployNftyLendingWithTestTokens } from "../utils/fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { LiquidityShopStatus } from "../utils/consts";

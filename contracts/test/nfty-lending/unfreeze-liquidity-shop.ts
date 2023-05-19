@@ -1,4 +1,4 @@
-import { createLiquidityShop } from "../fixtures";
+import { createLiquidityShop } from "../utils/fixtures";
 import { expect } from "chai";
 import { LiquidityShopStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";

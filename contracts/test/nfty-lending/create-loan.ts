@@ -1,5 +1,5 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { createLiquidityShop } from "../fixtures";
+import { createLiquidityShop } from "../utils/fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";

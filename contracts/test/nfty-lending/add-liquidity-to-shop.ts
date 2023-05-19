@@ -1,6 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { createLiquidityShop } from "../fixtures";
+import { createLiquidityShop } from "../utils/fixtures";
 
 describe("Add liquidity to shop", () => {
   const liquidityAmount = 1000;
