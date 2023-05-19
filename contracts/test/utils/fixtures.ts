@@ -56,12 +56,16 @@ export const deployNftyLending = async () => {
   await promissoryNote.setNoteAdmin(nftyLending.address);
   await obligationReceipt.setNoteAdmin(nftyLending.address);
 
+  const [owner, alice] = await ethers.getSigners();
+
   return {
     nftyLending,
     promissoryNote,
     obligationReceipt,
     nftyToken,
     diaOracle,
+    owner,
+    alice,
   };
 };
 

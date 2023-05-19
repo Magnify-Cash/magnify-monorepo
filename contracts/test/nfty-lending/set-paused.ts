@@ -1,42 +1,40 @@
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { deployNftyLending } from "../utils/fixtures";
+import { expect } from "chai";
+
 describe("Set paused", () => {
-  it("should fail to pause escrow by non-owner", async () => {
-    await expect(this.escrow.connect(alice).setPaused(true)).to.be.revertedWith(
+  it("should fail for non owner caller", async () => {
+    const { nftyLending, alice } = await loadFixture(deployNftyLending);
+
+    // try pausing and unpausing both
+    await expect(nftyLending.connect(alice).setPaused(true)).to.be.revertedWith(
       "Ownable: caller is not the owner"
     );
-  });
-
-  it("should pause contract", async () => {
-    expect(await this.escrow.paused()).to.be.false;
-    const tx = await this.escrow.setPaused(true);
-    expect(tx).to.emit(this.escrow, "Paused");
-    const response = await tx.wait();
-    const pausedEvent = response.events.find(
-      (event) => event.event == "Paused"
-    ).args;
-
-    expect(pausedEvent.account).to.equal(owner.address);
-
-    expect(await this.escrow.paused()).to.be.true;
-  });
-
-  it("should fail to unpause escrow by non-owner", async () => {
     await expect(
-      this.escrow.connect(alice).setPaused(false)
+      nftyLending.connect(alice).setPaused(false)
     ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 
-  it("should unpause contract", async () => {
-    expect(await this.escrow.paused()).to.be.true;
-    const tx = await this.escrow.setPaused(false);
+  it("should pause", async () => {
+    const { nftyLending, owner } = await loadFixture(deployNftyLending);
+    expect(await nftyLending.paused()).to.be.false;
 
-    expect(tx).to.emit(this.escrow, "Unpaused");
-    const response = await tx.wait();
-    const pausedEvent = response.events.find(
-      (event) => event.event == "Unpaused"
-    ).args;
+    await expect(nftyLending.setPaused(true))
+      .to.emit(nftyLending, "Paused")
+      .withArgs(owner.address);
 
-    expect(pausedEvent.account).to.equal(owner.address);
+    expect(await nftyLending.paused()).to.be.true;
+  });
 
-    expect(await this.escrow.paused()).to.be.false;
+  it("should unpause", async () => {
+    const { nftyLending, owner } = await loadFixture(deployNftyLending);
+    await nftyLending.setPaused(true);
+    expect(await nftyLending.paused()).to.be.true;
+
+    await expect(nftyLending.setPaused(false))
+      .to.emit(nftyLending, "Unpaused")
+      .withArgs(owner.address);
+
+    expect(await nftyLending.paused()).to.be.false;
   });
 });
