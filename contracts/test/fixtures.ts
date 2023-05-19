@@ -104,6 +104,21 @@ export const deployNftyLendingWithTestTokens = async () => {
 
   const { erc20, erc721, erc1155 } = await deployTestTokens();
 
+  // Set $NFTY prices in oracle
+  await diaOracle.setValue(
+    "NFTY/USD",
+    ethers.utils.parseUnits("10", 18), // 10 USD
+    Math.floor(new Date().getTime() / 1000)
+  );
+
+  // Set ERC20 prices in oracle
+  const erc20Symbol = await erc20.symbol();
+  await diaOracle.setValue(
+    erc20Symbol + "/USD",
+    ethers.utils.parseUnits("10", 18), // 2 USD
+    Math.floor(new Date().getTime() / 1000)
+  );
+
   return {
     nftyLending,
     promissoryNote,
@@ -123,11 +138,11 @@ export const createLiquidityShop = async () => {
     obligationReceipt,
     nftyToken,
     diaOracle,
-  } = await deployNftyLending();
+    erc20,
+    erc721,
+  } = await deployNftyLendingWithTestTokens();
 
-  const { erc20, erc721 } = await deployTestTokens();
-
-  const [owner, lender, alice] = await ethers.getSigners();
+  const [owner, lender, borrower, alice] = await ethers.getSigners();
 
   const liquidityAmount = 10000;
   const name = "My Shop";
@@ -169,6 +184,7 @@ export const createLiquidityShop = async () => {
     owner,
     lender,
     alice,
+    borrower,
     nftyLending,
     promissoryNote,
     obligationReceipt,

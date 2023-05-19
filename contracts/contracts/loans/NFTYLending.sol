@@ -985,6 +985,7 @@ contract NFTYLending is
     ) external override whenNotPaused nonReentrant {
         LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
 
+        require(liquidityShop.owner != address(0), "invalid shop id");
         require(
             liquidityShop.automaticApproval,
             "automatic approval not accepted"
