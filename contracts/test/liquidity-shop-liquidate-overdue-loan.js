@@ -1,12 +1,6 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 const { LOAN_STATUS, MINIMUM_BASKET_SIZE } = require("./utils/consts");
-const {
-  acceptOffer,
-  deployEscrow,
-  updateOracleValue,
-  withdrawPlatformFees,
-} = require("./utils/funcs");
 
 describe("Liquidate overdue loan", function () {
   before(async function () {

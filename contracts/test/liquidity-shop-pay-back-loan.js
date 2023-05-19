@@ -6,13 +6,6 @@ const {
   TEST_SIGNATURE_EXPIRY,
   LOAN_STATUS,
 } = require("./utils/consts");
-const {
-  acceptOffer,
-  deployEscrow,
-  updateOracleValue,
-  getLoanInterest,
-  withdrawPlatformFees,
-} = require("./utils/funcs");
 
 describe("Pay Back Loan", function () {
   // accounts
