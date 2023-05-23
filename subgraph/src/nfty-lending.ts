@@ -1,9 +1,8 @@
-import { BigInt } from "@graphprotocol/graph-ts";
 import {
   Initialized,
   LiquidatedOverdueLoan,
   LiquidityAddedToShop,
-  LiquidityShopCashOut,
+  LiquidityShopCashedOut,
   LiquidityShopCreated,
   LiquidityShopUpdated,
   LiquidityShopFrozen,
@@ -88,9 +87,11 @@ export function handleLiquidityAddedToShop(event: LiquidityAddedToShop): void {
   liquidityShop.save();
 }
 
-export function handleLiquidityShopCashOut(event: LiquidityShopCashOut): void {
+export function handleLiquidityShopCashedOut(
+  event: LiquidityShopCashedOut
+): void {
   const liquidityShop = new LiquidityShop(event.params.id.toString());
-  liquidityShop.balance = new BigInt(0);
+  liquidityShop.balance = liquidityShop.balance.minus(event.params.amount);
   liquidityShop.save();
 }
 
@@ -119,7 +120,6 @@ export function handleOfferAccepted(event: OfferAccepted): void {
 
   // Enter loan details
   loan.liquidityShop = event.params.liquidityShopId.toString();
-  loan.nftyNotesId = event.params.nftyNotesId;
   loan.amount = loanDetails.getAmount();
   loan.remainder = loanDetails.getAmount();
   loan.duration = loanDetails.getDuration();

@@ -67,7 +67,6 @@ type Loan @entity {
   startTime: BigInt! # uint256
   nftCollateralId: BigInt! # uint256
   fee: BigInt! # uint256
-  nftyNotesId: BigInt! # uint64
   status: LoanStatus! # LoanStatus
   lenderFeePercentage: BigInt! # uint256
   borrowerFeePercentage: BigInt! # uint256

@@ -131,5 +131,10 @@ describe("Deploy NFTYLending", () => {
     expect(await nftyLending.owner()).to.equal(owner.address);
     expect(await nftyLending.nftyToken()).to.equal(nftyToken.address);
     expect(await nftyLending.paused()).to.be.false;
+
+    const platformFees = await nftyLending.platformFees();
+    expect(platformFees.lenderPercentage).equals(30);
+    expect(platformFees.borrowerPercentage).equals(30);
+    expect(platformFees.platformPercentage).equals(40);
   });
 });

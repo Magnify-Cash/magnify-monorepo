@@ -416,6 +416,7 @@ contract NFTYLending is
         require(_platformFees.lenderPercentage > 0, "lender fee < 1%");
         require(_platformFees.borrowerPercentage > 0, "borrower fee < 1%");
         require(_platformFees.platformPercentage > 0, "platform fee < 1%");
+        platformFees = _platformFees;
 
         // Set loan origination fees
         require(_loanOriginationFee <= 10, "fee > 10%");

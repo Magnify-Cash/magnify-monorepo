@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: NFTYLending
-    network: mumbai
+    network: mainnet
     source:
       abi: NFTYLending
-      address: "0x348db0CDC8031901d126878bF0DF663FbB5afc1e"
-      startBlock: 34480511
+      address: "0xC9a43158891282A2B1475592D5719c001986Aaec"
+      startBlock: 88
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -31,12 +31,12 @@ dataSources:
           handler: handleProtocolParamsSet
         - event: Initialized(uint8)
           handler: handleInitialized
-        - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256,uint256)
+        - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256)
           handler: handleLiquidatedOverdueLoan
         - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
           handler: handleLiquidityAddedToShop
-        - event: LiquidityShopCashOut(indexed address,uint256,uint256)
-          handler: handleLiquidityShopCashOut
+        - event: LiquidityShopCashedOut(indexed address,uint256,uint256)
+          handler: handleLiquidityShopCashedOut
         - event: LiquidityShopCreated(indexed address,indexed address,indexed
             address,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
           handler: handleLiquidityShopCreated
@@ -46,12 +46,12 @@ dataSources:
           handler: handleLiquidityShopFrozen
         - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
           handler: handleLiquidityShopUnfrozen
-        - event: OfferAccepted(indexed address,indexed address,uint256,uint256,uint256)
+        - event: OfferAccepted(indexed address,indexed address,uint256,uint256)
           handler: handleOfferAccepted
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
         - event: PaidBackLoan(indexed address,indexed
-            address,uint256,uint256,uint256,uint256,uint256,uint256)
+            address,uint256,uint256,uint256,uint256,uint256)
           handler: handlePaidBackLoan
         - event: Paused(address)
           handler: handlePaused
@@ -62,11 +62,11 @@ dataSources:
       file: ./src/nfty-lending.ts
   - kind: ethereum/contract
     name: PromissoryNote
-    network: mumbai
+    network: mainnet
     source:
       abi: PromissoryNote
-      address: "0xBDb5c047951CB813FFe877BD2FD812E21D22CD9D"
-      startBlock: 34480488
+      address: "0xfbC22278A96299D91d41C453234d97b4F5Eb9B2d"
+      startBlock: 86
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -82,11 +82,11 @@ dataSources:
       file: ./src/promissory-note.ts
   - kind: ethereum/contract
     name: ObligationReceipt
-    network: mumbai
+    network: mainnet
     source:
       abi: ObligationReceipt
-      address: "0x7f5241868898479073Cb705cDB7C321CF2e9930c"
-      startBlock: 34480480
+      address: "0x46b142DD1E924FAb83eCc3c08e4D46E82f005e0E"
+      startBlock: 87
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

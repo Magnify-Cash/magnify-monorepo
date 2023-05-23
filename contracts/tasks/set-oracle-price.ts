@@ -22,8 +22,12 @@ task("set-oracle-price", "Set token price in testnet oracle")
     )) as NFTYLending__factory;
     const nftyLending = NFTYLending.attach(addr);
 
-    // Set fee expiration time to 10 years
-    const tx1 = await nftyLending.setFeeExpiration(BigNumber.from(315360000));
+    const tx1 = await nftyLending.setProtocolParams(
+      // Set fee expiration time to 10 years
+      BigNumber.from(315360000),
+      await nftyLending.platformFees(),
+      await nftyLending.loanOriginationFee()
+    );
 
     // Get Oracle address and contract instance
     const oracleAddr = await nftyLending.oracle();

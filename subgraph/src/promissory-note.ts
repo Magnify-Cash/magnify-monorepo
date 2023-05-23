@@ -1,8 +1,5 @@
 import { Address } from "@graphprotocol/graph-ts";
-import {
-  PromissoryNote,
-  Transfer,
-} from "../generated/PromissoryNote/PromissoryNote";
+import { Transfer } from "../generated/PromissoryNote/PromissoryNote";
 import { Loan } from "../generated/schema";
 
 export function handleTransfer(event: Transfer): void {
@@ -10,13 +7,8 @@ export function handleTransfer(event: Transfer): void {
   if (event.params.from == Address.zero() || event.params.to == Address.zero())
     return;
 
-  // Get loanId from tokenId
-  const promissoryNoteContract = PromissoryNote.bind(event.address);
-  const noteDetails = promissoryNoteContract.notes(event.params.tokenId);
-  const loanId = noteDetails.getNoteId().toString();
-
   // Update lender
-  const loan = new Loan(loanId);
+  const loan = new Loan(event.params.tokenId.toString());
   loan.lender = event.params.to;
   loan.save();
 }

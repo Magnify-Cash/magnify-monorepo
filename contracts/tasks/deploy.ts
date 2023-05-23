@@ -52,28 +52,6 @@ task(
     "NFTYLending"
   )) as NFTYLending__factory;
   const nftyLending = await hre.upgrades.deployProxy(NFTYLending, [
-    [
-      {
-        addr: usdc.address,
-        minBasket: hre.ethers.utils.parseUnits("10", 18),
-        minPayment: hre.ethers.utils.parseUnits("1", 18),
-      },
-      {
-        addr: dai.address,
-        minBasket: hre.ethers.utils.parseUnits("10", 18),
-        minPayment: hre.ethers.utils.parseUnits("1", 18),
-      },
-    ],
-    [
-      {
-        addr: doodles.address,
-        img: "https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ",
-      },
-      {
-        addr: punks.address,
-        img: "https://i.seadn.io/gcs/files/498c0d117d7f1c95993804b7712721c7.png",
-      },
-    ],
     promissoryNote.address,
     obligationReceipt.address,
     nftyToken.address,
@@ -81,13 +59,13 @@ task(
   ]);
   await nftyLending.deployed();
 
-  // Set noteAdmin for the nftyNotes contracts
-  await hre.run("set-note-admin", {
-    admin: nftyLending.address,
+  // Set nftyLending address in the nftyNotes contracts
+  await hre.run("set-nfty-lending", {
+    lending: nftyLending.address,
     notes: promissoryNote.address,
   });
-  await hre.run("set-note-admin", {
-    admin: nftyLending.address,
+  await hre.run("set-nfty-lending", {
+    lending: nftyLending.address,
     notes: obligationReceipt.address,
   });
 
