@@ -5,3 +5,4 @@ cache
 .env
 graph-node
 **.DS_Store
+.nova
