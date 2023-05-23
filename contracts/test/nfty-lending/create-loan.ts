@@ -195,7 +195,7 @@ describe("Create loan", () => {
       );
   });
 
-  it("Expect to fail because price feed is too old", async () => {
+  it("should fail if oracle price has expired", async () => {
     const { nftyLending, liquidityShopId, borrower } = await loadFixture(
       createLiquidityShopAndMintTokens
     );

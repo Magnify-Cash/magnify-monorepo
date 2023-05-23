@@ -1,131 +1,30 @@
-const { expect } = require("chai");
-const { ethers, upgrades } = require("hardhat");
-const { LOAN_STATUS, MINIMUM_BASKET_SIZE } = require("./utils/consts");
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { createLoan, deployNftyLending } from "../utils/fixtures";
 
-describe("Liquidate overdue loan", function () {
-  before(async function () {
-    [owner, borrower, lender, alice] = await ethers.getSigners();
+describe("Liquidate overdue loan", () => {
+  it("should fail for invalid NFTY notes id", async () => {
+    const { nftyLending, lender, nftyNotesId } = await loadFixture(createLoan);
 
-    [
-      this.escrow,
-      this.promissoryNote,
-      this.obligationReceipt,
-      this.nftyToken,
-      this.currency,
-      this.nftCollection,
-      this.DIAOracle,
-    ] = await deployEscrow();
+    const invalidNftyNotesId = 1;
+    expect(invalidNftyNotesId).to.not.equal(nftyNotesId);
 
-    // escrow
-    const nftyLendingFactory = await ethers.getContractFactory("NFTYLending");
-
-    this.alternativeEscrow = await upgrades.deployProxy(nftyLendingFactory, [
-      [],
-      [],
-      this.promissoryNote.address,
-      this.obligationReceipt.address,
-      this.nftyToken.address,
-      this.DIAOracle.address,
-    ]);
-    await this.alternativeEscrow.deployed();
-
-    // create liquidity shop
-    this.interestA = 20; // Interest percentage that borrower has to pay
-    this.interestB = 30;
-    this.interestC = 40;
-    const maxOffer = ethers.BigNumber.from(10).pow(18).mul(1000); // Max offer set by the lender for this liquidity shop
-    const liquidityShopName = "My-Shop";
-    const [automaticApproval, allowRefinancingTerms] = [false, true];
-    const liquidityAmount = MINIMUM_BASKET_SIZE.add(
-      ethers.BigNumber.from(10).pow(18).mul(20000)
-    ); // currency tokens
-
-    // Transfer liquidity amount to lender so it can create the shop
-    await this.currency.transfer(lender.address, liquidityAmount);
-
-    // Approve liquidity to create shop
-    await this.currency
-      .connect(lender)
-      .approve(this.escrow.address, liquidityAmount);
-
-    const createLiquidityShopTx = await this.escrow
-      .connect(lender)
-      .createLiquidityShop(
-        liquidityShopName,
-        this.currency.address,
-        this.nftCollection.address,
-        liquidityAmount,
-        this.interestA,
-        this.interestB,
-        this.interestC,
-        maxOffer,
-        automaticApproval,
-        allowRefinancingTerms
-      );
-    const createLiquidityShopResponse = await createLiquidityShopTx.wait();
-
-    this.liquidityShopCreatedEventData =
-      createLiquidityShopResponse.events.find(
-        (event) => event.event == "LiquidityShopCreated"
-      ).args;
-
-    const nftyTokenSymbol = await this.nftyToken.symbol();
-    const currencySymbol = await this.currency.symbol();
-
-    // Update the timestamp of the price, otherwise it will fail since other tests change the timestamp
-    await updateOracleValue(currencySymbol + "/USD");
-    await updateOracleValue(nftyTokenSymbol + "/USD");
-
-    const platformFees = await this.escrow.platformFees();
-
-    // Borrower fees in percentage
-    this.borrowerFee = platformFees.borrowerPercentage;
-
-    // Platform fees in percentage
-    this.platformFee = platformFees.platformPercentage;
-
-    // Platform fees that can be withdrawn (in NFTY tokens)
-    this.platformBalance = ethers.BigNumber.from(0);
-  });
-
-  before(async function () {
-    this.offer = {
-      shopId: this.liquidityShopCreatedEventData.id,
-      collateral: this.nftCollection,
-      loanDuration: 30, // Days
-      loanAmount: this.liquidityShopCreatedEventData.maxOffer.mul(4).div(100),
-    };
-    this.loan = await acceptOffer(
-      borrower,
-      lender,
-      this.escrow,
-      this.offer,
-      this.nftyToken,
-      this.currency.address
-    );
-
-    this.platformBalance = this.platformBalance.add(
-      this.loan.fees.mul(this.platformFee).div(100)
-    );
-  });
-
-  it("Expect to fail because not valid loan id", async function () {
-    const invalidNFTYNotesId = 2;
-    expect(this.loan.nftyNotesId).to.not.equal(invalidNFTYNotesId);
     await expect(
-      this.escrow.connect(lender).liquidateOverdueLoan(invalidNFTYNotesId)
+      nftyLending.connect(lender).liquidateOverdueLoan(invalidNftyNotesId)
     ).to.be.revertedWith("invalid promissory note");
   });
 
-  it("Expect to fail because not valid loan coordinator", async function () {
+  it("should fail for invalid loan coordinator", async () => {
+    const { lender, nftyNotesId } = await loadFixture(createLoan);
+    const { nftyLending } = await deployNftyLending();
+
     await expect(
-      this.alternativeEscrow
-        .connect(lender)
-        .liquidateOverdueLoan(this.loan.nftyNotesId)
+      nftyLending.connect(lender).liquidateOverdueLoan(nftyNotesId)
     ).to.be.revertedWith("not loan coordinator");
   });
 
-  it("Expect to fail because promissory note was not generated by the expected loan coordinator", async function () {
+  it("Expect to fail because promissory note was not generated by the expected loan coordinator", async () => {
     const invalidLoanId = 2;
     expect(this.loan.loanId).to.not.equal(invalidLoanId);
 
@@ -140,7 +39,7 @@ describe("Liquidate overdue loan", function () {
     ).to.be.revertedWith("not loan coordinator");
   });
 
-  it("Expect to fail because loan not expired", async function () {
+  it("Expect to fail because loan not expired", async () => {
     const currentBlock = await ethers.provider.getBlock(
       await ethers.provider.getBlockNumber()
     );
@@ -159,7 +58,7 @@ describe("Liquidate overdue loan", function () {
     ).to.be.revertedWith("loan not yet expired");
   });
 
-  it("Expect to fail because only owner of the promissory note can liquidate loan", async function () {
+  it("Expect to fail because only owner of the promissory note can liquidate loan", async () => {
     const promissoryNoteOwner = await this.promissoryNote.ownerOf(
       this.loan.nftyNotesId
     );
@@ -171,7 +70,7 @@ describe("Liquidate overdue loan", function () {
     ).to.be.revertedWith("not promissory note owner");
   });
 
-  it("Expect to fail because promissory note was transfered", async function () {
+  it("Expect to fail because promissory note was transfered", async () => {
     await this.promissoryNote
       .connect(lender)
       .transferFrom(lender.address, alice.address, this.loan.nftyNotesId);

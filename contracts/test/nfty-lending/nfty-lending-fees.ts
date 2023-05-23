@@ -1,10 +1,5 @@
-const { expect } = require("chai");
-const { ethers, upgrades } = require("hardhat");
-const {
-  TEST_TOKEN_NAME,
-  TEST_TOKEN_SYMBOL,
-  TEST_TOKEN_SUPPLY,
-} = require("./utils/consts");
+import { expect } from "chai";
+import { ethers, upgrades } from "hardhat";
 
 describe("Fees", function () {
   before(async function () {

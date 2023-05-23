@@ -200,3 +200,56 @@ export const createLiquidityShop = async () => {
     liquidityShopId,
   };
 };
+
+export const createLoan = async () => {
+  const {
+    borrower,
+    erc20,
+    erc721,
+    nftyToken,
+    nftyLending,
+    liquidityShopId,
+    ...rest
+  } = await createLiquidityShop();
+
+  const nftId = 0;
+  const loanDuration = 30;
+  const loanAmount = 1000;
+
+  // Give borrower some NFTY, ERC20, and NFTs
+  await erc20.connect(borrower).mint(10000);
+  await nftyToken.connect(borrower).mint(10000);
+  await erc721.connect(borrower).mint(1);
+
+  // Approve NFTYLending to transfer tokens
+  await erc20.connect(borrower).approve(nftyLending.address, 10000);
+  await nftyToken.connect(borrower).approve(nftyLending.address, 10000);
+  await erc721.connect(borrower).approve(nftyLending.address, nftId);
+
+  const tx = await nftyLending.connect(borrower).createLoan({
+    shopId: liquidityShopId,
+    nftCollateralId: nftId,
+    loanDuration,
+    amount: loanAmount,
+  });
+
+  // Get loan from event
+  const { events } = await tx.wait();
+  const event = events?.find((event) => event.event == "OfferAccepted")?.args;
+  const loanId = event?.loanId;
+  const nftyNotesId = event?.nftyNotesId;
+  const loan = await nftyLending.loans(loanId);
+
+  return {
+    borrower,
+    erc20,
+    erc721,
+    nftyToken,
+    nftyLending,
+    liquidityShopId,
+    loan,
+    loanId,
+    nftyNotesId,
+    ...rest,
+  };
+};

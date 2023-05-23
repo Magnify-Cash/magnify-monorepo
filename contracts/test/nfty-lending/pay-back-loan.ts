@@ -1,11 +1,6 @@
-const { expect } = require("chai");
-const { ethers, upgrades } = require("hardhat");
-const {
-  MINIMUM_PAYMENT_AMOUNT,
-  MINIMUM_BASKET_SIZE,
-  TEST_SIGNATURE_EXPIRY,
-  LOAN_STATUS,
-} = require("./utils/consts");
+import { expect } from "chai";
+import { ethers, upgrades } from "hardhat";
+import { LiquidityShopStatus, TEST_SIGNATURE_EXPIRY } from "../utils/consts";
 
 describe("Pay Back Loan", function () {
   // accounts
