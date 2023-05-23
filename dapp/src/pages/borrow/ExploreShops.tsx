@@ -129,7 +129,7 @@ export const ExploreShops = () => {
             <div className="col-md-auto flex-shrink-0 align-self-center">
               <div className="ws-100 hs-100 rounded-circle mx-auto d-flex align-items-center justify-content-center overflow-hidden">
                 <img
-                  src={result?.data?.nftCollection?.image}
+                  src={`/images/nft-collections/${result?.data?.nftCollection?.symbol}.png`}
                   alt="image"
                   className="d-block w-auto h-100"
                 />
@@ -191,7 +191,6 @@ export const ExploreShops = () => {
                 {...{
                   ...item,
                   id: parseInt(item.id),
-                  nftCollectionImage: result.data?.nftCollection?.image,
                   decimals: item.erc20.decimals,
                 }}
               />

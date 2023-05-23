@@ -1,4 +1,3 @@
-import { CreateShopDocument } from "../../../.graphclient";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useForm } from "react-hook-form";

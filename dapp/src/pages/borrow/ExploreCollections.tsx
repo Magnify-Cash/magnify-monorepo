@@ -5,7 +5,7 @@ import { Loading } from "@/components/Loading";
 
 type NftCollection = {
   name: string;
-  image: string;
+  symbol: string;
   id: string;
   numLiquidityShops: number;
 };
@@ -19,7 +19,7 @@ const CollectionCard = ({ item }: { item: NftCollection }) => {
       >
         <div className="hs-250 hs-sm-300 hs-md-250 d-flex justify-content-center overflow-hidden">
           <img
-            src={item.image}
+            src={`/images/nft-collections/${item.symbol}.png`}
             alt="image"
             className="d-block w-auto h-100 mt-20 mb-20"
           />

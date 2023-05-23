@@ -11,7 +11,6 @@ type Loan = {
   loanId: number;
   nftCollectionName: string;
   lender: string;
-  tokenId: BigInt;
   amount: number;
   apr: number;
   dueDate: Date;
@@ -24,7 +23,6 @@ const LoanRow = ({
   loanId,
   nftCollectionName,
   lender,
-  tokenId,
   amount,
   apr,
   dueDate,
@@ -45,12 +43,12 @@ const LoanRow = ({
       <div className="col-6 col-lg-2 align-self-lg-center">
         <div className="p-10 text-lg-center">
           <div className="text-muted fs-base-n2 d-lg-none lh-sm mb-5">
-            Lender/Token ID
+            Lender/Loan ID
           </div>
           <div>
             <div>{truncateAddress(lender)}</div>
             <div className="text-muted fs-base-n2 text-truncate">
-              {tokenId.toString()}
+              {loanId.toString()}
             </div>
           </div>
         </div>
@@ -172,7 +170,7 @@ export const BorrowingDashboard = () => {
                 {...{
                   lender: x.lender,
                   nftCollectionName: x.liquidityShop.nftCollection.name,
-                  tokenId: x.nftyNotesId,
+                  tokenId: x.id,
                   amount: x.amount,
                   // TODO: this is static, fix this
                   apr: 10,
@@ -237,7 +235,7 @@ export const BorrowingDashboard = () => {
                 {...{
                   lender: x.lender,
                   nftCollectionName: x.liquidityShop.nftCollection.name,
-                  tokenId: x.nftyNotesId,
+                  tokenId: x.id,
                   amount: x.amount,
                   // TODO: this is static, fix this
                   apr: 10,

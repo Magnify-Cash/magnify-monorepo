@@ -2,7 +2,7 @@ query ExploreCollections {
   nftCollections {
     id
     name
-    image
+    symbol
     liquidityShops {
       id
     }
@@ -12,7 +12,7 @@ query ExploreCollections {
 query ExploreShops($nftCollectionAddress: ID!) {
   nftCollection(id: $nftCollectionAddress) {
     name
-    image
+    symbol
     liquidityShops {
       id
       name
@@ -40,10 +40,6 @@ query RequestLoan($liquidityShopId: ID!, $walletAddress: Bytes!) {
     nftCollection {
       id
       name
-      image
-      nfts(where: { owner: $walletAddress }) {
-        tokenId
-      }
     }
     erc20 {
       name
@@ -68,26 +64,10 @@ query ManageShops($walletAddress: Bytes!) {
   }
 }
 
-query CreateShop {
-  nftCollections(where: { allowed: true }) {
-    id
-    name
-    symbol
-  }
-  erc20S(where: { allowed: true }) {
-    id
-    name
-    symbol
-    minimumBasketSize
-    minimumPaymentAmount
-    decimals
-  }
-}
-
 query LendingDashboard($walletAddress: Bytes!) {
   loans(where: { lender: $walletAddress }) {
+    id
     borrower
-    nftyNotesId
     duration
     amount
     startTime
@@ -107,7 +87,6 @@ query BorrowingDashboard($walletAddress: Bytes!) {
   loans(where: { borrower: $walletAddress }) {
     id
     lender
-    nftyNotesId
     duration
     amount
     startTime
@@ -133,7 +112,6 @@ query MakePayment($loanId: ID!) {
         id
         decimals
         symbol
-        minimumPaymentAmount
       }
     }
     duration
@@ -141,6 +119,5 @@ query MakePayment($loanId: ID!) {
     startTime
     remainder
     nftCollateralId
-    nftyNotesId
   }
 }

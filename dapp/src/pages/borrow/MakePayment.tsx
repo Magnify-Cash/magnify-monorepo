@@ -74,7 +74,7 @@ export const MakePayment = () => {
     isError: isPrepareError,
   } = usePrepareNftyLendingPayBackLoan({
     chainId: getProtocolChain(chain?.id),
-    args: [result.data?.loan?.nftyNotesId, parsedAmount],
+    args: [ethers.BigNumber.from(id), parsedAmount],
   });
 
   const {
@@ -198,14 +198,6 @@ export const MakePayment = () => {
                         {result.data?.loan?.liquidityShop.erc20.symbol}
                       </div>
                     </div>
-                  </div>
-                  <div className="text-center text-muted mt-10">
-                    NOTES: Minimum payment size is $
-                    {ethers.utils.formatUnits(
-                      result.data?.loan?.liquidityShop.erc20
-                        .minimumPaymentAmount,
-                      result.data?.loan?.liquidityShop.erc20.decimals
-                    )}
                   </div>
                 </div>
                 {/* Deposit amount end */}

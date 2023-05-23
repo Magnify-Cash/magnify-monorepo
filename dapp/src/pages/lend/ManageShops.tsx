@@ -5,8 +5,8 @@ import { useAccount, useNetwork } from "wagmi";
 import { ManageShopsDocument } from "../../../.graphclient";
 import { Loading, Web3Button } from "@/components";
 import {
-  usePrepareNftyLendingLiquidityShopCashOut,
-  useNftyLendingLiquidityShopCashOut,
+  usePrepareNftyLendingCashOutLiquidityShop,
+  useNftyLendingCashOutLiquidityShop,
   usePrepareNftyLendingAddLiquidityToShop,
   useNftyLendingAddLiquidityToShop,
   usePrepareNftyLendingFreezeLiquidityShop,
@@ -39,14 +39,16 @@ const ShopRow = ({
 
   // Cash Out Hook ************************************************************************
   const { config: cashOutConfig, error: cashOutError } =
-    usePrepareNftyLendingLiquidityShopCashOut({
+    usePrepareNftyLendingCashOutLiquidityShop({
       chainId: getProtocolChain(chain?.id),
       args: [
         BigNumber.from(id), // shop ID
+        // TODO: put actual cashout amount
+        ethers.BigNumber.from(10),
       ],
     });
   const { write: cashOutWrite, isLoading: cashOutLoading } =
-    useNftyLendingLiquidityShopCashOut({
+    useNftyLendingCashOutLiquidityShop({
       ...cashOutConfig,
       onSettled(data, error) {
         toast({

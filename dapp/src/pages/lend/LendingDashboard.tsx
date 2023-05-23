@@ -305,7 +305,7 @@ export const LendingDashboard = () => {
                 amount: x.amount,
                 duration: x.duration,
                 borrower: x.borrower,
-                tokenId: x.nftyNotesId,
+                tokenId: BigInt(x.id),
                 // TODO: static value for now, fix this
                 apr: 10,
                 dueDate: dayjs
