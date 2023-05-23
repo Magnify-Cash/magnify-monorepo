@@ -186,13 +186,7 @@ describe("Create loan", () => {
 
     await expect(tx)
       .to.emit(nftyLending, "OfferAccepted")
-      .withArgs(
-        lender.address,
-        borrower.address,
-        liquidityShopId,
-        anyValue,
-        anyValue
-      );
+      .withArgs(lender.address, borrower.address, liquidityShopId, anyValue);
   });
 
   it("should fail if oracle price has expired", async () => {
