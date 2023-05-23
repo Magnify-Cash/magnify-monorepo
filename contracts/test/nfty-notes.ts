@@ -17,7 +17,7 @@ describe("NFTYNotes", function () {
     await nftyNotes.deployed();
 
     const defaultAdminRole = await nftyNotes.DEFAULT_ADMIN_ROLE();
-    const noteAdminRole = await nftyNotes.NOTE_DESK_ADMIN();
+    const nftyLendingRole = await nftyNotes.NFTY_LENDING();
     const baseUriRole = await nftyNotes.BASE_URI_ROLE();
 
     return {
@@ -25,25 +25,20 @@ describe("NFTYNotes", function () {
       owner,
       alice,
       defaultAdminRole,
-      noteAdminRole,
+      nftyLendingRole,
       baseUriRole,
     };
   };
 
   const mintNoteFixture = async () => {
-    const tokenId = 1;
     const loanId = 1;
 
     const { nftyNotes, owner, alice } = await loadFixture(
       deployContractFixture
     );
-    await nftyNotes.setNoteAdmin(owner.address);
-    await nftyNotes.mint(
-      alice.address,
-      tokenId,
-      ethers.utils.defaultAbiCoder.encode(["uint256"], [loanId])
-    );
-    return { nftyNotes, owner, alice, tokenId, loanId };
+    await nftyNotes.setNftyLending(owner.address);
+    await nftyNotes.mint(alice.address, loanId);
+    return { nftyNotes, owner, alice, loanId };
   };
 
   it("should deploy", async () => {
@@ -80,7 +75,7 @@ describe("NFTYNotes", function () {
     );
 
     await expect(
-      nftyNotes.connect(alice).setNoteAdmin(alice.address)
+      nftyNotes.connect(alice).setNftyLending(alice.address)
     ).to.be.revertedWith(
       "AccessControl: account " +
         alice.address.toLowerCase() +
@@ -90,14 +85,14 @@ describe("NFTYNotes", function () {
   });
 
   it("should set note admin", async () => {
-    const { nftyNotes, alice, noteAdminRole } = await loadFixture(
+    const { nftyNotes, alice, nftyLendingRole } = await loadFixture(
       deployContractFixture
     );
 
-    await nftyNotes.setNoteAdmin(alice.address);
+    await nftyNotes.setNftyLending(alice.address);
 
     const aliceIsNoteAdmin = await nftyNotes.hasRole(
-      noteAdminRole,
+      nftyLendingRole,
       alice.address
     );
     expect(aliceIsNoteAdmin).to.be.true;
@@ -108,71 +103,41 @@ describe("NFTYNotes", function () {
     const { nftyNotes, alice } = await loadFixture(deployContractFixture);
 
     await expect(
-      nftyNotes
-        .connect(alice)
-        .mint(
-          alice.address,
-          0,
-          ethers.utils.defaultAbiCoder.encode(["uint256"], [loanId])
-        )
-    ).to.be.revertedWith("NFTYNotes: caller is not the Note Desk owner");
-  });
-
-  it("should fail to mint without loan id", async () => {
-    const { nftyNotes, alice, owner } = await loadFixture(
-      deployContractFixture
-    );
-    await nftyNotes.setNoteAdmin(owner.address);
-
-    await expect(nftyNotes.mint(alice.address, 0, [])).to.be.revertedWith(
-      "NFTYNotes: tokenId cannot be zero"
-    );
+      nftyNotes.connect(alice).mint(alice.address, loanId)
+    ).to.be.revertedWith("NFTYNotes: caller is not NFTYLending");
   });
 
   it("should mint", async () => {
-    const loanIds = [1, 2, 3];
     const { nftyNotes, alice, owner } = await loadFixture(
       deployContractFixture
     );
 
-    await nftyNotes.setNoteAdmin(owner.address);
+    await nftyNotes.setNftyLending(owner.address);
 
-    let tokenCounter = 1;
-    for (const [i, loanId] of loanIds.entries()) {
-      await nftyNotes.mint(
-        alice.address,
-        tokenCounter,
-        ethers.utils.defaultAbiCoder.encode(["uint256"], [loanId])
-      );
+    for (let loanId = 0; loanId < 3; loanId++) {
+      await nftyNotes.mint(alice.address, loanId);
 
       // check receiver
-      const nftOwner = await nftyNotes.ownerOf(tokenCounter);
+      const nftOwner = await nftyNotes.ownerOf(loanId);
       expect(nftOwner).to.equal(alice.address);
       const balance = await nftyNotes.balanceOf(alice.address);
-      expect(balance).to.equal(i + 1);
-
-      // check contract storage
-      const loan = await nftyNotes.notes(tokenCounter);
-      expect(loan.noteDesk).to.equal(owner.address);
-      expect(loan.noteId.toNumber()).to.equal(loanId);
-
-      tokenCounter++;
+      expect(balance).to.equal(loanId + 1);
     }
   });
 
   it("should call exists", async () => {
-    const { nftyNotes, tokenId } = await loadFixture(mintNoteFixture);
+    const { nftyNotes, loanId } = await loadFixture(mintNoteFixture);
 
     // Assertions
-    expect(await nftyNotes.exists(tokenId)).to.be.true;
-    expect(await nftyNotes.exists(tokenId + 1)).to.be.false;
+    expect(await nftyNotes.exists(loanId)).to.be.true;
+    expect(await nftyNotes.exists(loanId + 1)).to.be.false;
   });
 
   it("should fail to burn from non note admin", async () => {
-    const { nftyNotes, tokenId, alice } = await loadFixture(mintNoteFixture);
+    const { nftyNotes, loanId, alice } = await loadFixture(mintNoteFixture);
 
-    await expect(nftyNotes.connect(alice).burn(tokenId)).to.be.revertedWith(
-      "NFTYNotes: caller is not the Note Desk owner"
+    await expect(nftyNotes.connect(alice).burn(loanId)).to.be.revertedWith(
+      "NFTYNotes: caller is not NFTYLending"
     );
   });
 
@@ -182,31 +147,26 @@ describe("NFTYNotes", function () {
 
     expect(await nftyNotes.exists(invalidTokenId)).to.be.false;
     await expect(nftyNotes.burn(invalidTokenId)).to.be.revertedWith(
-      "ERC721: invalid token ID"
+      "NFTYNotes: loan does not exist"
     );
   });
 
   // TODO: seems like contract has a bug, confirm and fix
   it("should burn", async () => {
-    const { nftyNotes, tokenId, alice } = await loadFixture(mintNoteFixture);
+    const { nftyNotes, loanId, alice } = await loadFixture(mintNoteFixture);
 
-    expect(await nftyNotes.exists(tokenId)).to.be.true;
+    expect(await nftyNotes.exists(loanId)).to.be.true;
 
-    await nftyNotes.burn(tokenId);
+    await nftyNotes.burn(loanId);
 
-    expect(await nftyNotes.exists(tokenId)).to.be.false;
+    expect(await nftyNotes.exists(loanId)).to.be.false;
 
     // check token owner
-    await expect(nftyNotes.ownerOf(tokenId)).to.be.revertedWith(
+    await expect(nftyNotes.ownerOf(loanId)).to.be.revertedWith(
       "ERC721: invalid token ID"
     );
 
     expect(await nftyNotes.balanceOf(alice.address)).to.equal(0);
-
-    // check contract storage
-    const note = await nftyNotes.notes(tokenId);
-    expect(note.noteDesk).to.equal(ethers.constants.AddressZero);
-    expect(note.noteId.toNumber()).to.equal(0);
   });
 
   it("should call supportsInterface", async () => {
