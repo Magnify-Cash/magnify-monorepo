@@ -37,7 +37,6 @@ interface INFTYLending {
      * @param nftCollateralId The collateral id for this loan
      * @param fee The fee that the borrower has to pay to borrow this amount of money
      * @param liquidityShopId The id of the liquidity shop this loan is associated with
-     * @param nftyNotesId The id of the nftyNotes associated to the loan's collateral
      * @param platformFees The platform fees that were used when creating this loan
      * @param status The status of this loan. ACTIVE when first created and RESOLVED once resolved
      */
@@ -50,7 +49,6 @@ interface INFTYLending {
         uint256 nftCollateralId;
         uint256 fee;
         uint256 liquidityShopId;
-        uint64 nftyNotesId;
         PlatformFees platformFees;
         LoanStatus status;
     }
@@ -182,7 +180,7 @@ interface INFTYLending {
 
     function createLoan(Offer memory _offer) external;
 
-    function liquidateOverdueLoan(uint256 _nftyNotesId) external;
+    function liquidateOverdueLoan(uint256 _loanId) external;
 
-    function payBackLoan(uint256 _nftyNotesId, uint256 _amount) external;
+    function payBackLoan(uint256 _loanId, uint256 _amount) external;
 }

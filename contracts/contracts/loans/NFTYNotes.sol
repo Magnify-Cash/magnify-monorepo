@@ -12,15 +12,8 @@ contract NFTYNotes is ERC721, AccessControl, ReentrancyGuard {
     using Address for address;
     using Strings for uint256;
 
-    bytes32 public constant NOTE_DESK_ADMIN = keccak256("NOTE_DESK_ADMIN");
+    bytes32 public constant NFTY_LENDING = keccak256("NFTY_LENDING");
     bytes32 public constant BASE_URI_ROLE = keccak256("BASE_URI_ROLE");
-
-    struct Note {
-        address noteDesk;
-        uint256 noteId;
-    }
-
-    mapping(uint256 => Note) public notes;
 
     string public baseURI;
 
@@ -41,10 +34,10 @@ contract NFTYNotes is ERC721, AccessControl, ReentrancyGuard {
         _setBaseURI(customBaseURI);
     }
 
-    modifier onlyNoteAdmin() {
+    modifier onlyNftyLending() {
         require(
-            hasRole(NOTE_DESK_ADMIN, msg.sender),
-            "NFTYNotes: caller is not the Note Desk owner"
+            hasRole(NFTY_LENDING, msg.sender),
+            "NFTYNotes: caller is not NFTYLending"
         );
         _;
     }
@@ -54,57 +47,33 @@ contract NFTYNotes is ERC721, AccessControl, ReentrancyGuard {
             hasRole(BASE_URI_ROLE, msg.sender),
             "NFTYNotes: caller is not a base URI role"
         );
+
         _;
     }
 
-    function setNoteAdmin(
+    function setNftyLending(
         address account
     ) external nonReentrant onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(
-            account != address(0),
-            "NFTYNotes: account cannot be zero address"
-        );
-        grantRole(NOTE_DESK_ADMIN, account);
+        require(account != address(0), "account cannot be zero address");
+        grantRole(NFTY_LENDING, account);
     }
 
     function mint(
         address to,
-        uint256 tokenId,
-        bytes calldata data
-    ) external nonReentrant onlyNoteAdmin {
+        uint256 loanId
+    ) external nonReentrant onlyNftyLending {
         require(to != address(0), "NFTYNotes: to address cannot be zero");
-        require(tokenId > 0, "NFTYNotes: tokenId cannot be zero");
-        require(data.length > 0, "NFTYNotes: data cannot be empty");
-        require(!_exists(tokenId), "NFTYNotes: token already exists");
+        require(!_exists(loanId), "NFTYNotes: loan already exists");
 
-        uint256 noteId = abi.decode(data, (uint256));
-        require(noteId > 0, "NFTYNotes: noteId cannot be zero");
-        require(
-            notes[tokenId].noteId == 0,
-            "NFTYNotes: token already has a loan note"
-        );
-
-        notes[tokenId] = Note(msg.sender, noteId);
-        _safeMint(to, tokenId, data);
-
-        emit Minted(to, tokenId, msg.sender, noteId);
+        _safeMint(to, loanId);
+        emit Minted(to, loanId);
     }
 
-    function burn(uint256 tokenId) external nonReentrant onlyNoteAdmin {
-        require(tokenId > 0, "NFTYNotes: tokenId cannot be zero");
-        require(
-            ownerOf(tokenId) == msg.sender,
-            "NFTYNotes: caller is not the owner of the token"
-        );
-        require(
-            notes[tokenId].noteId > 0,
-            "NFTYNotes: token does not have a loan note"
-        );
+    function burn(uint256 loanId) external nonReentrant onlyNftyLending {
+        require(_exists(loanId), "NFTYNotes: loan does not exist");
 
-        notes[tokenId].noteId = 0;
-        _burn(tokenId);
-
-        emit Burned(tokenId, msg.sender);
+        _burn(loanId);
+        emit Burned(loanId);
     }
 
     function setBaseURI(
@@ -116,7 +85,6 @@ contract NFTYNotes is ERC721, AccessControl, ReentrancyGuard {
         );
 
         _setBaseURI(customBaseURI);
-
         emit BaseURISet(customBaseURI, msg.sender);
     }
 
@@ -146,12 +114,7 @@ contract NFTYNotes is ERC721, AccessControl, ReentrancyGuard {
         return _exists(_tokenId);
     }
 
-    event Minted(
-        address indexed to,
-        uint256 indexed tokenId,
-        address indexed noteAdmin,
-        uint256 noteId
-    );
-    event Burned(uint256 indexed tokenId, address indexed noteAdmin);
+    event Minted(address indexed to, uint256 indexed loanId);
+    event Burned(uint256 indexed loanId);
     event BaseURISet(string indexed baseURI, address indexed baseUriRole);
 }

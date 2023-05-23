@@ -225,14 +225,12 @@ contract NFTYLending is
      * @param borrower The address of the borrower
      * @param liquidityShopId A unique identifier that determines the liquidity shop to which this offer belongs
      * @param loanId A unique identifier for the loan created
-     * @param nftyNotesId A unique identifier of the NFTY Notes promissory and obligation note ids
      */
     event OfferAccepted(
         address indexed lender,
         address indexed borrower,
         uint256 liquidityShopId,
-        uint256 loanId,
-        uint256 nftyNotesId
+        uint256 loanId
     );
 
     /**
@@ -241,14 +239,12 @@ contract NFTYLending is
      * @param promissoryNoteOwner The address of the promissory note owner
      * @param liquidityShopId The unique identifier of the liquidity shop
      * @param loanId The unique identifier of the loan
-     * @param nftyNotesId The token ID for both the promissory note and obligation receipt tokens, burned in the process
      * @param nftCollateralId The collateral NFT ID that was sent to the promissory note holder
      */
     event LiquidatedOverdueLoan(
         address indexed promissoryNoteOwner,
         uint256 liquidityShopId,
         uint256 loanId,
-        uint256 nftyNotesId,
         uint256 nftCollateralId
     );
 
@@ -279,7 +275,6 @@ contract NFTYLending is
      * @param loanId The unique identifier of the loan
      * @param paidAmount The total amount of currency paid back to the promissory note holder, including interests
      * @param borrowerFees The amount of fees paid back to the obligation receipt holder
-     * @param nftyNotesId The token ID for both the promissory note and obligation receipt tokens, burned in the process
      * @param nftCollateralId The collateral NFT ID that was sent to the obligation receipt holder
      */
     event PaidBackLoan(
@@ -289,7 +284,6 @@ contract NFTYLending is
         uint256 loanId,
         uint256 paidAmount,
         uint256 borrowerFees,
-        uint256 nftyNotesId,
         uint256 nftCollateralId
     );
 
@@ -704,32 +698,25 @@ contract NFTYLending is
 
     /**
      * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral
-     * @param _nftyNotesId ID of the nftyNotesId associated to a loan
+     * @param _loanId ID of the loan
      *
      * Emits an {LiquidatedOverdueLoan} event.
      */
     function liquidateOverdueLoan(
-        uint256 _nftyNotesId
+        uint256 _loanId
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(promissoryNote).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_loanId),
             "invalid promissory note"
         );
 
-        (address loanCoordinator, uint256 loanId) = NFTYNotes(promissoryNote)
-            .notes(_nftyNotesId);
-        require(address(this) == loanCoordinator, "not loan coordinator");
+        Loan storage loan = loans[_loanId];
 
-        Loan storage loan = loans[loanId];
-
-        require(loan.liquidityShopId > 0, "non-existent loan");
+        require(loan.liquidityShopId > 0, "loan does not exist");
         require(loan.status == LoanStatus.Active, "loan not active");
+
         require(
-            loan.nftyNotesId == _nftyNotesId,
-            "loan does not match NFTYNote"
-        );
-        require(
-            NFTYNotes(promissoryNote).ownerOf(_nftyNotesId) == msg.sender,
+            NFTYNotes(promissoryNote).ownerOf(_loanId) == msg.sender,
             "not promissory note owner"
         );
 
@@ -748,8 +735,7 @@ contract NFTYLending is
         emit LiquidatedOverdueLoan(
             msg.sender,
             loan.liquidityShopId,
-            loanId,
-            _nftyNotesId,
+            _loanId,
             loan.nftCollateralId
         );
 
@@ -773,10 +759,9 @@ contract NFTYLending is
             );
 
         // burn both promissory note and obligation receipt
-        NFTYNotes(promissoryNote).burn(_nftyNotesId);
-        if (NFTYNotes(obligationReceipt).exists(_nftyNotesId)) {
-            NFTYNotes(obligationReceipt).burn(_nftyNotesId);
-        }
+        NFTYNotes(promissoryNote).burn(_loanId);
+        if (NFTYNotes(obligationReceipt).exists(_loanId))
+            NFTYNotes(obligationReceipt).burn(_loanId);
     }
 
     /**
@@ -822,14 +807,6 @@ contract NFTYLending is
 
         loanIdCounter.increment();
 
-        uint64 nftyNotesId = uint64(
-            uint256(
-                keccak256(
-                    abi.encodePacked(address(this), loanIdCounter.current())
-                )
-            )
-        );
-
         uint256 borrowerFees = (feesToSend *
             (platformFees.borrowerPercentage)) / (100);
         uint256 escrowFees = (feesToSend * (platformFees.platformPercentage)) /
@@ -842,33 +819,21 @@ contract NFTYLending is
         platformBalance += escrowFees;
 
         // Using helper function to avoid `Stack too deep` error
-        _storeLoan(
-            loanIdCounter.current(),
-            _offer,
-            interest,
-            nftyNotesId,
-            feesToSend
-        );
+        _storeLoan(loanIdCounter.current(), _offer, interest, feesToSend);
 
         emit OfferAccepted(
             liquidityShop.owner,
             _borrower,
             _offer.shopId,
-            loanIdCounter.current(),
-            nftyNotesId
+            loanIdCounter.current()
         );
 
         NFTYNotes(promissoryNote).mint(
             liquidityShop.owner,
-            nftyNotesId,
-            abi.encode(loanIdCounter.current())
+            loanIdCounter.current()
         );
 
-        NFTYNotes(obligationReceipt).mint(
-            _borrower,
-            nftyNotesId,
-            abi.encode(loanIdCounter.current())
-        );
+        NFTYNotes(obligationReceipt).mint(_borrower, loanIdCounter.current());
 
         // transfer Nft to escrow
         if (liquidityShop.nftCollectionIsErc1155)
@@ -913,14 +878,12 @@ contract NFTYLending is
      * @param _id The ID used to store the loan in the contract state
      * @param _offer The offer made by the borrower
      * @param _interest The interest percentage that the borrower has to pay
-     * @param _nftyNotesId The id of the nftyNotes related to this loan
      * @param _fees The fees that the borrower has to pay
      */
     function _storeLoan(
         uint256 _id,
         Offer memory _offer,
         uint256 _interest,
-        uint64 _nftyNotesId,
         uint256 _fees
     ) internal {
         Loan memory newLoan = Loan({
@@ -932,7 +895,6 @@ contract NFTYLending is
             fee: _fees,
             status: LoanStatus.Active,
             liquidityShopId: _offer.shopId,
-            nftyNotesId: _nftyNotesId,
             platformFees: PlatformFees({
                 lenderPercentage: platformFees.lenderPercentage,
                 platformPercentage: platformFees.platformPercentage,
@@ -1081,53 +1043,33 @@ contract NFTYLending is
 
     /**
      * @notice This function can be called by the obligation receipt holder to pay a loan and get the collateral back
-     * @param _nftyNotesId ID of the nftyNotesId associated to a loan
+     * @param _loanId ID of the loan
      * @param _amount The amount to be paid, in erc20 tokens
      *
      * Emits an {PaidBackLoan} event.
      */
     function payBackLoan(
-        uint256 _nftyNotesId,
+        uint256 _loanId,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
         require(
-            NFTYNotes(obligationReceipt).exists(_nftyNotesId),
+            NFTYNotes(obligationReceipt).exists(_loanId),
             "invalid obligation receipt"
         );
         require(
-            NFTYNotes(promissoryNote).exists(_nftyNotesId),
+            NFTYNotes(promissoryNote).exists(_loanId),
             "invalid promissory note"
         );
 
-        uint256 loanIdObligationReceipt;
-        uint256 loanIdPromissoryNote;
-        address loanCoordinator;
-
-        (loanCoordinator, loanIdObligationReceipt) = NFTYNotes(
-            obligationReceipt
-        ).notes(_nftyNotesId);
-        require(address(this) == loanCoordinator, "not loan coordinator");
-        (loanCoordinator, loanIdPromissoryNote) = NFTYNotes(promissoryNote)
-            .notes(_nftyNotesId);
-        require(address(this) == loanCoordinator, "not loan coordinator");
-        require(
-            loanIdObligationReceipt == loanIdPromissoryNote,
-            "loan id mismatch"
-        );
-
-        Loan storage loan = loans[loanIdObligationReceipt];
+        Loan storage loan = loans[_loanId];
         require(loan.liquidityShopId > 0, "non-existent loan");
         require(loan.status == LoanStatus.Active, "loan not active");
-        require(
-            loan.nftyNotesId == _nftyNotesId,
-            "loan does not match NFTYNote"
-        );
 
         address obligationReceiptHolder = NFTYNotes(obligationReceipt).ownerOf(
-            loan.nftyNotesId
+            _loanId
         );
         address promissoryNoteHolder = NFTYNotes(promissoryNote).ownerOf(
-            loan.nftyNotesId
+            _loanId
         );
 
         require(
@@ -1153,7 +1095,7 @@ contract NFTYLending is
         emit PaymentMade(
             obligationReceiptHolder,
             promissoryNoteHolder,
-            loanIdObligationReceipt,
+            _loanId,
             _amount,
             loan.remainder
         );
@@ -1178,10 +1120,9 @@ contract NFTYLending is
                 obligationReceiptHolder,
                 promissoryNoteHolder,
                 loan.liquidityShopId,
-                loanIdObligationReceipt,
+                _loanId,
                 payBackAmount,
                 borrowerFees,
-                loan.nftyNotesId,
                 loan.nftCollateralId
             );
 
@@ -1207,8 +1148,8 @@ contract NFTYLending is
                 );
 
             // burn both promissory note and obligation receipt
-            NFTYNotes(obligationReceipt).burn(loan.nftyNotesId);
-            NFTYNotes(promissoryNote).burn(loan.nftyNotesId);
+            NFTYNotes(obligationReceipt).burn(_loanId);
+            NFTYNotes(promissoryNote).burn(_loanId);
         }
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransferFrom(
