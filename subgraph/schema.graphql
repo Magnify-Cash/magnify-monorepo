@@ -47,8 +47,6 @@ type Erc20 @entity {
 type NftCollection @entity {
   id: ID!
   liquidityShops: [LiquidityShop!]! @derivedFrom(field: "nftCollection")
-  name: String! # string
-  symbol: String! # string
   isErc1155: Boolean! # bool
 }
 

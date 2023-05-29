@@ -17,7 +17,6 @@ import {
   ProtocolParamsSet,
 } from "../generated/NFTYLending/NFTYLending";
 import { ERC20 } from "../generated/NFTYLending/ERC20";
-import { ERC721 } from "../generated/NFTYLending/ERC721";
 import {
   Erc20,
   LiquidityShop,
@@ -41,10 +40,11 @@ export function handleLiquidityShopCreated(event: LiquidityShopCreated): void {
 
   // Create NftCollection instance
   const nftCollection = new NftCollection(event.params.nftCollection.toHex());
-  const erc721Contract = ERC721.bind(event.params.nftCollection);
 
-  nftCollection.name = erc721Contract.name();
-  nftCollection.symbol = erc721Contract.symbol();
+  if (event.params.nftCollectionIsErc1155) nftCollection.isErc1155 = true;
+  else nftCollection.isErc1155 = false;
+
+  nftCollection.isErc1155 = false;
 
   nftCollection.save();
 
@@ -237,6 +237,10 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   protocolParams.oraclePriceExpirationDuration =
     nftyLendingContract.oraclePriceExpirationDuration();
   protocolParams.owner = nftyLendingContract.owner();
+  protocolParams.oracle = nftyLendingContract.oracle();
+  protocolParams.nftyToken = nftyLendingContract.nftyToken();
+  protocolParams.promissoryNote = nftyLendingContract.promissoryNote();
+  protocolParams.obligationReceipt = nftyLendingContract.obligationReceipt();
 
   protocolParams.owner = event.params.newOwner;
   protocolParams.save();

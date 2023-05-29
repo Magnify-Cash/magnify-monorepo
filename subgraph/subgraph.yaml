@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYLending
-      address: "0xCace1b78160AE76398F486c8a18044da0d66d86D"
-      startBlock: 105
+      address: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9"
+      startBlock: 35
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -24,8 +24,6 @@ dataSources:
           file: ../contracts/artifacts/contracts/loans/NFTYLending.sol/NFTYLending.json
         - name: ERC20
           file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
-        - name: ERC721
-          file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json
       eventHandlers:
         - event: ProtocolParamsSet(uint256,(uint256,uint256,uint256),uint256)
           handler: handleProtocolParamsSet
@@ -38,7 +36,7 @@ dataSources:
         - event: LiquidityShopCashedOut(indexed address,uint256,uint256)
           handler: handleLiquidityShopCashedOut
         - event: LiquidityShopCreated(indexed address,indexed address,indexed
-            address,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
+            address,bool,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
           handler: handleLiquidityShopCreated
         - event: LiquidityShopUpdated(uint256,string,uint256,uint256,uint256,uint256,bool,bool)
           handler: handleLiquidityShopUpdated
@@ -65,8 +63,8 @@ dataSources:
     network: mainnet
     source:
       abi: PromissoryNote
-      address: "0x18E317A7D70d8fBf8e6E893616b52390EbBdb629"
-      startBlock: 103
+      address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB"
+      startBlock: 33
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -85,8 +83,8 @@ dataSources:
     network: mainnet
     source:
       abi: ObligationReceipt
-      address: "0x4b6aB5F819A515382B0dEB6935D793817bB4af28"
-      startBlock: 104
+      address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042"
+      startBlock: 34
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
