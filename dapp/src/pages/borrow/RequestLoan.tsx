@@ -22,6 +22,8 @@ import { RequestLoanDocument } from "../../../.graphclient";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Loading } from "@/components/Loading";
 import { toast } from "@/helpers/Toast";
+import { useEffect, useState } from "react";
+import { NftCollection, Token, config } from "@/config";
 
 type RequestLoanForm = {
   nftCollateralId: string;
@@ -41,6 +43,35 @@ export const RequestLoan = () => {
     // @ts-ignore
     variables: { liquidityShopId: id, walletAddress: address },
   });
+
+  // Fetching token info from whitelists
+  const [fetchingTokens, setFetchingTokens] = useState(true);
+  const [nftCollection, setNftCollection] = useState<NftCollection>();
+  const [token, setToken] = useState<Token>();
+  useEffect(() => {
+    const fetchNftCollection = async () => {
+      setFetchingTokens(true);
+
+      const nftCollections = await config.whitelists.nftCollections();
+      const tokens = await config.whitelists.tokens();
+      setNftCollection(
+        nftCollections.filter(
+          (x) =>
+            x.address.toLowerCase() ==
+            result.data?.liquidityShop?.nftCollection.id
+        )[0]
+      );
+      setToken(
+        tokens.filter(
+          (x) => x.address.toLowerCase() == result.data?.liquidityShop?.erc20.id
+        )[0]
+      );
+
+      setFetchingTokens(false);
+    };
+
+    fetchNftCollection();
+  }, []);
 
   // Form
   const {
@@ -225,7 +256,7 @@ export const RequestLoan = () => {
                     <div className="col-lg-4 px-10 my-10 my-lg-20">
                       <div className="text-truncate text-secondary-lm text-secondary-light-dm fw-bold fs-base-p8">
                         <i className="fa-regular fa-image me-5"></i>
-                        {result.data?.liquidityShop?.nftCollection?.name}
+                        {nftCollection?.name}
                       </div>
                       <div className="text-truncate text-muted">
                         Collection Type
@@ -318,7 +349,7 @@ export const RequestLoan = () => {
                       <label className="form-label">Selected Coin</label>
                       <div className="form-control form-control-alt form-control-lg d-flex align-items-center">
                         <img
-                          src={`/images/tokens/${result.data?.liquidityShop?.erc20.symbol}.svg`}
+                          src={token?.logoURI}
                           className="w-auto hs-25 d-block me-5"
                         />
                         {result.data?.liquidityShop?.erc20.symbol}

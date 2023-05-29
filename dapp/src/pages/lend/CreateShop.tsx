@@ -1,8 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
 import { useForm } from "react-hook-form";
-import { ethers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Token, config, NftCollection } from "@/config";
 
 type CreateShopForm = {
   shopName: string;
@@ -17,14 +16,8 @@ type CreateShopForm = {
 
 export type CreateShopState = {
   form: CreateShopForm;
-  erc20: {
-    symbol: string;
-    decimals: number;
-  };
-  nftCollection: {
-    symbol: string;
-    name: string;
-  };
+  erc20: Token;
+  nftCollection: NftCollection;
 };
 
 export const CreateShop = () => {
@@ -43,23 +36,33 @@ export const CreateShop = () => {
     defaultValues: state?.form,
   });
 
-  // GraphQL fetch
-  const [result] = useQuery({ query: CreateShopDocument });
+  const [fetchingWhitelists, setFetchingWhitelists] = useState(false);
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [nftCollections, setNftCollections] = useState<NftCollection[]>([]);
+
+  useEffect(() => {
+    const fetchWhitelists = async () => {
+      setFetchingWhitelists(true);
+      setTokens(await config.whitelists.tokens());
+      setNftCollections(await config.whitelists.nftCollections());
+      setFetchingWhitelists(false);
+    };
+
+    fetchWhitelists();
+  }, []);
 
   // After GraphQL is done loading, set form values that depend on GraphQL
   useEffect(() => {
-    if (state?.form && !result.fetching) {
+    if (state?.form && !fetchingWhitelists) {
       setValue("erc20", state.form.erc20, { shouldValidate: true });
       setValue("nftCollection", state.form.nftCollection, {
         shouldValidate: true,
       });
     }
-  }, [result.fetching]);
+  }, [fetchingWhitelists]);
 
   // Dynamic part of form that depends on selected ERC20
-  const selectedErc20 = result.data?.erc20S.filter(
-    (x) => x.id == watch("erc20")
-  )[0];
+  const selectedErc20 = tokens.filter((x) => x.address == watch("erc20"))[0];
 
   // Create Liquidity Shop Form
   const onSubmit = (form: CreateShopForm) => {
@@ -73,8 +76,8 @@ export const CreateShop = () => {
       state: {
         form,
         erc20: selectedErc20,
-        nftCollection: result.data?.nftCollections.filter(
-          (x) => x.id == form.nftCollection
+        nftCollection: nftCollections.filter(
+          (x) => x.address == form.nftCollection
         )[0],
       },
     });
@@ -129,8 +132,8 @@ export const CreateShop = () => {
                     {...register("nftCollection", { required: true })}
                   >
                     <option value="">Select NFT Collection</option>
-                    {result.data?.nftCollections.map((item) => (
-                      <option value={item.id} key={item.id}>
+                    {nftCollections.map((item) => (
+                      <option value={item.address} key={item.address}>
                         {item.name}
                       </option>
                     ))}
@@ -145,12 +148,7 @@ export const CreateShop = () => {
                         step="1"
                         {...register("offerAmount", {
                           required: true,
-                          min: selectedErc20
-                            ? ethers.utils.formatUnits(
-                                selectedErc20?.minimumPaymentAmount,
-                                selectedErc20?.decimals
-                              )
-                            : 0,
+                          min: 0,
                           valueAsNumber: true,
                         })}
                         className="form-control form-control-alt form-control-lg form-number"
@@ -164,8 +162,8 @@ export const CreateShop = () => {
                         className="form-select form-select-lg"
                       >
                         <option value="">Select Token</option>
-                        {result.data?.erc20S.map((item) => (
-                          <option key={item.id} value={item.id}>
+                        {tokens.map((item) => (
+                          <option key={item.address} value={item.address}>
                             {item.name} ({item.symbol})
                           </option>
                         ))}
@@ -193,12 +191,7 @@ export const CreateShop = () => {
                         step="1"
                         {...register("shopAmount", {
                           required: true,
-                          min: selectedErc20
-                            ? ethers.utils.formatUnits(
-                                selectedErc20?.minimumBasketSize,
-                                selectedErc20?.decimals
-                              )
-                            : 0,
+                          min: 0,
                         })}
                         className="form-control form-control-alt form-control-lg form-number"
                         placeholder="0.0"
@@ -212,7 +205,11 @@ export const CreateShop = () => {
                             <img
                               height="24"
                               width="24"
-                              src={`/images/tokens/${selectedErc20.symbol}.svg`}
+                              src={
+                                tokens.filter(
+                                  (x) => x.address == selectedErc20.address
+                                )[0].logoURI
+                              }
                               alt="Token Logo"
                             />
                             <div className="ms-10">
@@ -226,17 +223,6 @@ export const CreateShop = () => {
                     </div>
                   </div>
                 </div>
-                {selectedErc20 ? (
-                  <div className="text-center text-muted fs-base-n2 mt-10">
-                    NOTES: Minimum Shop size is{" "}
-                    {ethers.utils.formatUnits(
-                      selectedErc20.minimumBasketSize,
-                      selectedErc20.decimals
-                    )}{" "}
-                    {selectedErc20.symbol}
-                  </div>
-                ) : null}
-
                 {/* Add liquidity end --> */}
 
                 {/* Interest rates start --> */}

@@ -38,6 +38,7 @@ query RequestLoan($liquidityShopId: ID!, $walletAddress: Bytes!) {
       id
     }
     erc20 {
+      id
       name
       symbol
       decimals

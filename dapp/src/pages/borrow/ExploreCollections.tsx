@@ -2,12 +2,15 @@ import { Link } from "react-router-dom";
 import { useQuery } from "urql";
 import { ExploreCollectionsDocument } from "../../../.graphclient";
 import { Loading } from "@/components/Loading";
+import { useEffect, useState } from "react";
+import { config, NftCollection as ConfigNftCollection } from "@/config";
 
 type NftCollection = {
   name: string;
   symbol: string;
   id: string;
   numLiquidityShops: number;
+  imageUrl: string;
 };
 
 const CollectionCard = ({ item }: { item: NftCollection }) => {
@@ -19,7 +22,7 @@ const CollectionCard = ({ item }: { item: NftCollection }) => {
       >
         <div className="hs-250 hs-sm-300 hs-md-250 d-flex justify-content-center overflow-hidden">
           <img
-            src={`/images/nft-collections/${item.symbol}.png`}
+            src={item.imageUrl}
             alt="image"
             className="d-block w-auto h-100 mt-20 mb-20"
           />
@@ -46,7 +49,21 @@ const CollectionCard = ({ item }: { item: NftCollection }) => {
 export const ExploreCollections = () => {
   const [result] = useQuery({ query: ExploreCollectionsDocument });
 
-  if (result.fetching) return <Loading />;
+  const [fetchingNftCollections, setFetchingNftCollections] = useState(true);
+  const [nftCollections, setNftCollections] = useState<ConfigNftCollection[]>(
+    []
+  );
+  useEffect(() => {
+    const fetchNftCollections = async () => {
+      setFetchingNftCollections(true);
+      setNftCollections(await config.whitelists.nftCollections());
+      setFetchingNftCollections(false);
+    };
+
+    fetchNftCollections();
+  }, []);
+
+  if (result.fetching || fetchingNftCollections) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -85,12 +102,23 @@ export const ExploreCollections = () => {
 
         {/* Content start */}
         <div className="row g-content m-0">
-          {result.data?.nftCollections.map((item) => (
-            <CollectionCard
-              key={item.id}
-              item={{ ...item, numLiquidityShops: item.liquidityShops.length }}
-            />
-          ))}
+          {result.data?.nftCollections.map((item) => {
+            const nftCollection = nftCollections.filter(
+              (x) => x.address.toLowerCase() == item.id
+            )[0];
+            return (
+              <CollectionCard
+                key={item.id}
+                item={{
+                  ...item,
+                  numLiquidityShops: item.liquidityShops.length,
+                  name: nftCollection.name,
+                  symbol: nftCollection.symbol,
+                  imageUrl: nftCollection.logoURI,
+                }}
+              />
+            );
+          })}
         </div>
         {/* Content end */}
       </div>

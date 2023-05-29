@@ -1,5 +1,5 @@
 import { useQuery } from "urql";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { useAccount, useNetwork } from "wagmi";
 import { ManageShopsDocument } from "../../../.graphclient";
@@ -16,6 +16,7 @@ import {
 } from "../../../../wagmi-generated";
 import { getProtocolChain } from "@/helpers/ProtocolDefaults";
 import { toast } from "@/helpers/Toast";
+import { NftCollection, config } from "@/config";
 
 type Shop = {
   name: string;
@@ -254,8 +255,20 @@ export const ManageShops = () => {
     variables: { walletAddress: address },
   });
 
+  const [fetchingNftCollections, setFetchingNftCollections] = useState(true);
+  const [nftCollections, setNftCollections] = useState<NftCollection[]>([]);
+  useEffect(() => {
+    const fetchNftCollections = async () => {
+      setFetchingNftCollections(true);
+      setNftCollections(await config.whitelists.nftCollections());
+      setFetchingNftCollections(false);
+    };
+
+    fetchNftCollections();
+  }, []);
+
   // Return *******************************************************************************
-  if (result.fetching) return <Loading />;
+  if (result.fetching || fetchingNftCollections) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -313,7 +326,9 @@ export const ManageShops = () => {
               key={shop.id}
               {...{
                 ...shop,
-                nftCollectionName: shop.nftCollection.name,
+                nftCollectionName: nftCollections.filter(
+                  (x) => x.address.toLowerCase() == shop.nftCollection.id
+                )[0].name,
                 id: parseInt(shop.id),
                 erc20Decimals: shop.erc20.decimals,
               }}

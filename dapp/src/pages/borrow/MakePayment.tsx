@@ -20,6 +20,8 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import { toast } from "@/helpers/Toast";
+import { useEffect, useState } from "react";
+import { NftCollection, Token, config } from "@/config";
 
 type MakePaymentForm = {
   amount: number;
@@ -36,6 +38,35 @@ export const MakePayment = () => {
       loanId: id,
     },
   });
+
+  const [fetchingTokens, setFetchingTokens] = useState(true);
+  const [nftCollection, setNftCollection] = useState<NftCollection>();
+  const [token, setToken] = useState<Token>();
+  useEffect(() => {
+    const fetchNftCollection = async () => {
+      setFetchingTokens(true);
+
+      const nftCollections = await config.whitelists.nftCollections();
+      const tokens = await config.whitelists.tokens();
+      setNftCollection(
+        nftCollections.filter(
+          (x) =>
+            x.address.toLowerCase() ==
+            result.data?.loan?.liquidityShop.nftCollection.id
+        )[0]
+      );
+      setToken(
+        tokens.filter(
+          (x) =>
+            x.address.toLowerCase() == result.data?.loan?.liquidityShop.erc20.id
+        )[0]
+      );
+
+      setFetchingTokens(false);
+    };
+
+    fetchNftCollection();
+  }, []);
 
   const { register, handleSubmit, watch } = useForm<MakePaymentForm>({
     defaultValues: {
@@ -97,7 +128,7 @@ export const MakePayment = () => {
     paybackLoanWrite?.();
   };
 
-  if (result.fetching) return <Loading />;
+  if (result.fetching || fetchingTokens) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -123,8 +154,7 @@ export const MakePayment = () => {
                     />
                   </div>
                   <div className="fw-bold text-primary text-center mt-10">
-                    {result.data?.loan?.liquidityShop.nftCollection.name} #
-                    {result.data?.loan?.nftCollateralId}
+                    {nftCollection?.name} #{result.data?.loan?.nftCollateralId}
                   </div>
                 </div>
 
@@ -192,7 +222,7 @@ export const MakePayment = () => {
                       <label className="form-label">Selected Coin</label>
                       <div className="form-control form-control-alt form-control-lg d-flex align-items-center">
                         <img
-                          src={`/images/tokens/${result.data?.loan?.liquidityShop.erc20.symbol}.svg`}
+                          src={token?.logoURI}
                           className="w-auto hs-25 d-block me-5"
                         />
                         {result.data?.loan?.liquidityShop.erc20.symbol}

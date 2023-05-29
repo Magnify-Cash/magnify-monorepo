@@ -53,7 +53,8 @@ const allConfigs: { [key: string]: Config } = {
           name: "USD Coin",
           address: "0x7d1216A946af1f30efF7fF16744363CCfAdBFAc3",
           symbol: "USDC",
-          logoURI: "/public/images/tokens/USDC.svg",
+          logoURI:
+            "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
           decimals: 18,
         },
         {
@@ -61,7 +62,8 @@ const allConfigs: { [key: string]: Config } = {
           address: "0x939e2b90538D8cBC344221F597976c91b39145Cd",
           symbol: "DAI",
           decimals: 18,
-          logoURI: "/public/images/tokens/DAI.svg",
+          logoURI:
+            "https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png",
         },
       ],
       nftCollections: async () => [
@@ -98,7 +100,8 @@ const allConfigs: { [key: string]: Config } = {
           name: "USD Coin",
           address: deployments.usdc.address,
           symbol: "USDC",
-          logoURI: "/public/images/tokens/USDC.svg",
+          logoURI:
+            "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
           decimals: 18,
         },
         {
@@ -106,7 +109,8 @@ const allConfigs: { [key: string]: Config } = {
           address: deployments.dai.address,
           symbol: "DAI",
           decimals: 18,
-          logoURI: "/public/images/tokens/DAI.svg",
+          logoURI:
+            "https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png",
         },
       ],
       nftCollections: async () => [

@@ -88,7 +88,7 @@ export const CreateShopConfirm = () => {
       state.form.erc20, // address _erc20,
       // @ts-ignore
       state.form.nftCollection, // address _nftCollection,
-      true,
+      state.nftCollection.isErc1155,
       ethers.utils.parseUnits(
         state.form.shopAmount.toString(),
         state.erc20.decimals

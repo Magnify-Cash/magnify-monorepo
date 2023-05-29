@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import { Loading } from "@/components";
 import { ethers } from "ethers";
 import { truncateAddress } from "@/helpers/utils";
+import { useEffect, useState } from "react";
+import { NftCollection, config } from "@/config";
 
 type Loan = {
   loanId: number;
@@ -109,7 +111,19 @@ export const BorrowingDashboard = () => {
     },
   });
 
-  if (result.fetching) return <Loading />;
+  const [fetchingNftCollection, setFetchingNftCollections] = useState(false);
+  const [nftCollections, setNftCollections] = useState<NftCollection[]>([]);
+  useEffect(() => {
+    const fetchNftCollections = async () => {
+      setFetchingNftCollections(true);
+      setNftCollections(await config.whitelists.nftCollections());
+      setFetchingNftCollections(false);
+    };
+
+    fetchNftCollections();
+  }, []);
+
+  if (result.fetching || fetchingNftCollection) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -169,7 +183,9 @@ export const BorrowingDashboard = () => {
               <LoanRow
                 {...{
                   lender: x.lender,
-                  nftCollectionName: x.liquidityShop.nftCollection.name,
+                  nftCollectionName: nftCollections.filter(
+                    (elem) => elem.address.toLowerCase() == x.id
+                  )[0].name,
                   tokenId: x.id,
                   amount: x.amount,
                   // TODO: this is static, fix this
@@ -234,7 +250,9 @@ export const BorrowingDashboard = () => {
               <LoanRow
                 {...{
                   lender: x.lender,
-                  nftCollectionName: x.liquidityShop.nftCollection.name,
+                  nftCollectionName: nftCollections.filter(
+                    (elem) => elem.address.toLowerCase() == x.id
+                  )[0].name,
                   tokenId: x.id,
                   amount: x.amount,
                   // TODO: this is static, fix this

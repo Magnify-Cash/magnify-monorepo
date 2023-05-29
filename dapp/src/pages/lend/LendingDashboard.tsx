@@ -10,6 +10,8 @@ import {
   usePrepareNftyLendingLiquidateOverdueLoan,
   useNftyLendingLiquidateOverdueLoan,
 } from "../../../../wagmi-generated";
+import { useEffect, useState } from "react";
+import { NftCollection, config } from "@/config";
 
 type Loan = {
   nftCollectionName: string;
@@ -200,6 +202,18 @@ export const LendingDashboard = () => {
     },
   });
 
+  const [fetchingNftCollection, setFetchingNftCollections] = useState(false);
+  const [nftCollections, setNftCollections] = useState<NftCollection[]>([]);
+  useEffect(() => {
+    const fetchNftCollections = async () => {
+      setFetchingNftCollections(true);
+      setNftCollections(await config.whitelists.nftCollections());
+      setFetchingNftCollections(false);
+    };
+
+    fetchNftCollections();
+  }, []);
+
   // TODO: Placeholder list of pending loans for now
   const pendingLoans: Loan[] = [];
 
@@ -301,7 +315,9 @@ export const LendingDashboard = () => {
           {result.data?.loans.map((x) => (
             <ActiveLoanRow
               {...{
-                nftCollectionName: x.liquidityShop.nftCollection.name,
+                nftCollectionName: nftCollections.filter(
+                  (elem) => elem.address.toLowerCase() == x.id
+                )[0].name,
                 amount: x.amount,
                 duration: x.duration,
                 borrower: x.borrower,
