@@ -5972,7 +5972,7 @@ ethereum-cryptography@^1.0.3:
     "@scure/bip32" "1.1.5"
     "@scure/bip39" "1.1.1"
 
-ethereumjs-abi@^0.6.8, "ethereumjs-abi@https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz":
+ethereumjs-abi@^0.6.8:
   version "0.6.8"
   resolved "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz#71bc152db099f70e62f108b7cdfca1b362c6fcae"
   dependencies:
