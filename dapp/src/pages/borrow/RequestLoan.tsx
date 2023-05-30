@@ -24,6 +24,7 @@ import { Loading } from "@/components/Loading";
 import { toast } from "@/helpers/Toast";
 import { useEffect, useState } from "react";
 import { NftCollection, Token, config } from "@/config";
+import { WalletNft, getWalletNfts } from "@/helpers/utils";
 
 type RequestLoanForm = {
   nftCollateralId: string;
@@ -48,8 +49,11 @@ export const RequestLoan = () => {
   const [fetchingTokens, setFetchingTokens] = useState(true);
   const [nftCollection, setNftCollection] = useState<NftCollection>();
   const [token, setToken] = useState<Token>();
+  const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
   useEffect(() => {
-    const fetchNftCollection = async () => {
+    const fetchTokens = async () => {
+      if (!address || result.fetching) return;
+
       setFetchingTokens(true);
 
       const nftCollections = await config.whitelists.nftCollections();
@@ -66,12 +70,19 @@ export const RequestLoan = () => {
           (x) => x.address.toLowerCase() == result.data?.liquidityShop?.erc20.id
         )[0]
       );
+      setWalletNfts(
+        await getWalletNfts({
+          wallet: address,
+          // @ts-ignore
+          nftCollection: result.data?.liquidityShop?.nftCollection.id,
+        })
+      );
 
       setFetchingTokens(false);
     };
 
-    fetchNftCollection();
-  }, []);
+    fetchTokens();
+  }, [result.fetching, address]);
 
   // Form
   const {
@@ -183,7 +194,7 @@ export const RequestLoan = () => {
       )
     : 0;
 
-  if (result.fetching) return <Loading />;
+  if (result.fetching || fetchingTokens) return <Loading />;
 
   return (
     <div className="container-xl">
@@ -295,14 +306,11 @@ export const RequestLoan = () => {
                         })}
                       >
                         <option value="-1">Select NFT</option>
-                        {result.data?.liquidityShop?.nftCollection.nfts?.map(
-                          (x) => (
-                            <option value={x.tokenId} key={x.tokenId}>
-                              {result.data?.liquidityShop?.nftCollection?.name}{" "}
-                              #{x.tokenId}
-                            </option>
-                          )
-                        )}
+                        {walletNfts?.map((x) => (
+                          <option value={x.tokenId} key={x.tokenId}>
+                            {nftCollection?.name} #{x.tokenId}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>

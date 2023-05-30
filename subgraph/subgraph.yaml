@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYLending
-      address: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9"
-      startBlock: 35
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+      startBlock: 11
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -63,8 +63,8 @@ dataSources:
     network: mainnet
     source:
       abi: PromissoryNote
-      address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB"
-      startBlock: 33
+      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+      startBlock: 7
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -83,8 +83,8 @@ dataSources:
     network: mainnet
     source:
       abi: ObligationReceipt
-      address: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042"
-      startBlock: 34
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+      startBlock: 8
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
