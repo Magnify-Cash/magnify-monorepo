@@ -186,11 +186,13 @@ contract NFTYLending is
      * @param owner The address of the owner of the liquidity shop
      * @param id Identifier for the liquidity shop
      * @param amount Amount withdrawn
+     * @param balance New balance after cash out
      */
     event LiquidityShopCashedOut(
         address indexed owner,
         uint256 id,
-        uint256 amount
+        uint256 amount,
+        uint256 balance
     );
 
     /**
@@ -639,7 +641,12 @@ contract NFTYLending is
 
         liquidityShop.balance = liquidityShop.balance - _amount;
 
-        emit LiquidityShopCashedOut(liquidityShop.owner, _id, _amount);
+        emit LiquidityShopCashedOut(
+            liquidityShop.owner,
+            _id,
+            _amount,
+            liquidityShop.balance
+        );
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             liquidityShop.owner,

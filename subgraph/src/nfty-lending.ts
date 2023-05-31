@@ -91,7 +91,7 @@ export function handleLiquidityShopCashedOut(
   event: LiquidityShopCashedOut
 ): void {
   const liquidityShop = new LiquidityShop(event.params.id.toString());
-  liquidityShop.balance = liquidityShop.balance.minus(event.params.amount);
+  liquidityShop.balance = event.params.balance;
   liquidityShop.save();
 }
 

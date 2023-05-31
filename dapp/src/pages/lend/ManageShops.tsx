@@ -39,13 +39,15 @@ const ShopRow = ({
   const { chain } = useNetwork();
 
   // Cash Out Hook ************************************************************************
+  const [cashOutAmount, setCashOutAmount] = useState("0");
   const { config: cashOutConfig, error: cashOutError } =
     usePrepareNftyLendingCashOutLiquidityShop({
       chainId: getProtocolChain(chain?.id),
       args: [
         BigNumber.from(id), // shop ID
-        // TODO: put actual cashout amount
-        ethers.BigNumber.from(10),
+        cashOutAmount
+          ? ethers.utils.parseUnits(cashOutAmount, erc20Decimals)
+          : BigNumber.from(0),
       ],
     });
   const { write: cashOutWrite, isLoading: cashOutLoading } =
@@ -198,17 +200,36 @@ const ShopRow = ({
                   Freeze Shop
                 </Web3Button>
               )}
+
               <div className="dropdown-divider"></div>
-              <Web3Button
-                error={cashOutError}
-                loading={cashOutLoading}
-                className="btn dropdown-item"
-                onClick={() => cashOutWrite?.()}
-              >
-                <i className="fa-solid fa-check text-success-lm text-success-light-dm me-5"></i>
+              <h6 className="dropdown-header">
+                <i className="fa-light fa-seedling text-warning-dim-lm text-warning-light-dm me-5"></i>
                 Cash Out
-              </Web3Button>
-              <div className="dropdown-divider"></div>
+              </h6>
+              <div className="dropdown-content">
+                <form>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Enter Amountß"
+                      value={cashOutAmount}
+                      min={0}
+                      onChange={(e) => setCashOutAmount(e.target.value)}
+                    />
+                    <Web3Button
+                      error={cashOutError}
+                      loading={cashOutLoading}
+                      className="btn btn-warning"
+                      onClick={() => cashOutWrite?.()}
+                    >
+                      <i className="fa-solid fa-check"></i>
+                      <span className="visually-hidden">Submit</span>
+                    </Web3Button>
+                  </div>
+                </form>
+              </div>
+
               <div className="dropdown-divider"></div>
               <h6 className="dropdown-header">
                 <i className="fa-light fa-seedling text-warning-dim-lm text-warning-light-dm me-5"></i>

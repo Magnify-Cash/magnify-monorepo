@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYLending
-      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
-      startBlock: 11
+      address: "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
+      startBlock: 194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -33,7 +33,7 @@ dataSources:
           handler: handleLiquidatedOverdueLoan
         - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
           handler: handleLiquidityAddedToShop
-        - event: LiquidityShopCashedOut(indexed address,uint256,uint256)
+        - event: LiquidityShopCashedOut(indexed address,uint256,uint256,uint256)
           handler: handleLiquidityShopCashedOut
         - event: LiquidityShopCreated(indexed address,indexed address,indexed
             address,bool,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
@@ -63,8 +63,8 @@ dataSources:
     network: mainnet
     source:
       abi: PromissoryNote
-      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F"
-      startBlock: 7
+      address: "0x12Bcb546bC60fF39F1Adfc7cE4605d5Bd6a6A876"
+      startBlock: 191
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -83,8 +83,8 @@ dataSources:
     network: mainnet
     source:
       abi: ObligationReceipt
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
-      startBlock: 8
+      address: "0xaC47e91215fb80462139756f43438402998E4A3a"
+      startBlock: 192
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
