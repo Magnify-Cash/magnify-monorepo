@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 
 import "./NFTYNotes.sol";
 import "../interfaces/INFTYLending.sol";
-import "../interfaces/IDIAOracleV2.sol";
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -71,11 +70,6 @@ contract NFTYLending is
     address public obligationReceipt;
 
     /**
-     * @notice The address of the oracle to be used for fees
-     */
-    address public oracle;
-
-    /**
      * @notice The address of the NFTY Token contract to use for borrower fees
      */
     address public nftyToken;
@@ -86,27 +80,9 @@ contract NFTYLending is
     uint256 public loanOriginationFee;
 
     /**
-     * @notice The percentage of fees that will be used when asking for a loan
+     * @notice The amount of platform fees per token that can be withdrawn by an admin
      */
-    PlatformFees public platformFees;
-
-    /**
-     * @notice The amount of platform fees (in NFTY tokens) that can be withdrawn by an admin
-     */
-    uint256 private platformBalance;
-
-    /* @notice Mapping that keeps a record of nonces used by borrowers
-     * An uint256 number that should uniquely identify each signature for each user (i.e. each user should only create one
-     * off-chain signature for each nonce, with a nonce being any arbitrary
-     * uint256 value that they have not used yet for an off-chain Nfty signature).
-     */
-    mapping(address => mapping(uint256 => bool))
-        private nonceHasBeenUsedForUser;
-
-    /**
-     * @notice The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
-     */
-    uint256 public oraclePriceExpirationDuration;
+    mapping(address => uint256) public platformBalance;
 
     /* *********** */
     /* EVENTS */
@@ -124,7 +100,6 @@ contract NFTYLending is
      * @param amount The current balance of the liquidity shop
      * @param id A unique liquidity shop ID
      * @param name The name of the liquidity shop
-     * @param automaticApproval Whether or not this liquidity shop will accept offers automatically
      * @param allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      */
     event LiquidityShopCreated(
@@ -139,7 +114,6 @@ contract NFTYLending is
         uint256 amount,
         uint256 id,
         string name,
-        bool automaticApproval,
         bool allowRefinancingTerms
     );
 
@@ -151,7 +125,6 @@ contract NFTYLending is
      * @param interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param maxOffer The max offer set for the NFT collection, valued in the ERC20 tokens set for the liquidity shop
-     * @param automaticApproval Whether or not this liquidity shop will accept offers automatically
      * @param allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      */
     event LiquidityShopUpdated(
@@ -161,7 +134,6 @@ contract NFTYLending is
         uint256 interestB,
         uint256 interestC,
         uint256 maxOffer,
-        bool automaticApproval,
         bool allowRefinancingTerms
     );
 
@@ -258,15 +230,13 @@ contract NFTYLending is
      * @param promissoryNoteOwner The address of the owner of the promissory note, actor who receives the payment loan fees
      * @param loanId The unique identifier of the loan
      * @param paidAmount The amount of currency paid back to the promissory note holder
-     * @param remainder The amount of currency remaining to be paid
      *
      */
     event PaymentMade(
         address indexed obligationReceiptOwner,
         address indexed promissoryNoteOwner,
         uint256 loanId,
-        uint256 paidAmount,
-        uint256 remainder
+        uint256 paidAmount
     );
 
     /**
@@ -277,7 +247,6 @@ contract NFTYLending is
      * @param liquidityShopId The unique identifier of the liquidity shop
      * @param loanId The unique identifier of the loan
      * @param paidAmount The total amount of currency paid back to the promissory note holder, including interests
-     * @param borrowerFees The amount of fees paid back to the obligation receipt holder
      * @param nftCollateralId The collateral NFT ID that was sent to the obligation receipt holder
      */
     event PaidBackLoan(
@@ -286,22 +255,15 @@ contract NFTYLending is
         uint256 liquidityShopId,
         uint256 loanId,
         uint256 paidAmount,
-        uint256 borrowerFees,
         uint256 nftCollateralId
     );
 
     /**
      * @notice Event that will be emitted every time an admin updates protocol parameters
      *
-     * @param oraclePriceExpirationDuration The maximum acceptable amount of time passed since the oracle price was last updated in seconds for it to remain valid
-     * @param platformFees The percentage of fees for each participant
      * @param loanOriginationFees The percentage of fees in tokens that the borrower will have to pay for a loan
      */
-    event ProtocolParamsSet(
-        uint256 oraclePriceExpirationDuration,
-        PlatformFees platformFees,
-        uint256 loanOriginationFees
-    );
+    event ProtocolParamsSet(uint256 loanOriginationFees);
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -316,14 +278,11 @@ contract NFTYLending is
      *
      * @param _promissoryNote Promissory note ERC721 address
      * @param _obligationReceipt Obligation receipt ERC721 address
-     * @param _nftyToken Address of the contract to be used for fees on this contract
-     * @param _oracle Address of the oracle to be used for fee calculation
      */
     function initialize(
         address _promissoryNote,
         address _obligationReceipt,
-        address _nftyToken,
-        address _oracle
+        address _nftyToken
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
@@ -340,19 +299,8 @@ contract NFTYLending is
         );
         obligationReceipt = _obligationReceipt;
 
-        require(_oracle != address(0), "oracle is zero addr");
-        oracle = _oracle;
-
         // Set default protocol params
-        setProtocolParams(
-            480,
-            PlatformFees({
-                lenderPercentage: 30,
-                borrowerPercentage: 30,
-                platformPercentage: 40
-            }),
-            1
-        );
+        setProtocolParams(1);
     }
 
     /**
@@ -369,74 +317,17 @@ contract NFTYLending is
     }
 
     /**
-     * @notice An internal function that checks if the oracle price is too old.
+     * @notice This function allows the admin of the contract to modify protocol level params.
      *
-     * @param key A string specifying the asset.
-     * @param maxTimePassed The max acceptable amount of time passed since the oracle price was last updated.
-     *
-     * @return price The price returned by the oracle.
-     * @return inTime A boolean that is true if the price was updated at most maxTimePassed seconds ago, otherwise false.
-     */
-    function getPriceIfNotOlderThan(
-        string memory key,
-        uint128 maxTimePassed
-    ) internal view returns (uint256 price, bool inTime) {
-        uint128 oracleTimestamp;
-        (price, oracleTimestamp) = IDIAOracleV2(oracle).getValue(key);
-        inTime = ((block.timestamp - oracleTimestamp) < maxTimePassed)
-            ? true
-            : false;
-        return (price, inTime);
-    }
-
-    /**
-     * @notice This function allows the admin of the contract to modify the max acceptable amount of time passed since the oracle price was last updated.
-     *
-     * @param _oraclePriceExpirationDuration Max acceptable amount of time passed since the oracle price was last updated
-     * @param _platformFees Percentage of fees that each participant will receive once a loan is accepted
      * @param _loanOriginationFee Percentage of fees that the lender will receive in tokens once an offer is accepted.
      * Emits an {FeeExpirationSet} event.
      */
-    function setProtocolParams(
-        uint256 _oraclePriceExpirationDuration,
-        PlatformFees memory _platformFees,
-        uint256 _loanOriginationFee
-    ) public onlyOwner {
-        // Set fee expiration
-        require(_oraclePriceExpirationDuration > 0, "expiration = 0");
-        // TODO: Uncomment the following in production.
-        // require(_feeExpirationTime <= 24 hours, "expiration > 24hs");
-        oraclePriceExpirationDuration = _oraclePriceExpirationDuration;
-
-        // Set platform fees
-        require(
-            _platformFees.lenderPercentage +
-                _platformFees.borrowerPercentage +
-                _platformFees.platformPercentage ==
-                100,
-            "fees do not add up to 100%"
-        );
-        require(_platformFees.lenderPercentage > 0, "lender fee < 1%");
-        require(_platformFees.borrowerPercentage > 0, "borrower fee < 1%");
-        require(_platformFees.platformPercentage > 0, "platform fee < 1%");
-        platformFees = _platformFees;
-
+    function setProtocolParams(uint256 _loanOriginationFee) public onlyOwner {
         // Set loan origination fees
         require(_loanOriginationFee <= 10, "fee > 10%");
         loanOriginationFee = _loanOriginationFee;
 
-        emit ProtocolParamsSet(
-            _oraclePriceExpirationDuration,
-            _platformFees,
-            _loanOriginationFee
-        );
-    }
-
-    /**
-     * @notice Function that returns whether a nonce has been used by a user or not
-     */
-    function isValidNonce(uint256 nonce) external view returns (bool) {
-        return !nonceHasBeenUsedForUser[msg.sender][nonce];
+        emit ProtocolParamsSet(_loanOriginationFee);
     }
 
     /**
@@ -450,7 +341,6 @@ contract NFTYLending is
      * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
-     * @param _automaticApproval Whether or not this liquidity shop will accept offers automatically
      * @param _allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      * @dev Emits an `LiquidityShopCreated` event.
      */
@@ -464,7 +354,6 @@ contract NFTYLending is
         uint256 _interestB,
         uint256 _interestC,
         uint256 _maxOffer,
-        bool _automaticApproval,
         bool _allowRefinancingTerms
     ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
@@ -505,7 +394,6 @@ contract NFTYLending is
             interestC: _interestC,
             maxOffer: _maxOffer,
             balance: _liquidityAmount,
-            automaticApproval: _automaticApproval,
             allowRefinancingTerms: _allowRefinancingTerms,
             status: LiquidityShopStatus.Active,
             name: _name
@@ -524,7 +412,6 @@ contract NFTYLending is
             newLiquidityShop.balance,
             liquidityShopId,
             newLiquidityShop.name,
-            newLiquidityShop.automaticApproval,
             newLiquidityShop.allowRefinancingTerms
         );
 
@@ -543,7 +430,6 @@ contract NFTYLending is
      * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
-     * @param _automaticApproval Whether or not this liquidity shop will accept offers automatically
      * @param _allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      * @dev Emits an `LiquidityShopUpdated` event.
      */
@@ -554,7 +440,6 @@ contract NFTYLending is
         uint256 _interestB,
         uint256 _interestC,
         uint256 _maxOffer,
-        bool _automaticApproval,
         bool _allowRefinancingTerms
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
@@ -573,7 +458,6 @@ contract NFTYLending is
         liquidityShop.interestA = _interestA;
         liquidityShop.interestB = _interestB;
         liquidityShop.interestC = _interestC;
-        liquidityShop.automaticApproval = _automaticApproval;
         liquidityShop.allowRefinancingTerms = _allowRefinancingTerms;
 
         emit LiquidityShopUpdated(
@@ -583,7 +467,6 @@ contract NFTYLending is
             _interestB,
             _interestC,
             _maxOffer,
-            _automaticApproval,
             _allowRefinancingTerms
         );
     }
@@ -738,10 +621,6 @@ contract NFTYLending is
 
         loan.status = LoanStatus.Resolved;
 
-        uint256 borrowerFees = (loan.fee *
-            (loan.platformFees.borrowerPercentage)) / (100);
-        platformBalance += borrowerFees;
-
         emit LiquidatedOverdueLoan(
             msg.sender,
             loan.liquidityShopId,
@@ -813,23 +692,22 @@ contract NFTYLending is
         require(_offer.amount > 0, "amount = 0");
         require(_offer.amount <= liquidityShop.maxOffer, "amount > max offer");
 
-        uint256 feesToSend = getOfferFees(_offer.amount, liquidityShop.erc20);
+        uint fees = (loanOriginationFee * _offer.amount) / 100;
+        uint256 interest = (_offer.amount * shopInterest) / 100;
 
-        loanIdCounter.increment();
+        liquidityShop.balance = liquidityShop.balance - _offer.amount;
 
-        uint256 borrowerFees = (feesToSend *
-            (platformFees.borrowerPercentage)) / (100);
-        uint256 escrowFees = (feesToSend * (platformFees.platformPercentage)) /
-            (100);
-        uint256 lenderFees = (feesToSend * (platformFees.lenderPercentage)) /
-            (100);
-        uint256 interest = (_offer.amount * (shopInterest)) / (100);
-
-        liquidityShop.balance = liquidityShop.balance - (_offer.amount);
-        platformBalance += escrowFees;
-
-        // Using helper function to avoid `Stack too deep` error
-        _storeLoan(loanIdCounter.current(), _offer, interest, feesToSend);
+        Loan memory newLoan = Loan({
+            amount: _offer.amount,
+            amountPaidBack: 0,
+            duration: _offer.loanDuration,
+            startTime: block.timestamp,
+            nftCollateralId: _offer.nftCollateralId,
+            fee: fees,
+            status: LoanStatus.Active,
+            liquidityShopId: _offer.shopId
+        });
+        loans[loanIdCounter.current()] = newLoan;
 
         emit OfferAccepted(
             liquidityShop.owner,
@@ -861,90 +739,11 @@ contract NFTYLending is
                 _offer.nftCollateralId
             );
 
-        // transfer lender fees to lender
-        IERC20Upgradeable(nftyToken).safeTransferFrom(
-            _borrower,
-            liquidityShop.owner,
-            lenderFees
-        );
-
-        // transfer borrower and platform fees to escrow
-        IERC20Upgradeable(nftyToken).safeTransferFrom(
-            _borrower,
-            address(this),
-            borrowerFees + (escrowFees)
-        );
-
-        // transfer amount to borrower
+        // transfer amount minus fees to borrower
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             _borrower,
-            _offer.amount
+            _offer.amount - fees
         );
-    }
-
-    /**
-     * @notice Helper function to store loan information on the contract
-     *
-     * @param _id The ID used to store the loan in the contract state
-     * @param _offer The offer made by the borrower
-     * @param _interest The interest percentage that the borrower has to pay
-     * @param _fees The fees that the borrower has to pay
-     */
-    function _storeLoan(
-        uint256 _id,
-        Offer memory _offer,
-        uint256 _interest,
-        uint256 _fees
-    ) internal {
-        Loan memory newLoan = Loan({
-            amount: _offer.amount,
-            remainder: _offer.amount + (_interest),
-            duration: _offer.loanDuration,
-            startTime: block.timestamp,
-            nftCollateralId: _offer.nftCollateralId,
-            fee: _fees,
-            status: LoanStatus.Active,
-            liquidityShopId: _offer.shopId,
-            platformFees: PlatformFees({
-                lenderPercentage: platformFees.lenderPercentage,
-                platformPercentage: platformFees.platformPercentage,
-                borrowerPercentage: platformFees.borrowerPercentage
-            })
-        });
-
-        loans[_id] = newLoan;
-    }
-
-    /**
-     * @notice Helper function to calculate fees to pay based on a loan.
-     * Fees are calculated based on the ERC20/NFTY token conversion, plus the loan origination fee and amount.
-     *
-     * @param amount loan amount, in erc20 tokens.
-     * @param currency token contract address used for the loan.
-     */
-    function getOfferFees(
-        uint256 amount,
-        address currency
-    ) public view returns (uint256) {
-        (uint256 nftyToUSD, bool nftyInTime) = getPriceIfNotOlderThan(
-            string(
-                abi.encodePacked(IERC20Metadata(nftyToken).symbol(), "/USD")
-            ),
-            uint128(oraclePriceExpirationDuration)
-        );
-        require(nftyToUSD != 0, "missing NFTY price");
-        require(nftyInTime, "NFTY price too old");
-
-        (uint256 erc20ToUSD, bool erc20InTime) = getPriceIfNotOlderThan(
-            string(abi.encodePacked(IERC20Metadata(currency).symbol(), "/USD")),
-            uint128(oraclePriceExpirationDuration)
-        );
-        require(erc20ToUSD != 0, "missing ERC20 price");
-        require(erc20InTime, "ERC20 price too old");
-
-        return
-            ((amount * (erc20ToUSD)) * (loanOriginationFee) * (10 ** 18)) /
-            (10 ** (IERC20Metadata(currency).decimals()) * (nftyToUSD) * (100));
     }
 
     /**
@@ -958,97 +757,8 @@ contract NFTYLending is
         LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
 
         require(liquidityShop.owner != address(0), "invalid shop id");
-        require(
-            liquidityShop.automaticApproval,
-            "automatic approval not accepted"
-        );
+
         _acceptOffer(_offer, msg.sender);
-    }
-
-    /**
-     * @notice This function can be called liquidity shop owner to accept offers made by borrowers
-     *
-     * @param _offer The offer made by the borrower
-     * @param _signature The components of the borrower signature
-     */
-    function acceptOffer(
-        Offer memory _offer,
-        Signature memory _signature
-    ) external override whenNotPaused nonReentrant {
-        LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
-
-        require(msg.sender == liquidityShop.owner, "caller is not shop owner");
-
-        require(validateSignature(_signature, _offer), "invalid signature");
-
-        require(
-            !nonceHasBeenUsedForUser[_signature.signer][_signature.nonce],
-            "nonce invalid"
-        );
-
-        nonceHasBeenUsedForUser[_signature.signer][_signature.nonce] = true;
-
-        _acceptOffer(_offer, _signature.signer);
-    }
-
-    /**
-     * @notice This function is used to validate a signature
-     *
-     * @param _signature The signature struct containing:
-     * - signer: The address of the signer. The borrower address for `acceptOffer`
-     * - nonce: It can be any uint256 value that the user has not previously used to sign an
-     * off-chain offer. Each nonce can be used at most once per user within this contract
-     * - expiry: Date when the signature expires
-     * - signature: The ECDSA signature of the borrower, obtained off-chain ahead of time, signing the following
-     * combination of parameters:
-     * - Offer.shopId
-     * - Offer.nftCollateralId
-     * - Offer.loanDuration
-     * - Offer.amount
-     * - Signature.signer
-     * - Signature.nonce
-     * - Signature.expiry
-     * - chainId
-     * @param _offer The offer struct containing:
-     * - Offer.shopId: ID of the shop related to this offer
-     * - Offer.nftCollateralId: ID of the NFT to be used as collateral
-     * - Offer.loanDuration: Loan duration in days
-     * - Offer.amount: Amount asked on this loan in the same currency of the liquidity shop
-     */
-    function validateSignature(
-        Signature memory _signature,
-        Offer memory _offer
-    ) private view returns (bool) {
-        require(block.timestamp <= _signature.expiry, "signature has expired");
-        if (_signature.signer == address(0)) {
-            return false;
-        } else {
-            // Encode offer to validate signature
-            bytes memory offerHash = abi.encodePacked(
-                _offer.shopId,
-                _offer.nftCollateralId,
-                _offer.loanDuration,
-                _offer.amount
-            );
-
-            // Encode signature parameters to validate it
-            bytes memory signatureHash = abi.encodePacked(
-                _signature.signer,
-                _signature.nonce,
-                _signature.expiry
-            );
-
-            bytes32 messagehash = keccak256(
-                abi.encodePacked(offerHash, signatureHash, block.chainid)
-            );
-
-            return
-                SignatureChecker.isValidSignatureNow(
-                    _signature.signer,
-                    ECDSA.toEthSignedMessageHash(messagehash),
-                    _signature.signature
-                );
-        }
     }
 
     /**
@@ -1097,48 +807,38 @@ contract NFTYLending is
             loan.liquidityShopId
         ];
 
-        require(loan.remainder >= _amount, "payment amount > debt");
-        require(_amount == loan.remainder, "insufficient payment amount");
+        // calculate accumulated interest
+        uint256 interest = 0;
+        if (loan.duration == 30) {
+            interest = (loan.amount * liquidityShop.interestA) / 100;
+        } else if (loan.duration == 60) {
+            interest = (loan.amount * liquidityShop.interestB) / 100;
+        } else if (loan.duration == 90) {
+            interest = (loan.amount * liquidityShop.interestC) / 100;
+        }
 
-        loan.remainder = loan.remainder - (_amount);
+        loan.amountPaidBack = loan.amountPaidBack + _amount;
+        uint256 totalAmount = loan.amount + interest;
+
+        require(totalAmount > loan.amountPaidBack, "payment amount > debt");
 
         emit PaymentMade(
             obligationReceiptHolder,
             promissoryNoteHolder,
             _loanId,
-            _amount,
-            loan.remainder
+            _amount
         );
 
-        if (loan.remainder == 0) {
+        if (totalAmount == loan.amountPaidBack) {
             loan.status = LoanStatus.Resolved;
-
-            // calculate and send fees to obligation receipt holder
-            uint256 borrowerFees = (loan.fee *
-                (loan.platformFees.borrowerPercentage)) / (100);
-            uint256 interest = 0;
-            if (loan.duration == 30) {
-                interest = (loan.amount * (liquidityShop.interestA)) / (100);
-            } else if (loan.duration == 60) {
-                interest = (loan.amount * (liquidityShop.interestB)) / (100);
-            } else if (loan.duration == 90) {
-                interest = (loan.amount * (liquidityShop.interestC)) / (100);
-            }
-            uint256 payBackAmount = loan.amount + (interest);
 
             emit PaidBackLoan(
                 obligationReceiptHolder,
                 promissoryNoteHolder,
                 loan.liquidityShopId,
                 _loanId,
-                payBackAmount,
-                borrowerFees,
+                _amount,
                 loan.nftCollateralId
-            );
-
-            IERC20Upgradeable(nftyToken).safeTransfer(
-                obligationReceiptHolder,
-                borrowerFees
             );
 
             // send NFT collateral to obligation receipt holder
@@ -1177,14 +877,17 @@ contract NFTYLending is
      *
      */
     function withdrawPlatformFees(
+        address _erc20,
         address _receiver
     ) external onlyOwner nonReentrant {
-        uint256 amount = platformBalance;
-        require(amount > 0, "collected platform fees = 0");
         require(_receiver != address(0), "invalid receiver");
+        require(_erc20 != address(0), "invalid erc20");
 
-        platformBalance = 0;
+        uint256 amount = platformBalance[_erc20];
+        require(amount > 0, "collected platform fees = 0");
 
-        IERC20Upgradeable(nftyToken).safeTransfer(_receiver, amount);
+        platformBalance[_erc20] = 0;
+
+        IERC20Upgradeable(_erc20).safeTransfer(_receiver, amount);
     }
 }

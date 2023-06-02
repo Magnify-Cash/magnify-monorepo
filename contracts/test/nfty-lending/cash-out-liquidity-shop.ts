@@ -61,7 +61,12 @@ describe("Cash out liquidity shop", () => {
         .cashOutLiquidityShop(liquidityShopId, cashOutAmount)
     )
       .to.emit(nftyLending, "LiquidityShopCashedOut")
-      .withArgs(lender.address, liquidityShopId, cashOutAmount);
+      .withArgs(
+        lender.address,
+        liquidityShopId,
+        cashOutAmount,
+        shopBalance.sub(cashOutAmount)
+      );
 
     // check balances
     const newNftyLendingBalance = await erc20.balanceOf(nftyLending.address);

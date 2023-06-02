@@ -48,7 +48,6 @@ export const deployNftyLending = async () => {
     promissoryNote.address,
     obligationReceipt.address,
     nftyToken.address,
-    diaOracle.address,
   ])) as NFTYLending;
   await nftyLending.deployed();
 
@@ -104,6 +103,7 @@ export const deployNftyLendingWithTestTokens = async () => {
     obligationReceipt,
     nftyToken,
     diaOracle,
+    alice,
   } = await deployNftyLending();
 
   const { erc20, erc721, erc1155 } = await deployTestTokens();
@@ -132,6 +132,7 @@ export const deployNftyLendingWithTestTokens = async () => {
     erc20,
     erc721,
     erc1155,
+    alice,
   };
 };
 
@@ -172,7 +173,6 @@ export const createLiquidityShop = async () => {
       interestB,
       interestC,
       maxOffer,
-      true,
       true
     );
 

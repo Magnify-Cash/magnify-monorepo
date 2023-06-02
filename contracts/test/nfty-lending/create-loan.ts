@@ -1,7 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { createLiquidityShop } from "../utils/fixtures";
 import { expect } from "chai";
-import { ethers } from "hardhat";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("Create loan", () => {
@@ -132,31 +131,6 @@ describe("Create loan", () => {
     ).to.be.revertedWith("insufficient shop balance");
   });
 
-  it("should fail if shop does not allow automatic approval", async () => {
-    const { nftyLending, liquidityShopId, borrower, lender, liquidityShop } =
-      await loadFixture(createLiquidityShopAndMintTokens);
-
-    await nftyLending.connect(lender).updateLiquidityShop(
-      liquidityShopId,
-      liquidityShop.name,
-      liquidityShop.interestA,
-      liquidityShop.interestB,
-      liquidityShop.interestC,
-      liquidityShop.maxOffer,
-      false, // Set automatic approval to false
-      liquidityShop.allowRefinancingTerms
-    );
-
-    await expect(
-      nftyLending.connect(borrower).createLoan({
-        shopId: liquidityShopId,
-        nftCollateralId: nftId,
-        loanDuration,
-        amount: loanAmount,
-      })
-    ).to.be.revertedWith("automatic approval not accepted");
-  });
-
   it("should fail if liquidity shop is not active", async () => {
     const { nftyLending, liquidityShopId, borrower, lender } =
       await loadFixture(createLiquidityShopAndMintTokens);
@@ -187,23 +161,5 @@ describe("Create loan", () => {
     await expect(tx)
       .to.emit(nftyLending, "OfferAccepted")
       .withArgs(lender.address, borrower.address, liquidityShopId, anyValue);
-  });
-
-  it("should fail if oracle price has expired", async () => {
-    const { nftyLending, liquidityShopId, borrower } = await loadFixture(
-      createLiquidityShopAndMintTokens
-    );
-
-    // Add 60 days to current time so price feed has expired
-    await ethers.provider.send("evm_increaseTime", [60 * 24 * 60 * 60]);
-
-    await expect(
-      nftyLending.connect(borrower).createLoan({
-        shopId: liquidityShopId,
-        nftCollateralId: nftId,
-        loanDuration,
-        amount: loanAmount,
-      })
-    ).to.be.revertedWith("NFTY price too old");
   });
 });

@@ -63,7 +63,6 @@ describe("Deploy NFTYLending", () => {
         ethers.constants.AddressZero, // zero address for promissory note
         obligationReceipt.address,
         nftyToken.address,
-        diaOracle.address,
       ])
     ).to.be.revertedWith("promissory note is zero addr");
   });
@@ -77,7 +76,6 @@ describe("Deploy NFTYLending", () => {
         promissoryNote.address,
         ethers.constants.AddressZero, // zero address for obligation receipt
         nftyToken.address,
-        diaOracle.address,
       ])
     ).to.be.revertedWith("obligation receipt is zero addr");
   });
@@ -91,23 +89,8 @@ describe("Deploy NFTYLending", () => {
         promissoryNote.address,
         obligationReceipt.address,
         ethers.constants.AddressZero, // zero address for obligation receipt
-        diaOracle.address,
       ])
     ).to.be.revertedWith("nfty contract is zero addr");
-  });
-
-  it("should fail for zero addr oracle", async () => {
-    const { NFTYLending, promissoryNote, nftyToken, obligationReceipt } =
-      await loadFixture(deployDependencies);
-
-    await expect(
-      upgrades.deployProxy(NFTYLending, [
-        promissoryNote.address,
-        obligationReceipt.address,
-        nftyToken.address,
-        ethers.constants.AddressZero, // zero address for oracle
-      ])
-    ).to.be.revertedWith("oracle is zero addr");
   });
 
   it("should deploy", async () => {
@@ -124,17 +107,10 @@ describe("Deploy NFTYLending", () => {
       promissoryNote.address,
       obligationReceipt.address,
       nftyToken.address,
-      diaOracle.address,
     ])) as NFTYLending;
 
     // check expected values set in constructor
     expect(await nftyLending.owner()).to.equal(owner.address);
-    expect(await nftyLending.nftyToken()).to.equal(nftyToken.address);
     expect(await nftyLending.paused()).to.be.false;
-
-    const platformFees = await nftyLending.platformFees();
-    expect(platformFees.lenderPercentage).equals(30);
-    expect(platformFees.borrowerPercentage).equals(30);
-    expect(platformFees.platformPercentage).equals(40);
   });
 });

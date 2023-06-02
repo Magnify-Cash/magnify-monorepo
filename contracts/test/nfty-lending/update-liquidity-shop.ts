@@ -8,7 +8,6 @@ describe("Update liquidity shop", () => {
   const interestB = 10;
   const interestC = 15;
   const maxOffer = 2000;
-  const automaticApproval = false;
   const allowRefinancingTerms = true;
 
   it("should update liquidity shop", async () => {
@@ -26,7 +25,6 @@ describe("Update liquidity shop", () => {
           interestB,
           interestC,
           maxOffer,
-          automaticApproval,
           allowRefinancingTerms
         )
     )
@@ -38,7 +36,6 @@ describe("Update liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       );
 
@@ -49,7 +46,6 @@ describe("Update liquidity shop", () => {
     expect(newShop.interestB).to.equal(interestB);
     expect(newShop.interestC).to.equal(interestC);
     expect(newShop.maxOffer).to.equal(maxOffer);
-    expect(newShop.automaticApproval).to.equal(automaticApproval);
     expect(newShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
   });
 
@@ -69,7 +65,6 @@ describe("Update liquidity shop", () => {
           interestB,
           interestC,
           maxOffer,
-          automaticApproval,
           allowRefinancingTerms
         )
     ).to.be.revertedWith("Pausable: paused");
@@ -94,7 +89,6 @@ describe("Update liquidity shop", () => {
           interestB,
           interestC,
           maxOffer,
-          automaticApproval,
           allowRefinancingTerms
         )
     ).to.be.revertedWith("invalid shop id");
@@ -113,7 +107,6 @@ describe("Update liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("caller is not owner");
@@ -132,7 +125,6 @@ describe("Update liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestA = 0");
@@ -145,7 +137,6 @@ describe("Update liquidity shop", () => {
         0, // interestB = 0
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestB = 0");
@@ -158,7 +149,6 @@ describe("Update liquidity shop", () => {
         interestB,
         0, // interestC = 0
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestC = 0");
@@ -177,7 +167,6 @@ describe("Update liquidity shop", () => {
         interestB,
         interestC,
         0, // maxOffer = 0
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("max offer = 0");
@@ -196,7 +185,6 @@ describe("Update liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("empty shop name");

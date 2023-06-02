@@ -12,7 +12,6 @@ describe("Create liquidity shop", () => {
   const interestA = 10;
   const interestB = 20;
   const interestC = 30;
-  const automaticApproval = true;
   const allowRefinancingTerms = true;
 
   it("should fail for zero address ERC20", async () => {
@@ -31,7 +30,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("invalid erc20");
@@ -53,7 +51,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("invalid nft collection");
@@ -75,7 +72,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("invalid nft collection");
@@ -97,7 +93,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("invalid nft collection");
@@ -119,7 +114,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("empty shop name");
@@ -141,7 +135,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         0, // 0 max offer
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("max offer = 0");
@@ -163,7 +156,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestA = 0");
@@ -179,7 +171,6 @@ describe("Create liquidity shop", () => {
         0, // 0 interestB
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestB = 0");
@@ -195,7 +186,6 @@ describe("Create liquidity shop", () => {
         interestB,
         0, // 0 interestC
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("interestC = 0");
@@ -218,7 +208,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       )
     ).to.be.revertedWith("Pausable: paused");
@@ -247,7 +236,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       );
 
@@ -266,7 +254,6 @@ describe("Create liquidity shop", () => {
         liquidityAmount,
         anyValue,
         name,
-        automaticApproval,
         allowRefinancingTerms
       );
 
@@ -295,7 +282,6 @@ describe("Create liquidity shop", () => {
     expect(liquidityShop.maxOffer).to.equal(maxOffer);
     expect(liquidityShop.name).to.equal(name);
     expect(liquidityShop.status).to.equal(LiquidityShopStatus.Active);
-    expect(liquidityShop.automaticApproval).to.equal(automaticApproval);
     expect(liquidityShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
   });
 
@@ -322,7 +308,6 @@ describe("Create liquidity shop", () => {
         interestB,
         interestC,
         maxOffer,
-        automaticApproval,
         allowRefinancingTerms
       );
 
@@ -341,7 +326,6 @@ describe("Create liquidity shop", () => {
         liquidityAmount,
         anyValue,
         name,
-        automaticApproval,
         allowRefinancingTerms
       );
 
@@ -370,7 +354,6 @@ describe("Create liquidity shop", () => {
     expect(liquidityShop.maxOffer).to.equal(maxOffer);
     expect(liquidityShop.name).to.equal(name);
     expect(liquidityShop.status).to.equal(LiquidityShopStatus.Active);
-    expect(liquidityShop.automaticApproval).to.equal(automaticApproval);
     expect(liquidityShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
   });
 });
