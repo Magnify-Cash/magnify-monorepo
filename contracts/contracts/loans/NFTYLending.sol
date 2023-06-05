@@ -642,17 +642,15 @@ contract NFTYLending is
     }
 
     /**
-     * @notice Function reused for both accept offer for lender and create loan for borrower.
-     * It performs some validation checks, transfer the NFT, fees and amount to the corresponding part, creates and stores the loan
-     * and emits the OfferAccepted event.
+     * @notice This function can be called by a borrower to create a loan
      *
      * @param _offer The offer made by the borrower
-     * @param _borrower The address of the borrower
-     *
-     * Emits an {OfferAccepted} event.
      */
-    function _acceptOffer(Offer memory _offer, address _borrower) internal {
-        LiquidityShop storage liquidityShop = liquidityShops[_offer.shopId];
+    function createLoan(
+        Offer memory _offer
+    ) external override whenNotPaused nonReentrant {
+        LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
+
         require(liquidityShop.owner != address(0), "invalid shop id");
 
         require(
@@ -681,7 +679,6 @@ contract NFTYLending is
         require(_offer.amount <= liquidityShop.maxOffer, "amount > max offer");
 
         uint fees = (loanOriginationFee * _offer.amount) / 100;
-        uint256 interest = (_offer.amount * shopInterest) / 100;
 
         liquidityShop.balance = liquidityShop.balance - _offer.amount;
 
@@ -699,7 +696,7 @@ contract NFTYLending is
 
         emit OfferAccepted(
             liquidityShop.owner,
-            _borrower,
+            msg.sender,
             _offer.shopId,
             loanIdCounter.current()
         );
@@ -709,12 +706,12 @@ contract NFTYLending is
             loanIdCounter.current()
         );
 
-        NFTYNotes(obligationReceipt).mint(_borrower, loanIdCounter.current());
+        NFTYNotes(obligationReceipt).mint(msg.sender, loanIdCounter.current());
 
         // transfer Nft to escrow
         if (liquidityShop.nftCollectionIsErc1155)
             IERC1155(liquidityShop.nftCollection).safeTransferFrom(
-                _borrower,
+                msg.sender,
                 address(this),
                 _offer.nftCollateralId,
                 1,
@@ -722,31 +719,16 @@ contract NFTYLending is
             );
         else
             IERC721(liquidityShop.nftCollection).safeTransferFrom(
-                _borrower,
+                msg.sender,
                 address(this),
                 _offer.nftCollateralId
             );
 
         // transfer amount minus fees to borrower
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
-            _borrower,
+            msg.sender,
             _offer.amount - fees
         );
-    }
-
-    /**
-     * @notice This function can be called by a borrower to create a loan for shops that accepts it automatically
-     *
-     * @param _offer The offer made by the borrower
-     */
-    function createLoan(
-        Offer memory _offer
-    ) external override whenNotPaused nonReentrant {
-        LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
-
-        require(liquidityShop.owner != address(0), "invalid shop id");
-
-        _acceptOffer(_offer, msg.sender);
     }
 
     /**
