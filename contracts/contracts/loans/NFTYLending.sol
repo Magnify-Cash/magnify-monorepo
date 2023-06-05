@@ -70,11 +70,6 @@ contract NFTYLending is
     address public obligationReceipt;
 
     /**
-     * @notice The address of the NFTY Token contract to use for borrower fees
-     */
-    address public nftyToken;
-
-    /**
      * @notice The percentage of fees that the borrower will pay for each loan
      */
     uint256 public loanOriginationFee;
@@ -277,14 +272,10 @@ contract NFTYLending is
      */
     function initialize(
         address _promissoryNote,
-        address _obligationReceipt,
-        address _nftyToken
+        address _obligationReceipt
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
-
-        require(_nftyToken != address(0), "nfty contract is zero addr");
-        nftyToken = _nftyToken;
 
         require(_promissoryNote != address(0), "promissory note is zero addr");
         promissoryNote = _promissoryNote;
