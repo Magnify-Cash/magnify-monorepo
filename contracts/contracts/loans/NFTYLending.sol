@@ -100,7 +100,6 @@ contract NFTYLending is
      * @param amount The current balance of the liquidity shop
      * @param id A unique liquidity shop ID
      * @param name The name of the liquidity shop
-     * @param allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      */
     event LiquidityShopCreated(
         address indexed owner,
@@ -113,8 +112,7 @@ contract NFTYLending is
         uint256 maxOffer,
         uint256 amount,
         uint256 id,
-        string name,
-        bool allowRefinancingTerms
+        string name
     );
 
     /**
@@ -125,7 +123,6 @@ contract NFTYLending is
      * @param interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param maxOffer The max offer set for the NFT collection, valued in the ERC20 tokens set for the liquidity shop
-     * @param allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      */
     event LiquidityShopUpdated(
         uint256 id,
@@ -133,8 +130,7 @@ contract NFTYLending is
         uint256 interestA,
         uint256 interestB,
         uint256 interestC,
-        uint256 maxOffer,
-        bool allowRefinancingTerms
+        uint256 maxOffer
     );
 
     /**
@@ -341,7 +337,6 @@ contract NFTYLending is
      * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
-     * @param _allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      * @dev Emits an `LiquidityShopCreated` event.
      */
     function createLiquidityShop(
@@ -353,8 +348,7 @@ contract NFTYLending is
         uint256 _interestA,
         uint256 _interestB,
         uint256 _interestC,
-        uint256 _maxOffer,
-        bool _allowRefinancingTerms
+        uint256 _maxOffer
     ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
         require(_maxOffer > 0, "max offer = 0");
@@ -394,7 +388,6 @@ contract NFTYLending is
             interestC: _interestC,
             maxOffer: _maxOffer,
             balance: _liquidityAmount,
-            allowRefinancingTerms: _allowRefinancingTerms,
             status: LiquidityShopStatus.Active,
             name: _name
         });
@@ -411,8 +404,7 @@ contract NFTYLending is
             newLiquidityShop.maxOffer,
             newLiquidityShop.balance,
             liquidityShopId,
-            newLiquidityShop.name,
-            newLiquidityShop.allowRefinancingTerms
+            newLiquidityShop.name
         );
 
         IERC20Upgradeable(_erc20).safeTransferFrom(
@@ -430,7 +422,6 @@ contract NFTYLending is
      * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
      * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
      * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
-     * @param _allowRefinancingTerms Whether or not this liquidity shop will accept refinancing terms. NOTE: Not currently implemented
      * @dev Emits an `LiquidityShopUpdated` event.
      */
     function updateLiquidityShop(
@@ -439,8 +430,7 @@ contract NFTYLending is
         uint256 _interestA,
         uint256 _interestB,
         uint256 _interestC,
-        uint256 _maxOffer,
-        bool _allowRefinancingTerms
+        uint256 _maxOffer
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
@@ -458,7 +448,6 @@ contract NFTYLending is
         liquidityShop.interestA = _interestA;
         liquidityShop.interestB = _interestB;
         liquidityShop.interestC = _interestC;
-        liquidityShop.allowRefinancingTerms = _allowRefinancingTerms;
 
         emit LiquidityShopUpdated(
             _id,
@@ -466,8 +455,7 @@ contract NFTYLending is
             _interestA,
             _interestB,
             _interestC,
-            _maxOffer,
-            _allowRefinancingTerms
+            _maxOffer
         );
     }
 

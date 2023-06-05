@@ -56,7 +56,6 @@ interface INFTYLending {
      * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
      * @param nftCollection The address of the collection accepted as collateral
      * @param owner The address of the owner of this liquidity shop
-     * @param allowRefinancingTerms Whether or not terms can be changed for loans in this liquidity shop. NOTE: Not currently implemented
      * @param balance The balance of this shop
      * @param maxOffer The max offer allowed for this collection set by its owner in tokens in the same currency used in this liquidity shop
      * @param interestA interest set for the shop, used for loan duration A
@@ -71,7 +70,6 @@ interface INFTYLending {
         address nftCollection;
         bool nftCollectionIsErc1155;
         address owner;
-        bool allowRefinancingTerms;
         uint256 balance;
         uint256 maxOffer;
         uint256 interestA;
@@ -105,8 +103,7 @@ interface INFTYLending {
         uint256 _interestA,
         uint256 _interestB,
         uint256 _interestC,
-        uint256 _maxOffer,
-        bool _allowRefinancingTerms
+        uint256 _maxOffer
     ) external;
 
     function updateLiquidityShop(
@@ -115,8 +112,7 @@ interface INFTYLending {
         uint256 _interestA,
         uint256 _interestB,
         uint256 _interestC,
-        uint256 _maxOffer,
-        bool _allowRefinancingTerms
+        uint256 _maxOffer
     ) external;
 
     function addLiquidityToShop(uint256 _id, uint256 _amount) external;
