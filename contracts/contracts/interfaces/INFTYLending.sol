@@ -3,27 +3,17 @@
 pragma solidity ^0.8.18;
 
 interface INFTYLending {
-    /* *********** */
-    /* ENUMS   */
-    /* *********** */
-
-    // Enum for liquidity shop statuses
     // When first created a liquidity shop is ACTIVE, its owner can then set it as FROZEN
     enum LiquidityShopStatus {
         Active,
         Frozen
     }
 
-    // Enum for loan statuses
     // When first created a Loan is ACTIVE by default, once the loan is resolved it becomes RESOLVED
     enum LoanStatus {
         Active,
         Resolved
     }
-
-    /* *********** */
-    /* Structs     */
-    /* *********** */
 
     /**
      * @notice Struct used to store loans on this contract.
@@ -77,21 +67,6 @@ interface INFTYLending {
         string name;
     }
 
-    /**
-     * @notice Struct used to receive offer parameters used on acceptOffer
-     *
-     * @param shopId ID of the shop related to this offer
-     * @param nftCollateralId ID of the NFT to be used as collateral
-     * @param loanDuration Loan duration in days
-     * @param amount Amount to ask on this loan in ERC20
-     */
-    struct Offer {
-        uint256 shopId;
-        uint256 nftCollateralId;
-        uint256 loanDuration;
-        uint256 amount;
-    }
-
     function createLiquidityShop(
         string calldata _name,
         address _erc20,
@@ -121,7 +96,12 @@ interface INFTYLending {
 
     function unfreezeLiquidityShop(uint256 _id) external;
 
-    function createLoan(Offer memory _offer) external;
+    function createLoan(
+        uint256 _shopId,
+        uint256 _nftCollateralId,
+        uint256 _duration,
+        uint256 _amount
+    ) external;
 
     function liquidateOverdueLoan(uint256 _loanId) external;
 

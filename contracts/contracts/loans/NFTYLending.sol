@@ -635,12 +635,18 @@ contract NFTYLending is
     /**
      * @notice This function can be called by a borrower to create a loan
      *
-     * @param _offer The offer made by the borrower
+     * @param _shopId ID of the shop related to this offer
+     * @param _nftCollateralId ID of the NFT to be used as collateral
+     * @param _duration Loan duration in days
+     * @param _amount Amount to ask on this loan in ERC20
      */
     function createLoan(
-        Offer memory _offer
+        uint256 _shopId,
+        uint256 _nftCollateralId,
+        uint256 _duration,
+        uint256 _amount
     ) external override whenNotPaused nonReentrant {
-        LiquidityShop memory liquidityShop = liquidityShops[_offer.shopId];
+        LiquidityShop memory liquidityShop = liquidityShops[_shopId];
 
         require(liquidityShop.owner != address(0), "invalid shop id");
 
@@ -648,47 +654,44 @@ contract NFTYLending is
             liquidityShop.status == LiquidityShopStatus.Active,
             "shop must be active"
         );
-        require(_offer.loanDuration != 0, "loan duration = 0");
+        require(_duration != 0, "loan duration = 0");
 
         uint256 shopInterest = 0;
-        if (_offer.loanDuration == 30) {
+        if (_duration == 30) {
             shopInterest = liquidityShop.interestA;
-        } else if (_offer.loanDuration == 60) {
+        } else if (_duration == 60) {
             shopInterest = liquidityShop.interestB;
-        } else if (_offer.loanDuration == 90) {
+        } else if (_duration == 90) {
             shopInterest = liquidityShop.interestC;
         } else {
             revert("unallowed loan duration");
         }
 
-        require(
-            _offer.amount <= liquidityShop.balance,
-            "insufficient shop balance"
-        );
+        require(_amount <= liquidityShop.balance, "insufficient shop balance");
 
-        require(_offer.amount > 0, "amount = 0");
-        require(_offer.amount <= liquidityShop.maxOffer, "amount > max offer");
+        require(_amount > 0, "amount = 0");
+        require(_amount <= liquidityShop.maxOffer, "amount > max offer");
 
-        uint fees = (loanOriginationFee * _offer.amount) / 100;
+        uint fees = (loanOriginationFee * _amount) / 100;
 
-        liquidityShop.balance = liquidityShop.balance - _offer.amount;
+        liquidityShop.balance = liquidityShop.balance - _amount;
 
         Loan memory newLoan = Loan({
-            amount: _offer.amount,
+            amount: _amount,
             amountPaidBack: 0,
-            duration: _offer.loanDuration,
+            duration: _duration,
             startTime: block.timestamp,
-            nftCollateralId: _offer.nftCollateralId,
+            nftCollateralId: _nftCollateralId,
             fee: fees,
             status: LoanStatus.Active,
-            liquidityShopId: _offer.shopId
+            liquidityShopId: _shopId
         });
         loans[loanIdCounter.current()] = newLoan;
 
         emit OfferAccepted(
             liquidityShop.owner,
             msg.sender,
-            _offer.shopId,
+            _shopId,
             loanIdCounter.current()
         );
 
@@ -704,7 +707,7 @@ contract NFTYLending is
             IERC1155(liquidityShop.nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
-                _offer.nftCollateralId,
+                _nftCollateralId,
                 1,
                 ""
             );
@@ -712,13 +715,13 @@ contract NFTYLending is
             IERC721(liquidityShop.nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
-                _offer.nftCollateralId
+                _nftCollateralId
             );
 
         // transfer amount minus fees to borrower
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
             msg.sender,
-            _offer.amount - fees
+            _amount - fees
         );
     }
 
