@@ -1,6 +1,5 @@
 enum LiquidityShopStatus {
   ACTIVE
-  INACTIVE
   FROZEN
 }
 
@@ -53,7 +52,6 @@ type NftCollection @entity {
 enum LoanStatus {
   ACTIVE
   RESOLVED
-  INACTIVE
 }
 
 type Loan @entity {
