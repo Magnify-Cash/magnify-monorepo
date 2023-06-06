@@ -3,6 +3,7 @@
 pragma solidity ^0.8.18;
 
 import "./NFTYNotes.sol";
+import "./NFTYShopKey.sol";
 import "../interfaces/INFTYLending.sol";
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -68,6 +69,11 @@ contract NFTYLending is
      * @notice The address of the ERC721 to generate obligation receipts for borrowers
      */
     address public obligationReceipt;
+
+    /**
+     * @notice The address of the liquidity shop ownership ERC721
+     */
+    address public shopKey;
 
     /**
      * @notice The percentage of fees that the borrower will pay for each loan
@@ -272,7 +278,8 @@ contract NFTYLending is
      */
     function initialize(
         address _promissoryNote,
-        address _obligationReceipt
+        address _obligationReceipt,
+        address _shopKey
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
@@ -285,6 +292,9 @@ contract NFTYLending is
             "obligation receipt is zero addr"
         );
         obligationReceipt = _obligationReceipt;
+
+        require(_shopKey != address(0), "shop key is zero addr");
+        shopKey = _shopKey;
 
         // Set default protocol params
         setProtocolParams(1);
@@ -373,7 +383,6 @@ contract NFTYLending is
             erc20: _erc20,
             nftCollection: _nftCollection,
             nftCollectionIsErc1155: _nftCollectionIsErc1155,
-            owner: msg.sender,
             interestA: _interestA,
             interestB: _interestB,
             interestC: _interestC,
@@ -384,8 +393,11 @@ contract NFTYLending is
         });
         liquidityShops[liquidityShopId] = newLiquidityShop;
 
+        // mint shop ownership NFT
+        NFTYShopKey(shopKey).mint(msg.sender, liquidityShopId);
+
         emit LiquidityShopCreated(
-            newLiquidityShop.owner,
+            msg.sender,
             newLiquidityShop.erc20,
             newLiquidityShop.nftCollection,
             newLiquidityShop.nftCollectionIsErc1155,
@@ -425,8 +437,11 @@ contract NFTYLending is
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
-        require(liquidityShop.owner == msg.sender, "caller is not owner");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
 
         require(bytes(_name).length > 0, "empty shop name");
         require(_maxOffer > 0, "max offer = 0");
@@ -465,13 +480,16 @@ contract NFTYLending is
 
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
-        require(liquidityShop.owner == msg.sender, "caller is not owner");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
 
         liquidityShop.balance = liquidityShop.balance + (_amount);
 
         emit LiquidityAddedToShop(
-            liquidityShop.owner,
+            msg.sender,
             _id,
             liquidityShop.balance,
             _amount
@@ -497,21 +515,24 @@ contract NFTYLending is
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
-        require(msg.sender == liquidityShop.owner, "caller is not owner");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
         require(liquidityShop.balance > _amount, "insufficient shop balance");
 
         liquidityShop.balance = liquidityShop.balance - _amount;
 
         emit LiquidityShopCashedOut(
-            liquidityShop.owner,
+            msg.sender,
             _id,
             _amount,
             liquidityShop.balance
         );
 
         IERC20Upgradeable(liquidityShop.erc20).safeTransfer(
-            liquidityShop.owner,
+            msg.sender,
             _amount
         );
     }
@@ -525,8 +546,11 @@ contract NFTYLending is
     function freezeLiquidityShop(uint256 _id) external override whenNotPaused {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
-        require(msg.sender == liquidityShop.owner, "caller is not owner");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
         require(
             liquidityShop.status == LiquidityShopStatus.Active,
             "shop not active"
@@ -534,11 +558,7 @@ contract NFTYLending is
 
         liquidityShop.status = LiquidityShopStatus.Frozen;
 
-        emit LiquidityShopFrozen(
-            liquidityShop.owner,
-            _id,
-            liquidityShop.balance
-        );
+        emit LiquidityShopFrozen(msg.sender, _id, liquidityShop.balance);
     }
 
     /**
@@ -552,8 +572,11 @@ contract NFTYLending is
     ) external override whenNotPaused {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
-        require(msg.sender == liquidityShop.owner, "caller is not owner");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
         require(
             liquidityShop.status == LiquidityShopStatus.Frozen,
             "shop not frozen"
@@ -561,11 +584,7 @@ contract NFTYLending is
 
         liquidityShop.status = LiquidityShopStatus.Active;
 
-        emit LiquidityShopUnfrozen(
-            liquidityShop.owner,
-            _id,
-            liquidityShop.balance
-        );
+        emit LiquidityShopUnfrozen(msg.sender, _id, liquidityShop.balance);
     }
 
     /**
@@ -648,7 +667,7 @@ contract NFTYLending is
     ) external override whenNotPaused nonReentrant {
         LiquidityShop memory liquidityShop = liquidityShops[_shopId];
 
-        require(liquidityShop.owner != address(0), "invalid shop id");
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
 
         require(
             liquidityShop.status == LiquidityShopStatus.Active,
@@ -689,16 +708,13 @@ contract NFTYLending is
         loans[loanIdCounter.current()] = newLoan;
 
         emit OfferAccepted(
-            liquidityShop.owner,
+            msg.sender,
             msg.sender,
             _shopId,
             loanIdCounter.current()
         );
 
-        NFTYNotes(promissoryNote).mint(
-            liquidityShop.owner,
-            loanIdCounter.current()
-        );
+        NFTYNotes(promissoryNote).mint(msg.sender, loanIdCounter.current());
 
         NFTYNotes(obligationReceipt).mint(msg.sender, loanIdCounter.current());
 

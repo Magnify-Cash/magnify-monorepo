@@ -43,7 +43,6 @@ interface INFTYLending {
      *
      * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
      * @param nftCollection The address of the collection accepted as collateral
-     * @param owner The address of the owner of this liquidity shop
      * @param balance The balance of this shop
      * @param maxOffer The max offer allowed for this collection set by its owner in tokens in the same currency used in this liquidity shop
      * @param interestA interest set for the shop, used for loan duration A
@@ -57,7 +56,6 @@ interface INFTYLending {
         address erc20;
         address nftCollection;
         bool nftCollectionIsErc1155;
-        address owner;
         uint256 balance;
         uint256 maxOffer;
         uint256 interestA;
