@@ -22,8 +22,8 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
         string memory symbol,
         string memory customBaseURI
     ) ERC721(name, symbol) {
-        require(bytes(name).length > 0, "NFTYNotes: name cannot be empty");
-        require(bytes(symbol).length > 0, "NFTYNotes: symbol cannot be empty");
+        require(bytes(name).length > 0, "name cannot be empty");
+        require(bytes(symbol).length > 0, "symbol cannot be empty");
         require(
             bytes(customBaseURI).length > 0,
             "customBaseURI cannot be empty"
