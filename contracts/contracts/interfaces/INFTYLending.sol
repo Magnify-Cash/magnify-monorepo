@@ -33,67 +33,70 @@ interface INFTYLending {
         uint256 duration;
         uint256 startTime;
         uint256 nftCollateralId;
-        uint256 fee;
         uint256 liquidityShopId;
         LoanStatus status;
+        LoanConfig config;
     }
 
     /**
-     * @notice Struct used to store liquidity shops on this contract
+     * @notice Struct used to store loan config set by the shop owner for an NFT collection
      *
-     * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
      * @param nftCollection The address of the collection accepted as collateral
      * @param nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
-     * @param balance The balance of this shop
      * @param maxAmount The max loan amount allowed for this collection
-     * @param minAmount The max loan amount allowed for this collection
-     * @param maxInterest interest set for the shop, used for loan duration A
-     * @param minInterest interest set for the shop, used for loan duration B
-     * @param maxDuration interest set for the shop, used for loan duration C
-     * @param minDuration interest set for the shop, used for loan duration C
-     * @param status The status of this liquidity shop. When first created it becomes active,
-     * the owner can freeze it, in which case no more loans will be accepted
-     * @param name Liquidity shop name
+     * @param minAmount The min loan amount allowed for this collection
+     * @param maxInterest The max interest possible for this collection
+     * @param minInterest The min interest possible for this collection
+     * @param maxDuration The max duration allowed for this collection
+     * @param minDuration The min duration allowed for this collection
      */
-    struct LiquidityShop {
-        address erc20;
+    struct LoanConfig {
         address nftCollection;
         bool nftCollectionIsErc1155;
-        uint256 balance;
         uint256 minAmount;
         uint256 maxAmount;
         uint256 minInterest;
         uint256 maxInterest;
         uint256 minDuration;
         uint256 maxDuration;
-        LiquidityShopStatus status;
+    }
+
+    /**
+     * @notice Struct used to store liquidity shops on this contract
+     *
+     * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
+     * @param balance The balance of this shop
+     * @param status The status of this liquidity shop. When first created it becomes active,
+     * the owner can freeze it, in which case no more loans will be accepted
+     * @param name Liquidity shop name
+     */
+    struct LiquidityShop {
         string name;
+        address erc20;
+        uint256 balance;
+        LiquidityShopStatus status;
+        mapping(address => LoanConfig) loanConfigs;
     }
 
     function createLiquidityShop(
         string calldata _name,
         address _erc20,
-        address _nftCollection,
-        bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
-        uint256 _minAmount,
-        uint256 _maxAmount,
-        uint256 _minInterest,
-        uint256 _maxInterest,
-        uint256 _minDuration,
-        uint256 _maxDuration
+        LoanConfig[] calldata _loanConfigs
     ) external;
 
-    function updateLiquidityShop(
+    function updateLiquidityShopName(
         uint256 _id,
-        string calldata _name,
-        uint256 _minAmount,
-        uint256 _maxAmount,
-        uint256 _minInterest,
-        uint256 _maxInterest,
-        uint256 _minDuration,
-        uint256 _maxDuration
+        string calldata _name
     ) external;
+
+    function setLoanConfig(
+        uint256 _shopId,
+        address _nftCollection,
+        LoanConfig calldata _loanConfig
+    ) external;
+
+    function removeLoanConfig(uint256 _shopId, address _nftCollection) external;
 
     function addLiquidityToShop(uint256 _id, uint256 _amount) external;
 
@@ -105,7 +108,8 @@ interface INFTYLending {
 
     function createLoan(
         uint256 _shopId,
-        uint256 _nftCollateralId,
+        address _nftCollection,
+        uint256 _nftId,
         uint256 _duration,
         uint256 _amount
     ) external;

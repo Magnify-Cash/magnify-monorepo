@@ -93,53 +93,14 @@ contract NFTYLending is
      * @notice Event that will be emitted every time a liquidity shop is created
      * @param owner The address of the owner of the created liquidity shop
      * @param erc20 The ERC20 allowed as currency on the liquidity shop
-     * @param nftCollection The NFT Collection allowed as collateral for loans on the liquidity shop
-     * @param maxAmount The max loan amount allowed for this collection
-     * @param minAmount The max loan amount allowed for this collection
-     * @param maxInterest interest set for the shop, used for loan duration A
-     * @param minInterest interest set for the shop, used for loan duration B
-     * @param maxDuration interest set for the shop, used for loan duration C
-     * @param minDuration interest set for the shop, used for loan duration C
-     * @param amount The current balance of the liquidity shop
      * @param id A unique liquidity shop ID
      * @param name The name of the liquidity shop
      */
     event LiquidityShopCreated(
         address indexed owner,
         address indexed erc20,
-        address indexed nftCollection,
-        bool nftCollectionIsErc1155,
-        uint256 minAmount,
-        uint256 maxAmount,
-        uint256 minInterest,
-        uint256 maxInterest,
-        uint256 minDuration,
-        uint256 maxDuration,
-        uint256 amount,
         uint256 id,
         string name
-    );
-
-    /**
-     * @notice Event that will be emitted every time a liquidity shop is updated
-     * @param id The liquidity shop ID
-     * @param name The name of the liquidity shop
-     * @param maxAmount The max loan amount allowed for this collection
-     * @param minAmount The max loan amount allowed for this collection
-     * @param maxInterest interest set for the shop, used for loan duration A
-     * @param minInterest interest set for the shop, used for loan duration B
-     * @param maxDuration interest set for the shop, used for loan duration C
-     * @param minDuration interest set for the shop, used for loan duration C
-     */
-    event LiquidityShopUpdated(
-        uint256 id,
-        string name,
-        uint256 minAmount,
-        uint256 maxAmount,
-        uint256 minInterest,
-        uint256 maxInterest,
-        uint256 minDuration,
-        uint256 maxDuration
     );
 
     /**
@@ -339,41 +300,110 @@ contract NFTYLending is
      * @notice Creates a new liquidity shop
      * @param _name The name of this liquidity shop
      * @param _erc20 The ERC20 that will be accepted for loans in this liquidity shop
-     * @param _nftCollection The NFT contract address that will be accepted as collateral for loans in this liquidity shop
-     * @param _nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
      * @param _liquidityAmount The initial balance of this liquidity shop
-     * @param _maxAmount The max loan amount allowed for this collection
-     * @param _minAmount The max loan amount allowed for this collection
-     * @param _maxInterest interest set for the shop, used for loan duration A
-     * @param _minInterest interest set for the shop, used for loan duration B
-     * @param _maxDuration interest set for the shop, used for loan duration C
-     * @param _minDuration interest set for the shop, used for loan duration C
+     * @param _loanConfigs Loan config for each NFT collection this shop will support
      * @dev Emits an `LiquidityShopCreated` event.
      */
     function createLiquidityShop(
         string calldata _name,
         address _erc20,
-        address _nftCollection,
-        bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
-        uint256 _minAmount,
-        uint256 _maxAmount,
-        uint256 _minInterest,
-        uint256 _maxInterest,
-        uint256 _minDuration,
-        uint256 _maxDuration
+        LoanConfig[] calldata _loanConfigs
     ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
-        require(_minAmount > 0, "min amount = 0");
-        require(_maxAmount > 0, "max amount = 0");
-        require(_minInterest > 0, "min interest = 0");
-        require(_maxInterest > 0, "max interest = 0");
-        require(_minDuration > 0, "min duration = 0");
-        require(_maxDuration > 0, "max duration = 0");
         require(_erc20 != address(0), "invalid erc20");
-        require(_nftCollection != address(0), "invalid nft collection");
 
-        if (_nftCollectionIsErc1155)
+        liquidityShopIdCounter.increment();
+        uint256 liquidityShopId = liquidityShopIdCounter.current();
+
+        LiquidityShop storage newLiquidityShop = liquidityShops[
+            liquidityShopId
+        ];
+        newLiquidityShop.erc20 = _erc20;
+        newLiquidityShop.status = LiquidityShopStatus.Active;
+        newLiquidityShop.name = _name;
+
+        emit LiquidityShopCreated(
+            msg.sender,
+            newLiquidityShop.erc20,
+            liquidityShopId,
+            newLiquidityShop.name
+        );
+
+        // mint shop ownership NFT
+        NFTYShopKey(shopKey).mint(msg.sender, liquidityShopId);
+
+        // add loan configs
+        for (uint i = 0; i < _loanConfigs.length; i++) {
+            setLoanConfig(
+                liquidityShopId,
+                _loanConfigs[i].nftCollection,
+                _loanConfigs[i]
+            );
+        }
+
+        // add liquidity
+        addLiquidityToShop(liquidityShopId, _liquidityAmount);
+    }
+
+    /**
+     * @notice Event that will be emitted every time a liquidity shop is updated
+     * @param id The liquidity shop ID
+     * @param name The name of the liquidity shop
+     */
+    event LiquidityShopNameUpdated(uint256 id, string name);
+
+    /**
+     * @notice Updates a liquidity shop
+     * @param _id ID of the liquidity shop to be updated
+     * @param _name The new name of the liquidity shop
+     * @dev Emits an `LiquidityShopUpdated` event.
+     */
+    function updateLiquidityShopName(
+        uint256 _id,
+        string calldata _name
+    ) external override whenNotPaused nonReentrant {
+        LiquidityShop storage liquidityShop = liquidityShops[_id];
+
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
+            "not shop owner"
+        );
+
+        require(bytes(_name).length > 0, "empty shop name");
+        liquidityShop.name = _name;
+
+        emit LiquidityShopNameUpdated({id: _id, name: _name});
+    }
+
+    event LoanConfigSet(
+        uint256 shopId,
+        address nftCollection,
+        LoanConfig loanConfig
+    );
+
+    function setLoanConfig(
+        uint256 _shopId,
+        address _nftCollection,
+        LoanConfig calldata _loanConfig
+    ) public override whenNotPaused nonReentrant {
+        LiquidityShop storage liquidityShop = liquidityShops[_shopId];
+
+        require(liquidityShop.erc20 != address(0), "invalid shop id");
+        require(
+            NFTYShopKey(shopKey).ownerOf(_shopId) == msg.sender,
+            "not shop owner"
+        );
+
+        require(_loanConfig.minAmount > 0, "min amount = 0");
+        require(_loanConfig.maxAmount > 0, "max amount = 0");
+        require(_loanConfig.minInterest > 0, "min interest = 0");
+        require(_loanConfig.maxInterest > 0, "max interest = 0");
+        require(_loanConfig.minDuration > 0, "min duration = 0");
+        require(_loanConfig.maxDuration > 0, "max duration = 0");
+
+        if (_loanConfig.nftCollectionIsErc1155)
             require(
                 ERC165Checker.supportsInterface(
                     _nftCollection,
@@ -390,107 +420,36 @@ contract NFTYLending is
                 "invalid nft collection"
             );
 
-        liquidityShopIdCounter.increment();
-        uint256 liquidityShopId = liquidityShopIdCounter.current();
+        liquidityShop.loanConfigs[_nftCollection] = _loanConfig;
 
-        LiquidityShop memory newLiquidityShop = LiquidityShop({
-            erc20: _erc20,
+        emit LoanConfigSet({
+            shopId: _shopId,
             nftCollection: _nftCollection,
-            nftCollectionIsErc1155: _nftCollectionIsErc1155,
-            minAmount: _minAmount,
-            maxAmount: _maxAmount,
-            minInterest: _minInterest,
-            maxInterest: _maxInterest,
-            minDuration: _minDuration,
-            maxDuration: _maxDuration,
-            balance: _liquidityAmount,
-            status: LiquidityShopStatus.Active,
-            name: _name
+            loanConfig: _loanConfig
         });
-        liquidityShops[liquidityShopId] = newLiquidityShop;
-
-        // mint shop ownership NFT
-        NFTYShopKey(shopKey).mint(msg.sender, liquidityShopId);
-
-        emit LiquidityShopCreated(
-            msg.sender,
-            newLiquidityShop.erc20,
-            newLiquidityShop.nftCollection,
-            newLiquidityShop.nftCollectionIsErc1155,
-            newLiquidityShop.minAmount,
-            newLiquidityShop.maxAmount,
-            newLiquidityShop.minInterest,
-            newLiquidityShop.maxInterest,
-            newLiquidityShop.minDuration,
-            newLiquidityShop.maxDuration,
-            newLiquidityShop.balance,
-            liquidityShopId,
-            newLiquidityShop.name
-        );
-
-        IERC20Upgradeable(_erc20).safeTransferFrom(
-            msg.sender,
-            address(this),
-            _liquidityAmount
-        );
     }
 
-    /**
-     * @notice Updates a liquidity shop
-     * @param _id ID of the liquidity shop to be updated
-     * @param _name The new name of the liquidity shop
-     * @param _maxAmount The max loan amount allowed for this collection
-     * @param _minAmount The max loan amount allowed for this collection
-     * @param _maxInterest interest set for the shop, used for loan duration A
-     * @param _minInterest interest set for the shop, used for loan duration B
-     * @param _maxDuration interest set for the shop, used for loan duration C
-     * @param _minDuration interest set for the shop, used for loan duration C
-     * @dev Emits an `LiquidityShopUpdated` event.
-     */
-    function updateLiquidityShop(
-        uint256 _id,
-        string calldata _name,
-        uint256 _minAmount,
-        uint256 _maxAmount,
-        uint256 _minInterest,
-        uint256 _maxInterest,
-        uint256 _minDuration,
-        uint256 _maxDuration
+    event LoanConfigRemoved(uint256 shopId, address nftCollection);
+
+    function removeLoanConfig(
+        uint256 _shopId,
+        address _nftCollection
     ) external override whenNotPaused nonReentrant {
-        LiquidityShop storage liquidityShop = liquidityShops[_id];
+        LiquidityShop storage liquidityShop = liquidityShops[_shopId];
 
         require(liquidityShop.erc20 != address(0), "invalid shop id");
         require(
-            NFTYShopKey(shopKey).ownerOf(_id) == msg.sender,
-            "not shop owner"
+            liquidityShop.loanConfigs[_nftCollection].nftCollection !=
+                address(0),
+            "shop does not support NFT collection"
         );
 
-        require(bytes(_name).length > 0, "empty shop name");
-        require(_minAmount > 0, "min amount = 0");
-        require(_maxAmount > 0, "max amount = 0");
-        require(_minInterest > 0, "min interest = 0");
-        require(_maxInterest > 0, "max interest = 0");
-        require(_minDuration > 0, "min duration = 0");
-        require(_maxDuration > 0, "max duration = 0");
+        delete liquidityShop.loanConfigs[_nftCollection];
 
-        liquidityShop.name = _name;
-        liquidityShop.minAmount = _minAmount;
-        liquidityShop.maxAmount = _maxAmount;
-        liquidityShop.minInterest = _minInterest;
-        liquidityShop.maxInterest = _maxInterest;
-        liquidityShop.minDuration = _minDuration;
-        liquidityShop.maxDuration = _maxDuration;
-
-        emit LiquidityShopUpdated(
-            _id,
-            _name,
-            _minAmount,
-            _maxAmount,
-            _minInterest,
-            _maxInterest,
-            _minDuration,
-            _maxDuration
-        );
+        emit LoanConfigRemoved({
+            shopId: _shopId,
+            nftCollection: _nftCollection
+        });
     }
 
     /**
@@ -503,7 +462,7 @@ contract NFTYLending is
     function addLiquidityToShop(
         uint256 _id,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) public override whenNotPaused nonReentrant {
         require(_amount > 0, "amount = 0");
 
         LiquidityShop storage liquidityShop = liquidityShops[_id];
@@ -654,12 +613,8 @@ contract NFTYLending is
             loan.nftCollateralId
         );
 
-        LiquidityShop storage liquidityShop = liquidityShops[
-            loan.liquidityShopId
-        ];
-
-        if (liquidityShop.nftCollectionIsErc1155)
-            IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+        if (loan.config.nftCollectionIsErc1155)
+            IERC1155(loan.config.nftCollection).safeTransferFrom(
                 address(this),
                 msg.sender,
                 loan.nftCollateralId,
@@ -667,7 +622,7 @@ contract NFTYLending is
                 ""
             );
         else
-            IERC721(liquidityShop.nftCollection).safeTransferFrom(
+            IERC721(loan.config.nftCollection).safeTransferFrom(
                 address(this),
                 msg.sender,
                 loan.nftCollateralId
@@ -683,36 +638,47 @@ contract NFTYLending is
      * @notice This function can be called by a borrower to create a loan
      *
      * @param _shopId ID of the shop related to this offer
-     * @param _nftCollateralId ID of the NFT to be used as collateral
+     * @param _nftCollection The NFT collection address to be used as collateral
+     * @param _nftId ID of the NFT to be used as collateral
      * @param _duration Loan duration in days
      * @param _amount Amount to ask on this loan in ERC20
      */
     function createLoan(
         uint256 _shopId,
-        uint256 _nftCollateralId,
+        address _nftCollection,
+        uint256 _nftId,
         uint256 _duration,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
-        LiquidityShop memory liquidityShop = liquidityShops[_shopId];
+        LiquidityShop storage liquidityShop = liquidityShops[_shopId];
 
         require(liquidityShop.erc20 != address(0), "invalid shop id");
-
         require(
             liquidityShop.status == LiquidityShopStatus.Active,
             "shop must be active"
         );
-        require(_duration != 0, "loan duration = 0");
+        require(
+            liquidityShop.loanConfigs[_nftCollection].nftCollection !=
+                address(0),
+            "shop does not support NFT collection"
+        );
 
         require(_amount <= liquidityShop.balance, "insufficient shop balance");
 
-        require(_amount >= liquidityShop.minAmount, "amount < min amount");
-        require(_amount <= liquidityShop.maxAmount, "amount > max offer");
         require(
-            _duration >= liquidityShop.minDuration,
+            _amount >= liquidityShop.loanConfigs[_nftCollection].minAmount,
+            "amount < min amount"
+        );
+        require(
+            _amount <= liquidityShop.loanConfigs[_nftCollection].maxAmount,
+            "amount > max offer"
+        );
+        require(
+            _duration >= liquidityShop.loanConfigs[_nftCollection].minDuration,
             "duration < min duration"
         );
         require(
-            _duration <= liquidityShop.maxDuration,
+            _duration <= liquidityShop.loanConfigs[_nftCollection].maxDuration,
             "duration > max duration"
         );
 
@@ -725,10 +691,10 @@ contract NFTYLending is
             amountPaidBack: 0,
             duration: _duration,
             startTime: block.timestamp,
-            nftCollateralId: _nftCollateralId,
-            fee: fees,
+            nftCollateralId: _nftId,
             status: LoanStatus.Active,
-            liquidityShopId: _shopId
+            liquidityShopId: _shopId,
+            config: liquidityShop.loanConfigs[_nftCollection]
         });
         loans[loanIdCounter.current()] = newLoan;
 
@@ -744,19 +710,19 @@ contract NFTYLending is
         NFTYNotes(obligationReceipt).mint(msg.sender, loanIdCounter.current());
 
         // transfer Nft to escrow
-        if (liquidityShop.nftCollectionIsErc1155)
-            IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+        if (liquidityShop.loanConfigs[_nftCollection].nftCollectionIsErc1155)
+            IERC1155(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
-                _nftCollateralId,
+                _nftId,
                 1,
                 ""
             );
         else
-            IERC721(liquidityShop.nftCollection).safeTransferFrom(
+            IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
-                _nftCollateralId
+                _nftId
             );
 
         // transfer amount minus fees to borrower
@@ -808,17 +774,17 @@ contract NFTYLending is
             "loan has expired"
         );
 
-        LiquidityShop memory liquidityShop = liquidityShops[
+        LiquidityShop storage liquidityShop = liquidityShops[
             loan.liquidityShopId
         ];
 
         // calculate accumulated interest
-        uint256 interest = liquidityShop.minInterest +
-            (((loan.amount - liquidityShop.minAmount) /
-                (liquidityShop.maxAmount - liquidityShop.minAmount)) *
-                ((loan.duration - liquidityShop.minDuration) /
-                    (liquidityShop.maxDuration - liquidityShop.minDuration))) *
-            (liquidityShop.maxInterest - liquidityShop.minInterest);
+        uint256 interest = loan.config.minInterest +
+            (((loan.amount - loan.config.minAmount) /
+                (loan.config.maxAmount - loan.config.minAmount)) *
+                ((loan.duration - loan.config.minDuration) /
+                    (loan.config.maxDuration - loan.config.minDuration))) *
+            (loan.config.maxInterest - loan.config.minInterest);
 
         loan.amountPaidBack = loan.amountPaidBack + _amount;
         uint256 totalAmount = loan.amount + interest;
@@ -845,8 +811,8 @@ contract NFTYLending is
             );
 
             // send NFT collateral to obligation receipt holder
-            if (liquidityShop.nftCollectionIsErc1155)
-                IERC1155(liquidityShop.nftCollection).safeTransferFrom(
+            if (loan.config.nftCollectionIsErc1155)
+                IERC1155(loan.config.nftCollection).safeTransferFrom(
                     address(this),
                     obligationReceiptHolder,
                     loan.nftCollateralId,
@@ -854,7 +820,7 @@ contract NFTYLending is
                     ""
                 );
             else
-                IERC721(liquidityShop.nftCollection).safeTransferFrom(
+                IERC721(loan.config.nftCollection).safeTransferFrom(
                     address(this),
                     obligationReceiptHolder,
                     loan.nftCollateralId
