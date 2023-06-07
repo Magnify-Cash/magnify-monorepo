@@ -94,10 +94,12 @@ contract NFTYLending is
      * @param owner The address of the owner of the created liquidity shop
      * @param erc20 The ERC20 allowed as currency on the liquidity shop
      * @param nftCollection The NFT Collection allowed as collateral for loans on the liquidity shop
-     * @param maxOffer The max offer set for the NFT collection, valued in the ERC20 tokens set for the liquidity shop
-     * @param interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
-     * @param interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
-     * @param interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
+     * @param maxAmount The max loan amount allowed for this collection
+     * @param minAmount The max loan amount allowed for this collection
+     * @param maxInterest interest set for the shop, used for loan duration A
+     * @param minInterest interest set for the shop, used for loan duration B
+     * @param maxDuration interest set for the shop, used for loan duration C
+     * @param minDuration interest set for the shop, used for loan duration C
      * @param amount The current balance of the liquidity shop
      * @param id A unique liquidity shop ID
      * @param name The name of the liquidity shop
@@ -107,10 +109,12 @@ contract NFTYLending is
         address indexed erc20,
         address indexed nftCollection,
         bool nftCollectionIsErc1155,
-        uint256 interestA,
-        uint256 interestB,
-        uint256 interestC,
-        uint256 maxOffer,
+        uint256 minAmount,
+        uint256 maxAmount,
+        uint256 minInterest,
+        uint256 maxInterest,
+        uint256 minDuration,
+        uint256 maxDuration,
         uint256 amount,
         uint256 id,
         string name
@@ -120,18 +124,22 @@ contract NFTYLending is
      * @notice Event that will be emitted every time a liquidity shop is updated
      * @param id The liquidity shop ID
      * @param name The name of the liquidity shop
-     * @param interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
-     * @param interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
-     * @param interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
-     * @param maxOffer The max offer set for the NFT collection, valued in the ERC20 tokens set for the liquidity shop
+     * @param maxAmount The max loan amount allowed for this collection
+     * @param minAmount The max loan amount allowed for this collection
+     * @param maxInterest interest set for the shop, used for loan duration A
+     * @param minInterest interest set for the shop, used for loan duration B
+     * @param maxDuration interest set for the shop, used for loan duration C
+     * @param minDuration interest set for the shop, used for loan duration C
      */
     event LiquidityShopUpdated(
         uint256 id,
         string name,
-        uint256 interestA,
-        uint256 interestB,
-        uint256 interestC,
-        uint256 maxOffer
+        uint256 minAmount,
+        uint256 maxAmount,
+        uint256 minInterest,
+        uint256 maxInterest,
+        uint256 minDuration,
+        uint256 maxDuration
     );
 
     /**
@@ -334,10 +342,12 @@ contract NFTYLending is
      * @param _nftCollection The NFT contract address that will be accepted as collateral for loans in this liquidity shop
      * @param _nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
      * @param _liquidityAmount The initial balance of this liquidity shop
-     * @param _interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
-     * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
-     * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
-     * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
+     * @param _maxAmount The max loan amount allowed for this collection
+     * @param _minAmount The max loan amount allowed for this collection
+     * @param _maxInterest interest set for the shop, used for loan duration A
+     * @param _minInterest interest set for the shop, used for loan duration B
+     * @param _maxDuration interest set for the shop, used for loan duration C
+     * @param _minDuration interest set for the shop, used for loan duration C
      * @dev Emits an `LiquidityShopCreated` event.
      */
     function createLiquidityShop(
@@ -346,16 +356,20 @@ contract NFTYLending is
         address _nftCollection,
         bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
-        uint256 _interestA,
-        uint256 _interestB,
-        uint256 _interestC,
-        uint256 _maxOffer
+        uint256 _minAmount,
+        uint256 _maxAmount,
+        uint256 _minInterest,
+        uint256 _maxInterest,
+        uint256 _minDuration,
+        uint256 _maxDuration
     ) external whenNotPaused nonReentrant {
         require(bytes(_name).length > 0, "empty shop name");
-        require(_maxOffer > 0, "max offer = 0");
-        require(_interestA > 0, "interestA = 0");
-        require(_interestB > 0, "interestB = 0");
-        require(_interestC > 0, "interestC = 0");
+        require(_minAmount > 0, "min amount = 0");
+        require(_maxAmount > 0, "max amount = 0");
+        require(_minInterest > 0, "min interest = 0");
+        require(_maxInterest > 0, "max interest = 0");
+        require(_minDuration > 0, "min duration = 0");
+        require(_maxDuration > 0, "max duration = 0");
         require(_erc20 != address(0), "invalid erc20");
         require(_nftCollection != address(0), "invalid nft collection");
 
@@ -383,10 +397,12 @@ contract NFTYLending is
             erc20: _erc20,
             nftCollection: _nftCollection,
             nftCollectionIsErc1155: _nftCollectionIsErc1155,
-            interestA: _interestA,
-            interestB: _interestB,
-            interestC: _interestC,
-            maxOffer: _maxOffer,
+            minAmount: _minAmount,
+            maxAmount: _maxAmount,
+            minInterest: _minInterest,
+            maxInterest: _maxInterest,
+            minDuration: _minDuration,
+            maxDuration: _maxDuration,
             balance: _liquidityAmount,
             status: LiquidityShopStatus.Active,
             name: _name
@@ -401,10 +417,12 @@ contract NFTYLending is
             newLiquidityShop.erc20,
             newLiquidityShop.nftCollection,
             newLiquidityShop.nftCollectionIsErc1155,
-            newLiquidityShop.interestA,
-            newLiquidityShop.interestB,
-            newLiquidityShop.interestC,
-            newLiquidityShop.maxOffer,
+            newLiquidityShop.minAmount,
+            newLiquidityShop.maxAmount,
+            newLiquidityShop.minInterest,
+            newLiquidityShop.maxInterest,
+            newLiquidityShop.minDuration,
+            newLiquidityShop.maxDuration,
             newLiquidityShop.balance,
             liquidityShopId,
             newLiquidityShop.name
@@ -421,19 +439,23 @@ contract NFTYLending is
      * @notice Updates a liquidity shop
      * @param _id ID of the liquidity shop to be updated
      * @param _name The new name of the liquidity shop
-     * @param _interestA The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration A; e.g. `15` means 15%, and so on
-     * @param _interestB The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration B
-     * @param _interestC The interest percentage that borrowers will pay when asking for loans for this liquidity shop that match loan duration C
-     * @param _maxOffer The max offer for this collection set by its owner in tokens in the same currency used in this liquidity shop
+     * @param _maxAmount The max loan amount allowed for this collection
+     * @param _minAmount The max loan amount allowed for this collection
+     * @param _maxInterest interest set for the shop, used for loan duration A
+     * @param _minInterest interest set for the shop, used for loan duration B
+     * @param _maxDuration interest set for the shop, used for loan duration C
+     * @param _minDuration interest set for the shop, used for loan duration C
      * @dev Emits an `LiquidityShopUpdated` event.
      */
     function updateLiquidityShop(
         uint256 _id,
         string calldata _name,
-        uint256 _interestA,
-        uint256 _interestB,
-        uint256 _interestC,
-        uint256 _maxOffer
+        uint256 _minAmount,
+        uint256 _maxAmount,
+        uint256 _minInterest,
+        uint256 _maxInterest,
+        uint256 _minDuration,
+        uint256 _maxDuration
     ) external override whenNotPaused nonReentrant {
         LiquidityShop storage liquidityShop = liquidityShops[_id];
 
@@ -444,24 +466,30 @@ contract NFTYLending is
         );
 
         require(bytes(_name).length > 0, "empty shop name");
-        require(_maxOffer > 0, "max offer = 0");
-        require(_interestA > 0, "interestA = 0");
-        require(_interestB > 0, "interestB = 0");
-        require(_interestC > 0, "interestC = 0");
+        require(_minAmount > 0, "min amount = 0");
+        require(_maxAmount > 0, "max amount = 0");
+        require(_minInterest > 0, "min interest = 0");
+        require(_maxInterest > 0, "max interest = 0");
+        require(_minDuration > 0, "min duration = 0");
+        require(_maxDuration > 0, "max duration = 0");
 
-        liquidityShop.maxOffer = _maxOffer;
         liquidityShop.name = _name;
-        liquidityShop.interestA = _interestA;
-        liquidityShop.interestB = _interestB;
-        liquidityShop.interestC = _interestC;
+        liquidityShop.minAmount = _minAmount;
+        liquidityShop.maxAmount = _maxAmount;
+        liquidityShop.minInterest = _minInterest;
+        liquidityShop.maxInterest = _maxInterest;
+        liquidityShop.minDuration = _minDuration;
+        liquidityShop.maxDuration = _maxDuration;
 
         emit LiquidityShopUpdated(
             _id,
             _name,
-            _interestA,
-            _interestB,
-            _interestC,
-            _maxOffer
+            _minAmount,
+            _maxAmount,
+            _minInterest,
+            _maxInterest,
+            _minDuration,
+            _maxDuration
         );
     }
 
@@ -675,21 +703,18 @@ contract NFTYLending is
         );
         require(_duration != 0, "loan duration = 0");
 
-        uint256 shopInterest = 0;
-        if (_duration == 30) {
-            shopInterest = liquidityShop.interestA;
-        } else if (_duration == 60) {
-            shopInterest = liquidityShop.interestB;
-        } else if (_duration == 90) {
-            shopInterest = liquidityShop.interestC;
-        } else {
-            revert("unallowed loan duration");
-        }
-
         require(_amount <= liquidityShop.balance, "insufficient shop balance");
 
-        require(_amount > 0, "amount = 0");
-        require(_amount <= liquidityShop.maxOffer, "amount > max offer");
+        require(_amount >= liquidityShop.minAmount, "amount < min amount");
+        require(_amount <= liquidityShop.maxAmount, "amount > max offer");
+        require(
+            _duration >= liquidityShop.minDuration,
+            "duration < min duration"
+        );
+        require(
+            _duration <= liquidityShop.maxDuration,
+            "duration > max duration"
+        );
 
         uint fees = (loanOriginationFee * _amount) / 100;
 
@@ -788,14 +813,12 @@ contract NFTYLending is
         ];
 
         // calculate accumulated interest
-        uint256 interest = 0;
-        if (loan.duration == 30) {
-            interest = (loan.amount * liquidityShop.interestA) / 100;
-        } else if (loan.duration == 60) {
-            interest = (loan.amount * liquidityShop.interestB) / 100;
-        } else if (loan.duration == 90) {
-            interest = (loan.amount * liquidityShop.interestC) / 100;
-        }
+        uint256 interest = liquidityShop.minInterest +
+            (((loan.amount - liquidityShop.minAmount) /
+                (liquidityShop.maxAmount - liquidityShop.minAmount)) *
+                ((loan.duration - liquidityShop.minDuration) /
+                    (liquidityShop.maxDuration - liquidityShop.minDuration))) *
+            (liquidityShop.maxInterest - liquidityShop.minInterest);
 
         loan.amountPaidBack = loan.amountPaidBack + _amount;
         uint256 totalAmount = loan.amount + interest;

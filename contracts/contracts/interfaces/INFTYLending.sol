@@ -43,11 +43,14 @@ interface INFTYLending {
      *
      * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
      * @param nftCollection The address of the collection accepted as collateral
+     * @param nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
      * @param balance The balance of this shop
-     * @param maxOffer The max offer allowed for this collection set by its owner in tokens in the same currency used in this liquidity shop
-     * @param interestA interest set for the shop, used for loan duration A
-     * @param interestB interest set for the shop, used for loan duration B
-     * @param interestC interest set for the shop, used for loan duration C
+     * @param maxAmount The max loan amount allowed for this collection
+     * @param minAmount The max loan amount allowed for this collection
+     * @param maxInterest interest set for the shop, used for loan duration A
+     * @param minInterest interest set for the shop, used for loan duration B
+     * @param maxDuration interest set for the shop, used for loan duration C
+     * @param minDuration interest set for the shop, used for loan duration C
      * @param status The status of this liquidity shop. When first created it becomes active,
      * the owner can freeze it, in which case no more loans will be accepted
      * @param name Liquidity shop name
@@ -57,10 +60,12 @@ interface INFTYLending {
         address nftCollection;
         bool nftCollectionIsErc1155;
         uint256 balance;
-        uint256 maxOffer;
-        uint256 interestA;
-        uint256 interestB;
-        uint256 interestC;
+        uint256 minAmount;
+        uint256 maxAmount;
+        uint256 minInterest;
+        uint256 maxInterest;
+        uint256 minDuration;
+        uint256 maxDuration;
         LiquidityShopStatus status;
         string name;
     }
@@ -71,19 +76,23 @@ interface INFTYLending {
         address _nftCollection,
         bool _nftCollectionIsErc1155,
         uint256 _liquidityAmount,
-        uint256 _interestA,
-        uint256 _interestB,
-        uint256 _interestC,
-        uint256 _maxOffer
+        uint256 _minAmount,
+        uint256 _maxAmount,
+        uint256 _minInterest,
+        uint256 _maxInterest,
+        uint256 _minDuration,
+        uint256 _maxDuration
     ) external;
 
     function updateLiquidityShop(
         uint256 _id,
         string calldata _name,
-        uint256 _interestA,
-        uint256 _interestB,
-        uint256 _interestC,
-        uint256 _maxOffer
+        uint256 _minAmount,
+        uint256 _maxAmount,
+        uint256 _minInterest,
+        uint256 _maxInterest,
+        uint256 _minDuration,
+        uint256 _maxDuration
     ) external;
 
     function addLiquidityToShop(uint256 _id, uint256 _amount) external;
