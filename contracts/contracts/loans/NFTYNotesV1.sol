@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
+contract NFTYNotesV1 is ERC721, AccessControl, ReentrancyGuard {
     using Address for address;
     using Strings for uint256;
 
@@ -22,11 +22,11 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
         string memory symbol,
         string memory customBaseURI
     ) ERC721(name, symbol) {
-        require(bytes(name).length > 0, "name cannot be empty");
-        require(bytes(symbol).length > 0, "symbol cannot be empty");
+        require(bytes(name).length > 0, "NFTYNotes: name cannot be empty");
+        require(bytes(symbol).length > 0, "NFTYNotes: symbol cannot be empty");
         require(
             bytes(customBaseURI).length > 0,
-            "customBaseURI cannot be empty"
+            "NFTYNotes: customBaseURI cannot be empty"
         );
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -35,14 +35,17 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
     }
 
     modifier onlyNftyLending() {
-        require(hasRole(NFTY_LENDING, msg.sender), "caller is not NFTYLending");
+        require(
+            hasRole(NFTY_LENDING, msg.sender),
+            "NFTYNotes: caller is not NFTYLending"
+        );
         _;
     }
 
     modifier onlyBaseUriRole() {
         require(
             hasRole(BASE_URI_ROLE, msg.sender),
-            "caller is not a base URI role"
+            "NFTYNotes: caller is not a base URI role"
         );
 
         _;
@@ -57,20 +60,20 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
 
     function mint(
         address to,
-        uint256 shopId
+        uint256 loanId
     ) external nonReentrant onlyNftyLending {
-        require(to != address(0), "to address cannot be zero");
-        require(!_exists(shopId), "shop already exists");
+        require(to != address(0), "NFTYNotes: to address cannot be zero");
+        require(!_exists(loanId), "NFTYNotes: loan already exists");
 
-        _safeMint(to, shopId);
-        emit Minted(to, shopId);
+        _safeMint(to, loanId);
+        emit Minted(to, loanId);
     }
 
-    function burn(uint256 shopId) external nonReentrant onlyNftyLending {
-        require(_exists(shopId), "shopId does not exist");
+    function burn(uint256 loanId) external nonReentrant onlyNftyLending {
+        require(_exists(loanId), "NFTYNotes: loan does not exist");
 
-        _burn(shopId);
-        emit Burned(shopId);
+        _burn(loanId);
+        emit Burned(loanId);
     }
 
     function setBaseURI(
@@ -78,7 +81,7 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
     ) external nonReentrant onlyBaseUriRole {
         require(
             bytes(customBaseURI).length > 0,
-            "customBaseURI cannot be empty"
+            "NFTYNotes: customBaseURI cannot be empty"
         );
 
         _setBaseURI(customBaseURI);
@@ -92,7 +95,7 @@ contract NFTYShopKey is ERC721, AccessControl, ReentrancyGuard {
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "URI query for nonexistent token");
+        require(_exists(tokenId), "NFTYNotes: URI query for nonexistent token");
 
         if (bytes(baseURI).length > 0) {
             return string(abi.encodePacked(baseURI, tokenId.toString()));

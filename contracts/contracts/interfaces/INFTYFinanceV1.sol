@@ -2,21 +2,22 @@
 
 pragma solidity ^0.8.18;
 
-interface INFTYLending {
-    // When first created a liquidity shop is ACTIVE, its owner can then set it as FROZEN
-    enum LiquidityShopStatus {
+interface INFTYFinanceV1 {
+    // When first created a lending desk is Active, its owner can then set it as Frozen
+    enum LendingDeskStatus {
         Active,
-        Frozen
+        Frozen,
+        Dissolved
     }
 
-    // When first created a Loan is ACTIVE by default, once the loan is resolved it becomes RESOLVED
+    // When first created a Loan is Active by default, once the loan is resolved it becomes Resolved
     enum LoanStatus {
         Active,
         Resolved
     }
 
     /**
-     * @notice Struct used to store loans on this contract.
+     * @notice Struct used to store loans
      *
      * @param amount The amount borrowed
      * @param amountPaidBack The amount borrower has paid back
@@ -32,8 +33,8 @@ interface INFTYLending {
         uint256 amountPaidBack;
         uint256 duration;
         uint256 startTime;
-        uint256 nftCollateralId;
-        uint256 liquidityShopId;
+        uint256 nftId;
+        uint256 lendingDeskId;
         LoanStatus status;
         LoanConfig config;
     }
@@ -62,7 +63,7 @@ interface INFTYLending {
     }
 
     /**
-     * @notice Struct used to store liquidity shops on this contract
+     * @notice Struct used to store lending desks on this contract
      *
      * @param erc20 The ERC20 address allowed for loans belonging to this liquidity shop
      * @param balance The balance of this shop
@@ -70,51 +71,56 @@ interface INFTYLending {
      * the owner can freeze it, in which case no more loans will be accepted
      * @param name Liquidity shop name
      */
-    struct LiquidityShop {
-        string name;
+    struct LendingDesk {
         address erc20;
         uint256 balance;
-        LiquidityShopStatus status;
+        LendingDeskStatus status;
         mapping(address => LoanConfig) loanConfigs;
     }
 
-    function createLiquidityShop(
-        string calldata _name,
+    function initializeNewLendingDesk(
         address _erc20,
-        uint256 _liquidityAmount,
+        uint256 _depositAmount,
         LoanConfig[] calldata _loanConfigs
     ) external;
 
-    function updateLiquidityShopName(
-        uint256 _id,
-        string calldata _name
-    ) external;
-
-    function setLoanConfig(
-        uint256 _shopId,
+    function setLendingDeskLoanConfig(
+        uint256 _lendingDeskId,
         address _nftCollection,
         LoanConfig calldata _loanConfig
     ) external;
 
-    function removeLoanConfig(uint256 _shopId, address _nftCollection) external;
+    function removeLendingDeskLoanConfig(
+        uint256 _lendingDeskId,
+        address _nftCollection
+    ) external;
 
-    function addLiquidityToShop(uint256 _id, uint256 _amount) external;
+    function depositLendingDeskLiquidity(
+        uint256 _lendingDeskId,
+        uint256 _amount
+    ) external;
 
-    function cashOutLiquidityShop(uint256 _id, uint256 _amount) external;
+    function withdrawLendingDeskLiquidity(
+        uint256 _lendingDeskId,
+        uint256 _amount
+    ) external;
 
-    function freezeLiquidityShop(uint256 _id) external;
+    function setLendingDeskState(
+        uint256 _lendingDeskId,
+        bool _freezed
+    ) external;
 
-    function unfreezeLiquidityShop(uint256 _id) external;
+    function dissolveLendingDesk(uint256 _lendingDeskId) external;
 
-    function createLoan(
-        uint256 _shopId,
+    function initializeNewLoan(
+        uint256 _lendingDeskId,
         address _nftCollection,
         uint256 _nftId,
         uint256 _duration,
         uint256 _amount
     ) external;
 
-    function liquidateOverdueLoan(uint256 _loanId) external;
+    function liquidateDefaultedLoan(uint256 _loanId) external;
 
-    function payBackLoan(uint256 _loanId, uint256 _amount) external;
+    function makeLoanPayment(uint256 _loanId, uint256 _amount) external;
 }
