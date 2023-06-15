@@ -3,7 +3,7 @@
 pragma solidity ^0.8.18;
 
 import "../interfaces/INFTYFinanceV1.sol";
-import "../interfaces/IERC721MintableBurnable.sol";
+import "../interfaces/INFTYERC721.sol";
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -58,12 +58,12 @@ contract NFTYFinanceV1 is
     /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
-    address public promissoryNote;
+    address public promissoryNotes;
 
     /**
      * @notice The address of the ERC721 to generate obligation notes for borrowers
      */
-    address public obligationNote;
+    address public obligationNotes;
 
     /**
      * @notice The address of the lending desk ownership ERC721
@@ -91,26 +91,28 @@ contract NFTYFinanceV1 is
     /**
      * @notice Sets the admin of the contract.
      *
-     * @param _promissoryNote Promissory note ERC721 address
-     * @param _obligationNote Obligation receipt ERC721 address
+     * @param _promissoryNotes Promissory note ERC721 address
+     * @param _obligationNotes Obligation receipt ERC721 address
+     * @param _lendingKeys Lending desk ownership ERC721 address
+     * @param _loanOriginationFee The loan origination fee for every loan issued
      */
     function initialize(
-        address _promissoryNote,
-        address _obligationNote,
+        address _promissoryNotes,
+        address _obligationNotes,
         address _lendingKeys,
         uint256 _loanOriginationFee
     ) public initializer {
         __Ownable_init();
         __Pausable_init();
 
-        require(_promissoryNote != address(0), "promissory note is zero addr");
-        promissoryNote = _promissoryNote;
+        require(_promissoryNotes != address(0), "promissory note is zero addr");
+        promissoryNotes = _promissoryNotes;
 
         require(
-            _obligationNote != address(0),
+            _obligationNotes != address(0),
             "obligation receipt is zero addr"
         );
-        obligationNote = _obligationNote;
+        obligationNotes = _obligationNotes;
 
         require(_lendingKeys != address(0), "shop key is zero addr");
         lendingKeys = _lendingKeys;
@@ -157,9 +159,9 @@ contract NFTYFinanceV1 is
 
     /**
      * @notice Event that will be emitted every time a lending desk is created
-     * @param owner The address of the owner of the created liquidity shop
-     * @param erc20 The ERC20 allowed as currency on the liquidity shop
-     * @param id A unique liquidity shop ID
+     * @param owner The address of the owner of the created lending desk
+     * @param erc20 The ERC20 allowed as currency on the lending desk
+     * @param id A unique lending desk ID
      */
     event NewLendingDeskInitialized(
         address indexed owner,
@@ -168,9 +170,9 @@ contract NFTYFinanceV1 is
     );
 
     /**
-     * @notice Creates a new liquidity shop
-     * @param _erc20 The ERC20 that will be accepted for loans in this liquidity shop
-     * @param _depositAmount The initial balance of this liquidity shop
+     * @notice Creates a new lending desk
+     * @param _erc20 The ERC20 that will be accepted for loans in this lending desk
+     * @param _depositAmount The initial balance of this lending desk
      * @param _loanConfigs Loan config for each NFT collection this shop will support
      * @dev Emits an `NewLendingDeskInitialized` event.
      */
@@ -195,7 +197,7 @@ contract NFTYFinanceV1 is
         );
 
         // mint shop ownership NFT
-        IERC721MintableBurnable(lendingKeys).mint(msg.sender, lendingDeskId);
+        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskId);
 
         // add loan configs
         for (uint i = 0; i < _loanConfigs.length; i++) {
@@ -225,7 +227,7 @@ contract NFTYFinanceV1 is
 
         require(lendingDesk.erc20 != address(0), "invalid shop id");
         require(
-            IERC721MintableBurnable(lendingKeys).ownerOf(_shopId) == msg.sender,
+            INFTYERC721(lendingKeys).ownerOf(_shopId) == msg.sender,
             "not shop owner"
         );
 
@@ -287,9 +289,9 @@ contract NFTYFinanceV1 is
     /**
      * @notice Event that will be emitted every time liquidity is added to a shop
      *
-     * @param owner The address of the owner of the liquidity shop
-     * @param id Identifier for the liquidity shop
-     * @param balance Current balance for the liquidity shop
+     * @param owner The address of the owner of the lending desk
+     * @param id Identifier for the lending desk
+     * @param balance Current balance for the lending desk
      * @param liquidityAdded Amount of liquidity added to the shop
      */
     event LendingDeskLiquidityAdded(
@@ -301,7 +303,7 @@ contract NFTYFinanceV1 is
 
     /**
      * @notice This function is called to add liquidity to a shop
-     * @param _lendingDeskId The id of the liquidity shop
+     * @param _lendingDeskId The id of the lending desk
      * @param _amount The balance to be transferred
      *
      * Emits an {LiquidityAddedToShop} event.
@@ -316,8 +318,7 @@ contract NFTYFinanceV1 is
 
         require(lendingDesk.erc20 != address(0), "invalid shop id");
         require(
-            IERC721MintableBurnable(lendingKeys).ownerOf(_lendingDeskId) ==
-                msg.sender,
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not shop owner"
         );
 
@@ -338,10 +339,10 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice Event that will be emitted every time there is a cash out on a liquidity shop
+     * @notice Event that will be emitted every time there is a cash out on a lending desk
      *
-     * @param owner The address of the owner of the liquidity shop
-     * @param id Identifier for the liquidity shop
+     * @param owner The address of the owner of the lending desk
+     * @param id Identifier for the lending desk
      * @param amount Amount withdrawn
      * @param balance New balance after cash out
      */
@@ -353,9 +354,9 @@ contract NFTYFinanceV1 is
     );
 
     /**
-     * @notice This function is called to cash out a liquidity shop
-     * @param _lendingDeskId The id of the liquidity shop to be cashout
-     * @param _amount Amount to withdraw from the liquidity shop
+     * @notice This function is called to cash out a lending desk
+     * @param _lendingDeskId The id of the lending desk to be cashout
+     * @param _amount Amount to withdraw from the lending desk
      *
      * Emits an {LiquidityShopCashOut} event.
      */
@@ -367,8 +368,7 @@ contract NFTYFinanceV1 is
 
         require(lendingDesk.erc20 != address(0), "invalid shop id");
         require(
-            IERC721MintableBurnable(lendingKeys).ownerOf(_lendingDeskId) ==
-                msg.sender,
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not shop owner"
         );
         require(lendingDesk.balance > _amount, "insufficient shop balance");
@@ -386,7 +386,7 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice Event that will be emitted every time a liquidity shop is frozen// unfrozen
+     * @notice Event that will be emitted every time a lending desk is frozen// unfrozen
      *
      * @param lendingDeskId The ID of the lending desk
      * @param freeze Whether frozen// unfrozen
@@ -394,8 +394,8 @@ contract NFTYFinanceV1 is
     event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
 
     /**
-     * @notice This function can be called by the liquidity shop owner in order to freeze it
-     * @param _lendingDeskId ID of the liquidity shop to be frozen
+     * @notice This function can be called by the lending desk owner in order to freeze it
+     * @param _lendingDeskId ID of the lending desk to be frozen
      * @param _freeze Whether to freeze or unfreeze
      *
      * Emits an {LiquidityShopFrozen} event.
@@ -408,8 +408,7 @@ contract NFTYFinanceV1 is
 
         require(lendingDesk.erc20 != address(0), "invalid shop id");
         require(
-            IERC721MintableBurnable(lendingKeys).ownerOf(_lendingDeskId) ==
-                msg.sender,
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not shop owner"
         );
 
@@ -444,13 +443,12 @@ contract NFTYFinanceV1 is
 
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            IERC721MintableBurnable(lendingKeys).ownerOf(_lendingDeskId) ==
-                msg.sender,
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
         lendingDesk.status = LendingDeskStatus.Dissolved;
-        IERC721MintableBurnable(lendingKeys).burn(_lendingDeskId);
+        INFTYERC721(lendingKeys).burn(_lendingDeskId);
 
         emit LendingDeskDissolved(_lendingDeskId);
     }
@@ -459,7 +457,7 @@ contract NFTYFinanceV1 is
      * @notice Event that will be emitted every time a loan is liquidated when the obligation receipt holder did not pay it back in time
      *
      * @param promissoryNoteOwner The address of the promissory note owner
-     * @param liquidityShopId The unique identifier of the liquidity shop
+     * @param liquidityShopId The unique identifier of the lending desk
      * @param loanId The unique identifier of the loan
      * @param nftCollateralId The collateral NFT ID that was sent to the promissory note holder
      */
@@ -479,23 +477,17 @@ contract NFTYFinanceV1 is
     function liquidateDefaultedLoan(
         uint256 _loanId
     ) external override whenNotPaused nonReentrant {
-        require(
-            IERC721MintableBurnable(promissoryNote).exists(_loanId),
-            "invalid promissory note"
-        );
-
         Loan storage loan = loans[_loanId];
 
-        require(loan.lendingDeskId > 0, "loan does not exist");
+        require(loan.config.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
 
         require(
-            IERC721MintableBurnable(promissoryNote).ownerOf(_loanId) ==
-                msg.sender,
+            INFTYERC721(promissoryNotes).ownerOf(_loanId) == msg.sender,
             "not promissory note owner"
         );
 
-        uint256 loanDurationInDays = loan.duration * (1 days);
+        uint256 loanDurationInDays = loan.duration * 1 days;
         require(
             block.timestamp >= loan.startTime + (loanDurationInDays),
             "loan not yet expired"
@@ -526,9 +518,8 @@ contract NFTYFinanceV1 is
             );
 
         // burn both promissory note and obligation receipt
-        IERC721MintableBurnable(promissoryNote).burn(_loanId);
-        if (IERC721MintableBurnable(obligationNote).exists(_loanId))
-            IERC721MintableBurnable(obligationNote).burn(_loanId);
+        INFTYERC721(promissoryNotes).burn(_loanId);
+        INFTYERC721(obligationNotes).burn(_loanId);
     }
 
     /**
@@ -536,7 +527,7 @@ contract NFTYFinanceV1 is
      *
      * @param lender The address of the owner
      * @param borrower The address of the borrower
-     * @param lendingDeskId A unique identifier that determines the liquidity shop to which this offer belongs
+     * @param lendingDeskId A unique identifier that determines the lending desk to which this offer belongs
      * @param loanId A unique identifier for the loan created
      */
     event NewLoanInitialized(
@@ -616,15 +607,9 @@ contract NFTYFinanceV1 is
             loanIdCounter.current()
         );
 
-        IERC721MintableBurnable(promissoryNote).mint(
-            msg.sender,
-            loanIdCounter.current()
-        );
+        INFTYERC721(promissoryNotes).mint(msg.sender, loanIdCounter.current());
 
-        IERC721MintableBurnable(obligationNote).mint(
-            msg.sender,
-            loanIdCounter.current()
-        );
+        INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter.current());
 
         // transfer Nft to escrow
         if (lendingDesk.loanConfigs[_nftCollection].nftCollectionIsErc1155)
@@ -678,24 +663,17 @@ contract NFTYFinanceV1 is
         uint256 _loanId,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
-        require(
-            IERC721MintableBurnable(obligationNote).exists(_loanId),
-            "invalid obligation receipt"
-        );
-        require(
-            IERC721MintableBurnable(promissoryNote).exists(_loanId),
-            "invalid promissory note"
-        );
-
         Loan storage loan = loans[_loanId];
-        require(loan.lendingDeskId > 0, "non-existent loan");
+
+        require(loan.config.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
 
-        address obligationReceiptHolder = IERC721MintableBurnable(
-            obligationNote
-        ).ownerOf(_loanId);
-        address promissoryNoteHolder = IERC721MintableBurnable(promissoryNote)
-            .ownerOf(_loanId);
+        address obligationReceiptHolder = INFTYERC721(obligationNotes).ownerOf(
+            _loanId
+        );
+        address promissoryNoteHolder = INFTYERC721(promissoryNotes).ownerOf(
+            _loanId
+        );
 
         require(
             obligationReceiptHolder == msg.sender,
@@ -752,8 +730,8 @@ contract NFTYFinanceV1 is
                 );
 
             // burn both promissory note and obligation receipt
-            IERC721MintableBurnable(obligationNote).burn(_loanId);
-            IERC721MintableBurnable(promissoryNote).burn(_loanId);
+            INFTYERC721(obligationNotes).burn(_loanId);
+            INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
         IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
