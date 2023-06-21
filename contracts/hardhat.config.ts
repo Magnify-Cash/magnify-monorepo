@@ -1,8 +1,6 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import { config as dotEnvConfig } from "dotenv";
-import "hardhat-contract-sizer";
-import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/types";
 
 // Import tasks
