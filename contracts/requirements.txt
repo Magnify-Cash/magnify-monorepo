@@ -1,0 +1,6 @@
+## consenys stack
+# mythril
+# diligence-fuzzing
+
+## crytic stack
+slither-analyzer
