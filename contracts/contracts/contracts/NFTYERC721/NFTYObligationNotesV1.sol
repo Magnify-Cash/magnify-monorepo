@@ -6,8 +6,8 @@ import "./NFTYERC721.sol";
 
 contract NFTYObligationNotesV1 is NFTYERC721 {
     constructor(
-        string memory name,
-        string memory symbol,
-        string memory baseURI
-    ) NFTYERC721(name, symbol, baseURI) {}
+        string memory _name,
+        string memory _symbol,
+        string memory _baseURI
+    ) NFTYERC721(_name, _symbol, _baseURI) {}
 }
