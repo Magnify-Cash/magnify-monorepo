@@ -619,12 +619,12 @@ contract NFTYFinanceV1 is
 
         loan.amountPaidBack = loan.amountPaidBack + _amount;
 
-        uint256 totalAmount = loan.amount +
+        uint256 totalAmountDue = loan.amount +
             (loan.amount * loan.interest * hoursElapsed) /
             // 8760 to scale down annualized interest rate to hourly
             (8760 * 10000);
 
-        require(totalAmount > loan.amountPaidBack, "payment amount > debt");
+        require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
 
         emit LoanPaymentMade(
             obligationReceiptHolder,
@@ -632,12 +632,12 @@ contract NFTYFinanceV1 is
             _loanId,
             _amount,
             // loan is fully paid back
-            totalAmount == loan.amountPaidBack
+            loan.amountPaidBack >= totalAmountDue
         );
 
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
 
-        if (totalAmount == loan.amountPaidBack) {
+        if (loan.amountPaidBack >= totalAmountDue) {
             loan.status = LoanStatus.Resolved;
 
             // send NFT collateral to obligation receipt holder
