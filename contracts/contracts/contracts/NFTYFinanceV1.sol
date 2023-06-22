@@ -183,32 +183,28 @@ contract NFTYFinanceV1 is
         uint256 _depositAmount,
         LoanConfig[] calldata _loanConfigs
     ) external whenNotPaused nonReentrant {
+        // Check valid inputs
         require(_erc20 != address(0), "zero addr erc20");
 
+        // Set new desk in storage and update related state
+        // (ID, ERC20, Status, Loan Configs, Liquidity)
         lendingDeskIdCounter.increment();
         uint256 lendingDeskId = lendingDeskIdCounter.current();
-
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskId];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
+        setLendingDeskLoanConfig(lendingDeskId, _loanConfigs);
+        depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
 
+        // Mint lending desk ownership NFT
+        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskId);
+
+        // Emit event
         emit NewLendingDeskInitialized(
             msg.sender,
             lendingDesk.erc20,
             lendingDeskId
         );
-
-        // mint lending desk ownership NFT
-        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskId);
-
-
-        setLendingDeskLoanConfig(
-            lendingDeskId,
-            _loanConfigs
-        );
-
-        // add liquidity
-        depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
     }
 
     event LendingDeskLoanConfigSet(
