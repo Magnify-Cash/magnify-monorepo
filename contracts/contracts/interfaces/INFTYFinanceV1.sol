@@ -88,8 +88,7 @@ interface INFTYFinanceV1 {
 
     function setLendingDeskLoanConfig(
         uint256 _lendingDeskId,
-        address _nftCollection,
-        LoanConfig calldata _loanConfig
+        LoanConfig[] calldata _loanConfig
     ) external;
 
     function removeLendingDeskLoanConfig(

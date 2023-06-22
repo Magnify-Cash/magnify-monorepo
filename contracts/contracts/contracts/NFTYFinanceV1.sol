@@ -201,14 +201,11 @@ contract NFTYFinanceV1 is
         // mint lending desk ownership NFT
         INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskId);
 
-        // add loan configs
-        for (uint256 i = 0; i < _loanConfigs.length; i++) {
-            setLendingDeskLoanConfig(
-                lendingDeskId,
-                _loanConfigs[i].nftCollection,
-                _loanConfigs[i]
-            );
-        }
+
+        setLendingDeskLoanConfig(
+            lendingDeskId,
+            _loanConfigs
+        );
 
         // add liquidity
         depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
@@ -216,14 +213,12 @@ contract NFTYFinanceV1 is
 
     event LendingDeskLoanConfigSet(
         uint256 lendingDeskId,
-        address nftCollection,
-        LoanConfig loanConfig
+        LoanConfig[] loanConfig
     );
 
     function setLendingDeskLoanConfig(
         uint256 _lendingDeskId,
-        address _nftCollection,
-        LoanConfig calldata _loanConfig
+        LoanConfig[] calldata _loanConfigs
     ) public override whenNotPaused nonReentrant {
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
 
@@ -233,36 +228,37 @@ contract NFTYFinanceV1 is
             "not lending desk owner"
         );
 
-        require(_loanConfig.minAmount > 0, "min amount = 0");
-        require(_loanConfig.maxAmount > 0, "max amount = 0");
-        require(_loanConfig.minInterest > 0, "min interest = 0");
-        require(_loanConfig.maxInterest > 0, "max interest = 0");
-        require(_loanConfig.minDuration > 0, "min duration = 0");
-        require(_loanConfig.maxDuration > 0, "max duration = 0");
+        for (uint256 i = 0; i < _loanConfigs.length; i++) {
+            require(_loanConfigs[i].minAmount > 0, "min amount = 0");
+            require(_loanConfigs[i].maxAmount > 0, "max amount = 0");
+            require(_loanConfigs[i].minInterest > 0, "min interest = 0");
+            require(_loanConfigs[i].maxInterest > 0, "max interest = 0");
+            require(_loanConfigs[i].minDuration > 0, "min duration = 0");
+            require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
 
-        if (_loanConfig.nftCollectionIsErc1155)
-            require(
-                ERC165Checker.supportsInterface(
-                    _nftCollection,
-                    type(IERC1155).interfaceId
-                ),
-                "invalid nft collection"
-            );
-        else
-            require(
-                ERC165Checker.supportsInterface(
-                    _nftCollection,
-                    type(IERC721).interfaceId
-                ),
-                "invalid nft collection"
-            );
+            if (_loanConfigs[i].nftCollectionIsErc1155)
+                require(
+                    ERC165Checker.supportsInterface(
+                        _loanConfigs[i].nftCollection,
+                        type(IERC1155).interfaceId
+                    ),
+                    "invalid nft collection"
+                );
+            else
+                require(
+                    ERC165Checker.supportsInterface(
+                        _loanConfigs[i].nftCollection,
+                        type(IERC721).interfaceId
+                    ),
+                    "invalid nft collection"
+                );
 
-        lendingDesk.loanConfigs[_nftCollection] = _loanConfig;
+            lendingDesk.loanConfigs[_loanConfigs[i].nftCollection] = _loanConfigs[i];
+        }
 
         emit LendingDeskLoanConfigSet({
             lendingDeskId: _lendingDeskId,
-            nftCollection: _nftCollection,
-            loanConfig: _loanConfig
+            loanConfig: _loanConfigs
         });
     }
 
