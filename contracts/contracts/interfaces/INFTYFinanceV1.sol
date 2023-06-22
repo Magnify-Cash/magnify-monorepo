@@ -3,7 +3,7 @@
 pragma solidity ^0.8.18;
 
 interface INFTYFinanceV1 {
-    // When first created a lending desk is Active, its owner can then set it as Frozen
+    // When first created a lending desk is Active, its owner can then set it as Frozen or Dissolved
     enum LendingDeskStatus {
         Active,
         Frozen,
@@ -33,23 +33,24 @@ interface INFTYFinanceV1 {
         uint256 amountPaidBack;
         uint256 duration;
         uint256 startTime;
+        address nftCollection;
+        uint256 interest;
         uint256 nftId;
         uint256 lendingDeskId;
         LoanStatus status;
-        LoanConfig config;
     }
 
     /**
      * @notice Struct used to store loan config set by the shop owner for an NFT collection
      *
-     * @param nftCollection The address of the collection accepted as collateral
+     * @param nftCollection The address of the NFT collection accepted as collateral
      * @param nftCollectionIsErc1155 Whether the NFT collection is an ERC1155 contract or ERC721 contract
      * @param maxAmount The max loan amount allowed for this collection
      * @param minAmount The min loan amount allowed for this collection
-     * @param maxInterest The max interest possible for this collection
-     * @param minInterest The min interest possible for this collection
-     * @param maxDuration The max duration allowed for this collection
-     * @param minDuration The min duration allowed for this collection
+     * @param maxInterest The max interest rate possible in basis points for this collection
+     * @param minInterest The min interest rate possible in basis points for this collection
+     * @param maxDuration The max duration in hours allowed for this collection
+     * @param minDuration The min duration in hours allowed for this collection
      */
     struct LoanConfig {
         address nftCollection;
@@ -76,6 +77,8 @@ interface INFTYFinanceV1 {
         LendingDeskStatus status;
         mapping(address => LoanConfig) loanConfigs;
     }
+
+    // Methods related to lending desks
 
     function initializeNewLendingDesk(
         address _erc20,
@@ -111,6 +114,8 @@ interface INFTYFinanceV1 {
 
     function dissolveLendingDesk(uint256 _lendingDeskId) external;
 
+    // Methods related to loans
+
     function initializeNewLoan(
         uint256 _lendingDeskId,
         address _nftCollection,
@@ -119,7 +124,7 @@ interface INFTYFinanceV1 {
         uint256 _amount
     ) external;
 
-    function liquidateDefaultedLoan(uint256 _loanId) external;
-
     function makeLoanPayment(uint256 _loanId, uint256 _amount) external;
+
+    function liquidateDefaultedLoan(uint256 _loanId) external;
 }
