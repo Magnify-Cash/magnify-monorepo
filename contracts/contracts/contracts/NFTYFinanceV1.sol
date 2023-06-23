@@ -186,7 +186,7 @@ contract NFTYFinanceV1 is
         // Check valid inputs
         require(_erc20 != address(0), "zero addr erc20");
 
-        // Set new desk in storage and update related state
+        // Set new desk in storage and update related storage
         // (ID, ERC20, Status, Loan Configs, Liquidity)
         lendingDeskIdCounter.increment();
         uint256 lendingDeskId = lendingDeskIdCounter.current();
@@ -484,9 +484,9 @@ contract NFTYFinanceV1 is
         uint256 _duration,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
+        // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
-
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             lendingDesk.status == LendingDeskStatus.Active,
@@ -505,22 +505,39 @@ contract NFTYFinanceV1 is
         require(_duration >= loanConfig.minDuration, "duration < min duration");
         require(_duration <= loanConfig.maxDuration, "duration > max duration");
 
+        /*
+            Calculation of the interest rate:
+            1. Determine the impact of the differences in loan amount and duration:
+               - Multiply the differences between the requested values and a reference value.
+               (amountDifference * interestRange * durationDifference)
+
+            2. Find the maximum potential impact of the loan amount and duration:
+               - Multiply the ranges of possible values for loan amount and duration.
+               (amountRange * durationRange)
+
+            3. Adjust the impact based on the proportionate differences:
+               - Divide the impact of the differences by the maximum potential impact.
+               ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
+
+            4. Add the adjusted impact to the minimum interest rate:
+               - Combine the adjusted impact with the minimum interest rate.
+               loanConfig.minInterest + ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
+        */
+        uint256 interest = loanConfig.minInterest + (
+            (
+                (_amount - loanConfig.minAmount) *
+                (loanConfig.maxInterest - loanConfig.minInterest) *
+                (_duration - loanConfig.minDuration)
+            )
+            /
+            (
+                (loanConfig.maxAmount - loanConfig.minAmount) *
+                (loanConfig.maxDuration - loanConfig.minDuration)
+            )
+        );
+
+        // Set new desk in storage and update related storage
         loanIdCounter.increment();
-        uint256 loanId = loanIdCounter.current();
-
-        uint256 fees = (loanOriginationFee * _amount) / 10000;
-        lendingDesk.balance = lendingDesk.balance - _amount;
-
-        // calculate interest rate
-        uint256 interest = loanConfig.minInterest +
-            // multiplier for loan amount
-            (((_amount - loanConfig.minAmount) /
-                (loanConfig.maxAmount - loanConfig.minAmount)) *
-                // multiplier for loan duration
-                ((_duration - loanConfig.minDuration) /
-                    (loanConfig.maxDuration - loanConfig.minDuration))) *
-            (loanConfig.maxInterest - loanConfig.minInterest);
-
         Loan memory loan = Loan({
             amount: _amount,
             amountPaidBack: 0,
@@ -532,14 +549,16 @@ contract NFTYFinanceV1 is
             interest: interest,
             nftCollection: _nftCollection
         });
-        loans[loanId] = loan;
+        loans[loanIdCounter.current()] = loan;
+        lendingDesk.balance = lendingDesk.balance - _amount;
 
-        emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanId);
+        // Mint promissory and obligation notes
+        // Note: Promissory note is minted to the owner of the lending desk key 721
+        INFTYERC721(promissoryNotes).mint(INFTYERC721(lendingKeys).ownerOf(_lendingDeskId), loanIdCounter.current());
+        INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter.current());
 
-        INFTYERC721(promissoryNotes).mint(msg.sender, loanId);
-        INFTYERC721(obligationNotes).mint(msg.sender, loanId);
-
-        // transfer Nft to escrow
+        // Transfer NFT to escrow
+        // 1155
         if (loanConfig.nftCollectionIsErc1155)
             IERC1155(_nftCollection).safeTransferFrom(
                 msg.sender,
@@ -548,6 +567,7 @@ contract NFTYFinanceV1 is
                 1,
                 ""
             );
+        // 721
         else
             IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
@@ -555,11 +575,15 @@ contract NFTYFinanceV1 is
                 _nftId
             );
 
-        // transfer amount minus fees to borrower
+        // Transfer amount minus fees to borrower
+        // Note: Fees are held in contract until withdrawPlatformFees()
         IERC20Upgradeable(lendingDesk.erc20).safeTransfer(
             msg.sender,
-            _amount - fees
+            _amount - ((loanOriginationFee * _amount) / 10000)
         );
+
+        // OK
+        emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanIdCounter.current());
     }
 
     /**
