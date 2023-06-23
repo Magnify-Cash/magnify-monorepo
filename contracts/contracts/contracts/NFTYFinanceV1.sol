@@ -591,52 +591,50 @@ contract NFTYFinanceV1 is
         uint256 _loanId,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
+        // Get loan and check status
         Loan storage loan = loans[_loanId];
-
         require(loan.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
 
+        // Get note holders and verify sender is obligation note holder
         address obligationReceiptHolder = INFTYERC721(obligationNotes).ownerOf(
             _loanId
         );
         address promissoryNoteHolder = INFTYERC721(promissoryNotes).ownerOf(
             _loanId
         );
-
         require(
             obligationReceiptHolder == msg.sender,
             "not obligation receipt owner"
         );
 
-        // floor of actual floating point hours elapsed
-        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
+        // Calculate total amount due
+        uint256 timeElapsed = (block.timestamp - loan.startTime);
+        uint256 unscaledAmountDue = loan.amount + (loan.amount * loan.interest * timeElapsed);
+        uint256 totalAmountDue = unscaledAmountDue / (365 days * 10000);
 
-        require(hoursElapsed >= loan.duration, "loan has expired");
-
+        // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-
-        uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * hoursElapsed) /
-            // 8760 to scale down annualized interest rate to hourly
-            (8760 * 10000);
-
+        require((timeElapsed / 1 hours) >= loan.duration, "loan has expired");
         require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
 
+        // Emit Event
         emit LoanPaymentMade(
             obligationReceiptHolder,
             promissoryNoteHolder,
             _loanId,
             _amount,
-            // loan is fully paid back
-            loan.amountPaidBack >= totalAmountDue
+            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
         );
 
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
 
+        // Loan paid back. Proceed with fulfillment
         if (loan.amountPaidBack >= totalAmountDue) {
+            // Set status to resolves
             loan.status = LoanStatus.Resolved;
 
-            // send NFT collateral to obligation receipt holder
+            // Send NFT collateral to obligation receipt holder
             if (
                 lendingDesk
                     .loanConfigs[loan.nftCollection]
@@ -656,11 +654,12 @@ contract NFTYFinanceV1 is
                     loan.nftId
                 );
 
-            // burn both promissory note and obligation receipt
+            // Burn promissory note and obligation receipt
             INFTYERC721(obligationNotes).burn(_loanId);
             INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
+        // Transfer
         IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             promissoryNoteHolder,
