@@ -8,6 +8,7 @@
   "test": "yarn hardhat test",
   "generate": "yarn wagmi generate",
   "deploy:local": "yarn hardhat clean && yarn hardhat compile && yarn hardhat deploy --network localhost && yarn wagmi generate",
+  "mythril": "myth analyze contracts/contracts/NFTYFinanceV1.sol  --solc-json ./solc.json",
   "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings"
   },
   "devDependencies": {
