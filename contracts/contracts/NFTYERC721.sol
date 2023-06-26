@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "../../interfaces/INFTYERC721.sol";
+import "./interfaces/INFTYERC721.sol";
 
 contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
     using Address for address;
