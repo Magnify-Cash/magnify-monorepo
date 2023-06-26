@@ -2,33 +2,19 @@
 
 pragma solidity ^0.8.18;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 import "./interfaces/INFTYFinanceV1.sol";
 import "./interfaces/INFTYERC721.sol";
 
-contract NFTYFinanceV1 is
-    INFTYFinanceV1,
-    Initializable,
-    OwnableUpgradeable,
-    ERC721HolderUpgradeable,
-    ERC1155HolderUpgradeable,
-    PausableUpgradeable,
-    ReentrancyGuardUpgradeable
-{
-    using SafeERC20Upgradeable for IERC20Upgradeable;
-    using Counters for Counters.Counter;
+contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
 
     /* *********** */
     /*   STORAGE   */
@@ -36,11 +22,12 @@ contract NFTYFinanceV1 is
     /**
      * @notice Unique identifier for lending desks
      */
-    Counters.Counter private lendingDeskIdCounter;
+    uint256 private lendingDeskIdCounter;
+
     /**
      * @notice Unique identifier for loans
      */
-    Counters.Counter private loanIdCounter;
+    uint256 private loanIdCounter;
 
     /**
      * @notice Mapping to store lending desks
@@ -237,8 +224,22 @@ contract NFTYFinanceV1 is
     /* *********** */
     /* CONSTRUCTOR */
     /* *********** */
-    constructor() {
-        _disableInitializers();
+    constructor(
+        address _promissoryNotes,
+        address _obligationNotes,
+        address _lendingKeys,
+        uint256 _loanOriginationFee
+    ) {
+        // Check & set peripheral contract addresses
+        require(_promissoryNotes != address(0),"promissory note is zero addr");
+        require(_obligationNotes != address(0),"obligation note is zero addr");
+        require(_lendingKeys != address(0), "lending keys is zero addr");
+        promissoryNotes = _promissoryNotes;
+        obligationNotes = _obligationNotes;
+        lendingKeys = _lendingKeys;
+
+        // Set loan origination fee
+        setLoanOriginationFee(_loanOriginationFee);
     }
 
     /* ******************** */
@@ -262,22 +263,21 @@ contract NFTYFinanceV1 is
 
         // Set new desk in storage and update related storage
         // (ID, ERC20, Status, Loan Configs, Liquidity)
-        lendingDeskIdCounter.increment();
-        uint256 lendingDeskId = lendingDeskIdCounter.current();
-        LendingDesk storage lendingDesk = lendingDesks[lendingDeskId];
+        lendingDeskIdCounter++;
+        LendingDesk storage lendingDesk = lendingDesks[lendingDeskIdCounter];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
-        setLendingDeskLoanConfig(lendingDeskId, _loanConfigs);
-        depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
+        setLendingDeskLoanConfig(lendingDeskIdCounter, _loanConfigs);
+        depositLendingDeskLiquidity(lendingDeskIdCounter, _depositAmount);
 
         // Mint lending desk ownership NFT
-        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskId);
+        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskIdCounter);
 
         // Emit event
         emit NewLendingDeskInitialized(
             msg.sender,
             lendingDesk.erc20,
-            lendingDeskId
+            lendingDeskIdCounter
         );
     }
 
@@ -393,7 +393,7 @@ contract NFTYFinanceV1 is
 
         // Update balance state, transfer tokens
         lendingDesk.balance = lendingDesk.balance + _amount;
-        IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
+        IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             address(this),
             _amount
@@ -433,7 +433,7 @@ contract NFTYFinanceV1 is
 
         // Update balance state, transfer tokens
         lendingDesk.balance = lendingDesk.balance - _amount;
-        IERC20Upgradeable(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
+        IERC20(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
 
         // Emit event
         emit LendingDeskLiquidityWithdrawn(
@@ -580,7 +580,7 @@ contract NFTYFinanceV1 is
         );
 
         // Set new desk in storage and update related storage
-        loanIdCounter.increment();
+        loanIdCounter++;
         Loan memory loan = Loan({
             amount: _amount,
             amountPaidBack: 0,
@@ -592,18 +592,18 @@ contract NFTYFinanceV1 is
             interest: interest,
             nftCollection: _nftCollection
         });
-        loans[loanIdCounter.current()] = loan;
+        loans[loanIdCounter] = loan;
         lendingDesk.balance = lendingDesk.balance - _amount;
 
         // Mint promissory and obligation notes
         // Note: Promissory note is minted to the owner of the desk key
         INFTYERC721(promissoryNotes).mint(
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId),
-            loanIdCounter.current()
+            loanIdCounter
         );
         INFTYERC721(obligationNotes).mint(
             msg.sender,
-            loanIdCounter.current()
+            loanIdCounter
         );
 
         // Transfer NFT to escrow
@@ -626,13 +626,13 @@ contract NFTYFinanceV1 is
 
         // Transfer amount minus fees to borrower
         // Note: Fees are held in contract until withdrawPlatformFees()
-        IERC20Upgradeable(lendingDesk.erc20).safeTransfer(
+        IERC20(lendingDesk.erc20).safeTransfer(
             msg.sender,
             _amount - ((loanOriginationFee * _amount) / 10000)
         );
 
         // Emit event
-        emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanIdCounter.current());
+        emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanIdCounter);
     }
 
 
@@ -707,7 +707,7 @@ contract NFTYFinanceV1 is
         }
 
         // Transfer Tokens
-        IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
+        IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             promissoryNoteHolder,
             _amount
@@ -789,37 +789,6 @@ contract NFTYFinanceV1 is
     /* ******************** */
     /*  ADMIN FUNCTIONS     */
     /* ******************** */
-
-    /**
-     * @notice Initialize contract, set admin and protocol level configs
-     *
-     * @param _promissoryNotes Promissory note ERC721 address
-     * @param _obligationNotes Obligation note ERC721 address
-     * @param _lendingKeys Lending desk ownership ERC721 address
-     * @param _loanOriginationFee The loan origination fee for every loan issued
-     */
-    function initialize(
-        address _promissoryNotes,
-        address _obligationNotes,
-        address _lendingKeys,
-        uint256 _loanOriginationFee
-    ) public initializer {
-        // TODO
-        __Ownable_init();
-        __Pausable_init();
-
-        // Check & set peripheral contract addresses
-        require(_promissoryNotes != address(0),"promissory note is zero addr");
-        require(_obligationNotes != address(0),"obligation note is zero addr");
-        require(_lendingKeys != address(0), "lending keys is zero addr");
-        promissoryNotes = _promissoryNotes;
-        obligationNotes = _obligationNotes;
-        lendingKeys = _lendingKeys;
-
-        // Set loan origination fee
-        setLoanOriginationFee(_loanOriginationFee);
-    }
-
     /**
      * @notice Allows the admin of the contract to modify loan origination fee.
      *
@@ -860,7 +829,7 @@ contract NFTYFinanceV1 is
         platformFees[_erc20] = 0;
 
         // transfer tokens
-        IERC20Upgradeable(_erc20).safeTransfer(_receiver, amount);
+        IERC20(_erc20).safeTransfer(_receiver, amount);
     }
 
     /**
