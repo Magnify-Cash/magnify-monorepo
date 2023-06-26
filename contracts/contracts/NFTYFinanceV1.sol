@@ -36,7 +36,7 @@ contract NFTYFinanceV1 is
     using Counters for Counters.Counter;
 
     /* *********** */
-    /* STORAGE */
+    /*   STORAGE   */
     /* *********** */
     /**
      * @notice Unique identifier for lending desks
@@ -92,10 +92,13 @@ contract NFTYFinanceV1 is
      *
      * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
      */
-    event LoanOriginationFeeSet(uint256 loanOriginationFee);
+    event LoanOriginationFeeSet(
+        uint256 loanOriginationFee
+    );
 
     /**
      * @notice Event that will be emitted every time a lending desk is created
+     *
      * @param owner The address of the owner of the created lending desk
      * @param erc20 The ERC20 allowed as currency on the lending desk
      * @param id A unique lending desk ID
@@ -106,11 +109,23 @@ contract NFTYFinanceV1 is
         uint256 id
     );
 
+    /**
+     * @notice Event that will be emitted every time a lending desk config is created
+     *
+     * @param lendingDeskId Identifier for the lending desk
+     * @param loanConfig Loan config for each NFT collection this lending desk will support
+     */
     event LendingDeskLoanConfigSet(
         uint256 lendingDeskId,
         LoanConfig[] loanConfig
     );
 
+    /**
+     * @notice Event that will be emitted every time a lending desk config is removed
+     *
+     * @param lendingDeskId Identifier for the lending desk
+     * @param nftCollection Address for the NFT collection to remove supported config gfor
+     */
     event LendingDeskLoanConfigRemoved(
         uint256 lendingDeskId,
         address nftCollection
@@ -137,7 +152,10 @@ contract NFTYFinanceV1 is
      * @param lendingDeskId The ID of the lending desk
      * @param freeze Whether frozen// unfrozen
      */
-    event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
+    event LendingDeskStateSet(
+        uint256 lendingDeskId,
+        bool freeze
+    );
 
     /**
      * @notice Event that will be emitted every time there is a cash out on a lending desk
@@ -159,7 +177,9 @@ contract NFTYFinanceV1 is
      *
      * @param lendingDeskId The ID of the lending desk
      */
-    event LendingDeskDissolved(uint256 lendingDeskId);
+    event LendingDeskDissolved(
+        uint256 lendingDeskId
+    );
 
     /**
      * @notice Event that will be emitted every time a new offer is accepted
@@ -175,7 +195,6 @@ contract NFTYFinanceV1 is
         uint256 lendingDeskId,
         uint256 loanId
     );
-
 
     /**
      * @notice Event that will be emitted every time an obligation receipt holder pays back a loan
