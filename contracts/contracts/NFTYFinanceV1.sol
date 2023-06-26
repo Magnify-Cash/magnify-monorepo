@@ -236,74 +236,9 @@ contract NFTYFinanceV1 is
         _disableInitializers();
     }
 
-    /* *********** */
-    /*  FUNCTIONS  */
-    /* *********** */
-    /**
-     * @notice Initialize contract, set admin and protocol level configs
-     *
-     * @param _promissoryNotes Promissory note ERC721 address
-     * @param _obligationNotes Obligation note ERC721 address
-     * @param _lendingKeys Lending desk ownership ERC721 address
-     * @param _loanOriginationFee The loan origination fee for every loan issued
-     */
-    function initialize(
-        address _promissoryNotes,
-        address _obligationNotes,
-        address _lendingKeys,
-        uint256 _loanOriginationFee
-    ) public initializer {
-        __Ownable_init();
-        __Pausable_init();
-
-        require(
-            _promissoryNotes != address(0),
-            "promissory notes is zero addr"
-        );
-        promissoryNotes = _promissoryNotes;
-
-        require(
-            _obligationNotes != address(0),
-            "obligation notes is zero addr"
-        );
-        obligationNotes = _obligationNotes;
-
-        require(_lendingKeys != address(0), "lending keys is zero addr");
-        lendingKeys = _lendingKeys;
-
-        // Set loan origination fee
-        setLoanOriginationFee(_loanOriginationFee);
-    }
-
-    /**
-     * @notice Function that allows the admin of the platform to pause and unpause the protocol
-     *
-     * @param _paused Whether or not the protocol should be paused
-     */
-    function setPaused(bool _paused) external onlyOwner {
-        if (_paused) {
-            _pause();
-        } else {
-            _unpause();
-        }
-    }
-
-    /**
-     * @notice Allows the admin of the contract to modify loan origination fee.
-     *
-     * @param _loanOriginationFee Basis points fee the borrower will have to pay to the platform when borrowing loan
-     * Emits an {LoanOriginationFeeSet} event.
-     */
-    function setLoanOriginationFee(
-        uint256 _loanOriginationFee
-    ) public onlyOwner {
-        // Set loan origination fees
-        require(_loanOriginationFee <= 10, "fee > 10%");
-        loanOriginationFee = _loanOriginationFee;
-
-        emit LoanOriginationFeeSet(_loanOriginationFee);
-    }
-
+    /* ******************** */
+    /*  CORE FUNCTIONS      */
+    /* ******************** */
     /**
      * @notice Creates a new lending desk
      * @param _erc20 The ERC20 that will be accepted for loans in this lending desk
@@ -795,6 +730,10 @@ contract NFTYFinanceV1 is
         INFTYERC721(obligationNotes).burn(_loanId);
     }
 
+    /* ******************** */
+    /*  ADMIN FUNCTIONS     */
+    /* ******************** */
+
     /**
      * @notice This function can be called by an owner to withdraw collected platform funds.
      * The funds consists of all platform fees generated at the time of loan creation,
@@ -815,5 +754,70 @@ contract NFTYFinanceV1 is
         platformFees[_erc20] = 0;
 
         IERC20Upgradeable(_erc20).safeTransfer(_receiver, amount);
+    }
+
+    /**
+     * @notice Initialize contract, set admin and protocol level configs
+     *
+     * @param _promissoryNotes Promissory note ERC721 address
+     * @param _obligationNotes Obligation note ERC721 address
+     * @param _lendingKeys Lending desk ownership ERC721 address
+     * @param _loanOriginationFee The loan origination fee for every loan issued
+     */
+    function initialize(
+        address _promissoryNotes,
+        address _obligationNotes,
+        address _lendingKeys,
+        uint256 _loanOriginationFee
+    ) public initializer {
+        __Ownable_init();
+        __Pausable_init();
+
+        require(
+            _promissoryNotes != address(0),
+            "promissory notes is zero addr"
+        );
+        promissoryNotes = _promissoryNotes;
+
+        require(
+            _obligationNotes != address(0),
+            "obligation notes is zero addr"
+        );
+        obligationNotes = _obligationNotes;
+
+        require(_lendingKeys != address(0), "lending keys is zero addr");
+        lendingKeys = _lendingKeys;
+
+        // Set loan origination fee
+        setLoanOriginationFee(_loanOriginationFee);
+    }
+
+    /**
+     * @notice Function that allows the admin of the platform to pause and unpause the protocol
+     *
+     * @param _paused Whether or not the protocol should be paused
+     */
+    function setPaused(bool _paused) external onlyOwner {
+        if (_paused) {
+            _pause();
+        } else {
+            _unpause();
+        }
+    }
+
+    /**
+     * @notice Allows the admin of the contract to modify loan origination fee.
+     *
+     * @param _loanOriginationFee Basis points fee the borrower will have to pay to the platform when borrowing loan
+     * Emits an {LoanOriginationFeeSet} event.
+     */
+    function setLoanOriginationFee(
+        uint256 _loanOriginationFee
+    ) public onlyOwner {
+        // Set loan origination fees
+        require(_loanOriginationFee <= 10, "fee > 10%");
+        loanOriginationFee = _loanOriginationFee;
+
+        emit LoanOriginationFeeSet(_loanOriginationFee);
     }
 }
