@@ -35,6 +35,9 @@ contract NFTYFinanceV1 is
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using Counters for Counters.Counter;
 
+    /* *********** */
+    /* STORAGE */
+    /* *********** */
     /**
      * @notice Unique identifier for lending desks
      */
@@ -79,14 +82,144 @@ contract NFTYFinanceV1 is
      */
     mapping(address => uint256) public platformFees;
 
+
+    /* *********** */
+    /*  EVENTS     */
+    /* *********** */
+
+    /**
+     * @notice Event that will be emitted every time an admin updates loan origination fee
+     *
+     * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
+     */
+    event LoanOriginationFeeSet(uint256 loanOriginationFee);
+
+    /**
+     * @notice Event that will be emitted every time a lending desk is created
+     * @param owner The address of the owner of the created lending desk
+     * @param erc20 The ERC20 allowed as currency on the lending desk
+     * @param id A unique lending desk ID
+     */
+    event NewLendingDeskInitialized(
+        address indexed owner,
+        address indexed erc20,
+        uint256 id
+    );
+
+    event LendingDeskLoanConfigSet(
+        uint256 lendingDeskId,
+        LoanConfig[] loanConfig
+    );
+
+    event LendingDeskLoanConfigRemoved(
+        uint256 lendingDeskId,
+        address nftCollection
+    );
+
+    /**
+     * @notice Event that will be emitted every time liquidity is added to a lending desk
+     *
+     * @param owner The address of the owner of the lending desk
+     * @param id Identifier for the lending desk
+     * @param balance Current balance for the lending desk
+     * @param liquidityAdded Amount of liquidity added to the lending desk
+     */
+    event LendingDeskLiquidityAdded(
+        address indexed owner,
+        uint256 id,
+        uint256 balance,
+        uint256 liquidityAdded
+    );
+
+    /**
+     * @notice Event that will be emitted every time a lending desk is frozen// unfrozen
+     *
+     * @param lendingDeskId The ID of the lending desk
+     * @param freeze Whether frozen// unfrozen
+     */
+    event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
+
+    /**
+     * @notice Event that will be emitted every time there is a cash out on a lending desk
+     *
+     * @param owner The address of the owner of the lending desk
+     * @param id Identifier for the lending desk
+     * @param amount Amount withdrawn
+     * @param balance New balance after cash out
+     */
+    event LendingDeskLiquidityWithdrawn(
+        address indexed owner,
+        uint256 id,
+        uint256 amount,
+        uint256 balance
+    );
+
+    /**
+     * @notice Event that will be emitted when a lending desk is dissolved
+     *
+     * @param lendingDeskId The ID of the lending desk
+     */
+    event LendingDeskDissolved(uint256 lendingDeskId);
+
+    /**
+     * @notice Event that will be emitted every time a new offer is accepted
+     *
+     * @param lender The address of the owner
+     * @param borrower The address of the borrower
+     * @param lendingDeskId A unique identifier that determines the lending desk to which this offer belongs
+     * @param loanId A unique identifier for the loan created
+     */
+    event NewLoanInitialized(
+        address indexed lender,
+        address indexed borrower,
+        uint256 lendingDeskId,
+        uint256 loanId
+    );
+
+
+    /**
+     * @notice Event that will be emitted every time an obligation receipt holder pays back a loan
+     *
+     * @param obligationReceiptOwner The address of the owner of the obligation receipt, actor who pays back a loan
+     * @param promissoryNoteOwner The address of the owner of the promissory note, actor who receives the payment loan fees
+     * @param loanId The unique identifier of the loan
+     * @param amount The amount of currency paid back to the promissory note holder
+     * @param resolved Whether the loan is fully paid back or not
+     *
+     */
+    event LoanPaymentMade(
+        address indexed obligationReceiptOwner,
+        address indexed promissoryNoteOwner,
+        uint256 loanId,
+        uint256 amount,
+        bool resolved
+    );
+
+    /**
+     * @notice Event that will be emitted every time a loan is liquidated when the obligation receipt holder did not pay it back in time
+     *
+     * @param promissoryNoteOwner The address of the promissory note owner
+     * @param lendingDeskId The unique identifier of the lending desk
+     * @param loanId The unique identifier of the loan
+     * @param nftCollateralId The collateral NFT ID that was sent to the promissory note holder
+     */
+    event DefaultedLoanLiquidated(
+        address indexed promissoryNoteOwner,
+        uint256 lendingDeskId,
+        uint256 loanId,
+        uint256 nftCollateralId
+    );
+
     /* *********** */
     /* CONSTRUCTOR */
     /* *********** */
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
+    /* *********** */
+    /*  FUNCTIONS  */
+    /* *********** */
     /**
      * @notice Initialize contract, set admin and protocol level configs
      *
@@ -137,13 +270,6 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice Event that will be emitted every time an admin updates loan origination fee
-     *
-     * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
-     */
-    event LoanOriginationFeeSet(uint256 loanOriginationFee);
-
-    /**
      * @notice Allows the admin of the contract to modify loan origination fee.
      *
      * @param _loanOriginationFee Basis points fee the borrower will have to pay to the platform when borrowing loan
@@ -158,18 +284,6 @@ contract NFTYFinanceV1 is
 
         emit LoanOriginationFeeSet(_loanOriginationFee);
     }
-
-    /**
-     * @notice Event that will be emitted every time a lending desk is created
-     * @param owner The address of the owner of the created lending desk
-     * @param erc20 The ERC20 allowed as currency on the lending desk
-     * @param id A unique lending desk ID
-     */
-    event NewLendingDeskInitialized(
-        address indexed owner,
-        address indexed erc20,
-        uint256 id
-    );
 
     /**
      * @notice Creates a new lending desk
@@ -206,11 +320,6 @@ contract NFTYFinanceV1 is
             lendingDeskId
         );
     }
-
-    event LendingDeskLoanConfigSet(
-        uint256 lendingDeskId,
-        LoanConfig[] loanConfig
-    );
 
     function setLendingDeskLoanConfig(
         uint256 _lendingDeskId,
@@ -258,11 +367,6 @@ contract NFTYFinanceV1 is
         });
     }
 
-    event LendingDeskLoanConfigRemoved(
-        uint256 lendingDeskId,
-        address nftCollection
-    );
-
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
         address _nftCollection
@@ -282,21 +386,6 @@ contract NFTYFinanceV1 is
             nftCollection: _nftCollection
         });
     }
-
-    /**
-     * @notice Event that will be emitted every time liquidity is added to a lending desk
-     *
-     * @param owner The address of the owner of the lending desk
-     * @param id Identifier for the lending desk
-     * @param balance Current balance for the lending desk
-     * @param liquidityAdded Amount of liquidity added to the lending desk
-     */
-    event LendingDeskLiquidityAdded(
-        address indexed owner,
-        uint256 id,
-        uint256 balance,
-        uint256 liquidityAdded
-    );
 
     /**
      * @notice This function is called to add liquidity to a lending desk
@@ -336,21 +425,6 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice Event that will be emitted every time there is a cash out on a lending desk
-     *
-     * @param owner The address of the owner of the lending desk
-     * @param id Identifier for the lending desk
-     * @param amount Amount withdrawn
-     * @param balance New balance after cash out
-     */
-    event LendingDeskLiquidityWithdrawn(
-        address indexed owner,
-        uint256 id,
-        uint256 amount,
-        uint256 balance
-    );
-
-    /**
      * @notice This function is called to cash out a lending desk
      * @param _lendingDeskId The id of the lending desk to be cashout
      * @param _amount Amount to withdraw from the lending desk
@@ -384,14 +458,6 @@ contract NFTYFinanceV1 is
 
         IERC20Upgradeable(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
     }
-
-    /**
-     * @notice Event that will be emitted every time a lending desk is frozen// unfrozen
-     *
-     * @param lendingDeskId The ID of the lending desk
-     * @param freeze Whether frozen// unfrozen
-     */
-    event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
 
     /**
      * @notice This function can be called by the lending desk owner in order to freeze it
@@ -429,13 +495,6 @@ contract NFTYFinanceV1 is
         emit LendingDeskStateSet(_lendingDeskId, _freeze);
     }
 
-    /**
-     * @notice Event that will be emitted when a lending desk is dissolved
-     *
-     * @param lendingDeskId The ID of the lending desk
-     */
-    event LendingDeskDissolved(uint256 lendingDeskId);
-
     function dissolveLendingDesk(
         uint256 _lendingDeskId
     ) external override whenNotPaused nonReentrant {
@@ -452,21 +511,6 @@ contract NFTYFinanceV1 is
 
         emit LendingDeskDissolved(_lendingDeskId);
     }
-
-    /**
-     * @notice Event that will be emitted every time a new offer is accepted
-     *
-     * @param lender The address of the owner
-     * @param borrower The address of the borrower
-     * @param lendingDeskId A unique identifier that determines the lending desk to which this offer belongs
-     * @param loanId A unique identifier for the loan created
-     */
-    event NewLoanInitialized(
-        address indexed lender,
-        address indexed borrower,
-        uint256 lendingDeskId,
-        uint256 loanId
-    );
 
     /**
      * @notice This function can be called by a borrower to create a loan
@@ -586,23 +630,6 @@ contract NFTYFinanceV1 is
         emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanIdCounter.current());
     }
 
-    /**
-     * @notice Event that will be emitted every time an obligation receipt holder pays back a loan
-     *
-     * @param obligationReceiptOwner The address of the owner of the obligation receipt, actor who pays back a loan
-     * @param promissoryNoteOwner The address of the owner of the promissory note, actor who receives the payment loan fees
-     * @param loanId The unique identifier of the loan
-     * @param amount The amount of currency paid back to the promissory note holder
-     * @param resolved Whether the loan is fully paid back or not
-     *
-     */
-    event LoanPaymentMade(
-        address indexed obligationReceiptOwner,
-        address indexed promissoryNoteOwner,
-        uint256 loanId,
-        uint256 amount,
-        bool resolved
-    );
 
     /**
      * @notice This function can be called by the obligation receipt holder to pay a loan and get the collateral back
@@ -690,21 +717,6 @@ contract NFTYFinanceV1 is
             _amount
         );
     }
-
-    /**
-     * @notice Event that will be emitted every time a loan is liquidated when the obligation receipt holder did not pay it back in time
-     *
-     * @param promissoryNoteOwner The address of the promissory note owner
-     * @param lendingDeskId The unique identifier of the lending desk
-     * @param loanId The unique identifier of the loan
-     * @param nftCollateralId The collateral NFT ID that was sent to the promissory note holder
-     */
-    event DefaultedLoanLiquidated(
-        address indexed promissoryNoteOwner,
-        uint256 lendingDeskId,
-        uint256 loanId,
-        uint256 nftCollateralId
-    );
 
     /**
      * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral
