@@ -309,6 +309,7 @@ contract NFTYFinanceV1 is
             require(_loanConfigs[i].minDuration > 0, "min duration = 0");
             require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
 
+            // Verify NFT collection is valid NFT
             // 1155
             if (_loanConfigs[i].nftCollectionIsErc1155)
                 require(
@@ -379,28 +380,30 @@ contract NFTYFinanceV1 is
         uint256 _lendingDeskId,
         uint256 _amount
     ) public override whenNotPaused nonReentrant {
+        // Ensure positive amount
         require(_amount > 0, "amount = 0");
 
+        // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
+        // Update balance state, transfer tokens
         lendingDesk.balance = lendingDesk.balance + _amount;
+        IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _amount
+        );
 
+        // Emit event
         emit LendingDeskLiquidityAdded(
             msg.sender,
             _lendingDeskId,
             lendingDesk.balance,
-            _amount
-        );
-
-        IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
-            msg.sender,
-            address(this),
             _amount
         );
     }
@@ -416,8 +419,8 @@ contract NFTYFinanceV1 is
         uint256 _lendingDeskId,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
+        // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
@@ -428,8 +431,11 @@ contract NFTYFinanceV1 is
             "insufficient lending desk balance"
         );
 
+        // Update balance state, transfer tokens
         lendingDesk.balance = lendingDesk.balance - _amount;
+        IERC20Upgradeable(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
 
+        // Emit event
         emit LendingDeskLiquidityWithdrawn(
             msg.sender,
             _lendingDeskId,
@@ -437,7 +443,6 @@ contract NFTYFinanceV1 is
             lendingDesk.balance
         );
 
-        IERC20Upgradeable(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
     }
 
     /**
@@ -451,21 +456,24 @@ contract NFTYFinanceV1 is
         uint256 _lendingDeskId,
         bool _freeze
     ) external override whenNotPaused {
+        // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
+        // Freeze
         if (_freeze) {
             require(
                 lendingDesk.status == LendingDeskStatus.Active,
                 "lending desk not active"
             );
             lendingDesk.status = LendingDeskStatus.Frozen;
-        } else {
+        }
+        // Unfreeze
+        else {
             require(
                 lendingDesk.status == LendingDeskStatus.Active,
                 "lending desk not frozen"
@@ -473,6 +481,7 @@ contract NFTYFinanceV1 is
             lendingDesk.status = LendingDeskStatus.Active;
         }
 
+        // Emit Event
         emit LendingDeskStateSet(_lendingDeskId, _freeze);
     }
 
@@ -587,9 +596,15 @@ contract NFTYFinanceV1 is
         lendingDesk.balance = lendingDesk.balance - _amount;
 
         // Mint promissory and obligation notes
-        // Note: Promissory note is minted to the owner of the lending desk key 721
-        INFTYERC721(promissoryNotes).mint(INFTYERC721(lendingKeys).ownerOf(_lendingDeskId), loanIdCounter.current());
-        INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter.current());
+        // Note: Promissory note is minted to the owner of the desk key
+        INFTYERC721(promissoryNotes).mint(
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId),
+            loanIdCounter.current()
+        );
+        INFTYERC721(obligationNotes).mint(
+            msg.sender,
+            loanIdCounter.current()
+        );
 
         // Transfer NFT to escrow
         // 1155
@@ -632,8 +647,9 @@ contract NFTYFinanceV1 is
         uint256 _loanId,
         uint256 _amount
     ) external override whenNotPaused nonReentrant {
-        // Get loan and check status
+        // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
+        LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
         require(loan.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
 
@@ -659,23 +675,13 @@ contract NFTYFinanceV1 is
         require((timeElapsed / 1 hours) >= loan.duration, "loan has expired");
         require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
 
-        // Emit Event
-        emit LoanPaymentMade(
-            obligationReceiptHolder,
-            promissoryNoteHolder,
-            _loanId,
-            _amount,
-            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
-        );
-
-        LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
-
-        // Loan paid back. Proceed with fulfillment
+        // OPTIONAL: Loan paid back, proceed with fulfillment
+        // (Returning NFT from escrow, burning obligation/promissory notes)
         if (loan.amountPaidBack >= totalAmountDue) {
-            // Set status to resolves
+            // Set status to resolveD
             loan.status = LoanStatus.Resolved;
 
-            // Send NFT collateral to obligation receipt holder
+            // Send NFT collateral from escrow to obligation receipt holder
             if (
                 lendingDesk
                     .loanConfigs[loan.nftCollection]
@@ -700,11 +706,20 @@ contract NFTYFinanceV1 is
             INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
-        // Transfer
+        // Transfer Tokens
         IERC20Upgradeable(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             promissoryNoteHolder,
             _amount
+        );
+
+        // Emit Event
+        emit LoanPaymentMade(
+            obligationReceiptHolder,
+            promissoryNoteHolder,
+            _loanId,
+            _amount,
+            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
         );
     }
 
@@ -717,31 +732,27 @@ contract NFTYFinanceV1 is
     function liquidateDefaultedLoan(
         uint256 _loanId
     ) external override whenNotPaused nonReentrant {
+        // Get loan from storage
         Loan storage loan = loans[_loanId];
-
         require(loan.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
-
         require(
             INFTYERC721(promissoryNotes).ownerOf(_loanId) == msg.sender,
             "not promissory note owner"
         );
 
+        // Check loan is expired / in default
         uint256 loanDurationInDays = loan.duration * 1 days;
         require(
             block.timestamp >= loan.startTime + (loanDurationInDays),
             "loan not yet expired"
         );
 
+        // Update loan state to resolved
         loan.status = LoanStatus.Resolved;
 
-        emit DefaultedLoanLiquidated(
-            msg.sender,
-            loan.lendingDeskId,
-            _loanId,
-            loan.nftId
-        );
-
+        // Transfer NFT from escrow to promissory note holder
+        // 1155
         if (
             lendingDesks[loan.lendingDeskId]
                 .loanConfigs[loan.nftCollection]
@@ -754,6 +765,7 @@ contract NFTYFinanceV1 is
                 1,
                 ""
             );
+        // 721
         else
             IERC721(loan.nftCollection).safeTransferFrom(
                 address(this),
@@ -764,6 +776,14 @@ contract NFTYFinanceV1 is
         // burn both promissory note and obligation receipt
         INFTYERC721(promissoryNotes).burn(_loanId);
         INFTYERC721(obligationNotes).burn(_loanId);
+
+        // Emit event
+        emit DefaultedLoanLiquidated(
+            msg.sender,
+            loan.lendingDeskId,
+            _loanId,
+            loan.nftId
+        );
     }
 
     /* ******************** */
@@ -784,22 +804,16 @@ contract NFTYFinanceV1 is
         address _lendingKeys,
         uint256 _loanOriginationFee
     ) public initializer {
+        // TODO
         __Ownable_init();
         __Pausable_init();
 
-        require(
-            _promissoryNotes != address(0),
-            "promissory notes is zero addr"
-        );
-        promissoryNotes = _promissoryNotes;
-
-        require(
-            _obligationNotes != address(0),
-            "obligation notes is zero addr"
-        );
-        obligationNotes = _obligationNotes;
-
+        // Check & set peripheral contract addresses
+        require(_promissoryNotes != address(0),"promissory note is zero addr");
+        require(_obligationNotes != address(0),"obligation note is zero addr");
         require(_lendingKeys != address(0), "lending keys is zero addr");
+        promissoryNotes = _promissoryNotes;
+        obligationNotes = _obligationNotes;
         lendingKeys = _lendingKeys;
 
         // Set loan origination fee
@@ -834,14 +848,18 @@ contract NFTYFinanceV1 is
         address _erc20,
         address _receiver
     ) external onlyOwner nonReentrant {
+        // check inputs
         require(_receiver != address(0), "invalid receiver");
         require(_erc20 != address(0), "invalid erc20");
 
+        // check amount of erc20 requested
         uint256 amount = platformFees[_erc20];
         require(amount > 0, "collected platform fees = 0");
 
+        // update erc20 state
         platformFees[_erc20] = 0;
 
+        // transfer tokens
         IERC20Upgradeable(_erc20).safeTransfer(_receiver, amount);
     }
 
