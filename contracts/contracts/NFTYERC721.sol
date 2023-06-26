@@ -43,6 +43,9 @@ contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
     /* *********** */
     /* FUNCTIONS   */
     /* *********** */
+    /**
+     * @dev Call _safeMint but require NFTY_LENDING_ROLE
+     */
     function mint(
         address to,
         uint256 tokenId
@@ -52,6 +55,9 @@ contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
         _safeMint(to, tokenId);
     }
 
+    /**
+     * @dev Call _safeMint but require NFTY_LENDING_ROLE
+     */
     function burn(
         uint256 tokenId
     ) external nonReentrant onlyRole(NFTY_LENDING_ROLE) {
@@ -59,10 +65,9 @@ contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
         _burn(tokenId);
     }
 
-    function _baseURI() internal view override returns (string memory) {
-        return baseURI;
-    }
-
+    /**
+     * @dev Update base URI but require URI_SETTER_ROLE
+     */
     function setBaseURI(
         string memory _baseURI
     ) external nonReentrant onlyRole(URI_SETTER_ROLE) {
@@ -71,7 +76,9 @@ contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
         emit BaseURISet(msg.sender, _baseURI);
     }
 
-    // The following functions are overrides required by Solidity.
+    /**
+     * @dev The following functions are overrides required by Solidity.
+     */
     function supportsInterface(
         bytes4 interfaceId
     )
