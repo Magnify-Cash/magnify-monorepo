@@ -2,18 +2,10 @@
 
 pragma solidity ^0.8.18;
 
-import "./interfaces/INFTYFinanceV1.sol";
-import "./interfaces/INFTYERC721.sol";
-
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
-
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
@@ -22,6 +14,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgra
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+
+import "./interfaces/INFTYFinanceV1.sol";
+import "./interfaces/INFTYERC721.sol";
 
 contract NFTYFinanceV1 is
     INFTYFinanceV1,
