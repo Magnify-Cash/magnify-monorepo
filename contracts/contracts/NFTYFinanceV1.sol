@@ -88,15 +88,6 @@ contract NFTYFinanceV1 is
     /* *********** */
 
     /**
-     * @notice Event that will be emitted every time an admin updates loan origination fee
-     *
-     * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
-     */
-    event LoanOriginationFeeSet(
-        uint256 loanOriginationFee
-    );
-
-    /**
      * @notice Event that will be emitted every time a lending desk is created
      *
      * @param owner The address of the owner of the created lending desk
@@ -228,6 +219,25 @@ contract NFTYFinanceV1 is
         uint256 loanId,
         uint256 nftCollateralId
     );
+
+    /**
+     * @notice Event that will be emitted every time an admin updates loan origination fee
+     *
+     * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
+     */
+    event LoanOriginationFeeSet(
+        uint256 loanOriginationFee
+    );
+
+    /**
+     * @notice Event that will be emitted every time an admin pauses or unpauses the protocol
+     *
+     * @param paused Boolean for paused. True if paused, false if unpaused.
+     */
+    event ProtocolPaused(
+        bool paused
+    );
+
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -802,19 +812,6 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice Function that allows the admin of the platform to pause and unpause the protocol
-     *
-     * @param _paused Whether or not the protocol should be paused
-     */
-    function setPaused(bool _paused) external onlyOwner {
-        if (_paused) {
-            _pause();
-        } else {
-            _unpause();
-        }
-    }
-
-    /**
      * @notice Allows the admin of the contract to modify loan origination fee.
      *
      * @param _loanOriginationFee Basis points fee the borrower will have to pay to the platform when borrowing loan
@@ -851,5 +848,23 @@ contract NFTYFinanceV1 is
         platformFees[_erc20] = 0;
 
         IERC20Upgradeable(_erc20).safeTransfer(_receiver, amount);
+    }
+
+    /**
+     * @notice Function that allows the admin of the platform to pause and unpause the protocol
+     *
+     * @param _paused Whether or not the protocol should be paused
+     * @dev Emits an {ProtocolPaused} event.
+     */
+    function setPaused(bool _paused) external onlyOwner {
+        // Pause or unpause
+        if (_paused) {
+            _pause();
+        } else {
+            _unpause();
+        }
+
+        // Emit event
+        emit ProtocolPaused(_paused);
     }
 }
