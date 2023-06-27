@@ -64,7 +64,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     mapping(address => uint256) public platformFees;
 
-
     /* *********** */
     /*  EVENTS     */
     /* *********** */
@@ -125,10 +124,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param lendingDeskId The ID of the lending desk
      * @param freeze Whether frozen// unfrozen
      */
-    event LendingDeskStateSet(
-        uint256 lendingDeskId,
-        bool freeze
-    );
+    event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
 
     /**
      * @notice Event that will be emitted every time there is a cash out on a lending desk
@@ -150,9 +146,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @param lendingDeskId The ID of the lending desk
      */
-    event LendingDeskDissolved(
-        uint256 lendingDeskId
-    );
+    event LendingDeskDissolved(uint256 lendingDeskId);
 
     /**
      * @notice Event that will be emitted every time a new offer is accepted
@@ -207,19 +201,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
      */
-    event LoanOriginationFeeSet(
-        uint256 loanOriginationFee
-    );
+    event LoanOriginationFeeSet(uint256 loanOriginationFee);
 
     /**
      * @notice Event that will be emitted every time an admin pauses or unpauses the protocol
      *
      * @param paused Boolean for paused. True if paused, false if unpaused.
      */
-    event ProtocolPaused(
-        bool paused
-    );
-
+    event ProtocolPaused(bool paused);
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -231,8 +220,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 _loanOriginationFee
     ) {
         // Check & set peripheral contract addresses
-        require(_promissoryNotes != address(0),"promissory note is zero addr");
-        require(_obligationNotes != address(0),"obligation note is zero addr");
+        require(_promissoryNotes != address(0), "promissory note is zero addr");
+        require(_obligationNotes != address(0), "obligation note is zero addr");
         require(_lendingKeys != address(0), "lending keys is zero addr");
         promissoryNotes = _promissoryNotes;
         obligationNotes = _obligationNotes;
@@ -319,7 +308,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     ),
                     "invalid nft collection"
                 );
-            // 721
+                // 721
             else
                 require(
                     ERC165Checker.supportsInterface(
@@ -330,7 +319,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 );
 
             // Add loan configuration to state
-            lendingDesk.loanConfigs[_loanConfigs[i].nftCollection] = _loanConfigs[i];
+            lendingDesk.loanConfigs[
+                _loanConfigs[i].nftCollection
+            ] = _loanConfigs[i];
         }
 
         // Emit event
@@ -442,7 +433,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             _amount,
             lendingDesk.balance
         );
-
     }
 
     /**
@@ -566,18 +556,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
            - Combine the adjusted impact with the minimum interest rate.
            loanConfig.minInterest + ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
         */
-        uint256 interest = loanConfig.minInterest + (
-            (
-                (_amount - loanConfig.minAmount) *
+        uint256 interest = loanConfig.minInterest +
+            (((_amount - loanConfig.minAmount) *
                 (loanConfig.maxInterest - loanConfig.minInterest) *
-                (_duration - loanConfig.minDuration)
-            )
-            /
-            (
-                (loanConfig.maxAmount - loanConfig.minAmount) *
-                (loanConfig.maxDuration - loanConfig.minDuration)
-            )
-        );
+                (_duration - loanConfig.minDuration)) /
+                ((loanConfig.maxAmount - loanConfig.minAmount) *
+                    (loanConfig.maxDuration - loanConfig.minDuration)));
 
         // Set new desk in storage and update related storage
         loanIdCounter++;
@@ -601,10 +585,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId),
             loanIdCounter
         );
-        INFTYERC721(obligationNotes).mint(
-            msg.sender,
-            loanIdCounter
-        );
+        INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter);
 
         // Transfer NFT to escrow
         // 1155
@@ -616,7 +597,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 1,
                 ""
             );
-        // 721
+            // 721
         else
             IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
@@ -632,9 +613,13 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Emit event
-        emit NewLoanInitialized(msg.sender, msg.sender, _lendingDeskId, loanIdCounter);
+        emit NewLoanInitialized(
+            msg.sender,
+            msg.sender,
+            _lendingDeskId,
+            loanIdCounter
+        );
     }
-
 
     /**
      * @notice This function can be called by the obligation note holder to pay a loan and get the collateral back
@@ -667,7 +652,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Calculate total amount due
         uint256 timeElapsed = (block.timestamp - loan.startTime);
-        uint256 unscaledAmountDue = loan.amount + (loan.amount * loan.interest * timeElapsed);
+        uint256 unscaledAmountDue = loan.amount +
+            (loan.amount * loan.interest * timeElapsed);
         uint256 totalAmountDue = unscaledAmountDue / (365 days * 10000);
 
         // Update amountPaidBack and check expiry / overflow.
@@ -765,7 +751,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 1,
                 ""
             );
-        // 721
+            // 721
         else
             IERC721(loan.nftCollection).safeTransferFrom(
                 address(this),
