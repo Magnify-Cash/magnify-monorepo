@@ -193,7 +193,7 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskId];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
-        setLendingDeskLoanConfig(lendingDeskId, _loanConfigs);
+        setLendingDeskLoanConfigs(lendingDeskId, _loanConfigs);
         depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
 
         // Mint lending desk ownership NFT
@@ -207,12 +207,12 @@ contract NFTYFinanceV1 is
         );
     }
 
-    event LendingDeskLoanConfigSet(
+    event LendingDeskLoanConfigsSet(
         uint256 lendingDeskId,
         LoanConfig[] loanConfig
     );
 
-    function setLendingDeskLoanConfig(
+    function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] calldata _loanConfigs
     ) public override whenNotPaused nonReentrant {
@@ -252,7 +252,7 @@ contract NFTYFinanceV1 is
             lendingDesk.loanConfigs[_loanConfigs[i].nftCollection] = _loanConfigs[i];
         }
 
-        emit LendingDeskLoanConfigSet({
+        emit LendingDeskLoanConfigsSet({
             lendingDeskId: _lendingDeskId,
             loanConfig: _loanConfigs
         });
@@ -640,7 +640,7 @@ contract NFTYFinanceV1 is
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
         require((timeElapsed / 1 hours) >= loan.duration, "loan has expired");
-        require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
+        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // Emit Event
         emit LoanPaymentMade(
