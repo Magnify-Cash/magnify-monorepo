@@ -1,4 +1,5 @@
 {
-  "filter_paths": "(mocks/|test/|@openzeppelin/)",
-  "solc_remaps": "@=../node_modules/@"
+  "detectors_to_exclude": "naming-convention,timestamp",
+  "solc_remaps": "@=../node_modules/@",
+  "filter_paths": "(node_modules/|test/)"
 }
