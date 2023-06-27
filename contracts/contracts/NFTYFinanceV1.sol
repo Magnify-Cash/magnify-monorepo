@@ -256,7 +256,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskIdCounter];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
-        setLendingDeskLoanConfig(lendingDeskIdCounter, _loanConfigs);
+        setLendingDeskLoanConfigs(lendingDeskIdCounter, _loanConfigs);
         depositLendingDeskLiquidity(lendingDeskIdCounter, _depositAmount);
 
         // Mint lending desk ownership NFT
@@ -277,7 +277,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param _loanConfigs Loan config for each NFT collection this lending desk will support
      * @dev Emits an {LendingDeskLoanConfigSet} event.
      */
-    function setLendingDeskLoanConfig(
+    function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] calldata _loanConfigs
     ) public override whenNotPaused nonReentrant {
