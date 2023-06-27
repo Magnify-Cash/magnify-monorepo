@@ -640,7 +640,7 @@ contract NFTYFinanceV1 is
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
         require((timeElapsed / 1 hours) >= loan.duration, "loan has expired");
-        require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
+        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // Emit Event
         emit LoanPaymentMade(
