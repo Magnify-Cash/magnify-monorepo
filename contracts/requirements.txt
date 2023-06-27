@@ -2,4 +2,4 @@
 mythril
 
 ## crytic stack
-# slither-analyzer
+slither-analyzer
