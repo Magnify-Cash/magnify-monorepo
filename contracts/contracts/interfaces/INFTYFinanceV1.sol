@@ -86,7 +86,7 @@ interface INFTYFinanceV1 {
         LoanConfig[] calldata _loanConfigs
     ) external;
 
-    function setLendingDeskLoanConfig(
+    function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] calldata _loanConfig
     ) external;
