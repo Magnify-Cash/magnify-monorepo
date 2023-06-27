@@ -651,18 +651,19 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Calculate total amount due
-        uint256 timeElapsed = (block.timestamp - loan.startTime);
-        uint256 unscaledAmountDue = loan.amount +
-            (loan.amount * loan.interest * timeElapsed);
-        uint256 totalAmountDue = unscaledAmountDue / (365 days * 10000);
+        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
+        uint256 totalAmountDue = loan.amount +
+            (loan.amount * loan.interest * hoursElapsed) /
+            (8760 * 10000);
 
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require((timeElapsed / 1 hours) >= loan.duration, "loan has expired");
-        require(totalAmountDue > loan.amountPaidBack, "payment amount > debt");
+        require(hoursElapsed <= loan.duration, "loan has expired");
+        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
+        // TODO: Check if this can be changed to equal
         if (loan.amountPaidBack >= totalAmountDue) {
             // Set status to resolveD
             loan.status = LoanStatus.Resolved;
