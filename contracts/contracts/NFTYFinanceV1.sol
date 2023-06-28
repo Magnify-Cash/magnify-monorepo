@@ -279,7 +279,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
-        LoanConfig[] calldata _loanConfigs
+        LoanConfig[] memory _loanConfigs
     ) public whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
