@@ -280,7 +280,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] calldata _loanConfigs
-    ) public override whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -341,7 +341,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
         address _nftCollection
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -370,7 +370,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) public override whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant {
         // Ensure positive amount
         require(_amount > 0, "amount = 0");
 
@@ -409,7 +409,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function withdrawLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -445,7 +445,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function setLendingDeskState(
         uint256 _lendingDeskId,
         bool _freeze
-    ) external override whenNotPaused {
+    ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -483,7 +483,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function dissolveLendingDesk(
         uint256 _lendingDeskId
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -516,7 +516,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 _nftId,
         uint256 _duration,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
@@ -631,7 +631,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function makeLoanPayment(
         uint256 _loanId,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
@@ -718,7 +718,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function liquidateDefaultedLoan(
         uint256 _loanId
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get loan from storage
         Loan storage loan = loans[_loanId];
         require(loan.nftCollection != address(0), "invalid loan id");
