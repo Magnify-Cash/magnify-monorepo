@@ -4,16 +4,11 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./interfaces/INFTYERC721.sol";
 
 contract NFTYERC721 is INFTYERC721, ERC721, AccessControl, ReentrancyGuard {
-    using Address for address;
-    using Strings for uint256;
-
     /* *********** */
     /*   STORAGE   */
     /* *********** */
