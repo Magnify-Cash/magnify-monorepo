@@ -42,17 +42,17 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
-    address public promissoryNotes;
+    address public immutable promissoryNotes;
 
     /**
      * @notice The address of the ERC721 to generate obligation notes for borrowers
      */
-    address public obligationNotes;
+    address public immutable obligationNotes;
 
     /**
      * @notice The address of the lending desk ownership ERC721
      */
-    address public lendingKeys;
+    address public immutable lendingKeys;
 
     /**
      * @notice The basis points of fees that the borrower will pay for each loan
@@ -651,14 +651,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Calculate total amount due
-        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * hoursElapsed) /
-            (8760 * 10000);
+            (loan.amount * loan.interest * (block.timestamp - loan.startTime))
+            / (8760 * 10000) // Yearly scale
+            / 1 hours; // Hourly scale
 
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require(hoursElapsed <= loan.duration, "loan has expired");
+        require((block.timestamp - loan.startTime) / 1 hours <= loan.duration, "loan has expired");
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
