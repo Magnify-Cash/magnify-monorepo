@@ -13,7 +13,8 @@ interface INFTYFinanceV1 {
     // When first created a Loan is Active by default, once the loan is resolved it becomes Resolved
     enum LoanStatus {
         Active,
-        Resolved
+        Resolved,
+        Defaulted
     }
 
     /**

@@ -740,7 +740,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Update loan state to resolved
-        loan.status = LoanStatus.Resolved;
+        loan.status = LoanStatus.Defaulted;
 
         // Transfer NFT from escrow to promissory note holder
         // 1155
