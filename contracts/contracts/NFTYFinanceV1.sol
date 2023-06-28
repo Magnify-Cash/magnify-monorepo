@@ -42,17 +42,17 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice The address of the ERC721 to generate promissory notes for lenders
      */
-    address public promissoryNotes;
+    address public immutable promissoryNotes;
 
     /**
      * @notice The address of the ERC721 to generate obligation notes for borrowers
      */
-    address public obligationNotes;
+    address public immutable obligationNotes;
 
     /**
      * @notice The address of the lending desk ownership ERC721
      */
-    address public lendingKeys;
+    address public immutable lendingKeys;
 
     /**
      * @notice The basis points of fees that the borrower will pay for each loan
@@ -280,7 +280,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] calldata _loanConfigs
-    ) public override whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -341,13 +341,17 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
         address _nftCollection
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             lendingDesk.loanConfigs[_nftCollection].nftCollection != address(0),
             "lending desk does not support NFT collection"
+        );
+        require(
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            "not lending desk owner"
         );
 
         // Delete desk
@@ -370,7 +374,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) public override whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant {
         // Ensure positive amount
         require(_amount > 0, "amount = 0");
 
@@ -409,7 +413,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function withdrawLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -445,7 +449,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function setLendingDeskState(
         uint256 _lendingDeskId,
         bool _freeze
-    ) external override whenNotPaused {
+    ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -483,7 +487,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function dissolveLendingDesk(
         uint256 _lendingDeskId
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -516,7 +520,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 _nftId,
         uint256 _duration,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
@@ -631,7 +635,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function makeLoanPayment(
         uint256 _loanId,
         uint256 _amount
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
@@ -651,14 +655,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Calculate total amount due
-        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * hoursElapsed) /
-            (8760 * 10000);
+            (loan.amount * loan.interest * (block.timestamp - loan.startTime))
+            / (8760 * 10000) // Yearly scale
+            / 1 hours; // Hourly scale
 
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require(hoursElapsed <= loan.duration, "loan has expired");
+        require((block.timestamp - loan.startTime) / 1 hours <= loan.duration, "loan has expired");
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
@@ -718,7 +722,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function liquidateDefaultedLoan(
         uint256 _loanId
-    ) external override whenNotPaused nonReentrant {
+    ) external whenNotPaused nonReentrant {
         // Get loan from storage
         Loan storage loan = loans[_loanId];
         require(loan.nftCollection != address(0), "invalid loan id");
@@ -736,7 +740,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Update loan state to resolved
-        loan.status = LoanStatus.Resolved;
+        loan.status = LoanStatus.Defaulted;
 
         // Transfer NFT from escrow to promissory note holder
         // 1155
