@@ -349,6 +349,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             lendingDesk.loanConfigs[_nftCollection].nftCollection != address(0),
             "lending desk does not support NFT collection"
         );
+        require(
+            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            "not lending desk owner"
+        );
 
         // Delete desk
         delete lendingDesk.loanConfigs[_nftCollection];
