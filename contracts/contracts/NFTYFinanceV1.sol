@@ -656,13 +656,16 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * (block.timestamp - loan.startTime))
-            / (8760 * 10000) // Yearly scale
-            / 1 hours; // Hourly scale
+            (loan.amount * loan.interest * (block.timestamp - loan.startTime)) /
+            (8760 * 10000) / // Yearly scale
+            1 hours; // Hourly scale
 
         // Update amountPaidBack and check expiry / overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require((block.timestamp - loan.startTime) / 1 hours <= loan.duration, "loan has expired");
+        require(
+            (block.timestamp - loan.startTime) / 1 hours <= loan.duration,
+            "loan has expired"
+        );
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
@@ -790,7 +793,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 _loanOriginationFee
     ) public onlyOwner {
         // Set loan origination fees
-        require(_loanOriginationFee <= 10, "fee > 10%");
+        require(_loanOriginationFee <= 10000, "fee > 10%");
         loanOriginationFee = _loanOriginationFee;
 
         // Emit event
@@ -802,42 +805,29 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * The funds consists of all platform fees generated at the time of loan creation,
      * in addition to collected borrower fees for liquidated loans which were not paid back.
      * @param _receiver the address that will receive the platform fees that can be withdrawn at the time
+     * @param _erc20s array of erc20s the admin wants to withdraw fees for
      *
      */
     function withdrawPlatformFees(
-        address _erc20,
-        address _receiver
+        address _receiver,
+        address[] calldata _erc20s
     ) external onlyOwner nonReentrant {
         // check inputs
         require(_receiver != address(0), "invalid receiver");
-        require(_erc20 != address(0), "invalid erc20");
 
-        // check amount of erc20 requested
-        uint256 amount = platformFees[_erc20];
-        require(amount > 0, "collected platform fees = 0");
+        // loop over erc20s
+        for (uint256 i = 0; i < _erc20s.length; i++) {
+            require(_erc20s[i] != address(0), "invalid erc20");
 
-        // update erc20 state
-        platformFees[_erc20] = 0;
+            // check amount of erc20 requested
+            uint256 amount = platformFees[_erc20s[i]];
+            require(amount > 0, "collected platform fees = 0");
 
-        // transfer tokens
-        IERC20(_erc20).safeTransfer(_receiver, amount);
-    }
+            // update erc20 state
+            platformFees[_erc20s[i]] = 0;
 
-    /**
-     * @notice Function that allows the admin of the platform to pause and unpause the protocol
-     *
-     * @param _paused Whether or not the protocol should be paused
-     * @dev Emits an {ProtocolPaused} event.
-     */
-    function setPaused(bool _paused) external onlyOwner {
-        // Pause or unpause
-        if (_paused) {
-            _pause();
-        } else {
-            _unpause();
+            // transfer tokens
+            IERC20(_erc20s[i]).safeTransfer(_receiver, amount);
         }
-
-        // Emit event
-        emit ProtocolPaused(_paused);
     }
 }

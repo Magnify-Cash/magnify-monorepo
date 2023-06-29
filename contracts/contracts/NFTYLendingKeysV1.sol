@@ -8,6 +8,7 @@ contract NFTYLendingKeysV1 is NFTYERC721 {
     constructor(
         string memory _name,
         string memory _symbol,
-        string memory _baseURI
-    ) NFTYERC721(_name, _symbol, _baseURI) {}
+        string memory _baseURI,
+        address _nftyFinance
+    ) NFTYERC721(_name, _symbol, _baseURI, _nftyFinance) {}
 }
