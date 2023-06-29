@@ -13,7 +13,7 @@ contract NFTYERC721 is INFTYERC721, ERC721, Ownable, ReentrancyGuard {
     /*   STORAGE   */
     /* *********** */
     string public baseURI;
-    address public immutable nftyFinance;
+    address public nftyFinance;
 
     /* *********** */
     /*   EVENTS    */
@@ -37,16 +37,21 @@ contract NFTYERC721 is INFTYERC721, ERC721, Ownable, ReentrancyGuard {
     constructor(
         string memory name,
         string memory symbol,
-        string memory _baseURI,
-        address _nftyFinance
+        string memory _baseURI
     ) ERC721(name, symbol) {
         baseURI = _baseURI;
-        nftyFinance = _nftyFinance;
     }
 
     /* *********** */
     /* FUNCTIONS   */
     /* *********** */
+    /**
+     * @dev Set NFTY Finance contract address, requires caller to be owner
+     */
+    function setNftyFinance(address _nftyFinance) external onlyOwner {
+        nftyFinance = _nftyFinance;
+    }
+
     /**
      * @dev Call _safeMint but requires caller to be the NFTY Finance contract
      */
