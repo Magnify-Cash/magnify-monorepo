@@ -386,8 +386,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             "not lending desk owner"
         );
 
-        // Update balance state, transfer tokens
+        // Update balance state, approve tokens, transfer tokens
         lendingDesk.balance = lendingDesk.balance + _amount;
+        IERC20(lendingDesk.erc20).safeIncreaseAllowance(
+            address(this),
+            _amount
+        );
         IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             address(this),
@@ -591,9 +595,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
         INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter);
 
-        // Transfer NFT to escrow
+        // Approve + Transfer NFT to escrow
         // 1155
-        if (loanConfig.nftCollectionIsErc1155)
+        if (loanConfig.nftCollectionIsErc1155){
+            IERC1155(_nftCollection).setApprovalForAll(msg.sender, true);
             IERC1155(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -601,13 +606,19 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 1,
                 ""
             );
-            // 721
-        else
+        }
+        // 721
+        else {
+            IERC721(_nftCollection).approve(
+                address(this),
+                _nftId
+            );
             IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
                 _nftId
             );
+        }
 
         // Transfer amount minus fees to borrower
         // Note: Fees are held in contract until withdrawPlatformFees()
@@ -700,7 +711,11 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
-        // Transfer Tokens
+        // Approve + Transfer Tokens
+        IERC20(lendingDesk.erc20).safeIncreaseAllowance(
+            address(this),
+            _amount
+        );
         IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             promissoryNoteHolder,
