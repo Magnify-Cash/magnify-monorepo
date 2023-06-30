@@ -300,7 +300,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
             // Verify NFT collection is valid NFT
             // 1155
-            if (_loanConfigs[i].nftCollectionIsErc1155)
+            if (_loanConfigs[i].nftCollectionIsErc1155) {
                 require(
                     ERC165Checker.supportsInterface(
                         _loanConfigs[i].nftCollection,
@@ -308,8 +308,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     ),
                     "invalid nft collection"
                 );
-                // 721
-            else
+            }
+            // 721
+            else {
                 require(
                     ERC165Checker.supportsInterface(
                         _loanConfigs[i].nftCollection,
@@ -317,6 +318,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     ),
                     "invalid nft collection"
                 );
+            }
 
             // Add loan configuration to state
             lendingDesk.loanConfigs[
@@ -692,6 +694,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     .loanConfigs[loan.nftCollection]
                     .nftCollectionIsErc1155
             )
+            // 1155
+            {
                 IERC1155(loan.nftCollection).safeTransferFrom(
                     address(this),
                     obligationReceiptHolder,
@@ -699,12 +703,15 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     1,
                     ""
                 );
-            else
+            }
+            // 721
+            else {
                 IERC721(loan.nftCollection).safeTransferFrom(
                     address(this),
                     obligationReceiptHolder,
                     loan.nftId
                 );
+            }
 
             // Burn promissory note and obligation receipt
             INFTYERC721(obligationNotes).burn(_loanId);
@@ -761,12 +768,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         loan.status = LoanStatus.Defaulted;
 
         // Transfer NFT from escrow to promissory note holder
-        // 1155
+
         if (
             lendingDesks[loan.lendingDeskId]
                 .loanConfigs[loan.nftCollection]
                 .nftCollectionIsErc1155
         )
+        // 1155
+        {
             IERC1155(loan.nftCollection).safeTransferFrom(
                 address(this),
                 msg.sender,
@@ -774,13 +783,15 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 1,
                 ""
             );
-            // 721
-        else
+        }
+        // 721
+        else {
             IERC721(loan.nftCollection).safeTransferFrom(
                 address(this),
                 msg.sender,
                 loan.nftId
             );
+        }
 
         // burn both promissory note and obligation receipt
         INFTYERC721(promissoryNotes).burn(_loanId);
