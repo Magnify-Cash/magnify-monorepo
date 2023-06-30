@@ -831,6 +831,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         require(_receiver != address(0), "invalid receiver");
 
         // loop over erc20s
+        // TODO:
+        // is re-entry concern here with transfers in a loop?
+        // correct state is updated before transfer, but n transfer happens before n+1 state update / transfer
+        // also an onlyOwner function so smaller attack surface
         for (uint256 i = 0; i < _erc20s.length; i++) {
             require(_erc20s[i] != address(0), "invalid erc20");
 
