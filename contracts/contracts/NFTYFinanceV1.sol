@@ -22,12 +22,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Unique identifier for lending desks
      */
-    uint256 private lendingDeskIdCounter;
+    uint256 public lendingDeskIdCounter;
 
     /**
      * @notice Unique identifier for loans
      */
-    uint256 private loanIdCounter;
+    uint256 public loanIdCounter;
 
     /**
      * @notice Mapping to store lending desks
