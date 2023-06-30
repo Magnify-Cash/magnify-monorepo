@@ -3,14 +3,27 @@
 pragma solidity ^0.8.18;
 
 interface INFTYFinanceV1 {
-    // When first created a lending desk is Active, its owner can then set it as Frozen or Dissolved
+    /* *********** */
+    /*  EVENTS     */
+    /* *********** */
+    /**
+     * @notice LendingDeskStatus used to store lending desk status
+     * @notice Active Default status when a lending desk is created
+     * @notice Frozen Used when a lender pauses or 'freezes' their desk
+     * @notice Dissolved Used when a lender fully dissolves their desk. Non-reversible.
+     */
     enum LendingDeskStatus {
         Active,
         Frozen,
         Dissolved
     }
 
-    // When first created a Loan is Active by default, once the loan is resolved it becomes Resolved
+    /**
+     * @notice LoanStatus used to store loan status
+     * @notice Active Default status when a loan is issued
+     * @notice Resolved Used when a loan is fully paid back by borrower
+     * @notice Defaulted Used when a loan is liquidated by lender
+     */
     enum LoanStatus {
         Active,
         Resolved,
@@ -79,43 +92,102 @@ interface INFTYFinanceV1 {
         mapping(address => LoanConfig) loanConfigs;
     }
 
-    // Methods related to lending desks
-
+    /* ******************** */
+    /*  CORE FUNCTIONS      */
+    /* ******************** */
+    /**
+     * @notice Creates a new lending desk
+     *
+     * @param _erc20 The ERC20 that will be accepted for loans in this lending desk
+     * @param _depositAmount The initial balance of this lending desk
+     * @param _loanConfigs Loan config for each NFT collection this lending desk will support
+     * @dev Emits an {NewLendingDeskInitialized} event.
+     */
     function initializeNewLendingDesk(
         address _erc20,
         uint256 _depositAmount,
         LoanConfig[] calldata _loanConfigs
     ) external;
 
+    /**
+     * @notice Creates a new lending configuration
+     *
+     * @param _lendingDeskId Identifier for the lending desk
+     * @param _loanConfigs Loan config for each NFT collection this lending desk will support
+     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     */
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
-        LoanConfig[] calldata _loanConfig
+        LoanConfig[] calldata _loanConfigs
     ) external;
 
+    /**
+     * @notice Removes a new lending configuration
+     *
+     * @param _lendingDeskId Identifier for the lending desk
+     * @param _nftCollection Address for the NFT collection to remove supported config for
+     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     */
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
         address _nftCollection
     ) external;
 
+    /**
+     * @notice This function is called to add liquidity to a lending desk
+     *
+     * @param _lendingDeskId The id of the lending desk
+     * @param _amount The balance to be transferred
+     * @dev Emits an {LendingDeskLiquidityAdded} event.
+     */
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
     ) external;
 
+
+    /**
+     * @notice This function is called to cash out a lending desk
+     * @param _lendingDeskId The id of the lending desk to be cashout
+     * @param _amount Amount to withdraw from the lending desk
+     *
+     * @dev Emits an {LendingDeskLiquidityWithdrawn} event.
+     */
     function withdrawLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
     ) external;
 
+    /**
+     * @notice This function can be called by the lending desk owner in order to freeze it
+     * @param _lendingDeskId ID of the lending desk to be frozen
+     * @param _freezed Whether to freeze or unfreeze
+     *
+     * @dev Emits an {LendingDeskStateSet} event.
+     */
     function setLendingDeskState(
         uint256 _lendingDeskId,
         bool _freezed
     ) external;
 
+    /**
+     * @notice This function is called to dissolve a lending desk
+     *
+     * @param _lendingDeskId The id of the lending desk
+     * @dev Emits an {LendingDeskDissolved} event.
+     */
     function dissolveLendingDesk(uint256 _lendingDeskId) external;
 
-    // Methods related to loans
-
+    /**
+     * @notice This function can be called by a borrower to create a loan
+     *
+     * @param _lendingDeskId ID of the lending desk related to this offer
+     * @param _nftCollection The NFT collection address to be used as collateral
+     * @param _nftId ID of the NFT to be used as collateral
+     * @param _duration Loan duration in hours
+     * @param _amount Amount to ask on this loan in ERC20
+     * @dev Emits an {NewLoanInitialized} event
+     */
     function initializeNewLoan(
         uint256 _lendingDeskId,
         address _nftCollection,
@@ -124,7 +196,44 @@ interface INFTYFinanceV1 {
         uint256 _amount
     ) external;
 
+    /**
+     * @notice This function can be called by the obligation note holder to pay a loan and get the collateral back
+     *
+     * @param _loanId ID of the loan
+     * @param _amount The amount to be paid, in erc20 tokens
+     * @dev Emits an {LoanPaymentMade} event.
+     */
     function makeLoanPayment(uint256 _loanId, uint256 _amount) external;
 
+    /**
+     * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral
+     * @param _loanId ID of the loan
+     *
+     * @dev Emits an {LiquidatedOverdueLoan} event.
+     */
     function liquidateDefaultedLoan(uint256 _loanId) external;
+
+
+    /* ******************** */
+    /*  ADMIN FUNCTIONS     */
+    /* ******************** */
+    /**
+     * @notice Allows the admin of the contract to modify loan origination fee.
+     *
+     * @param _loanOriginationFee Basis points fee the borrower will have to pay to the platform when borrowing loan
+     * @dev Emits an {LoanOriginationFeeSet} event.
+     */
+    function setLoanOriginationFee(uint256 _loanOriginationFee) external;
+
+    /**
+     * @notice This function can be called by an owner to withdraw collected platform funds.
+     * The funds consists of all platform fees generated at the time of loan creation,
+     * in addition to collected borrower fees for liquidated loans which were not paid back.
+     * @param _receiver the address that will receive the platform fees that can be withdrawn at the time
+     *
+     */
+    function withdrawPlatformFees(
+        address _receiver,
+        address[] calldata _erc20s
+    ) external;
 }
