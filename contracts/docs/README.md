@@ -2,6 +2,16 @@
 
 NFTYFinanceV1 is a smart contract protocol that enables lending and borrowing of ERC20 tokens using NFT's as collateral. This protocol introduces "LAMM" (Lending Automated Market Maker), a novel AMM-style architecture for lending markets.
 
+### Contracts
+NFTYFinanceV1 is built around a single core protocol, with several peripheral contracts.
+The contract structure for NFTYFinanceV1 is as follows:
+
+- NFTYFinanceV1.sol: Contains the core protocol module
+- NFTYFinanceERC721.sol: Contains abstract ERC721 with built-in roles, to be inherited by other 721 contracts
+- NFTYLendingKeysV1.sol: Contains the lending desk key module, which handles lending desk ownership
+- NFTYObligationNotesV1.sol: Contains the obligation note module, which handles borrower's obligtaion to pay back
+- NFTYPromissoryNotesV1.sol: Contains the promissory note, which handles lender's promise to be paid back
+
 ### Dependencies
 
 This contract relies on the following external contracts and libraries:
