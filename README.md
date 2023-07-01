@@ -1,6 +1,7 @@
 # nftyfinance-monorepo
+NFTY Finance V1 Monorepo
 
-Monorepo for all NFTY Finance related development
+For more on the contracts, protocol design, etc., please view the [`/contracts`](contracts/docs/README.md) directory
 
 ## Repo structure
 
