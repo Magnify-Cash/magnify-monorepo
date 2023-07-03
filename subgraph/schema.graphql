@@ -1,72 +1,72 @@
-enum LiquidityShopStatus {
-  ACTIVE
-  FROZEN
+enum LendingDeskStatus {
+  Active
+  Frozen
+  Dissolved
 }
 
-type LiquidityShop @entity {
+enum LoanStatus {
+  Active
+  Resolved
+  Defaulted
+}
+
+type LoanConfig @entity {
   id: ID!
-  erc20: Erc20!
+  lendingDesk: LendingDesk!
   nftCollection: NftCollection!
-  owner: Bytes! # address
-  automaticApproval: Boolean! # bool
-  allowRefinancingTerms: Boolean! # bool
-  balance: BigInt! # uint256
-  maxOffer: BigInt! # uint256
-  interestA: BigInt! # uint256
-  interestB: BigInt! # uint256
-  interestC: BigInt! # uint256
-  name: String! # string
-  status: LiquidityShopStatus! # LiquidityShopStatus
-  loans: [Loan!]! @derivedFrom(field: "liquidityShop")
+  minAmount: BigInt!
+  maxAmount: BigInt!
+  minInterest: BigInt!
+  maxInterest: BigInt!
+  minDuration: BigInt!
+  maxDuration: BigInt!
+}
+
+type LendingDesk @entity {
+  id: ID!
+  owner: Bytes!
+  erc20: Erc20!
+  balance: BigInt!
+  status: LendingDeskStatus!
+  loanConfigs: [LoanConfig!]! @derivedFrom(field: "lendingDesk")
+  loans: [Loan!]! @derivedFrom(field: "lendingDesk")
 }
 
 type ProtocolParams @entity {
   id: ID!
-  owner: Bytes! # address
-  paused: Boolean! # bool
-  loanOriginationFeePercentage: BigInt! # uint256
-  lenderFeePercentage: BigInt! # uint256
-  borrowerFeePercentage: BigInt! # uint256
-  platformFeePercentage: BigInt! # uint256
-  oraclePriceExpirationDuration: BigInt! # uint256
-  promissoryNote: Bytes! # address
-  obligationReceipt: Bytes! # address
-  oracle: Bytes! # address
-  nftyToken: Bytes! # address
+  owner: Bytes!
+  paused: Boolean!
+  loanOriginationFee: BigInt!
+  promissoryNotes: Bytes!
+  obligationNotes: Bytes!
+  lendingKeys: Bytes!
 }
 
 type Erc20 @entity {
   id: ID!
-  liquidityShops: [LiquidityShop!]! @derivedFrom(field: "erc20")
-  name: String! # string
-  symbol: String! # string
-  decimals: Int! # uint8
+  name: String!
+  symbol: String!
+  decimals: Int!
+  lendingDesks: [LendingDesk!]! @derivedFrom(field: "erc20")
 }
 
 type NftCollection @entity {
   id: ID!
-  liquidityShops: [LiquidityShop!]! @derivedFrom(field: "nftCollection")
-  isErc1155: Boolean! # bool
-}
-
-enum LoanStatus {
-  ACTIVE
-  RESOLVED
+  isErc1155: Boolean!
+  loanConfigs: [LoanConfig!]! @derivedFrom(field: "nftCollection")
 }
 
 type Loan @entity {
   id: ID!
-  liquidityShop: LiquidityShop!
-  amount: BigInt! # uint256
-  remainder: BigInt! # uint256
-  duration: BigInt! # uint256
-  startTime: BigInt! # uint256
-  nftCollateralId: BigInt! # uint256
-  fee: BigInt! # uint256
-  status: LoanStatus! # LoanStatus
-  lenderFeePercentage: BigInt! # uint256
-  borrowerFeePercentage: BigInt! # uint256
-  platformFeePercentage: BigInt! # uint256
-  lender: Bytes! # address
-  borrower: Bytes! # address
+  lendingDesk: LendingDesk!
+  amount: BigInt!
+  amountPaidBack: BigInt!
+  duration: BigInt!
+  startTime: BigInt!
+  nftCollection: NftCollection!
+  nftId: BigInt!
+  interest: BigInt!
+  status: LoanStatus!
+  lender: Bytes!
+  borrower: Bytes!
 }
