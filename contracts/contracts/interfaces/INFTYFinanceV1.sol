@@ -145,7 +145,6 @@ interface INFTYFinanceV1 {
         uint256 _amount
     ) external;
 
-
     /**
      * @notice This function is called to cash out a lending desk
      * @param _lendingDeskId The id of the lending desk to be cashout
@@ -212,7 +211,6 @@ interface INFTYFinanceV1 {
      * @dev Emits an {LiquidatedOverdueLoan} event.
      */
     function liquidateDefaultedLoan(uint256 _loanId) external;
-
 
     /* ******************** */
     /*  ADMIN FUNCTIONS     */

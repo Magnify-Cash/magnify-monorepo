@@ -8594,6 +8594,13 @@ markdown-table@^1.1.3:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-1.1.3.tgz#9fcb69bcfdb8717bfd0398c6ec2d93036ef8de60"
   integrity sha512-1RUZVgQlpJSPWYbFSpmudq5nHY1doEIv89gBtF0s4gW1GF2XorxcA/70M5vq7rLv0a6mhOUccRsqkwhwLCIQ2Q==
 
+matchstick-as@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/matchstick-as/-/matchstick-as-0.5.2.tgz#6a6dde02d1d939c32458bd67bac688891a07a34c"
+  integrity sha512-fb1OVphDKEvJY06Ue02Eh1CNncuW95vp6b8tNAP7UIqplICSLoU/zgN6U7ge7R0upsoO78C7CRi4EyK/7Jxz7g==
+  dependencies:
+    wabt "1.0.24"
+
 mcl-wasm@^0.7.1:
   version "0.7.9"
   resolved "https://registry.yarnpkg.com/mcl-wasm/-/mcl-wasm-0.7.9.tgz#c1588ce90042a8700c3b60e40efb339fc07ab87f"
@@ -11594,6 +11601,11 @@ vite@^4.3.3:
     rollup "^3.21.0"
   optionalDependencies:
     fsevents "~2.3.2"
+
+wabt@1.0.24:
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/wabt/-/wabt-1.0.24.tgz#c02e0b5b4503b94feaf4a30a426ef01c1bea7c6c"
+  integrity sha512-8l7sIOd3i5GWfTWciPL0+ff/FK/deVK2Q6FN+MPz4vfUcD78i2M/49XJTwF6aml91uIiuXJEsLKWMB2cw/mtKg==
 
 wagmi@^0.12.12:
   version "0.12.12"

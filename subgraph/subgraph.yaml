@@ -3,10 +3,10 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: NFTYLending
+    name: NFTYFinance
     network: mainnet
     source:
-      abi: NFTYLending
+      abi: NFTYFinance
       address: "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
       startBlock: 194
     mapping:
@@ -14,75 +14,55 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - LiquidityShop
+        - LendingDesk
         - ProtocolParams
         - Erc20
         - NftCollection
         - Loan
       abis:
-        - name: NFTYLending
-          file: ../contracts/artifacts/contracts/loans/NFTYLending.sol/NFTYLending.json
+        - name: NFTYFinance
+          file: ../contracts/artifacts/contracts/NFTYFinanceV1.sol/NFTYFinanceV1.json
         - name: ERC20
           file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
       eventHandlers:
-        - event: ProtocolParamsSet(uint256,(uint256,uint256,uint256),uint256)
+        - event: LoanOriginationFeeSet(uint256)
           handler: handleProtocolParamsSet
-        - event: Initialized(uint8)
-          handler: handleInitialized
-        - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256)
-          handler: handleLiquidatedOverdueLoan
-        - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
-          handler: handleLiquidityAddedToShop
-        - event: LiquidityShopCashedOut(indexed address,uint256,uint256,uint256)
-          handler: handleLiquidityShopCashedOut
-        - event: LiquidityShopCreated(indexed address,indexed address,indexed
-            address,bool,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
-          handler: handleLiquidityShopCreated
-        - event: LiquidityShopUpdated(uint256,string,uint256,uint256,uint256,uint256,bool,bool)
-          handler: handleLiquidityShopUpdated
-        - event: LiquidityShopFrozen(indexed address,uint256,uint256)
-          handler: handleLiquidityShopFrozen
-        - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
-          handler: handleLiquidityShopUnfrozen
-        - event: OfferAccepted(indexed address,indexed address,uint256,uint256)
-          handler: handleOfferAccepted
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: PaidBackLoan(indexed address,indexed
-            address,uint256,uint256,uint256,uint256,uint256)
-          handler: handlePaidBackLoan
-        - event: Paused(address)
-          handler: handlePaused
-        - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
-          handler: handlePaymentMade
-        - event: Unpaused(address)
-          handler: handleUnpaused
-      file: ./src/nfty-lending.ts
+        # - event: Initialized(uint8)
+        #   handler: handleInitialized
+        # - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256)
+        #   handler: handleLiquidatedOverdueLoan
+        # - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
+        #   handler: handleLiquidityAddedToShop
+        # - event: LiquidityShopCashedOut(indexed address,uint256,uint256,uint256)
+        #   handler: handleLiquidityShopCashedOut
+        # - event: LiquidityShopCreated(indexed address,indexed address,indexed
+        #     address,bool,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
+        #   handler: handleLiquidityShopCreated
+        # - event: LiquidityShopUpdated(uint256,string,uint256,uint256,uint256,uint256,bool,bool)
+        #   handler: handleLiquidityShopUpdated
+        # - event: LiquidityShopFrozen(indexed address,uint256,uint256)
+        #   handler: handleLiquidityShopFrozen
+        # - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
+        #   handler: handleLiquidityShopUnfrozen
+        # - event: OfferAccepted(indexed address,indexed address,uint256,uint256)
+        #   handler: handleOfferAccepted
+        # - event: OwnershipTransferred(indexed address,indexed address)
+        #   handler: handleOwnershipTransferred
+        # - event: PaidBackLoan(indexed address,indexed
+        #     address,uint256,uint256,uint256,uint256,uint256)
+        #   handler: handlePaidBackLoan
+        # - event: Paused(address)
+        #   handler: handlePaused
+        # - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
+        #   handler: handlePaymentMade
+        # - event: Unpaused(address)
+        #   handler: handleUnpaused
+      file: ./src/nfty-finance.ts
   - kind: ethereum/contract
-    name: PromissoryNote
+    name: LendingKeys
     network: mainnet
     source:
-      abi: PromissoryNote
-      address: "0x12Bcb546bC60fF39F1Adfc7cE4605d5Bd6a6A876"
-      startBlock: 191
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Loan
-      abis:
-        - name: PromissoryNote
-          file: ../contracts/artifacts/contracts/loans/NFTYNotes.sol/NFTYNotes.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-      file: ./src/promissory-note.ts
-  - kind: ethereum/contract
-    name: ObligationReceipt
-    network: mainnet
-    source:
-      abi: ObligationReceipt
+      abi: LendingKeys
       address: "0xaC47e91215fb80462139756f43438402998E4A3a"
       startBlock: 192
     mapping:
@@ -92,9 +72,49 @@ dataSources:
       entities:
         - Loan
       abis:
-        - name: ObligationReceipt
-          file: ../contracts/artifacts/contracts/loans/NFTYNotes.sol/NFTYNotes.json
+        - name: LendingKeys
+          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
-      file: ./src/obligation-receipt.ts
+      file: ./src/lending-keys.ts
+  - kind: ethereum/contract
+    name: PromissoryNotes
+    network: mainnet
+    source:
+      abi: PromissoryNotes
+      address: "0x12Bcb546bC60fF39F1Adfc7cE4605d5Bd6a6A876"
+      startBlock: 191
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Loan
+      abis:
+        - name: PromissoryNotes
+          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/promissory-notes.ts
+  - kind: ethereum/contract
+    name: ObligationNotes
+    network: mainnet
+    source:
+      abi: ObligationNotes
+      address: "0xaC47e91215fb80462139756f43438402998E4A3a"
+      startBlock: 192
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Loan
+      abis:
+        - name: ObligationNotes
+          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/obligation-notes.ts
