@@ -1,5 +1,5 @@
 import { Address } from "@graphprotocol/graph-ts";
-import { Transfer } from "../generated/ObligationReceipt/ObligationReceipt";
+import { Transfer } from "../generated/ObligationNotes/ObligationNotes";
 import { Loan } from "../generated/schema";
 
 export function handleTransfer(event: Transfer): void {
