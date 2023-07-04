@@ -13,8 +13,9 @@ import {
   NFTYFinance,
   DefaultedLoanLiquidated,
   LoanPaymentMade,
+  NftyFinanceDeployed,
 } from "../generated/NFTYFinance/NFTYFinance";
-import { ERC20 } from "../generated/NFTYLending/ERC20";
+import { ERC20 } from "../generated/NFTYFinance/ERC20";
 import {
   Erc20,
   LendingDesk,
@@ -23,7 +24,7 @@ import {
   NftCollection,
   ProtocolParams,
 } from "../generated/schema";
-import { BigInt, store } from "@graphprotocol/graph-ts";
+import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 
 // Lending desk related events
 
@@ -155,6 +156,19 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
 
 // Protocol level parameters related events
 
+export function handleNftyFinanceDeployed(event: NftyFinanceDeployed): void {
+  const protocolParams = new ProtocolParams("0");
+
+  // Load contract details
+  const nftyFinanceContract = NFTYFinance.bind(event.address);
+  protocolParams.loanOriginationFee = nftyFinanceContract.loanOriginationFee();
+  protocolParams.paused = false;
+  protocolParams.owner = nftyFinanceContract.owner();
+  protocolParams.promissoryNotes = event.params.promissoryNotes;
+  protocolParams.obligationNotes = event.params.obligationNotes;
+  protocolParams.lendingKeys = event.params.lendingKeys;
+}
+
 export function handleLoanOriginationFeeSet(
   event: LoanOriginationFeeSet
 ): void {
@@ -177,16 +191,21 @@ export function handleUnpaused(event: Unpaused): void {
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   const protocolParams = new ProtocolParams("0");
+  protocolParams.owner = event.params.newOwner;
+
+  // Skip rest if this is not contract deployment
+  // if (event.params.previousOwner != new Address(0)) {
+  //   protocolParams.save();
+  //   return;
+  // }
 
   // Load contract details
   const nftyFinanceContract = NFTYFinance.bind(event.address);
-  protocolParams.loanOriginationFee = nftyFinanceContract.loanOriginationFee();
   protocolParams.paused = false;
-  protocolParams.owner = nftyFinanceContract.owner();
+  protocolParams.loanOriginationFee = nftyFinanceContract.loanOriginationFee();
   protocolParams.promissoryNotes = nftyFinanceContract.promissoryNotes();
   protocolParams.obligationNotes = nftyFinanceContract.obligationNotes();
   protocolParams.lendingKeys = nftyFinanceContract.lendingKeys();
 
-  protocolParams.owner = event.params.newOwner;
   protocolParams.save();
 }
