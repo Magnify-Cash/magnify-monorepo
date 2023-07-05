@@ -1,68 +1,75 @@
 import { ethers, upgrades } from "hardhat";
 import {
-  DIAOracleV2__factory,
-  NFTYLending,
-  NFTYLending__factory,
-  NFTYNotes__factory,
+  NFTYFinanceV1,
+  NFTYFinanceV1__factory,
+  NFTYLendingKeysV1__factory,
+  NFTYObligationNotesV1__factory,
+  NFTYPromissoryNotesV1__factory,
   TestERC1155__factory,
   TestERC20__factory,
   TestERC721__factory,
 } from "../../../typechain-types";
 
-export const deployNftyLending = async () => {
-  // $NFTY token
-  const TestERC20 = (await ethers.getContractFactory(
-    "TestERC20"
-  )) as TestERC20__factory;
-  const nftyToken = await TestERC20.deploy("NFTY Coin", "NFTY");
-  await nftyToken.deployed();
-
-  // NFTYNotes
-  const NFTYNotes = (await ethers.getContractFactory(
-    "NFTYNotes"
-  )) as NFTYNotes__factory;
-  const promissoryNote = await NFTYNotes.deploy(
-    "NFTY Promissory Note",
+export const deployNftyFinance = async () => {
+  // Promissory Notes
+  const PromissoryNotes = (await ethers.getContractFactory(
+    "NFTYPromissoryNotesV1"
+  )) as NFTYPromissoryNotesV1__factory;
+  const promissoryNotes = await PromissoryNotes.deploy(
+    "NFTY Promissory Notes",
     "LEND",
     "https://metadata.nfty.finance/LEND/"
   );
-  await promissoryNote.deployed();
-  const obligationReceipt = await NFTYNotes.deploy(
-    "NFTY Obligation Receipt",
+  await promissoryNotes.deployed();
+
+  // Obligation Notes
+  const ObligationNotes = (await ethers.getContractFactory(
+    "NFTYObligationNotesV1"
+  )) as NFTYObligationNotesV1__factory;
+  const obligationNotes = await ObligationNotes.deploy(
+    "NFTY Obligation Notes",
     "BORROW",
     "https://metadata.nfty.finance/BORROW/"
   );
-  await obligationReceipt.deployed();
+  await obligationNotes.deployed();
 
-  const DIAOracle = (await ethers.getContractFactory(
-    "DIAOracleV2"
-  )) as DIAOracleV2__factory;
-  const diaOracle = await DIAOracle.deploy();
-  await diaOracle.deployed();
+  // Lending Keys
+  const LendingKeys = (await ethers.getContractFactory(
+    "NFTYLendingKeysV1"
+  )) as NFTYLendingKeysV1__factory;
+  const lendingKeys = await LendingKeys.deploy(
+    "NFTY Lending Keys",
+    "KEYS",
+    "https://metadata.nfty.finance/KEYS/"
+  );
+  await lendingKeys.deployed();
 
-  // NFTYLending
-  const NFTYLendingFactory = (await ethers.getContractFactory(
-    "NFTYLending"
-  )) as NFTYLending__factory;
-  const nftyLending = (await upgrades.deployProxy(NFTYLendingFactory, [
-    promissoryNote.address,
-    obligationReceipt.address,
-    nftyToken.address,
-  ])) as NFTYLending;
-  await nftyLending.deployed();
+  const NFTYFinance = (await ethers.getContractFactory(
+    "NFTYFinanceV1"
+  )) as NFTYFinanceV1__factory;
+
+  const loanOriginationFee = 200;
+
+  const nftyFinance = (await NFTYFinance.deploy(
+    promissoryNotes.address,
+    obligationNotes.address,
+    lendingKeys.address,
+    loanOriginationFee
+  )) as NFTYFinanceV1;
+  await nftyFinance.deployed();
 
   // Configuration
-  await promissoryNote.setNftyLending(nftyLending.address);
-  await obligationReceipt.setNftyLending(nftyLending.address);
+  await promissoryNotes.setNftyFinance(nftyFinance.address);
+  await obligationNotes.setNftyFinance(nftyFinance.address);
 
   const [owner, alice] = await ethers.getSigners();
 
   return {
-    nftyLending,
-    promissoryNote,
-    obligationReceipt,
-    nftyToken,
-    diaOracle,
+    nftyFinance,
+    promissoryNotes,
+    obligationNotes,
+    lendingKeys,
+    loanOriginationFee,
     owner,
     alice,
   };
@@ -96,39 +103,24 @@ export const deployTestTokens = async () => {
   return { erc20, erc721, erc1155 };
 };
 
-export const deployNftyLendingWithTestTokens = async () => {
+export const deployNftyFinanceWithTestTokens = async () => {
   const {
-    nftyLending,
-    promissoryNote,
-    obligationReceipt,
-    nftyToken,
-    diaOracle,
+    nftyFinance,
+    promissoryNotes,
+    obligationNotes,
+    lendingKeys,
+    loanOriginationFee,
     alice,
   } = await deployNftyLending();
 
   const { erc20, erc721, erc1155 } = await deployTestTokens();
 
-  // Set $NFTY prices in oracle
-  await diaOracle.setValue(
-    "NFTY/USD",
-    ethers.utils.parseUnits("10", 18), // 10 USD
-    Math.floor(new Date().getTime() / 1000)
-  );
-
-  // Set ERC20 prices in oracle
-  const erc20Symbol = await erc20.symbol();
-  await diaOracle.setValue(
-    erc20Symbol + "/USD",
-    ethers.utils.parseUnits("10", 18), // 2 USD
-    Math.floor(new Date().getTime() / 1000)
-  );
-
   return {
-    nftyLending,
-    promissoryNote,
-    obligationReceipt,
-    nftyToken,
-    diaOracle,
+    nftyFinance,
+    promissoryNotes,
+    obligationNotes,
+    lendingKeys,
+    loanOriginationFee,
     erc20,
     erc721,
     erc1155,
