@@ -49,12 +49,12 @@ dataSources:
         # - event: PaidBackLoan(indexed address,indexed
         #     address,uint256,uint256,uint256,uint256,uint256)
         #   handler: handlePaidBackLoan
-        # - event: Paused(address)
-        #   handler: handlePaused
+        - event: Paused(address)
+          handler: handlePaused
         # - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
         #   handler: handlePaymentMade
-        # - event: Unpaused(address)
-        #   handler: handleUnpaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
       file: ./src/nfty-finance.ts
   - kind: ethereum/contract
     name: LendingKeys
