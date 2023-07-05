@@ -1,7 +1,7 @@
 import { assert, beforeAll, describe, test } from "matchstick-as";
 import {
-  createNewPausedEvent,
-  createNewUnpausedEvent,
+  createPausedEvent,
+  createUnpausedEvent,
   intialOwnershipTransfer,
 } from "./utils";
 import { Address } from "@graphprotocol/graph-ts";
@@ -15,7 +15,7 @@ const nftyFinance = Address.fromString(
 describe("Unpaused", () => {
   beforeAll(() => {
     intialOwnershipTransfer(nftyFinance);
-    const event = createNewPausedEvent(nftyFinance);
+    const event = createPausedEvent(nftyFinance);
     handlePaused(event);
   });
 
@@ -26,7 +26,7 @@ describe("Unpaused", () => {
     if (!protocolParams) return;
     assert.booleanEquals(protocolParams.paused, true);
 
-    const event = createNewUnpausedEvent(nftyFinance);
+    const event = createUnpausedEvent(nftyFinance);
     handleUnpaused(event);
 
     // ProtocolParams got updated
