@@ -54,7 +54,9 @@ export function handleNewLendingDeskInitialized(
 export function handleLendingDeskLoanConfigSet(
   event: LendingDeskLoanConfigSet
 ): void {
-  event.params.loanConfigs.forEach((loanConfigStruct) => {
+  for (let i = 0; i < event.params.loanConfigs.length; i++) {
+    const loanConfigStruct = event.params.loanConfigs[i];
+
     // Create NftCollection instance
     const nftCollection = new NftCollection(
       loanConfigStruct.nftCollection.toHex()
@@ -77,7 +79,7 @@ export function handleLendingDeskLoanConfigSet(
     loanConfig.maxInterest = loanConfigStruct.maxInterest;
 
     loanConfig.save();
-  });
+  }
 }
 
 export function handleLendingDeskLoanConfigRemoved(
