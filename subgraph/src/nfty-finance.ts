@@ -13,7 +13,6 @@ import {
   NFTYFinance,
   DefaultedLoanLiquidated,
   LoanPaymentMade,
-  NftyFinanceDeployed,
 } from "../generated/NFTYFinance/NFTYFinance";
 import { ERC20 } from "../generated/NFTYFinance/ERC20";
 import {
@@ -86,7 +85,7 @@ export function handleLendingDeskLoanConfigRemoved(
   store.remove(
     "LoanConfig",
     event.params.lendingDeskId.toString() +
-      ":" +
+      "-" +
       event.params.nftCollection.toHex()
   );
 }
@@ -156,23 +155,13 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
 
 // Protocol level parameters related events
 
-export function handleNftyFinanceDeployed(event: NftyFinanceDeployed): void {
-  const protocolParams = new ProtocolParams("0");
-
-  // Load contract details
-  const nftyFinanceContract = NFTYFinance.bind(event.address);
-  protocolParams.loanOriginationFee = nftyFinanceContract.loanOriginationFee();
-  protocolParams.paused = false;
-  protocolParams.owner = nftyFinanceContract.owner();
-  protocolParams.promissoryNotes = event.params.promissoryNotes;
-  protocolParams.obligationNotes = event.params.obligationNotes;
-  protocolParams.lendingKeys = event.params.lendingKeys;
-}
-
 export function handleLoanOriginationFeeSet(
   event: LoanOriginationFeeSet
 ): void {
-  const protocolParams = new ProtocolParams("0");
+  const protocolParams = ProtocolParams.load("0");
+  // Do not handle entity creation, that's covered by OwnershipTransferred handler
+  if (!protocolParams) return;
+
   protocolParams.loanOriginationFee = event.params.loanOriginationFee;
   protocolParams.save();
 }
@@ -190,22 +179,27 @@ export function handleUnpaused(event: Unpaused): void {
 }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  const protocolParams = new ProtocolParams("0");
-  protocolParams.owner = event.params.newOwner;
+  // Contract deployment, create ProtocolParams entity
+  if (event.params.previousOwner == Address.zero()) {
+    const protocolParams = new ProtocolParams("0");
+    protocolParams.owner = event.params.newOwner;
 
-  // Skip rest if this is not contract deployment
-  // if (event.params.previousOwner != new Address(0)) {
-  //   protocolParams.save();
-  //   return;
-  // }
+    // Load contract details
+    const nftyFinanceContract = NFTYFinance.bind(event.address);
+    protocolParams.paused = false;
+    protocolParams.loanOriginationFee =
+      nftyFinanceContract.loanOriginationFee();
+    protocolParams.promissoryNotes = nftyFinanceContract.promissoryNotes();
+    protocolParams.obligationNotes = nftyFinanceContract.obligationNotes();
+    protocolParams.lendingKeys = nftyFinanceContract.lendingKeys();
 
-  // Load contract details
-  const nftyFinanceContract = NFTYFinance.bind(event.address);
-  protocolParams.paused = false;
-  protocolParams.loanOriginationFee = nftyFinanceContract.loanOriginationFee();
-  protocolParams.promissoryNotes = nftyFinanceContract.promissoryNotes();
-  protocolParams.obligationNotes = nftyFinanceContract.obligationNotes();
-  protocolParams.lendingKeys = nftyFinanceContract.lendingKeys();
+    protocolParams.save();
+  } else {
+    // Ownership transfer, update owner
+    const protocolParams = ProtocolParams.load("0");
+    if (!protocolParams) return;
 
-  protocolParams.save();
+    protocolParams.owner = event.params.newOwner;
+    protocolParams.save();
+  }
 }
