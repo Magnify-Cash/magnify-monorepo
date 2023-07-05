@@ -167,13 +167,17 @@ export function handleLoanOriginationFeeSet(
 }
 
 export function handlePaused(event: Paused): void {
-  const protocolParams = new ProtocolParams("0");
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
+
   protocolParams.paused = true;
   protocolParams.save();
 }
 
 export function handleUnpaused(event: Unpaused): void {
-  const protocolParams = new ProtocolParams("0");
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
+
   protocolParams.paused = false;
   protocolParams.save();
 }

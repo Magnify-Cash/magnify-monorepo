@@ -2,9 +2,12 @@ import { Address, ethereum } from "@graphprotocol/graph-ts";
 import {
   LoanOriginationFeeSet,
   OwnershipTransferred,
+  Paused,
+  Unpaused,
 } from "../generated/NFTYFinance/NFTYFinance";
 import {
   createMockedFunction,
+  newTypedMockEvent,
   newTypedMockEventWithParams,
 } from "matchstick-as";
 import { handleOwnershipTransferred } from "../src/nfty-finance";
@@ -40,7 +43,7 @@ export const createNewLoanOriginationFeeSetEvent = (
   return event;
 };
 
-export const intialOwnershipTransfer = (nftyFinance: Address) => {
+export const intialOwnershipTransfer = (nftyFinance: Address): void => {
   const promissoryNotes = Address.fromString(
     "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"
   );
@@ -95,4 +98,16 @@ export const intialOwnershipTransfer = (nftyFinance: Address) => {
     owner
   );
   handleOwnershipTransferred(event);
+};
+
+export const createNewPausedEvent = (nftyFinance: Address): Paused => {
+  const event = newTypedMockEvent<Paused>();
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createNewUnpausedEvent = (nftyFinance: Address): Unpaused => {
+  const event = newTypedMockEvent<Unpaused>();
+  event.address = nftyFinance;
+  return event;
 };
