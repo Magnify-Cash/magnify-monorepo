@@ -7,9 +7,9 @@ import {
   describe,
   test,
 } from "matchstick-as/assembly/index";
-import { createNewOwnershipTransferredEvent } from "./utils";
+import { createOwnershipTransferredEvent } from "./utils";
 import { handleOwnershipTransferred } from "../src/nfty-finance";
-import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { ProtocolParams } from "../generated/schema";
 
 const nftyFinance = Address.fromString(
@@ -66,7 +66,7 @@ describe("OwnershipTransferred", () => {
       "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
     );
 
-    const event = createNewOwnershipTransferredEvent(
+    const event = createOwnershipTransferredEvent(
       nftyFinance,
       // this is contract initialization so previousOwner is zero address
       Address.zero(),
@@ -99,7 +99,7 @@ describe("OwnershipTransferred", () => {
     );
 
     // Contract initialization
-    const event1 = createNewOwnershipTransferredEvent(
+    const event1 = createOwnershipTransferredEvent(
       nftyFinance,
       // this is contract initialization so previousOwner is zero address
       Address.zero(),
@@ -110,7 +110,7 @@ describe("OwnershipTransferred", () => {
     assert.fieldEquals("ProtocolParams", "0", "owner", firstOwner.toHex());
 
     // Handle event
-    const event2 = createNewOwnershipTransferredEvent(
+    const event2 = createOwnershipTransferredEvent(
       nftyFinance,
       firstOwner,
       secondOwner

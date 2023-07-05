@@ -5,7 +5,7 @@ import {
   test,
 } from "matchstick-as/assembly/index";
 import {
-  createNewLoanOriginationFeeSetEvent,
+  createLoanOriginationFeeSetEvent,
   intialOwnershipTransfer,
 } from "./utils";
 import { handleLoanOriginationFeeSet } from "../src/nfty-finance";
@@ -31,7 +31,7 @@ describe("OwnershipTransferred", () => {
     );
 
     // Handle event
-    const event = createNewLoanOriginationFeeSetEvent(nftyFinance, 100);
+    const event = createLoanOriginationFeeSetEvent(nftyFinance, 100);
     handleLoanOriginationFeeSet(event);
 
     // Assert ProtocolParams got updated

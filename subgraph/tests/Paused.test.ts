@@ -1,5 +1,5 @@
 import { assert, beforeAll, describe, test } from "matchstick-as";
-import { createNewPausedEvent, intialOwnershipTransfer } from "./utils";
+import { createPausedEvent, intialOwnershipTransfer } from "./utils";
 import { Address } from "@graphprotocol/graph-ts";
 import { handlePaused } from "../src/nfty-finance";
 import { ProtocolParams } from "../generated/schema";
@@ -20,7 +20,7 @@ describe("Paused", () => {
     if (!protocolParams) return;
     assert.booleanEquals(protocolParams.paused, false);
 
-    const event = createNewPausedEvent(nftyFinance);
+    const event = createPausedEvent(nftyFinance);
     handlePaused(event);
 
     // ProtocolParams got updated
