@@ -849,4 +849,15 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             IERC20(_erc20s[i]).safeTransfer(_receiver, amount);
         }
     }
+
+    /**
+     * @notice Allows the admin of the contract to pause the contract as an emergency response.
+     *
+     * @param _paused Whether to pause or unpause
+     * @dev Emits either a {Paused} or {Unpaused} event.
+     */
+    function setPaused(bool _paused) public onlyOwner {
+        if (_paused) _pause();
+        else _unpause();
+    }
 }
