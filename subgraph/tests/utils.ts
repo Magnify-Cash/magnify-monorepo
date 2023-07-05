@@ -1,6 +1,7 @@
 import { Address, ethereum } from "@graphprotocol/graph-ts";
 import {
   LoanOriginationFeeSet,
+  NewLendingDeskInitialized,
   OwnershipTransferred,
   Paused,
   Unpaused,
@@ -12,7 +13,7 @@ import {
 } from "matchstick-as";
 import { handleOwnershipTransferred } from "../src/nfty-finance";
 
-export const createNewOwnershipTransferredEvent = (
+export const createOwnershipTransferredEvent = (
   nftyFinance: Address,
   previousOwner: Address,
   newOwner: Address
@@ -28,7 +29,7 @@ export const createNewOwnershipTransferredEvent = (
   return event;
 };
 
-export const createNewLoanOriginationFeeSetEvent = (
+export const createLoanOriginationFeeSetEvent = (
   nftyFinance: Address,
   loanOriginationFee: number
 ): LoanOriginationFeeSet => {
@@ -91,7 +92,7 @@ export const intialOwnershipTransfer = (nftyFinance: Address): void => {
     .returns([ethereum.Value.fromAddress(lendingKeys)]);
 
   // Initial OwnershipTransferred, i.e. contract deployment
-  const event = createNewOwnershipTransferredEvent(
+  const event = createOwnershipTransferredEvent(
     nftyFinance,
     // this is contract initialization so previousOwner is zero address
     Address.zero(),
@@ -100,14 +101,30 @@ export const intialOwnershipTransfer = (nftyFinance: Address): void => {
   handleOwnershipTransferred(event);
 };
 
-export const createNewPausedEvent = (nftyFinance: Address): Paused => {
+export const createPausedEvent = (nftyFinance: Address): Paused => {
   const event = newTypedMockEvent<Paused>();
   event.address = nftyFinance;
   return event;
 };
 
-export const createNewUnpausedEvent = (nftyFinance: Address): Unpaused => {
+export const createUnpausedEvent = (nftyFinance: Address): Unpaused => {
   const event = newTypedMockEvent<Unpaused>();
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createNewLendingDeskInitializedEvent = (
+  nftyFinance: Address,
+  owner: Address,
+  erc20: Address,
+  id: number
+): NewLendingDeskInitialized => {
+  const event = newTypedMockEventWithParams<NewLendingDeskInitialized>([
+    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
+    new ethereum.EventParam("erc20", ethereum.Value.fromAddress(erc20)),
+    // @ts-ignore
+    new ethereum.EventParam("id", ethereum.Value.fromI32(<i32>id)),
+  ]);
   event.address = nftyFinance;
   return event;
 };
