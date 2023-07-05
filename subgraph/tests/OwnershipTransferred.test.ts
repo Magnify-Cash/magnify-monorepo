@@ -9,7 +9,7 @@ import {
 } from "matchstick-as/assembly/index";
 import { createNewOwnershipTransferredEvent } from "./utils";
 import { handleOwnershipTransferred } from "../src/nfty-finance";
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 import { ProtocolParams } from "../generated/schema";
 
 const nftyFinance = Address.fromString(
@@ -77,14 +77,15 @@ describe("OwnershipTransferred", () => {
     // Assert correct entity is created
     const protocolParams = ProtocolParams.load("0");
     assert.assertNotNull(protocolParams);
+    if (!protocolParams) return;
 
-    assert.bytesEquals(protocolParams!.owner, owner);
-    assert.bytesEquals(protocolParams!.promissoryNotes, promissoryNotes);
-    assert.bytesEquals(protocolParams!.obligationNotes, obligationNotes);
-    assert.bytesEquals(protocolParams!.lendingKeys, lendingKeys);
-    assert.booleanEquals(protocolParams!.paused, false);
+    assert.bytesEquals(protocolParams.owner, owner);
+    assert.bytesEquals(protocolParams.promissoryNotes, promissoryNotes);
+    assert.bytesEquals(protocolParams.obligationNotes, obligationNotes);
+    assert.bytesEquals(protocolParams.lendingKeys, lendingKeys);
+    assert.booleanEquals(protocolParams.paused, false);
     assert.bigIntEquals(
-      protocolParams!.loanOriginationFee,
+      protocolParams.loanOriginationFee,
       BigInt.fromI32(loanOriginationFee)
     );
   });
@@ -97,7 +98,7 @@ describe("OwnershipTransferred", () => {
       "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f"
     );
 
-    // Events
+    // Contract initialization
     const event1 = createNewOwnershipTransferredEvent(
       nftyFinance,
       // this is contract initialization so previousOwner is zero address
@@ -105,6 +106,10 @@ describe("OwnershipTransferred", () => {
       firstOwner
     );
     handleOwnershipTransferred(event1);
+    // Assert ProtocolParams' initial state
+    assert.fieldEquals("ProtocolParams", "0", "owner", firstOwner.toHex());
+
+    // Handle event
     const event2 = createNewOwnershipTransferredEvent(
       nftyFinance,
       firstOwner,
