@@ -46,6 +46,7 @@ export function handleNewLendingDeskInitialized(
   lendingDesk.erc20 = event.params.erc20.toHex();
   lendingDesk.owner = event.params.owner;
   lendingDesk.status = "Active";
+  lendingDesk.balance = new BigInt(0);
 
   lendingDesk.save();
 }
