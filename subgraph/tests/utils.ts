@@ -1,5 +1,7 @@
-import { Address, ethereum } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
+  LendingDeskLoanConfigSet,
+  LendingDeskLoanConfigSetLoanConfigsStruct,
   LoanOriginationFeeSet,
   NewLendingDeskInitialized,
   OwnershipTransferred,
@@ -11,7 +13,10 @@ import {
   newTypedMockEvent,
   newTypedMockEventWithParams,
 } from "matchstick-as";
-import { handleOwnershipTransferred } from "../src/nfty-finance";
+import {
+  handleNewLendingDeskInitialized,
+  handleOwnershipTransferred,
+} from "../src/nfty-finance";
 
 export const createOwnershipTransferredEvent = (
   nftyFinance: Address,
@@ -127,4 +132,84 @@ export const createNewLendingDeskInitializedEvent = (
   ]);
   event.address = nftyFinance;
   return event;
+};
+
+export class TestLoanConfig {
+  nftCollection: Address;
+  nftCollectionIsErc1155: boolean;
+  minAmount: BigInt;
+  maxAmount: BigInt;
+  minDuration: BigInt;
+  maxDuration: BigInt;
+  minInterest: BigInt;
+  maxInterest: BigInt;
+}
+
+export const createLendingDeskLoanConfigSetEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  loanConfigs: TestLoanConfig[]
+): LendingDeskLoanConfigSet => {
+  const event = newTypedMockEventWithParams<LendingDeskLoanConfigSet>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam(
+      "loanConfigs",
+      ethereum.Value.fromTupleArray(
+        loanConfigs.map<ethereum.Tuple>((x) => {
+          const struct = new LendingDeskLoanConfigSetLoanConfigsStruct(0);
+
+          struct.push(ethereum.Value.fromAddress(x.nftCollection));
+          struct.push(ethereum.Value.fromBoolean(x.nftCollectionIsErc1155));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.minAmount));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.maxAmount));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.minInterest));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.maxInterest));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.minDuration));
+          struct.push(ethereum.Value.fromUnsignedBigInt(x.maxDuration));
+
+          return struct;
+        })
+      )
+    ),
+  ]);
+
+  event.address = nftyFinance;
+  return event;
+};
+
+export const initializeLendingDesk = (
+  nftyFinance: Address,
+  id: number,
+  owner: Address,
+  erc20: Address
+): void => {
+  intialOwnershipTransfer(nftyFinance);
+
+  const erc20Name = "USD Coin";
+  const erc20Symbol = "USDC";
+  const erc20Decimals = 18;
+
+  createMockedFunction(erc20, "name", "name():(string)")
+    .withArgs([])
+    .returns([ethereum.Value.fromString(erc20Name)]);
+  createMockedFunction(erc20, "symbol", "symbol():(string)")
+    .withArgs([])
+    .returns([ethereum.Value.fromString(erc20Symbol)]);
+  createMockedFunction(erc20, "decimals", "decimals():(uint8)")
+    .withArgs([])
+    // @ts-ignore
+    .returns([ethereum.Value.fromI32(<i32>erc20Decimals)]);
+
+  // Handle event
+  const event = createNewLendingDeskInitializedEvent(
+    nftyFinance,
+    owner,
+    erc20,
+    id
+  );
+  handleNewLendingDeskInitialized(event);
 };

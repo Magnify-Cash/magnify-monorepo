@@ -67,10 +67,12 @@ export function handleLendingDeskLoanConfigSet(
     // Create LoanConfig instance
     const loanConfig = new LoanConfig(
       event.params.lendingDeskId.toString() +
-        ":" +
+        "-" +
         loanConfigStruct.nftCollection.toHex()
     );
 
+    loanConfig.lendingDesk = event.params.lendingDeskId.toString();
+    loanConfig.nftCollection = loanConfigStruct.nftCollection.toHex();
     loanConfig.minAmount = loanConfigStruct.minAmount;
     loanConfig.maxAmount = loanConfigStruct.maxAmount;
     loanConfig.minDuration = loanConfigStruct.minDuration;
