@@ -11,7 +11,7 @@ import {
   initializeLendingDesk,
 } from "./utils";
 import { handleLendingDeskLoanConfigsSet } from "../src/nfty-finance";
-import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { LoanConfig, NftCollection } from "../generated/schema";
 
 const nftyFinance = Address.fromString(
@@ -97,8 +97,14 @@ describe("LendingDeskLoanConfigsSet", () => {
         nftCollection.isErc1155,
         config.nftCollectionIsErc1155
       );
-    });
 
-    // logStore();
+      // Assert derived fields
+      assert.arrayEquals(
+        nftCollection.loanConfigs.map<ethereum.Value>((x) =>
+          ethereum.Value.fromString(x)
+        ),
+        [ethereum.Value.fromString(loanConfigId)]
+      );
+    });
   });
 });

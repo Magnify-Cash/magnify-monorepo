@@ -75,5 +75,13 @@ describe("NewLendingDeskInitialized", () => {
     assert.stringEquals(erc20.symbol, erc20Symbol);
     // @ts-ignore
     assert.i32Equals(erc20.decimals, <i32>erc20Decimals);
+
+    // Assert derived fields
+    assert.arrayEquals(
+      erc20.lendingDesks.map<ethereum.Value>((x) =>
+        ethereum.Value.fromString(x)
+      ),
+      [ethereum.Value.fromString(lendingDesk.id)]
+    );
   });
 });
