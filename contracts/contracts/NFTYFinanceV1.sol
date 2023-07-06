@@ -87,7 +87,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param lendingDeskId Identifier for the lending desk
      * @param loanConfigs Loan config for each NFT collection this lending desk will support
      */
-    event LendingDeskLoanConfigSet(
+    event LendingDeskLoanConfigsSet(
         uint256 lendingDeskId,
         LoanConfig[] loanConfigs
     );
@@ -275,7 +275,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @param _lendingDeskId Identifier for the lending desk
      * @param _loanConfigs Loan config for each NFT collection this lending desk will support
-     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     * @dev Emits an {LendingDeskLoanConfigsSet} event.
      */
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
@@ -327,7 +327,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         }
 
         // Emit event
-        emit LendingDeskLoanConfigSet({
+        emit LendingDeskLoanConfigsSet({
             lendingDeskId: _lendingDeskId,
             loanConfigs: _loanConfigs
         });
@@ -338,7 +338,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @param _lendingDeskId Identifier for the lending desk
      * @param _nftCollection Address for the NFT collection to remove supported config for
-     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     * @dev Emits an {LendingDeskLoanConfigsSet} event.
      */
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,

@@ -1,7 +1,7 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
-  LendingDeskLoanConfigSet,
-  LendingDeskLoanConfigSetLoanConfigsStruct,
+  LendingDeskLoanConfigsSet,
+  LendingDeskLoanConfigsSetLoanConfigsStruct,
   LoanOriginationFeeSet,
   NewLendingDeskInitialized,
   OwnershipTransferred,
@@ -145,12 +145,12 @@ export class TestLoanConfig {
   maxInterest: BigInt;
 }
 
-export const createLendingDeskLoanConfigSetEvent = (
+export const createLendingDeskLoanConfigsSetEvent = (
   nftyFinance: Address,
   lendingDeskId: number,
   loanConfigs: TestLoanConfig[]
-): LendingDeskLoanConfigSet => {
-  const event = newTypedMockEventWithParams<LendingDeskLoanConfigSet>([
+): LendingDeskLoanConfigsSet => {
+  const event = newTypedMockEventWithParams<LendingDeskLoanConfigsSet>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -160,7 +160,7 @@ export const createLendingDeskLoanConfigSetEvent = (
       "loanConfigs",
       ethereum.Value.fromTupleArray(
         loanConfigs.map<ethereum.Tuple>((x) => {
-          const struct = new LendingDeskLoanConfigSetLoanConfigsStruct(0);
+          const struct = new LendingDeskLoanConfigsSetLoanConfigsStruct(0);
 
           struct.push(ethereum.Value.fromAddress(x.nftCollection));
           struct.push(ethereum.Value.fromBoolean(x.nftCollectionIsErc1155));

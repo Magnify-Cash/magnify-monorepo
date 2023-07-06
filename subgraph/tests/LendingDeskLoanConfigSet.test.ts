@@ -7,10 +7,10 @@ import {
 } from "matchstick-as/assembly/index";
 import {
   TestLoanConfig,
-  createLendingDeskLoanConfigSetEvent,
+  createLendingDeskLoanConfigsSetEvent,
   initializeLendingDesk,
 } from "./utils";
-import { handleLendingDeskLoanConfigSet } from "../src/nfty-finance";
+import { handleLendingDeskLoanConfigsSet } from "../src/nfty-finance";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { LoanConfig, NftCollection } from "../generated/schema";
 
@@ -49,19 +49,19 @@ const loanConfigs: Array<TestLoanConfig> = [
   },
 ];
 
-describe("LendingDeskLoanConfigSet", () => {
+describe("LendingDeskLoanConfigsSet", () => {
   beforeAll(() => {
     initializeLendingDesk(nftyFinance, lendingDeskId, owner, erc20);
   });
 
-  test("Should create LoanConfig and NftCollection entities on LendingDeskLoanConfigSet", () => {
+  test("Should create LoanConfig and NftCollection entities on LendingDeskLoanConfigsSet", () => {
     // Handle event
-    const event = createLendingDeskLoanConfigSetEvent(
+    const event = createLendingDeskLoanConfigsSetEvent(
       nftyFinance,
       lendingDeskId,
       loanConfigs
     );
-    handleLendingDeskLoanConfigSet(event);
+    handleLendingDeskLoanConfigsSet(event);
 
     loanConfigs.forEach((config) => {
       const loanConfigId =

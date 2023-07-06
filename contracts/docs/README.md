@@ -60,7 +60,7 @@ The contract provides the following functions:
 The contract emits the following events:
 
 - `NewLendingDeskInitialized`: Emitted when a new lending desk is created.
-- `LendingDeskLoanConfigSet`: Emitted when a lending desk's loan configuration is set.
+- `LendingDeskLoanConfigsSet`: Emitted when a lending desk's loan configurations are set.
 - `LendingDeskLoanConfigRemoved`: Emitted when a lending desk's support for an NFT collection is removed.
 - `LendingDeskLiquidityAdded`: Emitted when liquidity is added to a lending desk.
 - `LendingDeskStateSet`: Emitted when a lending desk is frozen/unfrozen.

@@ -4,7 +4,7 @@ import {
   Unpaused,
   NewLendingDeskInitialized,
   LoanOriginationFeeSet,
-  LendingDeskLoanConfigSet,
+  LendingDeskLoanConfigsSet,
   LendingDeskLoanConfigRemoved,
   LendingDeskLiquidityAdded,
   LendingDeskLiquidityWithdrawn,
@@ -51,8 +51,8 @@ export function handleNewLendingDeskInitialized(
   lendingDesk.save();
 }
 
-export function handleLendingDeskLoanConfigSet(
-  event: LendingDeskLoanConfigSet
+export function handleLendingDeskLoanConfigsSet(
+  event: LendingDeskLoanConfigsSet
 ): void {
   for (let i = 0; i < event.params.loanConfigs.length; i++) {
     const loanConfigStruct = event.params.loanConfigs[i];

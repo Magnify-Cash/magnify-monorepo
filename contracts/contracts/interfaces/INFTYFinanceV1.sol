@@ -114,7 +114,7 @@ interface INFTYFinanceV1 {
      *
      * @param _lendingDeskId Identifier for the lending desk
      * @param _loanConfigs Loan config for each NFT collection this lending desk will support
-     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     * @dev Emits an {LendingDeskLoanConfigsSet} event.
      */
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
@@ -126,7 +126,7 @@ interface INFTYFinanceV1 {
      *
      * @param _lendingDeskId Identifier for the lending desk
      * @param _nftCollection Address for the NFT collection to remove supported config for
-     * @dev Emits an {LendingDeskLoanConfigSet} event.
+     * @dev Emits an {LendingDeskLoanConfigsSet} event.
      */
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
