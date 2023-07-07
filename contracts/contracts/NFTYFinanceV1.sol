@@ -71,14 +71,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Event that will be emitted every time a lending desk is created
      *
+     * @param lendingDeskId A unique lending desk ID
      * @param owner The address of the owner of the created lending desk
      * @param erc20 The ERC20 allowed as currency on the lending desk
-     * @param id A unique lending desk ID
      */
     event NewLendingDeskInitialized(
-        address indexed owner,
-        address indexed erc20,
-        uint256 id
+        uint256 lendingDeskId,
+        address owner,
+        address erc20
     );
 
     /**
@@ -106,16 +106,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Event that will be emitted every time liquidity is added to a lending desk
      *
-     * @param owner The address of the owner of the lending desk
-     * @param id Identifier for the lending desk
+     * @param lendingDeskId Identifier for the lending desk
+     * @param amountAdded Amount of liquidity added to the lending desk
      * @param balance Current balance for the lending desk
-     * @param liquidityAdded Amount of liquidity added to the lending desk
      */
     event LendingDeskLiquidityAdded(
-        address indexed owner,
-        uint256 id,
-        uint256 balance,
-        uint256 liquidityAdded
+        uint256 lendingDeskId,
+        uint256 amountAdded,
+        uint256 balance
     );
 
     /**
@@ -129,15 +127,13 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Event that will be emitted every time there is a cash out on a lending desk
      *
-     * @param owner The address of the owner of the lending desk
-     * @param id Identifier for the lending desk
-     * @param amount Amount withdrawn
+     * @param lendingDeskId Identifier for the lending desk
+     * @param amountWithdrawn Amount withdrawn
      * @param balance New balance after cash out
      */
     event LendingDeskLiquidityWithdrawn(
-        address indexed owner,
-        uint256 id,
-        uint256 amount,
+        uint256 lendingDeskId,
+        uint256 amountWithdrawn,
         uint256 balance
     );
 
@@ -264,9 +260,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Emit event
         emit NewLendingDeskInitialized(
+            lendingDeskIdCounter,
             msg.sender,
-            lendingDesk.erc20,
-            lendingDeskIdCounter
+            lendingDesk.erc20
         );
     }
 
@@ -399,10 +395,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Emit event
         emit LendingDeskLiquidityAdded(
-            msg.sender,
             _lendingDeskId,
-            lendingDesk.balance,
-            _amount
+            _amount,
+            lendingDesk.balance
         );
     }
 
@@ -435,7 +430,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Emit event
         emit LendingDeskLiquidityWithdrawn(
-            msg.sender,
             _lendingDeskId,
             _amount,
             lendingDesk.balance

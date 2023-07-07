@@ -1,5 +1,7 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
+  LendingDeskLiquidityAdded,
+  LendingDeskLiquidityWithdrawn,
   LendingDeskLoanConfigRemoved,
   LendingDeskLoanConfigsSet,
   LendingDeskLoanConfigsSetLoanConfigsStruct,
@@ -127,10 +129,10 @@ export const createNewLendingDeskInitializedEvent = (
   id: number
 ): NewLendingDeskInitialized => {
   const event = newTypedMockEventWithParams<NewLendingDeskInitialized>([
+    // @ts-ignore
+    new ethereum.EventParam("lendingDeskId", ethereum.Value.fromI32(<i32>id)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam("erc20", ethereum.Value.fromAddress(erc20)),
-    // @ts-ignore
-    new ethereum.EventParam("id", ethereum.Value.fromI32(<i32>id)),
   ]);
   event.address = nftyFinance;
   return event;
@@ -239,6 +241,56 @@ export const createLendingDeskLoanConfigRemovedEvent = (
     new ethereum.EventParam(
       "nftCollection",
       ethereum.Value.fromAddress(nftCollection)
+    ),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createLendingDeskLiquidityAddedEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  amountAdded: BigInt,
+  balance: BigInt
+): LendingDeskLiquidityAdded => {
+  const event = newTypedMockEventWithParams<LendingDeskLiquidityAdded>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam(
+      "amountAdded",
+      ethereum.Value.fromUnsignedBigInt(amountAdded)
+    ),
+    new ethereum.EventParam(
+      "balance",
+      ethereum.Value.fromUnsignedBigInt(balance)
+    ),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createLendingDeskLiquidityWithdrawEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  amountWithdrawn: BigInt,
+  balance: BigInt
+): LendingDeskLiquidityWithdrawn => {
+  const event = newTypedMockEventWithParams<LendingDeskLiquidityWithdrawn>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam(
+      "amountWithdrawn",
+      ethereum.Value.fromUnsignedBigInt(amountWithdrawn)
+    ),
+    new ethereum.EventParam(
+      "balance",
+      ethereum.Value.fromUnsignedBigInt(balance)
     ),
   ]);
   event.address = nftyFinance;

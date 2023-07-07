@@ -9,7 +9,7 @@ import {
   initializeLendingDesk,
 } from "./utils";
 import { handleLendingDeskLoanConfigsSet } from "../src/nfty-finance";
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { ethereum } from "@graphprotocol/graph-ts";
 import { LoanConfig, NftCollection } from "../generated/schema";
 import {
   erc20Address,

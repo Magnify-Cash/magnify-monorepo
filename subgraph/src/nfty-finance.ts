@@ -41,7 +41,7 @@ export function handleNewLendingDeskInitialized(
   erc20.save();
 
   // Create LiquidityShop instance
-  const lendingDesk = new LendingDesk(event.params.id.toString());
+  const lendingDesk = new LendingDesk(event.params.lendingDeskId.toString());
 
   lendingDesk.erc20 = event.params.erc20.toHex();
   lendingDesk.owner = event.params.owner;
@@ -98,7 +98,9 @@ export function handleLendingDeskLoanConfigRemoved(
 export function handleLendingDeskLiquidityAdded(
   event: LendingDeskLiquidityAdded
 ): void {
-  const lendingDesk = new LendingDesk(event.params.id.toString());
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+
   lendingDesk.balance = event.params.balance;
   lendingDesk.save();
 }
@@ -106,7 +108,9 @@ export function handleLendingDeskLiquidityAdded(
 export function handleLendingDeskLiquidityWithdrawn(
   event: LendingDeskLiquidityWithdrawn
 ): void {
-  const lendingDesk = new LendingDesk(event.params.id.toString());
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+
   lendingDesk.balance = event.params.balance;
   lendingDesk.save();
 }
