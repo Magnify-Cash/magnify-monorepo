@@ -59,13 +59,14 @@ describe("OwnershipTransferred", () => {
       "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
     );
 
-    const event = createOwnershipTransferredEvent(
-      nftyFinance,
-      // this is contract initialization so previousOwner is zero address
-      Address.zero(),
-      owner
+    handleOwnershipTransferred(
+      createOwnershipTransferredEvent(
+        nftyFinance,
+        // this is contract initialization so previousOwner is zero address
+        Address.zero(),
+        owner
+      )
     );
-    handleOwnershipTransferred(event);
 
     // Assert correct entity is created
     const protocolParams = ProtocolParams.load("0");

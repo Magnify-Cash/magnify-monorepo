@@ -54,12 +54,13 @@ describe("LendingDeskLiquidityWithdrawn", () => {
     );
 
     // Handle event
-    const event = createLendingDeskLiquidityWithdrawEvent(
-      nftyFinance,
-      lendingDeskId,
-      amountWithdrawn
+    handleLendingDeskLiquidityWithdrawn(
+      createLendingDeskLiquidityWithdrawEvent(
+        nftyFinance,
+        lendingDeskId,
+        amountWithdrawn
+      )
     );
-    handleLendingDeskLiquidityWithdrawn(event);
 
     // Assert LendingDesk got updated
     assert.fieldEquals(

@@ -28,8 +28,9 @@ describe("OwnershipTransferred", () => {
     );
 
     // Handle event
-    const event = createLoanOriginationFeeSetEvent(nftyFinance, 100);
-    handleLoanOriginationFeeSet(event);
+    handleLoanOriginationFeeSet(
+      createLoanOriginationFeeSetEvent(nftyFinance, 100)
+    );
 
     // Assert ProtocolParams got updated
     assert.fieldEquals(

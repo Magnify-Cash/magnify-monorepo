@@ -11,8 +11,7 @@ import { nftyFinance } from "./consts";
 describe("Unpaused", () => {
   beforeAll(() => {
     intialOwnershipTransfer(nftyFinance);
-    const event = createPausedEvent(nftyFinance);
-    handlePaused(event);
+    handlePaused(createPausedEvent(nftyFinance));
   });
 
   test("Updates ProtocolParams on Unpaused", () => {
@@ -22,8 +21,7 @@ describe("Unpaused", () => {
     if (!protocolParams) return;
     assert.booleanEquals(protocolParams.paused, true);
 
-    const event = createUnpausedEvent(nftyFinance);
-    handleUnpaused(event);
+    handleUnpaused(createUnpausedEvent(nftyFinance));
 
     // ProtocolParams got updated
     protocolParams = ProtocolParams.load("0");

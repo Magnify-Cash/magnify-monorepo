@@ -40,13 +40,14 @@ describe("NewLendingDeskInitialized", () => {
 
   test("Should create LendingDesk and Erc20 entities on NewLendingDeskInitialized", () => {
     // Handle event
-    const event = createNewLendingDeskInitializedEvent(
-      nftyFinance,
-      lendingDeskOwner,
-      erc20Address,
-      lendingDeskId
+    handleNewLendingDeskInitialized(
+      createNewLendingDeskInitializedEvent(
+        nftyFinance,
+        lendingDeskOwner,
+        erc20Address,
+        lendingDeskId
+      )
     );
-    handleNewLendingDeskInitialized(event);
 
     // Assert LendingDesk got created
     const lendingDesk = LendingDesk.load(lendingDeskId.toString());

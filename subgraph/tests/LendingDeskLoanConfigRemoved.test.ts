@@ -38,12 +38,13 @@ describe("LendingDeskLoanConfigsSet", () => {
       const loanConfigId =
         lendingDeskId.toString() + "-" + loanConfig.nftCollection.toHex();
 
-      const event = createLendingDeskLoanConfigRemovedEvent(
-        nftyFinance,
-        lendingDeskId,
-        loanConfig.nftCollection
+      handleLendingDeskLoanConfigRemoved(
+        createLendingDeskLoanConfigRemovedEvent(
+          nftyFinance,
+          lendingDeskId,
+          loanConfig.nftCollection
+        )
       );
-      handleLendingDeskLoanConfigRemoved(event);
 
       // Assert LoanConfig got delete
       assert.notInStore("LoanConfig", loanConfigId);

@@ -16,8 +16,7 @@ describe("Paused", () => {
     if (!protocolParams) return;
     assert.booleanEquals(protocolParams.paused, false);
 
-    const event = createPausedEvent(nftyFinance);
-    handlePaused(event);
+    handlePaused(createPausedEvent(nftyFinance));
 
     // ProtocolParams got updated
     protocolParams = ProtocolParams.load("0");

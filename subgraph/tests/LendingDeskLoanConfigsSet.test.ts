@@ -32,12 +32,13 @@ describe("LendingDeskLoanConfigsSet", () => {
 
   test("Should create LoanConfig and NftCollection entities on LendingDeskLoanConfigsSet", () => {
     // Handle event
-    const event = createLendingDeskLoanConfigsSetEvent(
-      nftyFinance,
-      lendingDeskId,
-      loanConfigs
+    handleLendingDeskLoanConfigsSet(
+      createLendingDeskLoanConfigsSetEvent(
+        nftyFinance,
+        lendingDeskId,
+        loanConfigs
+      )
     );
-    handleLendingDeskLoanConfigsSet(event);
 
     loanConfigs.forEach((config) => {
       const loanConfigId =

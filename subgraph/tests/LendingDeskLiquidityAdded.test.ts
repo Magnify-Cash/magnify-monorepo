@@ -37,12 +37,13 @@ describe("LendingDeskLiquidityAdded", () => {
     assert.fieldEquals("LendingDesk", lendingDeskId.toString(), "balance", "0");
 
     // Handle event
-    const event = createLendingDeskLiquidityAddedEvent(
-      nftyFinance,
-      lendingDeskId,
-      initialAmount
+    handleLendingDeskLiquidityAdded(
+      createLendingDeskLiquidityAddedEvent(
+        nftyFinance,
+        lendingDeskId,
+        initialAmount
+      )
     );
-    handleLendingDeskLiquidityAdded(event);
 
     // Assert LendingDesk got updated
     assert.fieldEquals(

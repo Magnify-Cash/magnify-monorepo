@@ -101,13 +101,14 @@ export const intialOwnershipTransfer = (nftyFinance: Address): void => {
     .returns([ethereum.Value.fromAddress(lendingKeys)]);
 
   // Initial OwnershipTransferred, i.e. contract deployment
-  const event = createOwnershipTransferredEvent(
-    nftyFinance,
-    // this is contract initialization so previousOwner is zero address
-    Address.zero(),
-    owner
+  handleOwnershipTransferred(
+    createOwnershipTransferredEvent(
+      nftyFinance,
+      // this is contract initialization so previousOwner is zero address
+      Address.zero(),
+      owner
+    )
   );
-  handleOwnershipTransferred(event);
 };
 
 export const createPausedEvent = (nftyFinance: Address): Paused => {
