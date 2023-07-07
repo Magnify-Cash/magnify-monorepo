@@ -250,8 +250,7 @@ export const createLendingDeskLoanConfigRemovedEvent = (
 export const createLendingDeskLiquidityAddedEvent = (
   nftyFinance: Address,
   lendingDeskId: number,
-  amountAdded: BigInt,
-  balance: BigInt
+  amountAdded: BigInt
 ): LendingDeskLiquidityAdded => {
   const event = newTypedMockEventWithParams<LendingDeskLiquidityAdded>([
     new ethereum.EventParam(
@@ -263,10 +262,6 @@ export const createLendingDeskLiquidityAddedEvent = (
       "amountAdded",
       ethereum.Value.fromUnsignedBigInt(amountAdded)
     ),
-    new ethereum.EventParam(
-      "balance",
-      ethereum.Value.fromUnsignedBigInt(balance)
-    ),
   ]);
   event.address = nftyFinance;
   return event;
@@ -275,8 +270,7 @@ export const createLendingDeskLiquidityAddedEvent = (
 export const createLendingDeskLiquidityWithdrawEvent = (
   nftyFinance: Address,
   lendingDeskId: number,
-  amountWithdrawn: BigInt,
-  balance: BigInt
+  amountWithdrawn: BigInt
 ): LendingDeskLiquidityWithdrawn => {
   const event = newTypedMockEventWithParams<LendingDeskLiquidityWithdrawn>([
     new ethereum.EventParam(
@@ -287,10 +281,6 @@ export const createLendingDeskLiquidityWithdrawEvent = (
     new ethereum.EventParam(
       "amountWithdrawn",
       ethereum.Value.fromUnsignedBigInt(amountWithdrawn)
-    ),
-    new ethereum.EventParam(
-      "balance",
-      ethereum.Value.fromUnsignedBigInt(balance)
     ),
   ]);
   event.address = nftyFinance;

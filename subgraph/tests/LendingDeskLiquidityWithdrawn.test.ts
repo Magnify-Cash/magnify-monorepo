@@ -41,7 +41,6 @@ describe("LendingDeskLiquidityWithdrawn", () => {
       createLendingDeskLiquidityAddedEvent(
         nftyFinance,
         lendingDeskId,
-        initialAmount,
         initialAmount
       )
     );
@@ -58,8 +57,7 @@ describe("LendingDeskLiquidityWithdrawn", () => {
     const event = createLendingDeskLiquidityWithdrawEvent(
       nftyFinance,
       lendingDeskId,
-      amountWithdrawn,
-      initialAmount.minus(amountWithdrawn)
+      amountWithdrawn
     );
     handleLendingDeskLiquidityWithdrawn(event);
 

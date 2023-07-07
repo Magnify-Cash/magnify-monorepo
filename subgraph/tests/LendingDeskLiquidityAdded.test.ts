@@ -1,4 +1,5 @@
 import {
+  afterEach,
   assert,
   beforeAll,
   describe,
@@ -16,6 +17,7 @@ import {
   nftyFinance,
   lendingDeskOwner,
 } from "./consts";
+import { LendingDesk } from "../generated/schema";
 
 describe("LendingDeskLiquidityAdded", () => {
   beforeAll(() => {
@@ -29,7 +31,7 @@ describe("LendingDeskLiquidityAdded", () => {
   });
 
   test("Should update balance of LendingDesk on initial LendingDeskLiquidityAdded", () => {
-    const amountAdded = BigInt.fromU64(1000 * 10 ** 18);
+    const initialAmount = BigInt.fromU64(1000 * 10 ** 18);
 
     // Assert initial state of LendingDesk
     assert.fieldEquals("LendingDesk", lendingDeskId.toString(), "balance", "0");
@@ -38,8 +40,7 @@ describe("LendingDeskLiquidityAdded", () => {
     const event = createLendingDeskLiquidityAddedEvent(
       nftyFinance,
       lendingDeskId,
-      amountAdded,
-      amountAdded
+      initialAmount
     );
     handleLendingDeskLiquidityAdded(event);
 
@@ -48,7 +49,7 @@ describe("LendingDeskLiquidityAdded", () => {
       "LendingDesk",
       lendingDeskId.toString(),
       "balance",
-      amountAdded.toString()
+      initialAmount.toString()
     );
   });
 
@@ -61,7 +62,6 @@ describe("LendingDeskLiquidityAdded", () => {
       createLendingDeskLiquidityAddedEvent(
         nftyFinance,
         lendingDeskId,
-        initialAmount,
         initialAmount
       )
     );
@@ -75,13 +75,13 @@ describe("LendingDeskLiquidityAdded", () => {
     );
 
     // Handle event
-    const event = createLendingDeskLiquidityAddedEvent(
-      nftyFinance,
-      lendingDeskId,
-      amountAdded,
-      initialAmount.plus(amountAdded)
+    handleLendingDeskLiquidityAdded(
+      createLendingDeskLiquidityAddedEvent(
+        nftyFinance,
+        lendingDeskId,
+        amountAdded
+      )
     );
-    handleLendingDeskLiquidityAdded(event);
 
     // Assert LendingDesk got updated
     assert.fieldEquals(
@@ -90,5 +90,15 @@ describe("LendingDeskLiquidityAdded", () => {
       "balance",
       initialAmount.plus(amountAdded).toString()
     );
+  });
+
+  // Reset balance of LendingDesk
+  afterEach(() => {
+    const lendingDesk = LendingDesk.load(lendingDeskId.toString());
+    if (!lendingDesk) return;
+
+    // @ts-ignore
+    lendingDesk.balance = BigInt.fromI32(<i32>0);
+    lendingDesk.save();
   });
 });

@@ -108,12 +108,18 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @param lendingDeskId Identifier for the lending desk
      * @param amountAdded Amount of liquidity added to the lending desk
-     * @param balance Current balance for the lending desk
      */
-    event LendingDeskLiquidityAdded(
+    event LendingDeskLiquidityAdded(uint256 lendingDeskId, uint256 amountAdded);
+
+    /**
+     * @notice Event that will be emitted every time there is a cash out on a lending desk
+     *
+     * @param lendingDeskId Identifier for the lending desk
+     * @param amountWithdrawn Amount withdrawn
+     */
+    event LendingDeskLiquidityWithdrawn(
         uint256 lendingDeskId,
-        uint256 amountAdded,
-        uint256 balance
+        uint256 amountWithdrawn
     );
 
     /**
@@ -123,19 +129,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param freeze Whether frozen// unfrozen
      */
     event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
-
-    /**
-     * @notice Event that will be emitted every time there is a cash out on a lending desk
-     *
-     * @param lendingDeskId Identifier for the lending desk
-     * @param amountWithdrawn Amount withdrawn
-     * @param balance New balance after cash out
-     */
-    event LendingDeskLiquidityWithdrawn(
-        uint256 lendingDeskId,
-        uint256 amountWithdrawn,
-        uint256 balance
-    );
 
     /**
      * @notice Event that will be emitted when a lending desk is dissolved
@@ -394,11 +387,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         );
 
         // Emit event
-        emit LendingDeskLiquidityAdded(
-            _lendingDeskId,
-            _amount,
-            lendingDesk.balance
-        );
+        emit LendingDeskLiquidityAdded(_lendingDeskId, _amount);
     }
 
     /**
@@ -429,11 +418,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         IERC20(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
 
         // Emit event
-        emit LendingDeskLiquidityWithdrawn(
-            _lendingDeskId,
-            _amount,
-            lendingDesk.balance
-        );
+        emit LendingDeskLiquidityWithdrawn(_lendingDeskId, _amount);
     }
 
     /**
