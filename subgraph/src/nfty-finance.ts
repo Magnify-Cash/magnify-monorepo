@@ -30,15 +30,18 @@ import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 export function handleNewLendingDeskInitialized(
   event: NewLendingDeskInitialized
 ): void {
-  // Create ERC20 instance
-  const erc20 = new Erc20(event.params.erc20.toHex());
-  const erc20Contract = ERC20.bind(event.params.erc20);
+  // Create ERC20 instance if doesn't exist
+  if (!Erc20.load(event.params.erc20.toHex())) {
+    const erc20 = new Erc20(event.params.erc20.toHex());
+    const erc20Contract = ERC20.bind(event.params.erc20);
 
-  erc20.name = erc20Contract.name();
-  erc20.symbol = erc20Contract.symbol();
-  erc20.decimals = erc20Contract.decimals();
+    erc20.name = erc20Contract.name();
+    erc20.symbol = erc20Contract.symbol();
+    erc20.decimals = erc20Contract.decimals();
+    erc20.platformFees = BigInt.fromU32(0);
 
-  erc20.save();
+    erc20.save();
+  }
 
   // Create LiquidityShop instance
   const lendingDesk = new LendingDesk(event.params.lendingDeskId.toString());
@@ -129,21 +132,22 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
 export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   const loan = new Loan(event.params.loanId.toString());
 
-  // Get loan details
-  const nftyFinanceContract = NFTYFinance.bind(event.address);
-  const loanDetails = nftyFinanceContract.loans(event.params.loanId);
-
   // Enter loan details
   loan.lendingDesk = event.params.lendingDeskId.toString();
-  loan.amount = loanDetails.getAmount();
-  loan.amountPaidBack = new BigInt(0);
-  loan.duration = loanDetails.getDuration();
-  loan.startTime = loanDetails.getStartTime();
+  loan.amount = event.params.amount;
+  loan.amountPaidBack = BigInt.fromU32(0);
+  loan.duration = event.params.duration;
+  loan.startTime = event.block.timestamp;
   loan.status = "Active";
-  loan.lender = event.params.lender;
   loan.borrower = event.params.borrower;
-  loan.nftCollection = loanDetails.getNftCollection().toHex();
-  loan.nftId = loanDetails.getNftId();
+  loan.nftCollection = event.params.nftCollection.toHex();
+  loan.nftId = event.params.nftId;
+  loan.interest = event.params.interest;
+
+  // Fetch lending desk and set lender to lending desk owner
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+  loan.lender = lendingDesk.owner;
 
   // Save entity
   loan.save();

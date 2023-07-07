@@ -30,6 +30,7 @@ export const erc20Name = "USD Coin";
 export const erc20Symbol = "USDC";
 export const erc20Decimals = 18;
 
+// Loan Configs
 export const loanConfigs: Array<TestLoanConfig> = [
   {
     nftCollection: Address.fromString(
@@ -56,3 +57,16 @@ export const loanConfigs: Array<TestLoanConfig> = [
     maxInterest: BigInt.fromU64(10000),
   },
 ];
+
+// Loan
+export const loanId = 31;
+export const borrower = Address.fromString(
+  "0xcd3B766CCDd6AE721141F452C550Ca635964ce71"
+);
+export const nftCollection = Address.fromString(
+  "0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e"
+);
+export const nftId = 3120;
+export const amount = BigInt.fromU64(50 * 10 ** 18);
+export const duration = BigInt.fromU64(3 * 24);
+export const interest = BigInt.fromU64(8000);

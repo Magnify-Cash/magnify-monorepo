@@ -48,6 +48,7 @@ type Erc20 @entity {
   symbol: String!
   decimals: Int!
   lendingDesks: [LendingDesk!]! @derivedFrom(field: "erc20")
+  platformFees: BigInt!
 }
 
 type NftCollection @entity {

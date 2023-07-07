@@ -140,16 +140,19 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Event that will be emitted every time a new offer is accepted
      *
-     * @param lender The address of the owner
-     * @param borrower The address of the borrower
      * @param lendingDeskId A unique identifier that determines the lending desk to which this offer belongs
      * @param loanId A unique identifier for the loan created
+     * @param borrower The address of the borrower
      */
     event NewLoanInitialized(
-        address indexed lender,
-        address indexed borrower,
         uint256 lendingDeskId,
-        uint256 loanId
+        uint256 loanId,
+        address borrower,
+        address nftCollection,
+        uint256 nftId,
+        uint256 amount,
+        uint256 duration,
+        uint256 interest
     );
 
     /**
@@ -191,6 +194,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param loanOriginationFee The basis points of fees in tokens that the borrower will have to pay for a loan
      */
     event LoanOriginationFeeSet(uint256 loanOriginationFee);
+
+    /**
+     * @notice Event that will be emitted every time an admin withdraws platform fees
+     *
+     * @param receiver the address that will receive the platform fees that can be withdrawn at the time
+     * @param erc20s array of erc20s the admin wants to withdraw fees for
+     */
+    event PlatformFeesWithdrawn(address receiver, address[] erc20s);
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -597,10 +608,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Emit event
         emit NewLoanInitialized(
-            msg.sender,
-            msg.sender,
             _lendingDeskId,
-            loanIdCounter
+            loanIdCounter,
+            msg.sender,
+            _nftCollection,
+            _nftId,
+            _amount,
+            _duration,
+            interest
         );
     }
 
@@ -820,6 +835,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             // transfer tokens
             IERC20(_erc20s[i]).safeTransfer(_receiver, amount);
         }
+
+        emit PlatformFeesWithdrawn(_receiver, _erc20s);
     }
 
     /**

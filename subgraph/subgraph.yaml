@@ -27,32 +27,22 @@ dataSources:
       eventHandlers:
         - event: LoanOriginationFeeSet(uint256)
           handler: handleLoanOriginationFeeSet
-        # - event: LiquidatedOverdueLoan(indexed address,uint256,uint256,uint256)
-        #   handler: handleLiquidatedOverdueLoan
-        # - event: LiquidityAddedToShop(indexed address,uint256,uint256,uint256)
-        #   handler: handleLiquidityAddedToShop
-        # - event: LiquidityShopCashedOut(indexed address,uint256,uint256,uint256)
-        #   handler: handleLiquidityShopCashedOut
-        # - event: LiquidityShopCreated(indexed address,indexed address,indexed
-        #     address,bool,uint256,uint256,uint256,uint256,uint256,uint256,string,bool,bool)
-        #   handler: handleLiquidityShopCreated
-        # - event: LiquidityShopUpdated(uint256,string,uint256,uint256,uint256,uint256,bool,bool)
-        #   handler: handleLiquidityShopUpdated
-        # - event: LiquidityShopFrozen(indexed address,uint256,uint256)
-        #   handler: handleLiquidityShopFrozen
-        # - event: LiquidityShopUnfrozen(indexed address,uint256,uint256)
-        #   handler: handleLiquidityShopUnfrozen
-        # - event: OfferAccepted(indexed address,indexed address,uint256,uint256)
-        #   handler: handleOfferAccepted
+        - event: NewLendingDeskInitialized(uint256,address,address)
+          handler: handleNewLendingDeskInitialized
+        - event: LendingDeskLiquidityAdded(uint256,uint256)
+          handler: handleLendingDeskLiquidityAdded
+        - event: LendingDeskLiquidityWithdrawn(uint256,uint256)
+          handler: handleLendingDeskLiquidityWithdrawn
+        - event: LendingDeskLoanConfigsSet(uint256,(address,bool,uint256,uint256,uint256,uint256,uint256,uint256)[])
+          handler: handleLendingDeskLoanConfigsSet
+        - event: LendingDeskLoanConfigRemoved(uint256,address)
+          handler: handleLendingDeskLoanConfigRemoved
+        - event: LendingDeskStateSet(uint256,bool)
+          handler: handleLendingDeskStateSet
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        # - event: PaidBackLoan(indexed address,indexed
-        #     address,uint256,uint256,uint256,uint256,uint256)
-        #   handler: handlePaidBackLoan
         - event: Paused(address)
           handler: handlePaused
-        # - event: PaymentMade(indexed address,indexed address,uint256,uint256,uint256)
-        #   handler: handlePaymentMade
         - event: Unpaused(address)
           handler: handleUnpaused
       file: ./src/nfty-finance.ts

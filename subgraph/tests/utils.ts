@@ -8,6 +8,7 @@ import {
   LendingDeskStateSet,
   LoanOriginationFeeSet,
   NewLendingDeskInitialized,
+  NewLoanInitialized,
   OwnershipTransferred,
   Paused,
   Unpaused,
@@ -22,7 +23,6 @@ import {
   handleNewLendingDeskInitialized,
   handleOwnershipTransferred,
 } from "../src/nfty-finance";
-import { nftyFinance } from "./consts";
 
 export const createOwnershipTransferredEvent = (
   nftyFinance: Address,
@@ -302,6 +302,55 @@ export const createLendingDeskStateSetEvent = (
       ethereum.Value.fromI32(<i32>lendingDeskId)
     ),
     new ethereum.EventParam("freeze", ethereum.Value.fromBoolean(freeze)),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createNewLoanInitializedEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  loanId: number,
+  borrower: Address,
+  nftCollection: Address,
+  nftId: number,
+  amount: BigInt,
+  duration: BigInt,
+  interest: BigInt
+): NewLoanInitialized => {
+  const event = newTypedMockEventWithParams<NewLoanInitialized>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam(
+      "loanId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>loanId)
+    ),
+    new ethereum.EventParam("borrower", ethereum.Value.fromAddress(borrower)),
+    new ethereum.EventParam(
+      "nftCollection",
+      ethereum.Value.fromAddress(nftCollection)
+    ),
+    new ethereum.EventParam(
+      "nftId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>nftId)
+    ),
+    new ethereum.EventParam(
+      "amount",
+      ethereum.Value.fromUnsignedBigInt(amount)
+    ),
+    new ethereum.EventParam(
+      "duration",
+      ethereum.Value.fromUnsignedBigInt(duration)
+    ),
+    new ethereum.EventParam(
+      "interest",
+      ethereum.Value.fromUnsignedBigInt(interest)
+    ),
   ]);
   event.address = nftyFinance;
   return event;
