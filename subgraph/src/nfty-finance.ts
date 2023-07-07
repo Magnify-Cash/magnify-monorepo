@@ -116,7 +116,9 @@ export function handleLendingDeskLiquidityWithdrawn(
 }
 
 export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
-  const lendingDesk = new LendingDesk(event.params.lendingDeskId.toString());
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+
   if (event.params.freeze) lendingDesk.status = "Frozen";
   else lendingDesk.status = "Active";
   lendingDesk.save();

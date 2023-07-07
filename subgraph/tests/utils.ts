@@ -5,6 +5,7 @@ import {
   LendingDeskLoanConfigRemoved,
   LendingDeskLoanConfigsSet,
   LendingDeskLoanConfigsSetLoanConfigsStruct,
+  LendingDeskStateSet,
   LoanOriginationFeeSet,
   NewLendingDeskInitialized,
   OwnershipTransferred,
@@ -21,6 +22,7 @@ import {
   handleNewLendingDeskInitialized,
   handleOwnershipTransferred,
 } from "../src/nfty-finance";
+import { nftyFinance } from "./consts";
 
 export const createOwnershipTransferredEvent = (
   nftyFinance: Address,
@@ -283,6 +285,23 @@ export const createLendingDeskLiquidityWithdrawEvent = (
       "amountWithdrawn",
       ethereum.Value.fromUnsignedBigInt(amountWithdrawn)
     ),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createLendingDeskStateSetEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  freeze: boolean
+): LendingDeskStateSet => {
+  const event = newTypedMockEventWithParams<LendingDeskStateSet>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam("freeze", ethereum.Value.fromBoolean(freeze)),
   ]);
   event.address = nftyFinance;
   return event;
