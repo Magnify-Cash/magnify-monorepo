@@ -192,13 +192,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     event LoanOriginationFeeSet(uint256 loanOriginationFee);
 
-    /**
-     * @notice Event that will be emitted every time an admin pauses or unpauses the protocol
-     *
-     * @param paused Boolean for paused. True if paused, false if unpaused.
-     */
-    event ProtocolPaused(bool paused);
-
     /* *********** */
     /* CONSTRUCTOR */
     /* *********** */
