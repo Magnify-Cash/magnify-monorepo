@@ -1,5 +1,6 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
+  LendingDeskLoanConfigRemoved,
   LendingDeskLoanConfigsSet,
   LendingDeskLoanConfigsSetLoanConfigsStruct,
   LoanOriginationFeeSet,
@@ -14,6 +15,7 @@ import {
   newTypedMockEventWithParams,
 } from "matchstick-as";
 import {
+  handleLendingDeskLoanConfigsSet,
   handleNewLendingDeskInitialized,
   handleOwnershipTransferred,
 } from "../src/nfty-finance";
@@ -183,9 +185,10 @@ export const createLendingDeskLoanConfigsSetEvent = (
 
 export const initializeLendingDesk = (
   nftyFinance: Address,
-  id: number,
+  lendingDeskId: number,
   owner: Address,
-  erc20: Address
+  erc20: Address,
+  loanConfigs: TestLoanConfig[]
 ): void => {
   intialOwnershipTransfer(nftyFinance);
 
@@ -204,12 +207,40 @@ export const initializeLendingDesk = (
     // @ts-ignore
     .returns([ethereum.Value.fromI32(<i32>erc20Decimals)]);
 
-  // Handle event
-  const event = createNewLendingDeskInitializedEvent(
+  // Create lending desk
+  const newLendingDeskInitializedEvent = createNewLendingDeskInitializedEvent(
     nftyFinance,
     owner,
     erc20,
-    id
+    lendingDeskId
   );
-  handleNewLendingDeskInitialized(event);
+  handleNewLendingDeskInitialized(newLendingDeskInitializedEvent);
+
+  // Set loan configs
+  const lendingDeskLoanConfigsSetEvent = createLendingDeskLoanConfigsSetEvent(
+    nftyFinance,
+    lendingDeskId,
+    loanConfigs
+  );
+  handleLendingDeskLoanConfigsSet(lendingDeskLoanConfigsSetEvent);
+};
+
+export const createLendingDeskLoanConfigRemovedEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  nftCollection: Address
+): LendingDeskLoanConfigRemoved => {
+  const event = newTypedMockEventWithParams<LendingDeskLoanConfigRemoved>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+    new ethereum.EventParam(
+      "nftCollection",
+      ethereum.Value.fromAddress(nftCollection)
+    ),
+  ]);
+  event.address = nftyFinance;
+  return event;
 };

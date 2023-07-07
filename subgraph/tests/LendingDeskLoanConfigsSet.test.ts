@@ -51,7 +51,7 @@ const loanConfigs: Array<TestLoanConfig> = [
 
 describe("LendingDeskLoanConfigsSet", () => {
   beforeAll(() => {
-    initializeLendingDesk(nftyFinance, lendingDeskId, owner, erc20);
+    initializeLendingDesk(nftyFinance, lendingDeskId, owner, erc20, []);
   });
 
   test("Should create LoanConfig and NftCollection entities on LendingDeskLoanConfigsSet", () => {
