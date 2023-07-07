@@ -4,13 +4,9 @@ import {
   createUnpausedEvent,
   intialOwnershipTransfer,
 } from "./utils";
-import { Address } from "@graphprotocol/graph-ts";
 import { handlePaused, handleUnpaused } from "../src/nfty-finance";
 import { ProtocolParams } from "../generated/schema";
-
-const nftyFinance = Address.fromString(
-  "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
-);
+import { nftyFinance } from "./consts";
 
 describe("Unpaused", () => {
   beforeAll(() => {

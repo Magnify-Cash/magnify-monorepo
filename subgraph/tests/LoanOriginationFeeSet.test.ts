@@ -9,11 +9,8 @@ import {
   intialOwnershipTransfer,
 } from "./utils";
 import { handleLoanOriginationFeeSet } from "../src/nfty-finance";
-import { Address, BigInt } from "@graphprotocol/graph-ts";
-
-const nftyFinance = Address.fromString(
-  "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
-);
+import { BigInt } from "@graphprotocol/graph-ts";
+import { nftyFinance } from "./consts";
 
 describe("OwnershipTransferred", () => {
   beforeAll(() => {

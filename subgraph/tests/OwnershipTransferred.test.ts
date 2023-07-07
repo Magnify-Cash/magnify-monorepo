@@ -11,20 +11,13 @@ import { createOwnershipTransferredEvent } from "./utils";
 import { handleOwnershipTransferred } from "../src/nfty-finance";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { ProtocolParams } from "../generated/schema";
-
-const nftyFinance = Address.fromString(
-  "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
-);
-const promissoryNotes = Address.fromString(
-  "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"
-);
-const obligationNotes = Address.fromString(
-  "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-);
-const lendingKeys = Address.fromString(
-  "0x2546BcD3c84621e976D8185a91A922aE77ECEc30"
-);
-const loanOriginationFee = 200;
+import {
+  lendingKeys,
+  loanOriginationFee,
+  nftyFinance,
+  obligationNotes,
+  promissoryNotes,
+} from "./consts";
 
 describe("OwnershipTransferred", () => {
   beforeAll(() => {

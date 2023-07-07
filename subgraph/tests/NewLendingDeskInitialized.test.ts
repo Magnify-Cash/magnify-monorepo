@@ -12,19 +12,15 @@ import {
 import { handleNewLendingDeskInitialized } from "../src/nfty-finance";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { Erc20, LendingDesk } from "../generated/schema";
-
-const nftyFinance = Address.fromString(
-  "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
-);
-const owner = Address.fromString("0xFABB0ac9d68B0B445fB7357272Ff202C5651694a");
-const id = 12;
-
-const erc20Address = Address.fromString(
-  "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-);
-const erc20Name = "USD Coin";
-const erc20Symbol = "USDC";
-const erc20Decimals = 18;
+import {
+  erc20Address,
+  erc20Name,
+  erc20Symbol,
+  lendingDeskId,
+  nftyFinance,
+  lendingDeskOwner,
+  erc20Decimals,
+} from "./consts";
 
 describe("NewLendingDeskInitialized", () => {
   beforeAll(() => {
@@ -46,20 +42,20 @@ describe("NewLendingDeskInitialized", () => {
     // Handle event
     const event = createNewLendingDeskInitializedEvent(
       nftyFinance,
-      owner,
+      lendingDeskOwner,
       erc20Address,
-      id
+      lendingDeskId
     );
     handleNewLendingDeskInitialized(event);
 
     // Assert LendingDesk got created
-    const lendingDesk = LendingDesk.load(id.toString());
+    const lendingDesk = LendingDesk.load(lendingDeskId.toString());
     assert.assertNotNull(lendingDesk);
     if (!lendingDesk) return;
 
     // Assert contents of LendingDesk
-    assert.stringEquals(lendingDesk.id, id.toString());
-    assert.bytesEquals(lendingDesk.owner, owner);
+    assert.stringEquals(lendingDesk.id, lendingDeskId.toString());
+    assert.bytesEquals(lendingDesk.owner, lendingDeskOwner);
     assert.stringEquals(lendingDesk.erc20, erc20Address.toHex());
     assert.bigIntEquals(lendingDesk.balance, new BigInt(0));
     assert.stringEquals(lendingDesk.status, "Active");
