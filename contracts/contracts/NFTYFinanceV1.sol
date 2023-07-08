@@ -756,12 +756,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         INFTYERC721(obligationNotes).burn(_loanId);
 
         // Emit event
-        emit DefaultedLoanLiquidated(
-            msg.sender,
-            loan.lendingDeskId,
-            _loanId,
-            loan.nftId
-        );
+        emit DefaultedLoanLiquidated(_loanId);
     }
 
     /* ******************** */

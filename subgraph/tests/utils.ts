@@ -1,5 +1,6 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
+  DefaultedLoanLiquidated,
   LendingDeskDissolved,
   LendingDeskLiquidityAdded,
   LendingDeskLiquidityWithdrawn,
@@ -26,6 +27,7 @@ import {
   handleNewLoanInitialized,
   handleOwnershipTransferred,
 } from "../src/nfty-finance";
+import { nftyFinance } from "./consts";
 
 export const createOwnershipTransferredEvent = (
   nftyFinance: Address,
@@ -428,6 +430,21 @@ export const createLoanPaymentMadeEvent = (
       ethereum.Value.fromUnsignedBigInt(amount)
     ),
     new ethereum.EventParam("resolved", ethereum.Value.fromBoolean(resolved)),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createDefaultedLoanLiquidatedEvent = (
+  nftyFinance: Address,
+  loanId: number
+): DefaultedLoanLiquidated => {
+  const event = newTypedMockEventWithParams<DefaultedLoanLiquidated>([
+    new ethereum.EventParam(
+      "loanId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>loanId)
+    ),
   ]);
   event.address = nftyFinance;
   return event;

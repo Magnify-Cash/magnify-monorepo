@@ -165,7 +165,9 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
 export function handleDefaultedLoanLiquidated(
   event: DefaultedLoanLiquidated
 ): void {
-  const loan = new Loan(event.params.loanId.toString());
+  const loan = Loan.load(event.params.loanId.toString());
+  if (!loan) return;
+
   loan.status = "Defaulted";
   loan.save();
 }
