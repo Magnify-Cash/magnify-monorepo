@@ -1,5 +1,6 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
+  LendingDeskDissolved,
   LendingDeskLiquidityAdded,
   LendingDeskLiquidityWithdrawn,
   LendingDeskLoanConfigRemoved,
@@ -7,6 +8,7 @@ import {
   LendingDeskLoanConfigsSetLoanConfigsStruct,
   LendingDeskStateSet,
   LoanOriginationFeeSet,
+  LoanPaymentMade,
   NewLendingDeskInitialized,
   NewLoanInitialized,
   OwnershipTransferred,
@@ -21,6 +23,7 @@ import {
 import {
   handleLendingDeskLoanConfigsSet,
   handleNewLendingDeskInitialized,
+  handleNewLoanInitialized,
   handleOwnershipTransferred,
 } from "../src/nfty-finance";
 
@@ -351,6 +354,80 @@ export const createNewLoanInitializedEvent = (
       "interest",
       ethereum.Value.fromUnsignedBigInt(interest)
     ),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const createLendingDeskDissolvedEvent = (
+  nftyFinance: Address,
+  lendingDeskId: number
+): LendingDeskDissolved => {
+  const event = newTypedMockEventWithParams<LendingDeskDissolved>([
+    new ethereum.EventParam(
+      "lendingDeskId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>lendingDeskId)
+    ),
+  ]);
+  event.address = nftyFinance;
+  return event;
+};
+
+export const initializeLoan = (
+  nftyFinance: Address,
+  lendingDeskId: number,
+  lendingDeskOwner: Address,
+  erc20Address: Address,
+  loanConfigs: TestLoanConfig[],
+  loanId: number,
+  borrower: Address,
+  nftCollection: Address,
+  nftId: number,
+  amount: BigInt,
+  duration: BigInt,
+  interest: BigInt
+): void => {
+  initializeLendingDesk(
+    nftyFinance,
+    lendingDeskId,
+    lendingDeskOwner,
+    erc20Address,
+    loanConfigs
+  );
+
+  handleNewLoanInitialized(
+    createNewLoanInitializedEvent(
+      nftyFinance,
+      lendingDeskId,
+      loanId,
+      borrower,
+      nftCollection,
+      nftId,
+      amount,
+      duration,
+      interest
+    )
+  );
+};
+
+export const createLoanPaymentMadeEvent = (
+  nftyFinance: Address,
+  loanId: number,
+  amount: BigInt,
+  resolved: boolean
+): LoanPaymentMade => {
+  const event = newTypedMockEventWithParams<LoanPaymentMade>([
+    new ethereum.EventParam(
+      "loanId",
+      // @ts-ignore
+      ethereum.Value.fromI32(<i32>loanId)
+    ),
+    new ethereum.EventParam(
+      "amount",
+      ethereum.Value.fromUnsignedBigInt(amount)
+    ),
+    new ethereum.EventParam("resolved", ethereum.Value.fromBoolean(resolved)),
   ]);
   event.address = nftyFinance;
   return event;

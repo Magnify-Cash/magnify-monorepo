@@ -13,6 +13,7 @@ import {
   NFTYFinance,
   DefaultedLoanLiquidated,
   LoanPaymentMade,
+  LendingDeskDissolved,
 } from "../generated/NFTYFinance/NFTYFinance";
 import { ERC20 } from "../generated/NFTYFinance/ERC20";
 import {
@@ -127,6 +128,14 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
   lendingDesk.save();
 }
 
+export function handleLendingDeskDissolved(event: LendingDeskDissolved): void {
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+
+  lendingDesk.status = "Dissolved";
+  lendingDesk.save();
+}
+
 // Loan related events
 
 export function handleNewLoanInitialized(event: NewLoanInitialized): void {
@@ -162,8 +171,10 @@ export function handleDefaultedLoanLiquidated(
 }
 
 export function handleLoanPaymentMade(event: LoanPaymentMade): void {
-  const loan = new Loan(event.params.loanId.toString());
-  loan.amount = event.params.amount;
+  const loan = Loan.load(event.params.loanId.toString());
+  if (!loan) return;
+
+  loan.amountPaidBack = loan.amountPaidBack.plus(event.params.amountPaid);
   if (event.params.resolved) loan.status = "Resolved";
   loan.save();
 }

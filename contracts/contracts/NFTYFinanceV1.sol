@@ -156,37 +156,21 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     );
 
     /**
-     * @notice Event that will be emitted every time an obligation receipt holder pays back a loan
+     * @notice Event that will be emitted every time a borrower pays back a loan
      *
-     * @param obligationReceiptOwner The address of the owner of the obligation receipt, actor who pays back a loan
-     * @param promissoryNoteOwner The address of the owner of the promissory note, actor who receives the payment loan fees
      * @param loanId The unique identifier of the loan
-     * @param amount The amount of currency paid back to the promissory note holder
+     * @param amountPaid The amount of currency paid back to the lender
      * @param resolved Whether the loan is fully paid back or not
      *
      */
-    event LoanPaymentMade(
-        address indexed obligationReceiptOwner,
-        address indexed promissoryNoteOwner,
-        uint256 loanId,
-        uint256 amount,
-        bool resolved
-    );
+    event LoanPaymentMade(uint256 loanId, uint256 amountPaid, bool resolved);
 
     /**
      * @notice Event that will be emitted every time a loan is liquidated when the obligation receipt holder did not pay it back in time
      *
-     * @param promissoryNoteOwner The address of the promissory note owner
-     * @param lendingDeskId The unique identifier of the lending desk
      * @param loanId The unique identifier of the loan
-     * @param nftCollateralId The collateral NFT ID that was sent to the promissory note holder
      */
-    event DefaultedLoanLiquidated(
-        address indexed promissoryNoteOwner,
-        uint256 lendingDeskId,
-        uint256 loanId,
-        uint256 nftCollateralId
-    );
+    event DefaultedLoanLiquidated(uint256 loanId);
 
     /**
      * @notice Event that will be emitted every time an admin updates loan origination fee
@@ -708,8 +692,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Emit Event
         emit LoanPaymentMade(
-            obligationReceiptHolder,
-            promissoryNoteHolder,
             _loanId,
             _amount,
             loan.amountPaidBack >= totalAmountDue // loan is fully paid back
