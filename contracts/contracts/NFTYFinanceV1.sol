@@ -69,6 +69,19 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     /* *********** */
 
     /**
+     * @notice Event that will be when the contract is deployed
+     *
+     * @param promissoryNotes The address of the ERC721 to generate promissory notes for lenders
+     * @param obligationNotes The address of the ERC721 to generate obligation notes for borrowers
+     * @param lendingKeys The address of the lending desk ownership ERC721
+     */
+    event ProtocolInitialized(
+        address promissoryNotes,
+        address obligationNotes,
+        address lendingKeys
+    );
+
+    /**
      * @notice Event that will be emitted every time a lending desk is created
      *
      * @param lendingDeskId A unique lending desk ID
@@ -206,6 +219,13 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Set loan origination fee
         setLoanOriginationFee(_loanOriginationFee);
+
+        // Emit event
+        emit ProtocolInitialized(
+            _promissoryNotes,
+            _obligationNotes,
+            _lendingKeys
+        );
     }
 
     /* ******************** */

@@ -1,32 +1,29 @@
-import { assert, beforeAll, describe, test } from "matchstick-as";
+import { assert, beforeAll, test } from "matchstick-as";
 import {
   createPausedEvent,
   createUnpausedEvent,
-  intialOwnershipTransfer,
+  initializeProtocol,
 } from "./utils";
 import { handlePaused, handleUnpaused } from "../src/nfty-finance";
 import { ProtocolParams } from "../generated/schema";
-import { nftyFinance } from "./consts";
 
-describe("Unpaused", () => {
-  beforeAll(() => {
-    intialOwnershipTransfer(nftyFinance);
-    handlePaused(createPausedEvent(nftyFinance));
-  });
+beforeAll(() => {
+  initializeProtocol();
+  handlePaused(createPausedEvent());
+});
 
-  test("Updates ProtocolParams on Unpaused", () => {
-    // Assert ProtocolParams' initial state
-    let protocolParams = ProtocolParams.load("0");
-    assert.assertNotNull(protocolParams);
-    if (!protocolParams) return;
-    assert.booleanEquals(protocolParams.paused, true);
+test("Updates ProtocolParams on Unpaused", () => {
+  // Assert ProtocolParams' initial state
+  let protocolParams = ProtocolParams.load("0");
+  assert.assertNotNull(protocolParams);
+  if (!protocolParams) return;
+  assert.booleanEquals(protocolParams.paused, true);
 
-    handleUnpaused(createUnpausedEvent(nftyFinance));
+  handleUnpaused(createUnpausedEvent());
 
-    // ProtocolParams got updated
-    protocolParams = ProtocolParams.load("0");
-    assert.assertNotNull(protocolParams);
-    if (!protocolParams) return;
-    assert.booleanEquals(protocolParams.paused, false);
-  });
+  // ProtocolParams got updated
+  protocolParams = ProtocolParams.load("0");
+  assert.assertNotNull(protocolParams);
+  if (!protocolParams) return;
+  assert.booleanEquals(protocolParams.paused, false);
 });

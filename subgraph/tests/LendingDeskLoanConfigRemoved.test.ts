@@ -1,9 +1,4 @@
-import {
-  assert,
-  beforeAll,
-  describe,
-  test,
-} from "matchstick-as/assembly/index";
+import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import {
   createLendingDeskLoanConfigRemovedEvent,
   initializeLendingDesk,
@@ -15,53 +10,46 @@ import {
   erc20Address,
   lendingDeskId,
   loanConfigs,
-  nftyFinance,
   lendingDeskOwner,
 } from "./consts";
 
-describe("LendingDeskLoanConfigsSet", () => {
-  beforeAll(() => {
-    initializeLendingDesk(
-      nftyFinance,
-      lendingDeskId,
-      lendingDeskOwner,
-      erc20Address,
-      loanConfigs
+beforeAll(() => {
+  initializeLendingDesk(
+    lendingDeskId,
+    lendingDeskOwner,
+    erc20Address,
+    loanConfigs
+  );
+});
+
+test("Should remove LoanConfig on LendingDeskLoanConfigRemoved", () => {
+  // Assert LoanConfigs exist
+  assert.entityCount("LoanConfig", 2);
+
+  loanConfigs.forEach((loanConfig) => {
+    const loanConfigId =
+      lendingDeskId.toString() + "-" + loanConfig.nftCollection.toHex();
+
+    handleLendingDeskLoanConfigRemoved(
+      createLendingDeskLoanConfigRemovedEvent(
+        lendingDeskId,
+        loanConfig.nftCollection
+      )
     );
-  });
 
-  test("Should remove LoanConfig on LendingDeskLoanConfigRemoved", () => {
-    // Assert LoanConfigs exist
-    assert.entityCount("LoanConfig", 2);
+    // Assert LoanConfig got delete
+    assert.notInStore("LoanConfig", loanConfigId);
 
-    loanConfigs.forEach((loanConfig) => {
-      const loanConfigId =
-        lendingDeskId.toString() + "-" + loanConfig.nftCollection.toHex();
+    // Assert derived fields for NftCollection entity
+    const nftCollection = NftCollection.load(loanConfig.nftCollection.toHex());
+    assert.assertNotNull(nftCollection);
+    if (!nftCollection) return;
 
-      handleLendingDeskLoanConfigRemoved(
-        createLendingDeskLoanConfigRemovedEvent(
-          nftyFinance,
-          lendingDeskId,
-          loanConfig.nftCollection
-        )
-      );
-
-      // Assert LoanConfig got delete
-      assert.notInStore("LoanConfig", loanConfigId);
-
-      // Assert derived fields for NftCollection entity
-      const nftCollection = NftCollection.load(
-        loanConfig.nftCollection.toHex()
-      );
-      assert.assertNotNull(nftCollection);
-      if (!nftCollection) return;
-
-      assert.arrayEquals(
-        nftCollection.loanConfigs.map<ethereum.Value>((x) =>
-          ethereum.Value.fromString(x)
-        ),
-        []
-      );
-    });
+    assert.arrayEquals(
+      nftCollection.loanConfigs.map<ethereum.Value>((x) =>
+        ethereum.Value.fromString(x)
+      ),
+      []
+    );
   });
 });

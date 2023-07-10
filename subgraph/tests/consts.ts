@@ -2,8 +2,8 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { TestLoanConfig } from "./utils";
 
 // Protocol level parameters
-export const nftyFinance = Address.fromString(
-  "0x63fea6E447F120B8Faf85B53cdaD8348e645D80E"
+export const protocolOwner = Address.fromString(
+  "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
 );
 export const promissoryNotes = Address.fromString(
   "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"

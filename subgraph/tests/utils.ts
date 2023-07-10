@@ -14,6 +14,7 @@ import {
   NewLoanInitialized,
   OwnershipTransferred,
   Paused,
+  ProtocolInitialized,
   Unpaused,
 } from "../generated/NFTYFinance/NFTYFinance";
 import {
@@ -23,128 +24,100 @@ import {
 } from "matchstick-as";
 import {
   handleLendingDeskLoanConfigsSet,
+  handleLoanOriginationFeeSet,
   handleNewLendingDeskInitialized,
   handleNewLoanInitialized,
   handleOwnershipTransferred,
+  handleProtocolInitialized,
 } from "../src/nfty-finance";
-import { nftyFinance } from "./consts";
+import {
+  lendingKeys,
+  loanOriginationFee,
+  obligationNotes,
+  promissoryNotes,
+  protocolOwner,
+} from "./consts";
 
 export const createOwnershipTransferredEvent = (
-  nftyFinance: Address,
   previousOwner: Address,
   newOwner: Address
-): OwnershipTransferred => {
-  const event = newTypedMockEventWithParams<OwnershipTransferred>([
+): OwnershipTransferred =>
+  newTypedMockEventWithParams<OwnershipTransferred>([
     new ethereum.EventParam(
       "previousOwner",
       ethereum.Value.fromAddress(previousOwner)
     ),
     new ethereum.EventParam("newOwner", ethereum.Value.fromAddress(newOwner)),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createLoanOriginationFeeSetEvent = (
-  nftyFinance: Address,
   loanOriginationFee: number
-): LoanOriginationFeeSet => {
-  const event = newTypedMockEventWithParams<LoanOriginationFeeSet>([
+): LoanOriginationFeeSet =>
+  newTypedMockEventWithParams<LoanOriginationFeeSet>([
     new ethereum.EventParam(
       "loanOriginationFee",
       // @ts-ignore
       ethereum.Value.fromI32(<i32>loanOriginationFee)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
-export const intialOwnershipTransfer = (nftyFinance: Address): void => {
-  const promissoryNotes = Address.fromString(
-    "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"
-  );
-  const obligationNotes = Address.fromString(
-    "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-  );
-  const lendingKeys = Address.fromString(
-    "0x2546BcD3c84621e976D8185a91A922aE77ECEc30"
-  );
-  const loanOriginationFee = 200;
-  const owner = Address.fromString(
-    "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
-  );
+export const createProtocolInitializedEvent = (
+  promissoryNotes: Address,
+  obligationNotes: Address,
+  lendingKeys: Address
+): ProtocolInitialized =>
+  newTypedMockEventWithParams<ProtocolInitialized>([
+    new ethereum.EventParam(
+      "promissoryNotes",
+      ethereum.Value.fromAddress(promissoryNotes)
+    ),
+    new ethereum.EventParam(
+      "obligationNotes",
+      ethereum.Value.fromAddress(obligationNotes)
+    ),
+    new ethereum.EventParam(
+      "lendingKeys",
+      ethereum.Value.fromAddress(lendingKeys)
+    ),
+  ]);
 
-  // Mock loanOriginationFee
-  createMockedFunction(
-    nftyFinance,
-    "loanOriginationFee",
-    "loanOriginationFee():(uint256)"
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromI32(loanOriginationFee)]);
-
-  // Mock promissoryNotes
-  createMockedFunction(
-    nftyFinance,
-    "promissoryNotes",
-    "promissoryNotes():(address)"
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromAddress(promissoryNotes)]);
-
-  // Mock obligationNotes
-  createMockedFunction(
-    nftyFinance,
-    "obligationNotes",
-    "obligationNotes():(address)"
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromAddress(obligationNotes)]);
-
-  // Mock lendingKeys
-  createMockedFunction(nftyFinance, "lendingKeys", "lendingKeys():(address)")
-    .withArgs([])
-    .returns([ethereum.Value.fromAddress(lendingKeys)]);
-
-  // Initial OwnershipTransferred, i.e. contract deployment
+export const initializeProtocol = (): void => {
+  // 3 events emitted on contract deployment
   handleOwnershipTransferred(
     createOwnershipTransferredEvent(
-      nftyFinance,
       // this is contract initialization so previousOwner is zero address
       Address.zero(),
-      owner
+      protocolOwner
+    )
+  );
+  handleLoanOriginationFeeSet(
+    createLoanOriginationFeeSetEvent(loanOriginationFee)
+  );
+  handleProtocolInitialized(
+    createProtocolInitializedEvent(
+      promissoryNotes,
+      obligationNotes,
+      lendingKeys
     )
   );
 };
 
-export const createPausedEvent = (nftyFinance: Address): Paused => {
-  const event = newTypedMockEvent<Paused>();
-  event.address = nftyFinance;
-  return event;
-};
+export const createPausedEvent = (): Paused => newTypedMockEvent<Paused>();
 
-export const createUnpausedEvent = (nftyFinance: Address): Unpaused => {
-  const event = newTypedMockEvent<Unpaused>();
-  event.address = nftyFinance;
-  return event;
-};
+export const createUnpausedEvent = (): Unpaused =>
+  newTypedMockEvent<Unpaused>();
 
 export const createNewLendingDeskInitializedEvent = (
-  nftyFinance: Address,
   owner: Address,
   erc20: Address,
   id: number
-): NewLendingDeskInitialized => {
-  const event = newTypedMockEventWithParams<NewLendingDeskInitialized>([
+): NewLendingDeskInitialized =>
+  newTypedMockEventWithParams<NewLendingDeskInitialized>([
     // @ts-ignore
     new ethereum.EventParam("lendingDeskId", ethereum.Value.fromI32(<i32>id)),
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner)),
     new ethereum.EventParam("erc20", ethereum.Value.fromAddress(erc20)),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export class TestLoanConfig {
   nftCollection: Address;
@@ -158,11 +131,10 @@ export class TestLoanConfig {
 }
 
 export const createLendingDeskLoanConfigsSetEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   loanConfigs: TestLoanConfig[]
-): LendingDeskLoanConfigsSet => {
-  const event = newTypedMockEventWithParams<LendingDeskLoanConfigsSet>([
+): LendingDeskLoanConfigsSet =>
+  newTypedMockEventWithParams<LendingDeskLoanConfigsSet>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -189,18 +161,13 @@ export const createLendingDeskLoanConfigsSetEvent = (
     ),
   ]);
 
-  event.address = nftyFinance;
-  return event;
-};
-
 export const initializeLendingDesk = (
-  nftyFinance: Address,
   lendingDeskId: number,
   owner: Address,
   erc20: Address,
   loanConfigs: TestLoanConfig[]
 ): void => {
-  intialOwnershipTransfer(nftyFinance);
+  initializeProtocol();
 
   const erc20Name = "USD Coin";
   const erc20Symbol = "USDC";
@@ -219,7 +186,6 @@ export const initializeLendingDesk = (
 
   // Create lending desk
   const newLendingDeskInitializedEvent = createNewLendingDeskInitializedEvent(
-    nftyFinance,
     owner,
     erc20,
     lendingDeskId
@@ -228,7 +194,6 @@ export const initializeLendingDesk = (
 
   // Set loan configs
   const lendingDeskLoanConfigsSetEvent = createLendingDeskLoanConfigsSetEvent(
-    nftyFinance,
     lendingDeskId,
     loanConfigs
   );
@@ -236,11 +201,10 @@ export const initializeLendingDesk = (
 };
 
 export const createLendingDeskLoanConfigRemovedEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   nftCollection: Address
-): LendingDeskLoanConfigRemoved => {
-  const event = newTypedMockEventWithParams<LendingDeskLoanConfigRemoved>([
+): LendingDeskLoanConfigRemoved =>
+  newTypedMockEventWithParams<LendingDeskLoanConfigRemoved>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -251,16 +215,12 @@ export const createLendingDeskLoanConfigRemovedEvent = (
       ethereum.Value.fromAddress(nftCollection)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createLendingDeskLiquidityAddedEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   amountAdded: BigInt
-): LendingDeskLiquidityAdded => {
-  const event = newTypedMockEventWithParams<LendingDeskLiquidityAdded>([
+): LendingDeskLiquidityAdded =>
+  newTypedMockEventWithParams<LendingDeskLiquidityAdded>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -271,16 +231,12 @@ export const createLendingDeskLiquidityAddedEvent = (
       ethereum.Value.fromUnsignedBigInt(amountAdded)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createLendingDeskLiquidityWithdrawEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   amountWithdrawn: BigInt
-): LendingDeskLiquidityWithdrawn => {
-  const event = newTypedMockEventWithParams<LendingDeskLiquidityWithdrawn>([
+): LendingDeskLiquidityWithdrawn =>
+  newTypedMockEventWithParams<LendingDeskLiquidityWithdrawn>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -291,16 +247,12 @@ export const createLendingDeskLiquidityWithdrawEvent = (
       ethereum.Value.fromUnsignedBigInt(amountWithdrawn)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createLendingDeskStateSetEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   freeze: boolean
-): LendingDeskStateSet => {
-  const event = newTypedMockEventWithParams<LendingDeskStateSet>([
+): LendingDeskStateSet =>
+  newTypedMockEventWithParams<LendingDeskStateSet>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -308,12 +260,8 @@ export const createLendingDeskStateSetEvent = (
     ),
     new ethereum.EventParam("freeze", ethereum.Value.fromBoolean(freeze)),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createNewLoanInitializedEvent = (
-  nftyFinance: Address,
   lendingDeskId: number,
   loanId: number,
   borrower: Address,
@@ -322,8 +270,8 @@ export const createNewLoanInitializedEvent = (
   amount: BigInt,
   duration: BigInt,
   interest: BigInt
-): NewLoanInitialized => {
-  const event = newTypedMockEventWithParams<NewLoanInitialized>([
+): NewLoanInitialized =>
+  newTypedMockEventWithParams<NewLoanInitialized>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -357,27 +305,19 @@ export const createNewLoanInitializedEvent = (
       ethereum.Value.fromUnsignedBigInt(interest)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createLendingDeskDissolvedEvent = (
-  nftyFinance: Address,
   lendingDeskId: number
-): LendingDeskDissolved => {
-  const event = newTypedMockEventWithParams<LendingDeskDissolved>([
+): LendingDeskDissolved =>
+  newTypedMockEventWithParams<LendingDeskDissolved>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
       ethereum.Value.fromI32(<i32>lendingDeskId)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const initializeLoan = (
-  nftyFinance: Address,
   lendingDeskId: number,
   lendingDeskOwner: Address,
   erc20Address: Address,
@@ -391,7 +331,6 @@ export const initializeLoan = (
   interest: BigInt
 ): void => {
   initializeLendingDesk(
-    nftyFinance,
     lendingDeskId,
     lendingDeskOwner,
     erc20Address,
@@ -400,7 +339,6 @@ export const initializeLoan = (
 
   handleNewLoanInitialized(
     createNewLoanInitializedEvent(
-      nftyFinance,
       lendingDeskId,
       loanId,
       borrower,
@@ -414,12 +352,11 @@ export const initializeLoan = (
 };
 
 export const createLoanPaymentMadeEvent = (
-  nftyFinance: Address,
   loanId: number,
   amount: BigInt,
   resolved: boolean
-): LoanPaymentMade => {
-  const event = newTypedMockEventWithParams<LoanPaymentMade>([
+): LoanPaymentMade =>
+  newTypedMockEventWithParams<LoanPaymentMade>([
     new ethereum.EventParam(
       "loanId",
       // @ts-ignore
@@ -431,21 +368,14 @@ export const createLoanPaymentMadeEvent = (
     ),
     new ethereum.EventParam("resolved", ethereum.Value.fromBoolean(resolved)),
   ]);
-  event.address = nftyFinance;
-  return event;
-};
 
 export const createDefaultedLoanLiquidatedEvent = (
-  nftyFinance: Address,
   loanId: number
-): DefaultedLoanLiquidated => {
-  const event = newTypedMockEventWithParams<DefaultedLoanLiquidated>([
+): DefaultedLoanLiquidated =>
+  newTypedMockEventWithParams<DefaultedLoanLiquidated>([
     new ethereum.EventParam(
       "loanId",
       // @ts-ignore
       ethereum.Value.fromI32(<i32>loanId)
     ),
   ]);
-  event.address = nftyFinance;
-  return event;
-};

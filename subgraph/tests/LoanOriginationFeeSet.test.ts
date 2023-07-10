@@ -1,44 +1,31 @@
-import {
-  assert,
-  beforeAll,
-  describe,
-  test,
-} from "matchstick-as/assembly/index";
-import {
-  createLoanOriginationFeeSetEvent,
-  intialOwnershipTransfer,
-} from "./utils";
+import { assert, beforeAll, test } from "matchstick-as/assembly/index";
+import { createLoanOriginationFeeSetEvent, initializeProtocol } from "./utils";
 import { handleLoanOriginationFeeSet } from "../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
-import { nftyFinance } from "./consts";
 
-describe("OwnershipTransferred", () => {
-  beforeAll(() => {
-    intialOwnershipTransfer(nftyFinance);
-  });
+beforeAll(() => {
+  initializeProtocol();
+});
 
-  test("Should update ProtocolParams on LoanOriginationFeeSet", () => {
-    // Assert ProtocolParams' initial state
-    assert.fieldEquals(
-      "ProtocolParams",
-      "0",
-      "loanOriginationFee",
-      // 200 bps
-      BigInt.fromI32(200).toString()
-    );
+test("Should update ProtocolParams on LoanOriginationFeeSet", () => {
+  // Assert ProtocolParams' initial state
+  assert.fieldEquals(
+    "ProtocolParams",
+    "0",
+    "loanOriginationFee",
+    // 200 bps
+    BigInt.fromI32(200).toString()
+  );
 
-    // Handle event
-    handleLoanOriginationFeeSet(
-      createLoanOriginationFeeSetEvent(nftyFinance, 100)
-    );
+  // Handle event
+  handleLoanOriginationFeeSet(createLoanOriginationFeeSetEvent(100));
 
-    // Assert ProtocolParams got updated
-    assert.fieldEquals(
-      "ProtocolParams",
-      "0",
-      "loanOriginationFee",
-      // 100 bps
-      BigInt.fromI32(100).toString()
-    );
-  });
+  // Assert ProtocolParams got updated
+  assert.fieldEquals(
+    "ProtocolParams",
+    "0",
+    "loanOriginationFee",
+    // 100 bps
+    BigInt.fromI32(100).toString()
+  );
 });

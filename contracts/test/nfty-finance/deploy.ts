@@ -113,6 +113,17 @@ describe("Deploy NFTYFinance", () => {
       200
     )) as NFTYFinanceV1;
 
+    // Assert order of 3 emitted events
+    const receipt = await nftyFinance.deployTransaction.wait();
+    const eventNames = receipt.logs.map(
+      (x) => nftyFinance.interface.parseLog(x).name
+    );
+    expect(eventNames).to.deep.equal([
+      "OwnershipTransferred",
+      "LoanOriginationFeeSet",
+      "ProtocolInitialized",
+    ]);
+
     // check if emitted OwnershipTransferred event
     expect(nftyFinance.deployTransaction)
       .to.emit(nftyFinance, "OwnershipTransferred")
