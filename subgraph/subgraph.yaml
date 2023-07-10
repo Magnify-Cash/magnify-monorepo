@@ -25,8 +25,12 @@ dataSources:
         - name: ERC20
           file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
       eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
         - event: LoanOriginationFeeSet(uint256)
           handler: handleLoanOriginationFeeSet
+        - event: ProtocolInitialized(address,address,address)
+          handler: handleProtocolInitialized
         - event: NewLendingDeskInitialized(uint256,address,address)
           handler: handleNewLendingDeskInitialized
         - event: LendingDeskLiquidityAdded(uint256,uint256)
@@ -39,12 +43,20 @@ dataSources:
           handler: handleLendingDeskLoanConfigRemoved
         - event: LendingDeskStateSet(uint256,bool)
           handler: handleLendingDeskStateSet
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
+        - event: LendingDeskDissolved(uint256)
+          handler: handleLendingDeskDissolved
         - event: Paused(address)
           handler: handlePaused
         - event: Unpaused(address)
           handler: handleUnpaused
+        - event: NewLoanInitialized(uint256,uint256,address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleNewLoanInitialized
+        - event: LoanPaymentMade(uint256,uint256,bool)
+          handler: handleLoanPaymentMade
+        - event: DefaultedLoanLiquidated(uint256)
+          handler: handleDefaultedLoanLiquidated
+        - event: PlatformFeesWithdrawn(address,address[])
+          handler: handlePlatformFeesWithdrawn
       file: ./src/nfty-finance.ts
   - kind: ethereum/contract
     name: LendingKeys
@@ -58,7 +70,7 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Loan
+        - LendingDesk
       abis:
         - name: LendingKeys
           file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
