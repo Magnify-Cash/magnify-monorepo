@@ -70,3 +70,4 @@ export const nftId = 3120;
 export const amount = BigInt.fromU64(50 * 10 ** 18);
 export const duration = BigInt.fromU64(3 * 24);
 export const interest = BigInt.fromU64(8000);
+export const platformFee = BigInt.fromU64(1 * 10 ** 18);

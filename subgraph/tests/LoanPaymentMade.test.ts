@@ -19,6 +19,7 @@ import {
   amount,
   duration,
   interest,
+  platformFee,
 } from "./consts";
 import { Loan } from "../generated/schema";
 
@@ -34,7 +35,8 @@ beforeAll(() => {
     nftId,
     amount,
     duration,
-    interest
+    interest,
+    platformFee
   );
 });
 

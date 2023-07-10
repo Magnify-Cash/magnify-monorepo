@@ -14,6 +14,7 @@ import {
   LoanPaymentMade,
   LendingDeskDissolved,
   ProtocolInitialized,
+  PlatformFeesWithdrawn,
 } from "../generated/NFTYFinance/NFTYFinance";
 import { ERC20 } from "../generated/NFTYFinance/ERC20";
 import {
@@ -160,6 +161,13 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
 
   // Save entity
   loan.save();
+
+  // Update ERC20's platform fees
+  const erc20 = Erc20.load(lendingDesk.erc20);
+  if (!erc20) return;
+
+  erc20.platformFees = erc20.platformFees.plus(event.params.platformFee);
+  erc20.save();
 }
 
 export function handleDefaultedLoanLiquidated(
@@ -242,4 +250,16 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     protocolParams.owner = event.params.newOwner;
     protocolParams.save();
   }
+}
+
+export function handlePlatformFeesWithdrawn(
+  event: PlatformFeesWithdrawn
+): void {
+  event.params.erc20s.forEach((erc20Address) => {
+    const erc20 = Erc20.load(erc20Address.toHex());
+    if (!erc20) return;
+
+    erc20.platformFees = BigInt.fromU32(0);
+    erc20.save();
+  });
 }

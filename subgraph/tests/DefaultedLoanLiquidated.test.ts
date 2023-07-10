@@ -13,6 +13,7 @@ import {
   amount,
   duration,
   interest,
+  platformFee,
 } from "./consts";
 
 beforeAll(() => {
@@ -27,7 +28,8 @@ beforeAll(() => {
     nftId,
     amount,
     duration,
-    interest
+    interest,
+    platformFee
   );
 });
 

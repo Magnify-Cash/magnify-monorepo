@@ -165,7 +165,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 nftId,
         uint256 amount,
         uint256 duration,
-        uint256 interest
+        uint256 interest,
+        uint256 platformFee
     );
 
     /**
@@ -605,10 +606,14 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Transfer amount minus fees to borrower
         // Note: Fees are held in contract until withdrawPlatformFees()
+        uint256 platformFee = ((loanOriginationFee * _amount) / 10000);
         IERC20(lendingDesk.erc20).safeTransfer(
             msg.sender,
-            _amount - ((loanOriginationFee * _amount) / 10000)
+            _amount - platformFee
         );
+
+        // Increase platformFees
+        platformFees[lendingDesk.erc20] += platformFee;
 
         // Emit event
         emit NewLoanInitialized(
@@ -619,7 +624,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             _nftId,
             _amount,
             _duration,
-            interest
+            interest,
+            platformFee
         );
     }
 
@@ -747,7 +753,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         loan.status = LoanStatus.Defaulted;
 
         // Transfer NFT from escrow to promissory note holder
-
         if (
             lendingDesks[loan.lendingDeskId]
                 .loanConfigs[loan.nftCollection]

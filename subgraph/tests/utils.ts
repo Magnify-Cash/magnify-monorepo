@@ -14,6 +14,7 @@ import {
   NewLoanInitialized,
   OwnershipTransferred,
   Paused,
+  PlatformFeesWithdrawn,
   ProtocolInitialized,
   Unpaused,
 } from "../generated/NFTYFinance/NFTYFinance";
@@ -34,6 +35,7 @@ import {
   lendingKeys,
   loanOriginationFee,
   obligationNotes,
+  platformFee,
   promissoryNotes,
   protocolOwner,
 } from "./consts";
@@ -269,7 +271,8 @@ export const createNewLoanInitializedEvent = (
   nftId: number,
   amount: BigInt,
   duration: BigInt,
-  interest: BigInt
+  interest: BigInt,
+  platformFee: BigInt
 ): NewLoanInitialized =>
   newTypedMockEventWithParams<NewLoanInitialized>([
     new ethereum.EventParam(
@@ -304,6 +307,10 @@ export const createNewLoanInitializedEvent = (
       "interest",
       ethereum.Value.fromUnsignedBigInt(interest)
     ),
+    new ethereum.EventParam(
+      "platformFee",
+      ethereum.Value.fromUnsignedBigInt(platformFee)
+    ),
   ]);
 
 export const createLendingDeskDissolvedEvent = (
@@ -328,7 +335,8 @@ export const initializeLoan = (
   nftId: number,
   amount: BigInt,
   duration: BigInt,
-  interest: BigInt
+  interest: BigInt,
+  platformFee: BigInt
 ): void => {
   initializeLendingDesk(
     lendingDeskId,
@@ -346,7 +354,8 @@ export const initializeLoan = (
       nftId,
       amount,
       duration,
-      interest
+      interest,
+      platformFee
     )
   );
 };
@@ -378,4 +387,13 @@ export const createDefaultedLoanLiquidatedEvent = (
       // @ts-ignore
       ethereum.Value.fromI32(<i32>loanId)
     ),
+  ]);
+
+export const createPlatformFeesWithdrawnEvent = (
+  erc20s: Address[],
+  receiver: Address
+): PlatformFeesWithdrawn =>
+  newTypedMockEventWithParams<PlatformFeesWithdrawn>([
+    new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
+    new ethereum.EventParam("erc20s", ethereum.Value.fromAddressArray(erc20s)),
   ]);
