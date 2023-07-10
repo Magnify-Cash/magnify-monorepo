@@ -4,8 +4,8 @@ import {
   beforeAll,
   test,
 } from "matchstick-as/assembly/index";
-import { createLoanPaymentMadeEvent, initializeLoan } from "./utils";
-import { handleLoanPaymentMade } from "../src/nfty-finance";
+import { createLoanPaymentMadeEvent, initializeLoan } from "../utils";
+import { handleLoanPaymentMade } from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
   erc20Address,
@@ -20,8 +20,8 @@ import {
   duration,
   interest,
   platformFee,
-} from "./consts";
-import { Loan } from "../generated/schema";
+} from "../consts";
+import { Loan } from "../../generated/schema";
 
 beforeAll(() => {
   initializeLoan(

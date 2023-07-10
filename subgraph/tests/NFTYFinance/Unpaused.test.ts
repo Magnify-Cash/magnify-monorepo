@@ -3,9 +3,9 @@ import {
   createPausedEvent,
   createUnpausedEvent,
   initializeProtocol,
-} from "./utils";
-import { handlePaused, handleUnpaused } from "../src/nfty-finance";
-import { ProtocolParams } from "../generated/schema";
+} from "../utils";
+import { handlePaused, handleUnpaused } from "../../src/nfty-finance";
+import { ProtocolParams } from "../../generated/schema";
 
 beforeAll(() => {
   initializeProtocol();

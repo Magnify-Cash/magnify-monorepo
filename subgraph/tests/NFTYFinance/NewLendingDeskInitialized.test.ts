@@ -7,10 +7,10 @@ import {
 import {
   createNewLendingDeskInitializedEvent,
   initializeProtocol,
-} from "./utils";
-import { handleNewLendingDeskInitialized } from "../src/nfty-finance";
+} from "../utils";
+import { handleNewLendingDeskInitialized } from "../../src/nfty-finance";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
-import { Erc20, LendingDesk } from "../generated/schema";
+import { Erc20, LendingDesk } from "../../generated/schema";
 import {
   erc20Address,
   erc20Name,
@@ -18,7 +18,7 @@ import {
   lendingDeskId,
   lendingDeskOwner,
   erc20Decimals,
-} from "./consts";
+} from "../consts";
 
 beforeAll(() => {
   initializeProtocol();

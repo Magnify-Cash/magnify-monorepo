@@ -7,11 +7,11 @@ import {
 import {
   createLendingDeskLiquidityAddedEvent,
   initializeLendingDesk,
-} from "./utils";
-import { handleLendingDeskLiquidityAdded } from "../src/nfty-finance";
+} from "../utils";
+import { handleLendingDeskLiquidityAdded } from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
-import { erc20Address, lendingDeskId, lendingDeskOwner } from "./consts";
-import { LendingDesk } from "../generated/schema";
+import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
+import { LendingDesk } from "../../generated/schema";
 
 beforeAll(() => {
   initializeLendingDesk(lendingDeskId, lendingDeskOwner, erc20Address, []);

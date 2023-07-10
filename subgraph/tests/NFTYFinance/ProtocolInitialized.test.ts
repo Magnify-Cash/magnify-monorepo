@@ -3,20 +3,20 @@ import {
   handleLoanOriginationFeeSet,
   handleOwnershipTransferred,
   handleProtocolInitialized,
-} from "../src/nfty-finance";
+} from "../../src/nfty-finance";
 import {
   createLoanOriginationFeeSetEvent,
   createOwnershipTransferredEvent,
   createProtocolInitializedEvent,
-} from "./utils";
+} from "../utils";
 import {
   lendingKeys,
   loanOriginationFee,
   obligationNotes,
   promissoryNotes,
   protocolOwner,
-} from "./consts";
-import { ProtocolParams } from "../generated/schema";
+} from "../consts";
+import { ProtocolParams } from "../../generated/schema";
 import { assert, test } from "matchstick-as";
 
 test("Should create a new ProtocolParams entity on contract initialization", () => {

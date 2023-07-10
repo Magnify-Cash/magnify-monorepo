@@ -1,8 +1,8 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
-import { createNewLoanInitializedEvent, initializeLendingDesk } from "./utils";
-import { handleNewLoanInitialized } from "../src/nfty-finance";
+import { createNewLoanInitializedEvent, initializeLendingDesk } from "../utils";
+import { handleNewLoanInitialized } from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
-import { Loan } from "../generated/schema";
+import { Loan } from "../../generated/schema";
 import {
   erc20Address,
   lendingDeskId,
@@ -16,7 +16,7 @@ import {
   duration,
   interest,
   platformFee,
-} from "./consts";
+} from "../consts";
 
 beforeAll(() => {
   initializeLendingDesk(

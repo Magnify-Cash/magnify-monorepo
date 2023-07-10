@@ -3,13 +3,13 @@ import {
   createLendingDeskLiquidityAddedEvent,
   createLendingDeskLiquidityWithdrawEvent,
   initializeLendingDesk,
-} from "./utils";
+} from "../utils";
 import {
   handleLendingDeskLiquidityAdded,
   handleLendingDeskLiquidityWithdrawn,
-} from "../src/nfty-finance";
+} from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
-import { erc20Address, lendingDeskId, lendingDeskOwner } from "./consts";
+import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
 
 beforeAll(() => {
   initializeLendingDesk(lendingDeskId, lendingDeskOwner, erc20Address, []);

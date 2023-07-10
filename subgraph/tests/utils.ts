@@ -35,7 +35,6 @@ import {
   lendingKeys,
   loanOriginationFee,
   obligationNotes,
-  platformFee,
   promissoryNotes,
   protocolOwner,
 } from "./consts";

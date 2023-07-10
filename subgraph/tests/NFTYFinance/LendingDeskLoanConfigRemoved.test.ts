@@ -2,16 +2,16 @@ import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import {
   createLendingDeskLoanConfigRemovedEvent,
   initializeLendingDesk,
-} from "./utils";
-import { handleLendingDeskLoanConfigRemoved } from "../src/nfty-finance";
+} from "../utils";
+import { handleLendingDeskLoanConfigRemoved } from "../../src/nfty-finance";
 import { ethereum } from "@graphprotocol/graph-ts";
-import { NftCollection } from "../generated/schema";
+import { NftCollection } from "../../generated/schema";
 import {
   erc20Address,
   lendingDeskId,
   loanConfigs,
   lendingDeskOwner,
-} from "./consts";
+} from "../consts";
 
 beforeAll(() => {
   initializeLendingDesk(

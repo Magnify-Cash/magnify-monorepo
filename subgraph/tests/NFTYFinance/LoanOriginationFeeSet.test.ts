@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
-import { createLoanOriginationFeeSetEvent, initializeProtocol } from "./utils";
-import { handleLoanOriginationFeeSet } from "../src/nfty-finance";
+import { createLoanOriginationFeeSetEvent, initializeProtocol } from "../utils";
+import { handleLoanOriginationFeeSet } from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
 
 beforeAll(() => {

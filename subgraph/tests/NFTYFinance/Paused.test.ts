@@ -1,7 +1,7 @@
 import { assert, beforeAll, test } from "matchstick-as";
-import { createPausedEvent, initializeProtocol } from "./utils";
-import { handlePaused } from "../src/nfty-finance";
-import { ProtocolParams } from "../generated/schema";
+import { createPausedEvent, initializeProtocol } from "../utils";
+import { handlePaused } from "../../src/nfty-finance";
+import { ProtocolParams } from "../../generated/schema";
 
 beforeAll(() => {
   initializeProtocol();

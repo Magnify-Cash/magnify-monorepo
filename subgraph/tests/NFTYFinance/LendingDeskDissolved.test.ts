@@ -2,9 +2,9 @@ import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import {
   createLendingDeskDissolvedEvent,
   initializeLendingDesk,
-} from "./utils";
-import { handleLendingDeskDissolved } from "../src/nfty-finance";
-import { erc20Address, lendingDeskId, lendingDeskOwner } from "./consts";
+} from "../utils";
+import { handleLendingDeskDissolved } from "../../src/nfty-finance";
+import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
 
 beforeAll(() => {
   initializeLendingDesk(lendingDeskId, lendingDeskOwner, erc20Address, []);

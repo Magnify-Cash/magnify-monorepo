@@ -2,13 +2,15 @@ import {
   afterEach,
   assert,
   beforeAll,
-  describe,
   test,
 } from "matchstick-as/assembly/index";
-import { createLendingDeskStateSetEvent, initializeLendingDesk } from "./utils";
-import { handleLendingDeskStateSet } from "../src/nfty-finance";
-import { erc20Address, lendingDeskId, lendingDeskOwner } from "./consts";
-import { LendingDesk } from "../generated/schema";
+import {
+  createLendingDeskStateSetEvent,
+  initializeLendingDesk,
+} from "../utils";
+import { handleLendingDeskStateSet } from "../../src/nfty-finance";
+import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
+import { LendingDesk } from "../../generated/schema";
 
 beforeAll(() => {
   initializeLendingDesk(lendingDeskId, lendingDeskOwner, erc20Address, []);

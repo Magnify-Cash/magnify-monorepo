@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
-import { createPlatformFeesWithdrawnEvent, initializeLoan } from "./utils";
-import { handlePlatformFeesWithdrawn } from "../src/nfty-finance";
+import { createPlatformFeesWithdrawnEvent, initializeLoan } from "../utils";
+import { handlePlatformFeesWithdrawn } from "../../src/nfty-finance";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
   erc20Address,
@@ -15,7 +15,7 @@ import {
   duration,
   interest,
   platformFee,
-} from "./consts";
+} from "../consts";
 
 beforeAll(() => {
   initializeLoan(

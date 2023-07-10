@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
-import { createDefaultedLoanLiquidatedEvent, initializeLoan } from "./utils";
-import { handleDefaultedLoanLiquidated } from "../src/nfty-finance";
+import { createDefaultedLoanLiquidatedEvent, initializeLoan } from "../utils";
+import { handleDefaultedLoanLiquidated } from "../../src/nfty-finance";
 import {
   erc20Address,
   lendingDeskId,
@@ -14,7 +14,7 @@ import {
   duration,
   interest,
   platformFee,
-} from "./consts";
+} from "../consts";
 
 beforeAll(() => {
   initializeLoan(
