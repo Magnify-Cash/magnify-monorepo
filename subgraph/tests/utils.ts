@@ -396,3 +396,16 @@ export const createPlatformFeesWithdrawnEvent = (
     new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
     new ethereum.EventParam("erc20s", ethereum.Value.fromAddressArray(erc20s)),
   ]);
+
+export function createTransferEvent<T>(
+  from: Address,
+  to: Address,
+  tokenId: number
+): T {
+  return newTypedMockEventWithParams<T>([
+    new ethereum.EventParam("from", ethereum.Value.fromAddress(from)),
+    new ethereum.EventParam("to", ethereum.Value.fromAddress(to)),
+    // @ts-ignore
+    new ethereum.EventParam("tokenId", ethereum.Value.fromI32(<i32>tokenId)),
+  ]);
+}
