@@ -3,6 +3,7 @@ import { deployNftyFinanceWithTestTokens } from "../utils/fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { LendingDeskStatus } from "../utils/consts";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("Initialize new lending desk", () => {
   const initialBalance = 10000;
@@ -38,16 +39,17 @@ describe("Initialize new lending desk", () => {
 
     // Get ERC20 and approve
     await erc20.connect(lender).mint(initialBalance);
+    await erc20.connect(lender).approve(nftyFinance.address, initialBalance);
 
     // Create liquidity shop
     const tx = await nftyFinance
-      // .connect(lender)
+      .connect(lender)
       .initializeNewLendingDesk(erc20.address, initialBalance, []);
 
     // Check emitted event
     await expect(tx)
       .emit(nftyFinance, "NewLendingDeskInitialized")
-      .withArgs(erc20.address, initialBalance, []);
+      .withArgs(anyValue, lender.address, erc20.address);
 
     // Check ERC20 balances
     expect(await erc20.balanceOf(lender.address)).to.equal(0);
@@ -56,9 +58,9 @@ describe("Initialize new lending desk", () => {
     // Get lending desk from storage
     const { events } = await tx.wait();
     const event = events?.find(
-      (event) => event.event == "LiquidityShopCreated"
+      (event) => event.event == "NewLendingDeskInitialized"
     )?.args;
-    const lendingDesk = await nftyFinance.lendingDesks(event?.id);
+    const lendingDesk = await nftyFinance.lendingDesks(event?.lendingDeskId);
 
     // Asserts
     expect(lendingDesk.erc20).to.equal(erc20.address);

@@ -1,6 +1,6 @@
 import { createLiquidityShop } from "../utils/fixtures";
 import { expect } from "chai";
-import { LiquidityShopStatus } from "../utils/consts";
+import { LendingDeskStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Set lending desk state", () => {
@@ -56,7 +56,7 @@ describe("Set lending desk state", () => {
       .withArgs(lender.address, liquidityShopId, liquidityShop.balance);
 
     const newShop = await nftyLending.liquidityShops(liquidityShopId);
-    expect(newShop.status).to.equal(LiquidityShopStatus.Active);
+    expect(newShop.status).to.equal(LendingDeskStatus.Active);
   });
 
   it("should fail if contract is paused", async () => {

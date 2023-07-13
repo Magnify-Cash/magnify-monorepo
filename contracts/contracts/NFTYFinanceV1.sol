@@ -248,16 +248,18 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         require(_erc20 != address(0), "zero addr erc20");
 
         // Set new desk in storage and update related storage
-        // (ID, ERC20, Status, Loan Configs, Liquidity)
+
         lendingDeskIdCounter++;
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskIdCounter];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
-        setLendingDeskLoanConfigs(lendingDeskIdCounter, _loanConfigs);
-        depositLendingDeskLiquidity(lendingDeskIdCounter, _depositAmount);
 
         // Mint lending desk ownership NFT
         INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskIdCounter);
+
+        // Set loan configs and deposit liquidity
+        setLendingDeskLoanConfigs(lendingDeskIdCounter, _loanConfigs);
+        depositLendingDeskLiquidity(lendingDeskIdCounter, _depositAmount);
 
         // Emit event
         emit NewLendingDeskInitialized(
@@ -385,9 +387,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             "not lending desk owner"
         );
 
-        // Update balance state, approve tokens, transfer tokens
+        // Update balance state, transfer tokens
         lendingDesk.balance = lendingDesk.balance + _amount;
-        IERC20(lendingDesk.erc20).safeIncreaseAllowance(address(this), _amount);
         IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             address(this),
@@ -707,8 +708,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
-        // Approve + Transfer Tokens
-        IERC20(lendingDesk.erc20).safeIncreaseAllowance(address(this), _amount);
+        // Transfer Tokens
         IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             promissoryNoteHolder,

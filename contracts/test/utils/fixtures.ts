@@ -61,6 +61,7 @@ export const deployNftyFinance = async () => {
   // Configuration
   await promissoryNotes.setNftyFinance(nftyFinance.address);
   await obligationNotes.setNftyFinance(nftyFinance.address);
+  await lendingKeys.setNftyFinance(nftyFinance.address);
 
   const [owner, alice] = await ethers.getSigners();
 
