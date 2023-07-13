@@ -234,4 +234,12 @@ interface INFTYFinanceV1 {
         address _receiver,
         address[] calldata _erc20s
     ) external;
+
+    /**
+     * @notice Allows the admin of the contract to pause the contract as an emergency response.
+     *
+     * @param _paused Whether to pause or unpause
+     * @dev Emits either a {Paused} or {Unpaused} event.
+     */
+    function setPaused(bool _paused) external;
 }
