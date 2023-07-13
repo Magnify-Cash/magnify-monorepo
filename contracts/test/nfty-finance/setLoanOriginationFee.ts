@@ -9,12 +9,14 @@ describe("Set loan origination fee", function () {
     const tx = await nftyFinance.setLoanOriginationFee(10000);
     expect(tx).to.be.revertedWith("fee > 10%");
   });
+
   it("should set loan origination fee", async () => {
     const { nftyFinance } = await loadFixture(deployNftyFinance);
     const loanOriginationFee = 100;
 
     const tx = await nftyFinance.setLoanOriginationFee(loanOriginationFee);
 
+    // Check emitted event and storage
     expect(tx)
       .to.emit(nftyFinance, "LoanOriginationFeeSet")
       .withArgs(loanOriginationFee);

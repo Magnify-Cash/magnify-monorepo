@@ -111,7 +111,7 @@ export const deployNftyFinanceWithTestTokens = async () => {
     lendingKeys,
     loanOriginationFee,
     alice,
-  } = await deployNftyLending();
+  } = await deployNftyFinance();
 
   const { erc20, erc721, erc1155 } = await deployTestTokens();
 

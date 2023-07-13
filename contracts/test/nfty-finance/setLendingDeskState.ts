@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { LiquidityShopStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-describe("Unfreeze liquidity shop", () => {
+describe("Set lending desk state", () => {
   const createAndFreezeLiquidityShop = async () => {
     const { lender, nftyLending, liquidityShopId, ...rest } =
       await createLiquidityShop();

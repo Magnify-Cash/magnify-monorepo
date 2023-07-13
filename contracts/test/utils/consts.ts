@@ -1,11 +1,13 @@
-export enum LiquidityShopStatus {
+export enum LendingDeskStatus {
   Active,
   Frozen,
+  Dissolved,
 }
 
 export enum LoanStatus {
   Active,
   Resolved,
+  Defaulted,
 }
 
 export const TEST_SIGNATURE_EXPIRY = 180;

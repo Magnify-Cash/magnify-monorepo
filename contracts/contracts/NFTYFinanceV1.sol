@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -13,7 +12,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "./interfaces/INFTYFinanceV1.sol";
 import "./interfaces/INFTYERC721.sol";
 
-contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
+contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
     using SafeERC20 for IERC20;
 
     /* *********** */
@@ -244,7 +243,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         address _erc20,
         uint256 _depositAmount,
         LoanConfig[] calldata _loanConfigs
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Check valid inputs
         require(_erc20 != address(0), "zero addr erc20");
 
@@ -278,7 +277,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
         LoanConfig[] memory _loanConfigs
-    ) public whenNotPaused nonReentrant {
+    ) public whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -296,7 +295,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
             require(_loanConfigs[i].minDuration > 0, "min duration = 0");
             require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
 
-            // Verify NFT collection is valid NFT
+            // Add loan configuration to state
+            lendingDesk.loanConfigs[
+                _loanConfigs[i].nftCollection
+            ] = _loanConfigs[i];
+
+            // Verify NFT collection is valid NFT, interaction so the last operation
             // 1155
             if (_loanConfigs[i].nftCollectionIsErc1155) {
                 require(
@@ -317,11 +321,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                     "invalid nft collection"
                 );
             }
-
-            // Add loan configuration to state
-            lendingDesk.loanConfigs[
-                _loanConfigs[i].nftCollection
-            ] = _loanConfigs[i];
         }
 
         // Emit event
@@ -341,7 +340,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function removeLendingDeskLoanConfig(
         uint256 _lendingDeskId,
         address _nftCollection
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -374,7 +373,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) public whenNotPaused nonReentrant {
+    ) public whenNotPaused {
         // Ensure positive amount
         require(_amount > 0, "amount = 0");
 
@@ -409,7 +408,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function withdrawLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -478,7 +477,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      */
     function dissolveLendingDesk(
         uint256 _lendingDeskId
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
@@ -511,7 +510,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
         uint256 _nftId,
         uint256 _duration,
         uint256 _amount
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
@@ -557,6 +556,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
                 (_duration - loanConfig.minDuration)) /
                 ((loanConfig.maxAmount - loanConfig.minAmount) *
                     (loanConfig.maxDuration - loanConfig.minDuration)));
+
+        // Increase platformFees
+        uint256 platformFee = (loanOriginationFee * _amount) / 10000;
+        platformFees[lendingDesk.erc20] += platformFee;
 
         // Set new desk in storage and update related storage
         loanIdCounter++;
@@ -606,14 +609,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
 
         // Transfer amount minus fees to borrower
         // Note: Fees are held in contract until withdrawPlatformFees()
-        uint256 platformFee = ((loanOriginationFee * _amount) / 10000);
         IERC20(lendingDesk.erc20).safeTransfer(
             msg.sender,
             _amount - platformFee
         );
-
-        // Increase platformFees
-        platformFees[lendingDesk.erc20] += platformFee;
 
         // Emit event
         emit NewLoanInitialized(
@@ -639,7 +638,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function makeLoanPayment(
         uint256 _loanId,
         uint256 _amount
-    ) external whenNotPaused nonReentrant {
+    ) external whenNotPaused {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
@@ -730,9 +729,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      *
      * @dev Emits an {LiquidatedOverdueLoan} event.
      */
-    function liquidateDefaultedLoan(
-        uint256 _loanId
-    ) external whenNotPaused nonReentrant {
+    function liquidateDefaultedLoan(uint256 _loanId) external whenNotPaused {
         // Get loan from storage
         Loan storage loan = loans[_loanId];
         require(loan.nftCollection != address(0), "invalid loan id");
@@ -815,7 +812,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
     function withdrawPlatformFees(
         address _receiver,
         address[] calldata _erc20s
-    ) external onlyOwner nonReentrant {
+    ) external onlyOwner {
         // check inputs
         require(_receiver != address(0), "invalid receiver");
 
@@ -847,7 +844,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable, ReentrancyGuard {
      * @param _paused Whether to pause or unpause
      * @dev Emits either a {Paused} or {Unpaused} event.
      */
-    function setPaused(bool _paused) public onlyOwner {
+    function setPaused(bool _paused) external onlyOwner {
         if (_paused) _pause();
         else _unpause();
     }

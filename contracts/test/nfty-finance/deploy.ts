@@ -129,6 +129,20 @@ describe("Deploy NFTYFinance", () => {
       .to.emit(nftyFinance, "OwnershipTransferred")
       .withArgs(ethers.constants.AddressZero, owner.address);
 
+    // check if emitted LoanOriginationFeeSet event
+    expect(nftyFinance.deployTransaction)
+      .to.emit(nftyFinance, "LoanOriginationFeeSet")
+      .withArgs(200);
+
+    // check if emitted ProtocolInitialized event
+    expect(nftyFinance.deployTransaction)
+      .to.emit(nftyFinance, "ProtocolInitialized")
+      .withArgs(
+        promissoryNotes.address,
+        obligationNotes.address,
+        lendingKeys.address
+      );
+
     // check expected values set in constructor
     expect(await nftyFinance.owner()).to.equal(owner.address);
     expect(await nftyFinance.paused()).to.be.false;
