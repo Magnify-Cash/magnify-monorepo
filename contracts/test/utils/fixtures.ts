@@ -1,4 +1,4 @@
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import {
   NFTYFinanceV1,
   NFTYFinanceV1__factory,
@@ -129,68 +129,50 @@ export const deployNftyFinanceWithTestTokens = async () => {
   };
 };
 
-export const createLiquidityShop = async () => {
+export const initializeLendingDesk = async () => {
   const {
-    nftyLending,
-    promissoryNote,
-    obligationReceipt,
-    nftyToken,
-    diaOracle,
+    nftyFinance,
+    promissoryNotes,
+    obligationNotes,
     erc20,
     erc721,
-  } = await deployNftyLendingWithTestTokens();
+    lendingKeys,
+  } = await deployNftyFinanceWithTestTokens();
 
   const [owner, lender, borrower, alice] = await ethers.getSigners();
 
-  const liquidityAmount = 10000;
-  const name = "My Shop";
-  const interestA = 10;
-  const interestB = 20;
-  const interestC = 30;
-  const maxOffer = 1000;
+  const initialBalance = 10000;
 
   // Get ERC20 and approve
-  await erc20.connect(lender).mint(liquidityAmount);
-  await erc20.connect(lender).approve(nftyLending.address, liquidityAmount);
+  await erc20.connect(lender).mint(initialBalance);
+  await erc20.connect(lender).approve(nftyFinance.address, initialBalance);
 
   // Create liquidity shop
-  const tx = await nftyLending
+  const tx = await nftyFinance
     .connect(lender)
-    .createLiquidityShop(
-      name,
-      erc20.address,
-      erc721.address,
-      false,
-      liquidityAmount,
-      interestA,
-      interestB,
-      interestC,
-      maxOffer,
-      true
-    );
+    .initializeNewLendingDesk(erc20.address, initialBalance, []);
 
   // Get liquidity shop from event
   const { events } = await tx.wait();
   const event = events?.find(
-    (event) => event.event == "LiquidityShopCreated"
+    (event) => event.event == "NewLendingDeskInitialized"
   )?.args;
-  const liquidityShopId = event?.id;
-  const liquidityShop = await nftyLending.liquidityShops(liquidityShopId);
+  const lendingDeskId = event?.lendingDeskId;
+  const lendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
 
   return {
     owner,
     lender,
     alice,
     borrower,
-    nftyLending,
-    promissoryNote,
-    obligationReceipt,
-    nftyToken,
-    diaOracle,
+    nftyFinance,
+    promissoryNotes,
+    obligationNotes,
     erc20,
     erc721,
-    liquidityShop,
-    liquidityShopId,
+    lendingDesk,
+    lendingDeskId,
+    lendingKeys,
   };
 };
 

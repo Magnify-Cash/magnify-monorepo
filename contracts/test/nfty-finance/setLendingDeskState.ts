@@ -1,72 +1,103 @@
-import { createLiquidityShop } from "../utils/fixtures";
+import { initializeLendingDesk } from "../utils/fixtures";
 import { expect } from "chai";
 import { LendingDeskStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Set lending desk state", () => {
-  const createAndFreezeLiquidityShop = async () => {
-    const { lender, nftyLending, liquidityShopId, ...rest } =
-      await createLiquidityShop();
-    await nftyLending.connect(lender).freezeLiquidityShop(liquidityShopId);
-    return { lender, nftyLending, liquidityShopId, ...rest };
-  };
-
-  it("should fail for invalid id", async () => {
-    const { nftyLending, lender, liquidityShopId } = await loadFixture(
-      createAndFreezeLiquidityShop
+  it("should fail for invalid lending desk id", async () => {
+    const { nftyFinance, lender, lendingDeskId } = await loadFixture(
+      initializeLendingDesk
     );
 
-    const invalidShopId = 2;
-    expect(liquidityShopId).to.not.equal(invalidShopId); // check if actually invalid
+    const invalidLendingDeskId = 2;
+    expect(lendingDeskId).to.not.equal(invalidLendingDeskId); // check if actually invalid
+
+    // Try freeze and unfreeze both
+    await expect(
+      nftyFinance
+        .connect(lender)
+        .setLendingDeskState(invalidLendingDeskId, true)
+    ).to.be.revertedWith("invalid lending desk id");
 
     await expect(
-      nftyLending.connect(lender).unfreezeLiquidityShop(invalidShopId)
-    ).to.be.revertedWith("invalid shop id");
+      nftyFinance
+        .connect(lender)
+        .setLendingDeskState(invalidLendingDeskId, false)
+    ).to.be.revertedWith("invalid lending desk id");
   });
 
-  it("should fail for invalid caller", async () => {
-    const { nftyLending, liquidityShopId } = await loadFixture(
-      createAndFreezeLiquidityShop
+  it("should fail when caller is not lending desk owner", async () => {
+    const { nftyFinance, lendingDeskId } = await loadFixture(
+      initializeLendingDesk
     );
 
     await expect(
-      nftyLending.unfreezeLiquidityShop(liquidityShopId)
-    ).to.be.revertedWith("caller is not owner");
+      nftyFinance.setLendingDeskState(lendingDeskId, true)
+    ).to.be.revertedWith("not lending desk owner");
   });
 
-  it("should fail for non frozen shops", async () => {
-    const { nftyLending, liquidityShopId, lender } = await loadFixture(
-      // load the create shop fixture which doesn't freeze it
-      createLiquidityShop
+  it("should fail to freeze when lending desk is frozen", async () => {
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
+    );
+    // Freeze first
+    nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true);
+
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true)
+    ).to.be.revertedWith("lending desk not active");
+  });
+
+  it("should fail to unfreeze when lending desk is active", async () => {
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
     );
 
     await expect(
-      nftyLending.connect(lender).unfreezeLiquidityShop(liquidityShopId)
-    ).to.be.revertedWith("shop not frozen");
+      nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, false)
+    ).to.be.revertedWith("lending desk not frozen");
+  });
+
+  it("should freeze lending desk", async () => {
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
+    );
+
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true)
+    )
+      .to.emit(nftyFinance, "LendingDeskStateSet")
+      .withArgs(lendingDeskId, true);
+
+    const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+    expect(newLendingDesk.status).to.equal(LendingDeskStatus.Frozen);
   });
 
   it("should unfreeze liquidity shop", async () => {
-    const { nftyLending, liquidityShopId, lender, liquidityShop } =
-      await loadFixture(createAndFreezeLiquidityShop);
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
+    );
+    // Freeze first
+    await nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true);
 
     await expect(
-      nftyLending.connect(lender).unfreezeLiquidityShop(liquidityShopId)
+      nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, false)
     )
-      .to.emit(nftyLending, "LiquidityShopUnfrozen")
-      .withArgs(lender.address, liquidityShopId, liquidityShop.balance);
+      .to.emit(nftyFinance, "LendingDeskStateSet")
+      .withArgs(lendingDeskId, false);
 
-    const newShop = await nftyLending.liquidityShops(liquidityShopId);
-    expect(newShop.status).to.equal(LendingDeskStatus.Active);
+    const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+    expect(newLendingDesk.status).to.equal(LendingDeskStatus.Active);
   });
 
   it("should fail if contract is paused", async () => {
-    const { nftyLending, liquidityShopId, lender } = await loadFixture(
-      createAndFreezeLiquidityShop
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
     );
-    await nftyLending.setPaused(true);
+    await nftyFinance.setPaused(true);
 
     await expect(
-      nftyLending.connect(lender).unfreezeLiquidityShop(liquidityShopId)
+      nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true)
     ).to.be.revertedWith("Pausable: paused");
   });
 });

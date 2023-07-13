@@ -460,7 +460,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         // Unfreeze
         else {
             require(
-                lendingDesk.status == LendingDeskStatus.Active,
+                lendingDesk.status == LendingDeskStatus.Frozen,
                 "lending desk not frozen"
             );
             lendingDesk.status = LendingDeskStatus.Active;
