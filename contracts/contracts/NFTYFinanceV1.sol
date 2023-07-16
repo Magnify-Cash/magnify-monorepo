@@ -121,7 +121,10 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
      * @param lendingDeskId Identifier for the lending desk
      * @param amountAdded Amount of liquidity added to the lending desk
      */
-    event LendingDeskLiquidityAdded(uint256 lendingDeskId, uint256 amountAdded);
+    event LendingDeskLiquidityDeposited(
+        uint256 lendingDeskId,
+        uint256 amountAdded
+    );
 
     /**
      * @notice Event that will be emitted every time there is a cash out on a lending desk
@@ -370,7 +373,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
      *
      * @param _lendingDeskId The id of the lending desk
      * @param _amount The balance to be transferred
-     * @dev Emits an {LendingDeskLiquidityAdded} event.
+     * @dev Emits an {LendingDeskLiquidityDeposited} event.
      */
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,
@@ -396,7 +399,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         );
 
         // Emit event
-        emit LendingDeskLiquidityAdded(_lendingDeskId, _amount);
+        emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
     }
 
     /**

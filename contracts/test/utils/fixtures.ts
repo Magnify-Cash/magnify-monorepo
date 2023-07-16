@@ -141,7 +141,7 @@ export const initializeLendingDesk = async () => {
 
   const [owner, lender, borrower, alice] = await ethers.getSigners();
 
-  const initialBalance = 10000;
+  const initialBalance = BigInt(1000 * 10 ** 18);
 
   // Get ERC20 and approve
   await erc20.connect(lender).mint(initialBalance);

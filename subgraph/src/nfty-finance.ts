@@ -6,7 +6,7 @@ import {
   LoanOriginationFeeSet,
   LendingDeskLoanConfigsSet,
   LendingDeskLoanConfigRemoved,
-  LendingDeskLiquidityAdded,
+  LendingDeskLiquidityDeposited,
   LendingDeskLiquidityWithdrawn,
   LendingDeskStateSet,
   NewLoanInitialized,
@@ -100,8 +100,8 @@ export function handleLendingDeskLoanConfigRemoved(
   );
 }
 
-export function handleLendingDeskLiquidityAdded(
-  event: LendingDeskLiquidityAdded
+export function handleLendingDeskLiquidityDeposited(
+  event: LendingDeskLiquidityDeposited
 ): void {
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;

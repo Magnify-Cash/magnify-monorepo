@@ -2,7 +2,7 @@ import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
   DefaultedLoanLiquidated,
   LendingDeskDissolved,
-  LendingDeskLiquidityAdded,
+  LendingDeskLiquidityDeposited,
   LendingDeskLiquidityWithdrawn,
   LendingDeskLoanConfigRemoved,
   LendingDeskLoanConfigsSet,
@@ -217,11 +217,11 @@ export const createLendingDeskLoanConfigRemovedEvent = (
     ),
   ]);
 
-export const createLendingDeskLiquidityAddedEvent = (
+export const createLendingDeskLiquidityDepositedEvent = (
   lendingDeskId: number,
   amountAdded: BigInt
-): LendingDeskLiquidityAdded =>
-  newTypedMockEventWithParams<LendingDeskLiquidityAdded>([
+): LendingDeskLiquidityDeposited =>
+  newTypedMockEventWithParams<LendingDeskLiquidityDeposited>([
     new ethereum.EventParam(
       "lendingDeskId",
       // @ts-ignore
@@ -233,7 +233,7 @@ export const createLendingDeskLiquidityAddedEvent = (
     ),
   ]);
 
-export const createLendingDeskLiquidityWithdrawEvent = (
+export const createLendingDeskLiquidityWithdrawnEvent = (
   lendingDeskId: number,
   amountWithdrawn: BigInt
 ): LendingDeskLiquidityWithdrawn =>
