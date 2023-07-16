@@ -421,7 +421,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             "not lending desk owner"
         );
         require(
-            lendingDesk.balance > _amount,
+            lendingDesk.balance >= _amount,
             "insufficient lending desk balance"
         );
 
@@ -489,6 +489,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
+        require(lendingDesk.balance == 0, "lending desk not empty");
 
         // Update status and burn desk key
         lendingDesk.status = LendingDeskStatus.Dissolved;

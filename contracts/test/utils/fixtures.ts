@@ -173,6 +173,7 @@ export const initializeLendingDesk = async () => {
     lendingDesk,
     lendingDeskId,
     lendingKeys,
+    initialBalance,
   };
 };
 
