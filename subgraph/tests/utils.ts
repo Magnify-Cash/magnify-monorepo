@@ -219,7 +219,7 @@ export const createLendingDeskLoanConfigRemovedEvent = (
 
 export const createLendingDeskLiquidityDepositedEvent = (
   lendingDeskId: number,
-  amountAdded: BigInt
+  amountDeposited: BigInt
 ): LendingDeskLiquidityDeposited =>
   newTypedMockEventWithParams<LendingDeskLiquidityDeposited>([
     new ethereum.EventParam(
@@ -228,8 +228,8 @@ export const createLendingDeskLiquidityDepositedEvent = (
       ethereum.Value.fromI32(<i32>lendingDeskId)
     ),
     new ethereum.EventParam(
-      "amountAdded",
-      ethereum.Value.fromUnsignedBigInt(amountAdded)
+      "amountDeposited",
+      ethereum.Value.fromUnsignedBigInt(amountDeposited)
     ),
   ]);
 

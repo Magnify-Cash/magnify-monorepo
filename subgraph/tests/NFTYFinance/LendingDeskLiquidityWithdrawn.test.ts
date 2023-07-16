@@ -1,11 +1,11 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import {
-  createLendingDeskLiquidityAddedEvent,
-  createLendingDeskLiquidityWithdrawEvent,
+  createLendingDeskLiquidityDepositedEvent,
+  createLendingDeskLiquidityWithdrawnEvent,
   initializeLendingDesk,
 } from "../utils";
 import {
-  handleLendingDeskLiquidityAdded,
+  handleLendingDeskLiquidityDeposited,
   handleLendingDeskLiquidityWithdrawn,
 } from "../../src/nfty-finance";
 import { BigInt } from "@graphprotocol/graph-ts";
@@ -20,8 +20,8 @@ test("Should update balance of LendingDesk on LendingDeskLiquidityWithdrawn", ()
   const amountWithdrawn = BigInt.fromI64(100 * 10 ** 18);
 
   // First liquidity addition
-  handleLendingDeskLiquidityAdded(
-    createLendingDeskLiquidityAddedEvent(lendingDeskId, initialAmount)
+  handleLendingDeskLiquidityDeposited(
+    createLendingDeskLiquidityDepositedEvent(lendingDeskId, initialAmount)
   );
 
   // Assert initial state of LendingDesk
@@ -34,7 +34,7 @@ test("Should update balance of LendingDesk on LendingDeskLiquidityWithdrawn", ()
 
   // Handle event
   handleLendingDeskLiquidityWithdrawn(
-    createLendingDeskLiquidityWithdrawEvent(lendingDeskId, amountWithdrawn)
+    createLendingDeskLiquidityWithdrawnEvent(lendingDeskId, amountWithdrawn)
   );
 
   // Assert LendingDesk got updated

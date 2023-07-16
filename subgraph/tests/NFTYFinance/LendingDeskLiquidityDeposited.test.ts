@@ -39,7 +39,7 @@ test("Should update balance of LendingDesk on initial LendingDeskLiquidityAdded"
 
 test("Should increase balance of LendingDesk on subsequent LendingDeskLiquidityAdded", () => {
   const initialAmount = BigInt.fromU64(1000 * 10 ** 18);
-  const amountAdded = BigInt.fromI64(100 * 10 ** 18);
+  const amountDeposited = BigInt.fromI64(100 * 10 ** 18);
 
   // First liquidity addition
   handleLendingDeskLiquidityDeposited(
@@ -56,7 +56,7 @@ test("Should increase balance of LendingDesk on subsequent LendingDeskLiquidityA
 
   // Handle event
   handleLendingDeskLiquidityDeposited(
-    createLendingDeskLiquidityDepositedEvent(lendingDeskId, amountAdded)
+    createLendingDeskLiquidityDepositedEvent(lendingDeskId, amountDeposited)
   );
 
   // Assert LendingDesk got updated
@@ -64,7 +64,7 @@ test("Should increase balance of LendingDesk on subsequent LendingDeskLiquidityA
     "LendingDesk",
     lendingDeskId.toString(),
     "balance",
-    initialAmount.plus(amountAdded).toString()
+    initialAmount.plus(amountDeposited).toString()
   );
 });
 

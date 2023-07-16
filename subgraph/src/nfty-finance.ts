@@ -106,7 +106,7 @@ export function handleLendingDeskLiquidityDeposited(
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
 
-  lendingDesk.balance = lendingDesk.balance.plus(event.params.amountAdded);
+  lendingDesk.balance = lendingDesk.balance.plus(event.params.amountDeposited);
   lendingDesk.save();
 }
 

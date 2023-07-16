@@ -119,11 +119,11 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
      * @notice Event that will be emitted every time liquidity is added to a lending desk
      *
      * @param lendingDeskId Identifier for the lending desk
-     * @param amountAdded Amount of liquidity added to the lending desk
+     * @param amountDeposited Amount of liquidity added to the lending desk
      */
     event LendingDeskLiquidityDeposited(
         uint256 lendingDeskId,
-        uint256 amountAdded
+        uint256 amountDeposited
     );
 
     /**
