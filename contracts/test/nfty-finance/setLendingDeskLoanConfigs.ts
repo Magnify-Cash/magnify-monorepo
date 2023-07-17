@@ -3,17 +3,7 @@ import { initializeLendingDesk } from "../utils/fixtures";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-
-export type LoanConfigParams = {
-  nftCollection: string;
-  nftCollectionIsErc1155: boolean;
-  minAmount: BigNumber;
-  maxAmount: BigNumber;
-  minDuration: BigNumber;
-  maxDuration: BigNumber;
-  minInterest: BigNumber;
-  maxInterest: BigNumber;
-};
+import { LoanConfig } from "../utils/consts";
 
 describe("Set lending desk loan configs", () => {
   const setup = async () => {
@@ -21,7 +11,7 @@ describe("Set lending desk loan configs", () => {
       initializeLendingDesk
     );
 
-    const loanConfigParams: LoanConfigParams[] = [
+    const loanConfigParams: LoanConfig[] = [
       {
         nftCollection: erc721.address,
         nftCollectionIsErc1155: false,
