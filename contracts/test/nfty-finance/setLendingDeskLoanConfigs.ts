@@ -147,14 +147,8 @@ describe("Set lending desk loan configs", () => {
   });
 
   it("should add loan configs", async () => {
-    const {
-      nftyFinance,
-      erc721,
-      erc1155,
-      lendingDeskId,
-      lender,
-      loanConfigParams,
-    } = await loadFixture(setup);
+    const { nftyFinance, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
 
     const tx = await nftyFinance
       .connect(lender)
@@ -174,15 +168,36 @@ describe("Set lending desk loan configs", () => {
 
     for (let i = 0; i < 2; i++) {
       const eventLoanConfig = event?.loanConfigs[i];
-      const loanConfig = loanConfigParams[i];
+      const loanConfigInput = loanConfigParams[i];
 
-      expect(loanConfig).to.not.be.undefined;
-      expect(eventLoanConfig.minAmount).to.equal(loanConfig?.minAmount);
-      expect(eventLoanConfig.maxAmount).to.equal(loanConfig?.maxAmount);
-      expect(eventLoanConfig.minDuration).to.equal(loanConfig?.minDuration);
-      expect(eventLoanConfig.maxDuration).to.equal(loanConfig?.maxDuration);
-      expect(eventLoanConfig.minInterest).to.equal(loanConfig?.minInterest);
-      expect(eventLoanConfig.maxInterest).to.equal(loanConfig?.maxInterest);
+      expect(eventLoanConfig.nftCollection).to.equal(
+        loanConfigInput.nftCollection
+      );
+      expect(eventLoanConfig.nftCollectionIsErc1155).to.equal(
+        loanConfigInput.nftCollectionIsErc1155
+      );
+      expect(eventLoanConfig.minAmount).to.equal(loanConfigInput.minAmount);
+      expect(eventLoanConfig.maxAmount).to.equal(loanConfigInput.maxAmount);
+      expect(eventLoanConfig.minDuration).to.equal(loanConfigInput.minDuration);
+      expect(eventLoanConfig.maxDuration).to.equal(loanConfigInput.maxDuration);
+      expect(eventLoanConfig.minInterest).to.equal(loanConfigInput.minInterest);
+      expect(eventLoanConfig.maxInterest).to.equal(loanConfigInput.maxInterest);
+
+      // Check loan config in storage
+      const loanConfig = await nftyFinance.lendingDeskLoanConfigs(
+        lendingDeskId, // lending desk id
+        loanConfigInput.nftCollection // nft collection
+      );
+      expect(loanConfig.nftCollection).to.equal(loanConfigInput.nftCollection);
+      expect(loanConfig.nftCollectionIsErc1155).to.equal(
+        loanConfigInput.nftCollectionIsErc1155
+      );
+      expect(loanConfig.minAmount).to.equal(loanConfig?.minAmount);
+      expect(loanConfig.maxAmount).to.equal(loanConfig?.maxAmount);
+      expect(loanConfig.minDuration).to.equal(loanConfig?.minDuration);
+      expect(loanConfig.maxDuration).to.equal(loanConfig?.maxDuration);
+      expect(loanConfig.minInterest).to.equal(loanConfig?.minInterest);
+      expect(loanConfig.maxInterest).to.equal(loanConfig?.maxInterest);
     }
   });
 });

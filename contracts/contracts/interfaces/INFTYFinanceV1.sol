@@ -89,7 +89,6 @@ interface INFTYFinanceV1 {
         address erc20;
         uint256 balance;
         LendingDeskStatus status;
-        mapping(address => LoanConfig) loanConfigs;
     }
 
     /* ******************** */
