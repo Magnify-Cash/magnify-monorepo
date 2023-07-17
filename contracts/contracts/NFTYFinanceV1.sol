@@ -34,6 +34,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
     mapping(uint256 => LendingDesk) public lendingDesks;
 
     /**
+     * @notice Mapping to store loan configs of lending desks
+     */
+    mapping(uint256 => mapping(address => LoanConfig))
+        public lendingDeskLoanConfigs;
+
+    /**
      * @notice Mapping to store loans
      */
     mapping(uint256 => Loan) public loans;
@@ -301,7 +307,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
 
             // Add loan configuration to state
-            lendingDesk.loanConfigs[
+            lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
 
@@ -350,7 +356,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            lendingDesk.loanConfigs[_nftCollection].nftCollection != address(0),
+            lendingDeskLoanConfigs[_lendingDeskId][_nftCollection]
+                .nftCollection != address(0),
             "lending desk does not support NFT collection"
         );
         require(
@@ -358,8 +365,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             "not lending desk owner"
         );
 
-        // Delete desk
-        delete lendingDesk.loanConfigs[_nftCollection];
+        // Delete loan config from lending desk
+        delete lendingDeskLoanConfigs[_lendingDeskId][_nftCollection];
 
         // Emit event
         emit LendingDeskLoanConfigRemoved({
@@ -518,7 +525,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
     ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
+        LoanConfig storage loanConfig = lendingDeskLoanConfigs[_lendingDeskId][
+            _nftCollection
+        ];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             lendingDesk.status == LendingDeskStatus.Active,
@@ -685,8 +694,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
 
             // Send NFT collateral from escrow to obligation receipt holder
             if (
-                lendingDesk
-                    .loanConfigs[loan.nftCollection]
+                lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
                     .nftCollectionIsErc1155
             ) // 1155
             {
@@ -755,8 +763,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
 
         // Transfer NFT from escrow to promissory note holder
         if (
-            lendingDesks[loan.lendingDeskId]
-                .loanConfigs[loan.nftCollection]
+            lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
                 .nftCollectionIsErc1155
         ) // 1155
         {

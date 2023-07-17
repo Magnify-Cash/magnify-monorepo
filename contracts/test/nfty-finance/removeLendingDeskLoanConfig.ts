@@ -80,6 +80,15 @@ describe("Remove lending desk loan config", () => {
     )
       .to.emit(nftyFinance, "LendingDeskLoanConfigRemoved")
       .withArgs(lendingDeskId, loanConfig.nftCollection);
+
+    // Check if removed in storage
+    const loanConfigInStorage = await nftyFinance.lendingDeskLoanConfigs(
+      lendingDeskId,
+      loanConfig.nftCollection
+    );
+    expect(loanConfigInStorage.nftCollection).to.equal(
+      ethers.constants.AddressZero
+    );
   });
 
   it("should fail if contract is paused", async () => {
