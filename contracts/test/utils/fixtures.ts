@@ -136,6 +136,7 @@ export const initializeLendingDesk = async () => {
     obligationNotes,
     erc20,
     erc721,
+    erc1155,
     lendingKeys,
   } = await deployNftyFinanceWithTestTokens();
 
@@ -170,6 +171,7 @@ export const initializeLendingDesk = async () => {
     obligationNotes,
     erc20,
     erc721,
+    erc1155,
     lendingDesk,
     lendingDeskId,
     lendingKeys,
