@@ -1,233 +1,198 @@
-import { ethers } from "ethers";
-import { deployNftyFinanceWithTestTokens } from "../utils/fixtures";
+import { BigNumber, ethers } from "ethers";
+import { initializeLendingDesk } from "../utils/fixtures";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 export type LoanConfigParams = {
-  minAmount: BigInt;
-  maxAmount: BigInt;
-  minDuration: BigInt;
-  maxDuration: BigInt;
-  minInterest: BigInt;
-  maxInterest: BigInt;
+  nftCollection: string;
+  nftCollectionIsErc1155: boolean;
+  minAmount: BigNumber;
+  maxAmount: BigNumber;
+  minDuration: BigNumber;
+  maxDuration: BigNumber;
+  minInterest: BigNumber;
+  maxInterest: BigNumber;
 };
 
 describe("Set lending desk loan configs", () => {
-  const loanConfigParams: LoanConfigParams[] = [
-    {
-      minAmount: BigInt(10 * 10 ** 18),
-      maxAmount: BigInt(10 * 10 ** 18),
-      minDuration: BigInt(10 * 10 ** 18),
-      maxDuration: BigInt(10 * 10 ** 18),
-      minInterest: BigInt(10 * 10 ** 18),
-      maxInterest: BigInt(10 * 10 ** 18),
-    },
-  ];
-
-  it("should fail for zero addr NFT collection", async () => {
-    const { nftyFinance, erc20 } = await loadFixture(
-      deployNftyFinanceWithTestTokens
+  const setup = async () => {
+    const { erc721, erc1155, ...rest } = await loadFixture(
+      initializeLendingDesk
     );
 
+    const loanConfigParams: LoanConfigParams[] = [
+      {
+        nftCollection: erc721.address,
+        nftCollectionIsErc1155: false,
+        minAmount: ethers.utils.parseUnits("10", 18),
+        maxAmount: ethers.utils.parseUnits("10", 18),
+        minDuration: ethers.utils.parseUnits("10", 18),
+        maxDuration: ethers.utils.parseUnits("10", 18),
+        minInterest: ethers.utils.parseUnits("10", 18),
+        maxInterest: ethers.utils.parseUnits("10", 18),
+      },
+      {
+        nftCollection: erc1155.address,
+        nftCollectionIsErc1155: true,
+        minAmount: ethers.utils.parseUnits("80", 18),
+        maxAmount: ethers.utils.parseUnits("200", 18),
+        minDuration: ethers.utils.parseUnits("24", 18),
+        maxDuration: ethers.utils.parseUnits("240", 18),
+        minInterest: ethers.utils.parseUnits("2", 18),
+        maxInterest: ethers.utils.parseUnits("15", 18),
+      },
+    ];
+
+    return { erc721, erc1155, loanConfigParams, ...rest };
+  };
+
+  it("should fail for zero addr NFT collection", async () => {
+    const { nftyFinance, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
+
     await expect(
-      nftyFinance.setLendingDeskLoanConfigs(
-        name,
-        erc20.address,
-        ethers.constants.AddressZero, // zero address
-        false,
-        liquidityAmount,
-        interestA,
-        interestB,
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      )
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          nftCollection: ethers.constants.AddressZero,
+        },
+      ])
     ).to.be.revertedWith("invalid nft collection");
   });
 
   it("should fail for invalid ERC721", async () => {
-    const { nftyLending, erc20, erc1155 } = await loadFixture(
-      deployNftyLendingWithTestTokens
-    );
+    const { nftyFinance, erc1155, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
 
     await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc1155.address,
-        false, // should have been true
-        liquidityAmount,
-        interestA,
-        interestB,
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      )
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          nftCollection: erc1155.address,
+          nftCollectionIsErc1155: false,
+        },
+      ])
     ).to.be.revertedWith("invalid nft collection");
   });
 
   it("should fail for invalid ERC1155", async () => {
-    const { nftyLending, erc20, erc721 } = await loadFixture(
-      deployNftyLendingWithTestTokens
-    );
+    const { nftyFinance, erc721, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
 
     await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc721.address,
-        true, // should have been false
-        liquidityAmount,
-        interestA,
-        interestB,
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      )
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          nftCollection: erc721.address,
+          nftCollectionIsErc1155: true,
+        },
+      ])
     ).to.be.revertedWith("invalid nft collection");
   });
 
-  it("should fail for zero max offer", async () => {
-    const { nftyLending, erc20, erc721 } = await loadFixture(
-      deployNftyLendingWithTestTokens
-    );
+  it("should fail for zero value of numeric params", async () => {
+    const { nftyFinance, erc721, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
 
+    // min amount
     await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc721.address,
-        false,
-        liquidityAmount,
-        interestA,
-        interestB,
-        interestC,
-        0, // 0 max offer
-        allowRefinancingTerms
-      )
-    ).to.be.revertedWith("max offer = 0");
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          minAmount: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("min amount = 0");
+
+    // max amount
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          maxAmount: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("max amount = 0");
+
+    // min interest
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          minInterest: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("min interest = 0");
+
+    // max interest
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          maxInterest: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("max interest = 0");
+
+    // min duration
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          minDuration: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("min duration = 0");
+
+    // max duration
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          maxDuration: BigNumber.from(0),
+        },
+      ])
+    ).to.be.revertedWith("max duration = 0");
   });
 
-  it("should fail for zero interests", async () => {
-    const { nftyLending, erc20, erc721 } = await loadFixture(
-      deployNftyLendingWithTestTokens
-    );
+  it("should add loan configs", async () => {
+    const {
+      nftyFinance,
+      erc721,
+      erc1155,
+      lendingDeskId,
+      lender,
+      loanConfigParams,
+    } = await loadFixture(setup);
 
-    await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc721.address,
-        false,
-        liquidityAmount,
-        0, // 0 interestB
-        interestB,
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      )
-    ).to.be.revertedWith("interestA = 0");
-
-    await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc721.address,
-        false,
-        liquidityAmount,
-        interestA,
-        0, // 0 interestB
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      )
-    ).to.be.revertedWith("interestB = 0");
-
-    await expect(
-      nftyLending.createLiquidityShop(
-        name,
-        erc20.address,
-        erc721.address,
-        false,
-        liquidityAmount,
-        interestA,
-        interestB,
-        0, // 0 interestC
-        maxOffer,
-        allowRefinancingTerms
-      )
-    ).to.be.revertedWith("interestC = 0");
-  });
-
-  it("should create liquidity shop for ERC1155", async () => {
-    const { nftyLending, erc20, erc1155 } = await loadFixture(
-      deployNftyLendingWithTestTokens
-    );
-    const [owner, lender] = await ethers.getSigners();
-
-    // Get ERC20 and approve
-    await erc20.connect(lender).mint(liquidityAmount);
-    await erc20.connect(lender).approve(nftyLending.address, liquidityAmount);
-
-    // Create liquidity shop
-    const tx = await nftyLending
+    const tx = await nftyFinance
       .connect(lender)
-      .createLiquidityShop(
-        name,
-        erc20.address,
-        erc1155.address,
-        true,
-        liquidityAmount,
-        interestA,
-        interestB,
-        interestC,
-        maxOffer,
-        allowRefinancingTerms
-      );
+      .setLendingDeskLoanConfigs(lendingDeskId, loanConfigParams);
 
     // Check emitted event
     await expect(tx)
-      .emit(nftyLending, "LiquidityShopCreated")
-      .withArgs(
-        lender.address,
-        erc20.address,
-        erc1155.address,
-        true,
-        interestA,
-        interestB,
-        interestC,
-        maxOffer,
-        liquidityAmount,
-        anyValue,
-        name,
-        allowRefinancingTerms
-      );
+      .to.emit(nftyFinance, "LendingDeskLoanConfigsSet")
+      .withArgs(lendingDeskId, anyValue);
 
-    // Check ERC20 balances
-    expect(await erc20.balanceOf(lender.address)).to.equal(0);
-    expect(await erc20.balanceOf(nftyLending.address)).to.equal(
-      liquidityAmount
-    );
-
-    // Get liquidity shop from storage
+    // Get loan configs from event and check
     const { events } = await tx.wait();
     const event = events?.find(
-      (event) => event.event == "LiquidityShopCreated"
+      (event) => event.event == "LendingDeskLoanConfigsSet"
     )?.args;
-    const liquidityShop = await nftyLending.liquidityShops(event?.id);
+    expect(event?.loanConfigs.length).to.equal(2);
 
-    // Asserts
-    expect(liquidityShop.erc20).to.equal(erc20.address);
-    expect(liquidityShop.nftCollection).to.equal(erc1155.address);
-    expect(liquidityShop.nftCollectionIsErc1155).to.equal(true);
-    expect(liquidityShop.owner).to.equal(lender.address);
-    expect(liquidityShop.balance).to.equal(liquidityAmount);
-    expect(liquidityShop.interestA).to.equal(interestA);
-    expect(liquidityShop.interestB).to.equal(interestB);
-    expect(liquidityShop.interestC).to.equal(interestC);
-    expect(liquidityShop.maxOffer).to.equal(maxOffer);
-    expect(liquidityShop.name).to.equal(name);
-    expect(liquidityShop.status).to.equal(LiquidityShopStatus.Active);
-    expect(liquidityShop.allowRefinancingTerms).to.equal(allowRefinancingTerms);
+    for (let i = 0; i < 2; i++) {
+      const eventLoanConfig = event?.loanConfigs[i];
+      const loanConfig = loanConfigParams[i];
+
+      expect(loanConfig).to.not.be.undefined;
+      expect(eventLoanConfig.minAmount).to.equal(loanConfig?.minAmount);
+      expect(eventLoanConfig.maxAmount).to.equal(loanConfig?.maxAmount);
+      expect(eventLoanConfig.minDuration).to.equal(loanConfig?.minDuration);
+      expect(eventLoanConfig.maxDuration).to.equal(loanConfig?.maxDuration);
+      expect(eventLoanConfig.minInterest).to.equal(loanConfig?.minInterest);
+      expect(eventLoanConfig.maxInterest).to.equal(loanConfig?.maxInterest);
+    }
   });
 });
