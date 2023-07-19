@@ -202,55 +202,76 @@ export const initializeLendingDeskAndAddLoanConfig = async () => {
   return { nftyFinance, lender, lendingDeskId, loanConfig, erc721, ...rest };
 };
 
-export const createLoan = async () => {
-  const {
-    borrower,
-    erc20,
-    erc721,
-    nftyToken,
-    nftyLending,
-    liquidityShopId,
-    ...rest
-  } = await createLiquidityShop();
-
-  const nftId = 0;
+export const initializeLoan = async () => {
   const loanDuration = 30;
-  const loanAmount = 1000;
+  const loanAmount = ethers.utils.parseUnits("20", 18);
+  const nftId = 0;
 
-  // Give borrower some NFTY, ERC20, and NFTs
+  const { borrower, erc20, erc721, nftyFinance, lendingDeskId, ...rest } =
+    await initializeLendingDeskAndAddLoanConfig();
+
+  // Give borrower some ERC20 and NFTs
   await erc20.connect(borrower).mint(10000);
-  await nftyToken.connect(borrower).mint(10000);
   await erc721.connect(borrower).mint(1);
 
   // Approve NFTYLending to transfer tokens
-  await erc20.connect(borrower).approve(nftyLending.address, 10000);
-  await nftyToken.connect(borrower).approve(nftyLending.address, 10000);
-  await erc721.connect(borrower).approve(nftyLending.address, nftId);
+  await erc20.connect(borrower).approve(nftyFinance.address, 10000);
+  await erc721.connect(borrower).approve(nftyFinance.address, nftId);
 
-  const tx = await nftyLending.connect(borrower).createLoan({
-    shopId: liquidityShopId,
-    nftCollateralId: nftId,
-    loanDuration,
-    amount: loanAmount,
-  });
+  const tx = await nftyFinance
+    .connect(borrower)
+    .initializeNewLoan(
+      lendingDeskId,
+      erc721.address,
+      nftId,
+      loanDuration,
+      loanAmount
+    );
 
-  // Get loan from event
+  // Get details from event
   const { events } = await tx.wait();
-  const event = events?.find((event) => event.event == "OfferAccepted")?.args;
+  const event = events?.find(
+    (event) => event.event == "NewLoanInitialized"
+  )?.args;
   const loanId = event?.loanId;
-  const nftyNotesId = event?.nftyNotesId;
-  const loan = await nftyLending.loans(loanId);
+  const interest = event?.interest;
+  const platformFee = event?.platformFee;
+
+  // Get loan
+  const loan = await nftyFinance.loans(loanId);
 
   return {
     borrower,
     erc20,
     erc721,
-    nftyToken,
-    nftyLending,
-    liquidityShopId,
+    nftyFinance,
+    lendingDeskId,
+    nftId,
+    loanDuration,
+    loanAmount,
+    interest,
+    platformFee,
     loan,
     loanId,
-    nftyNotesId,
     ...rest,
   };
+};
+
+export const calculateRepaymentAmount = async (
+  loanStartTime: number,
+  loanAmount: BigNumber,
+  interest: number
+) => {
+  const secondsInYear = 31536000;
+  const secondsInHour = 3600;
+  const secondsSinceLoanStart = Math.floor(Date.now() / 1000) - loanStartTime;
+
+  const totalAmountDue = loanAmount.add(
+    loanAmount
+      .mul(interest)
+      .mul(secondsSinceLoanStart)
+      .div(secondsInYear * secondsInHour * 10000)
+  );
+
+  return totalAmountDue;
 };
