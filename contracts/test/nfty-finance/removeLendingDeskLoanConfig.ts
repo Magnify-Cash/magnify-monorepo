@@ -1,31 +1,12 @@
-import { initializeLendingDesk } from "../utils/fixtures";
+import {
+  initializeLendingDesk,
+  initializeLendingDeskAndAddLoanConfig,
+} from "../utils/fixtures";
 import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { LoanConfig } from "../utils/consts";
 import { ethers } from "hardhat";
 
 describe("Remove lending desk loan config", () => {
-  const initializeLendingDeskAndAddLoanConfig = async () => {
-    const { nftyFinance, lender, lendingDeskId, erc721, erc1155 } =
-      await loadFixture(initializeLendingDesk);
-
-    const loanConfig: LoanConfig = {
-      nftCollection: erc721.address,
-      nftCollectionIsErc1155: false,
-      minAmount: ethers.utils.parseUnits("10", 18),
-      maxAmount: ethers.utils.parseUnits("10", 18),
-      minDuration: ethers.utils.parseUnits("10", 18),
-      maxDuration: ethers.utils.parseUnits("10", 18),
-      minInterest: ethers.utils.parseUnits("10", 18),
-      maxInterest: ethers.utils.parseUnits("10", 18),
-    };
-
-    await nftyFinance
-      .connect(lender)
-      .setLendingDeskLoanConfigs(lendingDeskId, [loanConfig]);
-    return { nftyFinance, lender, lendingDeskId, loanConfig, erc1155, erc721 };
-  };
-
   it("should fail for invalid lending desk id", async () => {
     const { nftyFinance, lender, lendingDeskId, loanConfig } =
       await loadFixture(initializeLendingDeskAndAddLoanConfig);

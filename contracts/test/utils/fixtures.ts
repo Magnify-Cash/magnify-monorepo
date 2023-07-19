@@ -9,6 +9,8 @@ import {
   TestERC20__factory,
   TestERC721__factory,
 } from "../../../typechain-types";
+import { LoanConfig } from "./consts";
+import { BigNumber } from "ethers";
 
 export const deployNftyFinance = async () => {
   // Promissory Notes
@@ -177,6 +179,27 @@ export const initializeLendingDesk = async () => {
     lendingKeys,
     initialBalance,
   };
+};
+
+export const initializeLendingDeskAndAddLoanConfig = async () => {
+  const { nftyFinance, lender, lendingDeskId, erc721, ...rest } =
+    await initializeLendingDesk();
+
+  const loanConfig: LoanConfig = {
+    nftCollection: erc721.address,
+    nftCollectionIsErc1155: false,
+    minAmount: ethers.utils.parseUnits("10", 18),
+    maxAmount: ethers.utils.parseUnits("100", 18),
+    minDuration: BigNumber.from(24),
+    maxDuration: BigNumber.from(240),
+    minInterest: BigNumber.from(200),
+    maxInterest: BigNumber.from(1500),
+  };
+
+  await nftyFinance
+    .connect(lender)
+    .setLendingDeskLoanConfigs(lendingDeskId, [loanConfig]);
+  return { nftyFinance, lender, lendingDeskId, loanConfig, erc721, ...rest };
 };
 
 export const createLoan = async () => {
