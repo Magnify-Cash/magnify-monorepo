@@ -7,12 +7,20 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "./interfaces/INFTYFinanceV1.sol";
 import "./interfaces/INFTYERC721.sol";
 
-contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
+contract NFTYFinanceV1 is
+    INFTYFinanceV1,
+    Ownable,
+    Pausable,
+    ERC721Holder,
+    ERC1155Holder
+{
     using SafeERC20 for IERC20;
 
     /* *********** */
@@ -531,7 +539,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             lendingDesk.status == LendingDeskStatus.Active,
-            "lending desk must be active"
+            "lending desk not active"
         );
         require(
             loanConfig.nftCollection != address(0),
@@ -599,10 +607,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         );
         INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter);
 
-        // Approve + Transfer NFT to escrow
+        // Transfer NFT to escrow
         // 1155
         if (loanConfig.nftCollectionIsErc1155) {
-            IERC1155(_nftCollection).setApprovalForAll(msg.sender, true);
             IERC1155(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -613,7 +620,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         }
         // 721
         else {
-            IERC721(_nftCollection).approve(address(this), _nftId);
             IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
