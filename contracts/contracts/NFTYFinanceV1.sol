@@ -677,25 +677,24 @@ contract NFTYFinanceV1 is
             "not obligation receipt owner"
         );
 
+        // Separate variable to get integer// floor value of hours elapsed
+        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
+        require(hoursElapsed <= loan.duration, "loan has expired");
+
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * (block.timestamp - loan.startTime)) /
-            (8760 * 10000) / // Yearly scale
-            1 hours; // Hourly scale
+            (loan.amount * loan.interest * hoursElapsed) /
+            (8760 * 10000); // Yearly scale, 8760 hours in a year
 
-        // Update amountPaidBack and check expiry / overflow.
+        // Update amountPaidBack and check overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require(
-            (block.timestamp - loan.startTime) / 1 hours <= loan.duration,
-            "loan has expired"
-        );
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
         // TODO: Check if this can be changed to equal
         if (loan.amountPaidBack >= totalAmountDue) {
-            // Set status to resolveD
+            // Set status to resolved
             loan.status = LoanStatus.Resolved;
 
             // Send NFT collateral from escrow to obligation receipt holder
@@ -758,9 +757,8 @@ contract NFTYFinanceV1 is
         );
 
         // Check loan is expired / in default
-        uint256 loanDurationInDays = loan.duration * 1 days;
         require(
-            block.timestamp >= loan.startTime + (loanDurationInDays),
+            block.timestamp >= loan.startTime + (loan.duration * 1 hours),
             "loan not yet expired"
         );
 
