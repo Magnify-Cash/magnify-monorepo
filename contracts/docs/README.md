@@ -1,23 +1,20 @@
-## NFTYFinanceV1
+# NFTYFinanceV1
 
-NFTYFinanceV1 is a smart contract protocol that enables lending and borrowing of ERC20 tokens using NFTs as collateral.
+NFTYFinanceV1 is a smart contract protocol that facilitates lending and borrowing of ERC20 tokens using NFTs as collateral. The protocol introduces a novel AMM-style architecture called "LAMM" (Lending Automated Market Maker) for lending markets.
 
-This protocol introduces "LAMM" (Lending Automated Market Maker), a novel AMM-style architecture for lending markets.
+## Contracts
 
-### Contracts
-
-NFTYFinanceV1 is built around a single core protocol, with several peripheral contracts.
-The contract structure for NFTYFinanceV1 is as follows:
+The NFTYFinanceV1 protocol consists of a single core contract and several peripheral contracts. Here is the contract structure:
 
 - `NFTYFinanceV1.sol`: Contains the core protocol module.
-- `NFTYFinanceERC721.sol`: Contains abstract ERC721 with built-in roles, to be inherited by other ERC721 contracts.
-- `NFTYLendingKeysV1.sol`: Contains the lending desk key module, which handles lending desk ownership.
-- `NFTYObligationNotesV1.sol`: Contains the obligation note module, which handles borrower's obligation to pay back.
-- `NFTYPromissoryNotesV1.sol`: Contains the promissory note, which handles lender's promise to be paid back.
+- `NFTYFinanceERC721.sol`: Contains an abstract ERC721 with built-in roles, intended for inheritance by other ERC721 contracts.
+- `NFTYLendingKeysV1.sol`: Contains the lending desk key module, responsible for handling lending desk ownership.
+- `NFTYObligationNotesV1.sol`: Contains the obligation note module, which manages a borrower's obligation to repay the loan.
+- `NFTYPromissoryNotesV1.sol`: Contains the promissory note module, which represents the lender's promise to be repaid.
 
-### Dependencies
+## Dependencies
 
-This contract relies on the following external contracts and libraries:
+The contract relies on the following external contracts and libraries:
 
 - OpenZeppelin Contracts (version 4.3.0)
   - `Ownable.sol`
@@ -29,17 +26,17 @@ This contract relies on the following external contracts and libraries:
   - `IERC1155.sol`
   - `ERC165Checker.sol`
 
-### Contract Structure
+## Contract Structure
 
 The contract is organized into the following sections:
 
 1. Storage: Defines the storage variables used by the contract.
 2. Events: Defines the events emitted by the contract.
-3. Constructor: Initializes the contract with the provided addresses and loan origination fee.
+3. Constructor: Initializes the contract with provided addresses and sets the loan origination fee.
 4. Core Functions: Implements the core functionality of the contract, including creating lending desks, configuring loan parameters, depositing/withdrawing liquidity, borrowing loans, repaying loans, and liquidating defaulted loans.
-5. Admin Functions: Implements the admin functionality of the contract, including setting loan origination fees, withdrawing platform fees, and pausing/unpausing the protocol.
+5. Admin Functions: Implements the admin functionality of the contract, such as setting loan origination fees, withdrawing platform fees, and pausing/unpausing the protocol.
 
-### Contract Functions
+## Contract Functions
 
 The contract provides the following functions:
 
@@ -48,14 +45,14 @@ The contract provides the following functions:
 3. `removeLendingDeskLoanConfig`: Removes support for an NFT collection from a lending desk.
 4. `depositLendingDeskLiquidity`: Deposits liquidity into a lending desk.
 5. `withdrawLendingDeskLiquidity`: Withdraws liquidity from a lending desk.
-6. `setLendingDeskState`: Pauses / unpauses the lending desk state (active or frozen).
-7. `dissolveLendingDesk`: Dissolves lending desk. Non-reversible.
-8. `initializeNewLoan`: Creates a loan against an ERC20 using NFT collateral.
+6. `setLendingDeskState`: Pauses/unpauses the lending desk state (active or frozen).
+7. `dissolveLendingDesk`: Dissolves a lending desk (non-reversible action).
+8. `initializeNewLoan`: Creates a loan against an ERC20 token using NFT collateral.
 9. `liquidateDefaultedLoan`: Liquidates a defaulted loan.
 10. `setLoanOriginationFee`: Sets the loan origination fee.
-11. `withdrawPlatformFees`: Withdraws the loan origination fee for specified ERC20's
+11. `withdrawPlatformFees`: Withdraws the loan origination fee for specified ERC20 tokens.
 
-### Events
+## Events
 
 The contract emits the following events:
 
@@ -71,6 +68,6 @@ The contract emits the following events:
 - `DefaultedLoanLiquidated`: Emitted when a defaulted loan is liquidated.
 - `LoanOriginationFeeSet`: Emitted when the loan origination fee is updated.
 
-### License
+## License
 
 This contract is licensed under the Business Source License 1.1 (BUSL-1.1).

@@ -1,44 +1,61 @@
-# nftyfinance-monorepo
-NFTY Finance V1 Monorepo
+# NFTY Finance V1 Monorepo
 
-For more on the contracts, protocol design, etc., please view the [`/contracts`](contracts/docs/README.md) directory
+![NFTY Finance Logo](https://example.com/nfty-finance-logo.png)
 
-## Repo structure
+Welcome to NFTY Finance V1! This repository serves as the central hub for various subprojects that collectively constitute the NFTY Finance protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
 
-This is a monorepo which uses [yarn workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/). To install dependencies, run `yarn install` from the root and that will take care of all the dependencies of the subprojects.
+## Repo Structure
 
-You can run yarn commands within a subproject directly from the root. As an example, to run the `start` command inside the `contracts` subproject, you can run `yarn contracts start`.
+This monorepo utilizes [yarn workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/) to manage dependencies across subprojects seamlessly. To get started, simply run `yarn install` from the root directory, and it will automatically handle all the dependencies for the subprojects.
 
-Currently there are 4 subprojects
+Currently, the monorepo comprises the following four subprojects:
 
-- contracts
-- subgraph
-- faucet
-- dapp
+1. **contracts**: This section contains the smart contracts that form the backbone of the NFTY Finance protocol. For in-depth details, please refer to the [`/contracts`](contracts/docs/README.md) directory.
 
-## Local development
+2. **subgraph**: Here, you can find the code responsible for managing the subgraph of the NFTY Finance protocol. (You may include additional context or purpose of the subgraph here.)
+
+3. **faucet**: The faucet subproject deals with setting up and managing the faucet service. (Feel free to elaborate further on the functionality of the faucet if needed.)
+
+4. **dapp**: The dapp subproject encompasses the decentralized application (dApp) for NFTY Finance. (Provide more information on the features and functionalities of the dApp as necessary.)
+
+## Local Development Setup
+
+To begin local development, carefully follow the steps outlined below:
 
 ### Setting up graph-node docker
 
 1. Install Docker v4.10.1 from [here](https://docs.docker.com/desktop/release-notes/#4100).
-2. Clone the [graph-node](https://github.com/graphprotocol/graph-node) repo alongside this repo, i.e. in the same directory this repo is in.
-3. Build graph-node images locally following [these](https://github.com/graphprotocol/graph-node/tree/master/docker#running-graph-node-on-an-macbook-m1) steps. **Note**: you have to increase memory allowance of Docker to 8GB from Preferences→Resources for this step. After this step is done you can decrease it back to the default 4GB.
 
-### Starting a local development stack
+2. Clone the [graph-node](https://github.com/graphprotocol/graph-node) repository alongside this repo in the same directory.
 
-1. Run `yarn install` to install all dependencies.
-2. Run `yarn contracts start` to bring up local hardhat chain.
-3. Run `yarn graph-node` to bring up local graph stack. Wait until the logs say `Downloading latest blocks from Ethereum, this may take a few minutes...`.
-4. Run `yarn deploy:local`. This will deploy a fresh version of the all contracts and subgraph.
+3. Build graph-node images locally by following [these steps](https://github.com/graphprotocol/graph-node/tree/master/docker#running-graph-node-on-an-macbook-m1). **Note**: Before proceeding, you must increase Docker's memory allowance to 8GB from Preferences → Resources. After completion, you can revert it to the default 4GB.
 
-The environment is now ready. Now you can run `yarn faucet start` to start the faucet, and// or run `yarn dapp start` to start the dapp.
+### Starting a Local Development Stack
+
+1. Begin by running `yarn install` to install all the necessary dependencies.
+
+2. Execute `yarn contracts start` to bring up the local hardhat chain.
+
+3. Start the local graph stack with `yarn graph-node`. Please wait until the logs indicate `Downloading latest blocks from Ethereum, this may take a few minutes...`.
+
+4. Deploy a fresh version of all contracts and the subgraph by running `yarn deploy:local`.
+
+The environment is now ready for development. You can launch the faucet service using `yarn faucet start` and/or start the dApp with `yarn dapp start`.
 
 **Notes:**
 
-- Anytime you have made changes in the contracts, run `yarn deploy:local` again.
-- If you close the hardhat chain process, you have to restart the `graph-node` script too.
-- The scripts will work only if you have this repo and the graph-node repo in the same directory.
+- When you make changes to the contracts, always run `yarn deploy:local` to deploy the updated contracts and subgraph.
 
-### Running tests
+- If you close the hardhat chain process, ensure to restart the `graph-node` script as well.
 
-Run `yarn contracts test` to run all smart contract tests. To target specific tests, e.g. to run tests with the name `NFTYNotes` you can run `yarn contracts test --grep "NFTYNotes"`.
+- For the scripts to work correctly, ensure that both this repo and the graph-node repo are present in the same directory.
+
+### Running Tests
+
+To run all smart contract tests, execute `yarn contracts test`. If you want to target specific tests, e.g., tests with the name `NFTYNotes`, you can use `yarn contracts test --grep "NFTYNotes"`.
+
+## Contributing
+
+We highly value and welcome contributions to enhance the NFTY Finance protocol. Whether you find issues or have ideas for improvements, feel free to open a pull request or create an issue on the repository. We kindly request that all contributions adhere to the project's guidelines and coding standards.
+
+Thank you for showing interest in NFTY Finance! We believe a comprehensive README is crucial for any project as it offers valuable insights into the project and reflects the developer's commitment to quality and transparency. If you have any further questions or require assistance, don't hesitate to reach out. Happy coding!
