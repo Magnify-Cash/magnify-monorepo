@@ -7,12 +7,20 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "./interfaces/INFTYFinanceV1.sol";
 import "./interfaces/INFTYERC721.sol";
 
-contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
+contract NFTYFinanceV1 is
+    INFTYFinanceV1,
+    Ownable,
+    Pausable,
+    ERC721Holder,
+    ERC1155Holder
+{
     using SafeERC20 for IERC20;
 
     /* *********** */
@@ -32,6 +40,12 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
      * @notice Mapping to store lending desks
      */
     mapping(uint256 => LendingDesk) public lendingDesks;
+
+    /**
+     * @notice Mapping to store loan configs of lending desks
+     */
+    mapping(uint256 => mapping(address => LoanConfig))
+        public lendingDeskLoanConfigs;
 
     /**
      * @notice Mapping to store loans
@@ -301,7 +315,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
 
             // Add loan configuration to state
-            lendingDesk.loanConfigs[
+            lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
 
@@ -350,7 +364,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            lendingDesk.loanConfigs[_nftCollection].nftCollection != address(0),
+            lendingDeskLoanConfigs[_lendingDeskId][_nftCollection]
+                .nftCollection != address(0),
             "lending desk does not support NFT collection"
         );
         require(
@@ -358,8 +373,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             "not lending desk owner"
         );
 
-        // Delete desk
-        delete lendingDesk.loanConfigs[_nftCollection];
+        // Delete loan config from lending desk
+        delete lendingDeskLoanConfigs[_lendingDeskId][_nftCollection];
 
         // Emit event
         emit LendingDeskLoanConfigRemoved({
@@ -518,11 +533,13 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
     ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        LoanConfig storage loanConfig = lendingDesk.loanConfigs[_nftCollection];
+        LoanConfig storage loanConfig = lendingDeskLoanConfigs[_lendingDeskId][
+            _nftCollection
+        ];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
             lendingDesk.status == LendingDeskStatus.Active,
-            "lending desk must be active"
+            "lending desk not active"
         );
         require(
             loanConfig.nftCollection != address(0),
@@ -590,10 +607,9 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         );
         INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter);
 
-        // Approve + Transfer NFT to escrow
+        // Transfer NFT to escrow
         // 1155
         if (loanConfig.nftCollectionIsErc1155) {
-            IERC1155(_nftCollection).setApprovalForAll(msg.sender, true);
             IERC1155(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -604,7 +620,6 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         }
         // 721
         else {
-            IERC721(_nftCollection).approve(address(this), _nftId);
             IERC721(_nftCollection).safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -662,31 +677,29 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
             "not obligation receipt owner"
         );
 
+        // Separate variable to get integer// floor value of hours elapsed
+        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
+        require(hoursElapsed <= loan.duration, "loan has expired");
+
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * (block.timestamp - loan.startTime)) /
-            (8760 * 10000) / // Yearly scale
-            1 hours; // Hourly scale
+            (loan.amount * loan.interest * hoursElapsed) /
+            (8760 * 10000); // Yearly scale, 8760 hours in a year
 
-        // Update amountPaidBack and check expiry / overflow.
+        // Update amountPaidBack and check overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
-        require(
-            (block.timestamp - loan.startTime) / 1 hours <= loan.duration,
-            "loan has expired"
-        );
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
         // TODO: Check if this can be changed to equal
         if (loan.amountPaidBack >= totalAmountDue) {
-            // Set status to resolveD
+            // Set status to resolved
             loan.status = LoanStatus.Resolved;
 
             // Send NFT collateral from escrow to obligation receipt holder
             if (
-                lendingDesk
-                    .loanConfigs[loan.nftCollection]
+                lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
                     .nftCollectionIsErc1155
             ) // 1155
             {
@@ -744,9 +757,8 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
         );
 
         // Check loan is expired / in default
-        uint256 loanDurationInDays = loan.duration * 1 days;
         require(
-            block.timestamp >= loan.startTime + (loanDurationInDays),
+            block.timestamp >= loan.startTime + (loan.duration * 1 hours),
             "loan not yet expired"
         );
 
@@ -755,8 +767,7 @@ contract NFTYFinanceV1 is INFTYFinanceV1, Ownable, Pausable {
 
         // Transfer NFT from escrow to promissory note holder
         if (
-            lendingDesks[loan.lendingDeskId]
-                .loanConfigs[loan.nftCollection]
+            lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
                 .nftCollectionIsErc1155
         ) // 1155
         {
