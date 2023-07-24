@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./interfaces/INFTYERC721.sol";
+import "./interfaces/INFTYERC721V1.sol";
 
-contract NFTYERC721 is INFTYERC721, ERC721, Ownable, ReentrancyGuard {
+contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable, ReentrancyGuard {
     /* *********** */
     /*   STORAGE   */
     /* *********** */

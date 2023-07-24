@@ -76,7 +76,7 @@ describe("Initialize new lending desk", () => {
     // Make sure lending desk ownership NFT got minted
     await expect(tx)
       .emit(lendingKeys, "Transfer")
-      .withArgs(ethers.constants.AddressZero, lender, lendingDeskId);
+      .withArgs(ethers.constants.AddressZero, lender.address, lendingDeskId);
 
     // Check ERC20 balances
     expect(await erc20.balanceOf(lender.address)).to.equal(0);

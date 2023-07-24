@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
 import "./interfaces/INFTYFinanceV1.sol";
-import "./interfaces/INFTYERC721.sol";
+import "./interfaces/INFTYERC721V1.sol";
 
 contract NFTYFinanceV1 is
     INFTYFinanceV1,
@@ -272,7 +272,7 @@ contract NFTYFinanceV1 is
         lendingDesk.status = LendingDeskStatus.Active;
 
         // Mint lending desk ownership NFT
-        INFTYERC721(lendingKeys).mint(msg.sender, lendingDeskIdCounter);
+        INFTYERC721V1(lendingKeys).mint(msg.sender, lendingDeskIdCounter);
 
         // Set loan configs and deposit liquidity
         setLendingDeskLoanConfigs(lendingDeskIdCounter, _loanConfigs);
@@ -301,7 +301,7 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
@@ -378,7 +378,7 @@ contract NFTYFinanceV1 is
             "lending desk does not support NFT collection"
         );
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
@@ -410,7 +410,7 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
@@ -441,7 +441,7 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
         require(
@@ -472,7 +472,7 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
 
@@ -510,14 +510,14 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         require(lendingDesk.erc20 != address(0), "invalid lending desk id");
         require(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
             "not lending desk owner"
         );
         require(lendingDesk.balance == 0, "lending desk not empty");
 
         // Update status and burn lending key
         lendingDesk.status = LendingDeskStatus.Dissolved;
-        INFTYERC721(lendingKeys).burn(_lendingDeskId);
+        INFTYERC721V1(lendingKeys).burn(_lendingDeskId);
 
         // Emit event
         emit LendingDeskDissolved(_lendingDeskId);
@@ -610,11 +610,11 @@ contract NFTYFinanceV1 is
 
         // Mint promissory and obligation notes
         // Note: Promissory note is minted to the owner of the desk key
-        INFTYERC721(promissoryNotes).mint(
-            INFTYERC721(lendingKeys).ownerOf(_lendingDeskId),
+        INFTYERC721V1(promissoryNotes).mint(
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId),
             loanIdCounter
         );
-        INFTYERC721(obligationNotes).mint(msg.sender, loanIdCounter);
+        INFTYERC721V1(obligationNotes).mint(msg.sender, loanIdCounter);
 
         // Transfer NFT to escrow
         // 1155
@@ -675,8 +675,8 @@ contract NFTYFinanceV1 is
         require(loan.status == LoanStatus.Active, "loan not active");
 
         // Get note holders and verify sender is borrower i.e. obligation note holder
-        address borrower = INFTYERC721(obligationNotes).ownerOf(_loanId);
-        address lender = INFTYERC721(promissoryNotes).ownerOf(_loanId);
+        address borrower = INFTYERC721V1(obligationNotes).ownerOf(_loanId);
+        address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
         require(borrower == msg.sender, "not borrower");
 
         // Separate variable to get integer// floor value of hours elapsed
@@ -723,8 +723,8 @@ contract NFTYFinanceV1 is
             }
 
             // Burn promissory note and obligation note
-            INFTYERC721(obligationNotes).burn(_loanId);
-            INFTYERC721(promissoryNotes).burn(_loanId);
+            INFTYERC721V1(obligationNotes).burn(_loanId);
+            INFTYERC721V1(promissoryNotes).burn(_loanId);
         }
 
         // Transfer Tokens
@@ -750,7 +750,7 @@ contract NFTYFinanceV1 is
         require(loan.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
         require(
-            INFTYERC721(promissoryNotes).ownerOf(_loanId) == msg.sender,
+            INFTYERC721V1(promissoryNotes).ownerOf(_loanId) == msg.sender,
             "not lender"
         );
 
@@ -787,8 +787,8 @@ contract NFTYFinanceV1 is
         }
 
         // burn both promissory note and obligation note
-        INFTYERC721(promissoryNotes).burn(_loanId);
-        INFTYERC721(obligationNotes).burn(_loanId);
+        INFTYERC721V1(promissoryNotes).burn(_loanId);
+        INFTYERC721V1(obligationNotes).burn(_loanId);
 
         // Emit event
         emit DefaultedLoanLiquidated(_loanId);
