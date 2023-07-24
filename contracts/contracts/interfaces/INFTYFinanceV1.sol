@@ -35,8 +35,8 @@ interface INFTYFinanceV1 {
      *
      * @param amount The amount borrowed
      * @param amountPaidBack The amount borrower has paid back
-     * @param duration The initial duration of the loan. Used to verify if expired
-     * @param startTime The time when the loan was initiated. Used to verify if expired
+     * @param duration The initial duration of the loan. Used to verify if defaulted
+     * @param startTime The time when the loan was initiated. Used to verify if defaulted
      * @param nftId The collateral NFT id for this loan
      * @param lendingDeskId The id of the lending desk this loan is associated with
      * @param status The status of this loan. Active when first created and Resolved once resolved
@@ -137,7 +137,7 @@ interface INFTYFinanceV1 {
      *
      * @param _lendingDeskId The id of the lending desk
      * @param _amount The balance to be transferred
-     * @dev Emits an {LendingDeskLiquidityAdded} event.
+     * @dev Emits an {LendingDeskLiquidityDeposited} event.
      */
     function depositLendingDeskLiquidity(
         uint256 _lendingDeskId,

@@ -23,4 +23,14 @@ describe("Withdraw platform fees", () => {
     const platformFees = await nftyFinance.platformFees(erc20.address);
     expect(platformFees).to.equal(0);
   });
+
+  it("should fail when caller is not admin", async () => {
+    const { nftyFinance, erc20, alice } = await loadFixture(initializeLoan);
+
+    await expect(
+      nftyFinance
+        .connect(alice)
+        .withdrawPlatformFees(alice.address, [erc20.address])
+    ).to.be.revertedWith("Ownable: caller is not the owner");
+  });
 });

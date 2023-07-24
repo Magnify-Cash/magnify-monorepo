@@ -196,7 +196,7 @@ contract NFTYFinanceV1 is
     event LoanPaymentMade(uint256 loanId, uint256 amountPaid, bool resolved);
 
     /**
-     * @notice Event that will be emitted every time a loan is liquidated when the obligation receipt holder did not pay it back in time
+     * @notice Event that will be emitted every time a loan is liquidated when the obligation note holder did not pay it back in time
      *
      * @param loanId The unique identifier of the loan
      */
@@ -308,11 +308,20 @@ contract NFTYFinanceV1 is
         // Loop over _loanConfigs
         for (uint256 i = 0; i < _loanConfigs.length; i++) {
             require(_loanConfigs[i].minAmount > 0, "min amount = 0");
-            require(_loanConfigs[i].maxAmount > 0, "max amount = 0");
+            require(
+                _loanConfigs[i].maxAmount >= _loanConfigs[i].minAmount,
+                "max amount < min amount"
+            );
             require(_loanConfigs[i].minInterest > 0, "min interest = 0");
-            require(_loanConfigs[i].maxInterest > 0, "max interest = 0");
+            require(
+                _loanConfigs[i].maxInterest >= _loanConfigs[i].minInterest,
+                "max interest < min interest"
+            );
             require(_loanConfigs[i].minDuration > 0, "min duration = 0");
-            require(_loanConfigs[i].maxDuration > 0, "max duration = 0");
+            require(
+                _loanConfigs[i].maxDuration >= _loanConfigs[i].minDuration,
+                "max duration < min duration"
+            );
 
             // Add loan configuration to state
             lendingDeskLoanConfigs[_lendingDeskId][
@@ -506,7 +515,7 @@ contract NFTYFinanceV1 is
         );
         require(lendingDesk.balance == 0, "lending desk not empty");
 
-        // Update status and burn desk key
+        // Update status and burn lending key
         lendingDesk.status = LendingDeskStatus.Dissolved;
         INFTYERC721(lendingKeys).burn(_lendingDeskId);
 
@@ -665,21 +674,14 @@ contract NFTYFinanceV1 is
         require(loan.nftCollection != address(0), "invalid loan id");
         require(loan.status == LoanStatus.Active, "loan not active");
 
-        // Get note holders and verify sender is obligation note holder
-        address obligationReceiptHolder = INFTYERC721(obligationNotes).ownerOf(
-            _loanId
-        );
-        address promissoryNoteHolder = INFTYERC721(promissoryNotes).ownerOf(
-            _loanId
-        );
-        require(
-            obligationReceiptHolder == msg.sender,
-            "not obligation receipt owner"
-        );
+        // Get note holders and verify sender is borrower i.e. obligation note holder
+        address borrower = INFTYERC721(obligationNotes).ownerOf(_loanId);
+        address lender = INFTYERC721(promissoryNotes).ownerOf(_loanId);
+        require(borrower == msg.sender, "not borrower");
 
         // Separate variable to get integer// floor value of hours elapsed
         uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
-        require(hoursElapsed <= loan.duration, "loan has expired");
+        require(hoursElapsed < loan.duration, "loan has defaulted");
 
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
@@ -697,7 +699,7 @@ contract NFTYFinanceV1 is
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 
-            // Send NFT collateral from escrow to obligation receipt holder
+            // Send NFT collateral from escrow to borrower
             if (
                 lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
                     .nftCollectionIsErc1155
@@ -705,7 +707,7 @@ contract NFTYFinanceV1 is
             {
                 IERC1155(loan.nftCollection).safeTransferFrom(
                     address(this),
-                    obligationReceiptHolder,
+                    borrower,
                     loan.nftId,
                     1,
                     ""
@@ -715,22 +717,18 @@ contract NFTYFinanceV1 is
             else {
                 IERC721(loan.nftCollection).safeTransferFrom(
                     address(this),
-                    obligationReceiptHolder,
+                    borrower,
                     loan.nftId
                 );
             }
 
-            // Burn promissory note and obligation receipt
+            // Burn promissory note and obligation note
             INFTYERC721(obligationNotes).burn(_loanId);
             INFTYERC721(promissoryNotes).burn(_loanId);
         }
 
         // Transfer Tokens
-        IERC20(lendingDesk.erc20).safeTransferFrom(
-            msg.sender,
-            promissoryNoteHolder,
-            _amount
-        );
+        IERC20(lendingDesk.erc20).safeTransferFrom(msg.sender, lender, _amount);
 
         // Emit Event
         emit LoanPaymentMade(
@@ -753,13 +751,13 @@ contract NFTYFinanceV1 is
         require(loan.status == LoanStatus.Active, "loan not active");
         require(
             INFTYERC721(promissoryNotes).ownerOf(_loanId) == msg.sender,
-            "not promissory note owner"
+            "not lender"
         );
 
         // Check loan is expired / in default
         require(
             block.timestamp >= loan.startTime + (loan.duration * 1 hours),
-            "loan not yet expired"
+            "loan has not defaulted"
         );
 
         // Update loan state to resolved
@@ -788,7 +786,7 @@ contract NFTYFinanceV1 is
             );
         }
 
-        // burn both promissory note and obligation receipt
+        // burn both promissory note and obligation note
         INFTYERC721(promissoryNotes).burn(_loanId);
         INFTYERC721(obligationNotes).burn(_loanId);
 
