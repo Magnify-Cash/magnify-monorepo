@@ -3,7 +3,6 @@ import { deployNftyFinanceWithTestTokens } from "../utils/fixtures";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { LendingDeskStatus } from "../utils/consts";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("Initialize new lending desk", () => {
   const initialBalance = 10000;
@@ -32,7 +31,7 @@ describe("Initialize new lending desk", () => {
   });
 
   it("should create lending desk", async () => {
-    const { nftyFinance, erc20 } = await loadFixture(
+    const { nftyFinance, erc20, lendingKeys } = await loadFixture(
       deployNftyFinanceWithTestTokens
     );
     const [lender] = await ethers.getSigners();
@@ -46,20 +45,44 @@ describe("Initialize new lending desk", () => {
       .connect(lender)
       .initializeNewLendingDesk(erc20.address, initialBalance, []);
 
-    // Check emitted event
+    // Check order of events emitted
+    const receipt = await tx.wait();
+    const eventNames = receipt.events?.map((x) => x.event).filter((x) => x);
+    expect(eventNames).to.deep.equal([
+      "LendingDeskLoanConfigsSet",
+      "LendingDeskLiquidityDeposited",
+      "NewLendingDeskInitialized",
+    ]);
+
+    const { events } = await tx.wait();
+    const event = events?.find(
+      (event) => event.event == "NewLendingDeskInitialized"
+    )?.args;
+    const lendingDeskId = event?.lendingDeskId;
+
+    // Check emitted events
     await expect(tx)
       .emit(nftyFinance, "NewLendingDeskInitialized")
-      .withArgs(anyValue, lender.address, erc20.address);
+      .withArgs(lendingDeskId, lender.address, erc20.address);
+
+    await expect(tx)
+      .emit(nftyFinance, "LendingDeskLoanConfigsSet")
+      .withArgs(lendingDeskId, []);
+
+    await expect(tx)
+      .emit(nftyFinance, "LendingDeskLiquidityDeposited")
+      .withArgs(lendingDeskId, initialBalance);
+
+    // Make sure lending desk ownership NFT got minted
+    await expect(tx)
+      .emit(lendingKeys, "Transfer")
+      .withArgs(ethers.constants.AddressZero, lender.address, lendingDeskId);
 
     // Check ERC20 balances
     expect(await erc20.balanceOf(lender.address)).to.equal(0);
     expect(await erc20.balanceOf(nftyFinance.address)).to.equal(initialBalance);
 
     // Get lending desk from storage
-    const { events } = await tx.wait();
-    const event = events?.find(
-      (event) => event.event == "NewLendingDeskInitialized"
-    )?.args;
     const lendingDesk = await nftyFinance.lendingDesks(event?.lendingDeskId);
 
     // Asserts

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { NFTYNotes__factory } from "../../typechain-types";
+import { NFTYERC721V1 } from "../../typechain-types";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("NFTYNotes", function () {

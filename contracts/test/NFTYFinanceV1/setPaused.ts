@@ -3,7 +3,7 @@ import { deployNftyFinance } from "../utils/fixtures";
 import { expect } from "chai";
 
 describe("Set paused", () => {
-  it("should fail for non owner caller", async () => {
+  it("should fail when caller is not admin", async () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
     // try pausing and unpausing both

@@ -73,7 +73,7 @@ dataSources:
         - LendingDesk
       abis:
         - name: LendingKeys
-          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
+          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
@@ -93,7 +93,7 @@ dataSources:
         - Loan
       abis:
         - name: PromissoryNotes
-          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
+          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
@@ -113,7 +113,7 @@ dataSources:
         - Loan
       abis:
         - name: ObligationNotes
-          file: ../contracts/artifacts/contracts/NFTYERC721.sol/NFTYERC721.json
+          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer

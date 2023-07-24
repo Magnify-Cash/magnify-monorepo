@@ -77,6 +77,38 @@ describe("Initialize new loan", () => {
     ).to.be.revertedWith("duration > max duration");
   });
 
+  it("should fail for amount < min amount", async () => {
+    const { nftyFinance, lendingDeskId, borrower, erc721 } = await loadFixture(
+      setup
+    );
+
+    await expect(
+      nftyFinance.connect(borrower).initializeNewLoan(
+        lendingDeskId,
+        erc721.address,
+        nftId,
+        loanDuration,
+        ethers.utils.parseUnits("5", 18) // loan amount
+      )
+    ).to.be.revertedWith("amount < min amount");
+  });
+
+  it("should fail for amount > max amount", async () => {
+    const { nftyFinance, lendingDeskId, borrower, erc721 } = await loadFixture(
+      setup
+    );
+
+    await expect(
+      nftyFinance.connect(borrower).initializeNewLoan(
+        lendingDeskId,
+        erc721.address,
+        nftId,
+        loanDuration,
+        ethers.utils.parseUnits("200", 18) // loan amount
+      )
+    ).to.be.revertedWith("amount > max amount");
+  });
+
   it("should fail if contract is paused", async () => {
     const { nftyFinance, lendingDeskId, borrower, erc721 } = await loadFixture(
       setup
@@ -94,6 +126,26 @@ describe("Initialize new loan", () => {
           loanAmount
         )
     ).to.be.revertedWith("Pausable: paused");
+  });
+
+  it("should fail if lending desk does not support NFT collection", async () => {
+    const { nftyFinance, lendingDeskId, borrower, erc20, erc721, lender } =
+      await loadFixture(setup);
+
+    // Remove support for ERC721
+    await nftyFinance
+      .connect(lender)
+      .removeLendingDeskLoanConfig(lendingDeskId, erc721.address);
+
+    await expect(
+      nftyFinance.connect(borrower).initializeNewLoan(
+        lendingDeskId,
+        erc721.address, // not supported
+        nftId,
+        loanDuration,
+        loanAmount
+      )
+    ).to.be.revertedWith("lending desk does not support NFT collection");
   });
 
   it("should fail if lending desk does not have enough balance", async () => {
@@ -149,8 +201,9 @@ describe("Initialize new loan", () => {
   });
 
   it("should create loan", async () => {
-    const { nftyFinance, lendingDeskId, borrower, erc721, lender } =
-      await loadFixture(setup);
+    const { nftyFinance, lendingDeskId, borrower, erc721 } = await loadFixture(
+      setup
+    );
 
     const tx = nftyFinance
       .connect(borrower)

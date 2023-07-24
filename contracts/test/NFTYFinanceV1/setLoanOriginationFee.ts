@@ -22,4 +22,12 @@ describe("Set loan origination fee", function () {
       .withArgs(loanOriginationFee);
     expect(await nftyFinance.loanOriginationFee()).to.equal(loanOriginationFee);
   });
+
+  it("should fail when caller is not admin", async () => {
+    const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
+
+    await expect(
+      nftyFinance.connect(alice).setLoanOriginationFee(100)
+    ).to.be.revertedWith("Ownable: caller is not the owner");
+  });
 });
