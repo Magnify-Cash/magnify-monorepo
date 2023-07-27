@@ -9,7 +9,7 @@ import {
   NFTYPromissoryNotesV1__factory,
 } from "typechain-types";
 
-describe("Deploy NFTYFinance", () => {
+describe("NFTY Finance: Deploy", () => {
   const deployDependencies = async () => {
     // Promissory Notes
     const PromissoryNotes = (await ethers.getContractFactory(

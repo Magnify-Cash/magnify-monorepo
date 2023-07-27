@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { LendingDeskStatus } from "../utils/consts";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-describe("Set lending desk state", () => {
+describe("NFTY Finance: Set lending desk state", () => {
   it("should fail for invalid lending desk id", async () => {
     const { nftyFinance, lender, lendingDeskId } = await loadFixture(
       initializeLendingDesk

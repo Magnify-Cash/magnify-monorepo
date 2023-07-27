@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { ethers } from "hardhat";
 
-describe("Initialize new loan", () => {
+describe("NFTY Finance: Initialize new loan", () => {
   const loanDuration = 30;
   const loanAmount = ethers.utils.parseUnits("20", 18);
   const nftId = 0;

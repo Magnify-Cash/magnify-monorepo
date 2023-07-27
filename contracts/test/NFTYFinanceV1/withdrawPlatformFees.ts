@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { initializeLoan } from "../utils/fixtures";
 import { expect } from "chai";
 
-describe("Withdraw platform fees", () => {
+describe("NFTY Finance: Withdraw platform fees", () => {
   it("should withdraw platform fees", async () => {
     const { nftyFinance, erc20, alice } = await loadFixture(initializeLoan);
     const oldPlatformFee = await nftyFinance.platformFees(erc20.address);

@@ -6,7 +6,7 @@ import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
-describe("Remove lending desk loan config", () => {
+describe("NFTY Finance: Remove lending desk loan config", () => {
   it("should fail for invalid lending desk id", async () => {
     const { nftyFinance, lender, lendingDeskId, loanConfig } =
       await loadFixture(initializeLendingDeskAndAddLoanConfig);

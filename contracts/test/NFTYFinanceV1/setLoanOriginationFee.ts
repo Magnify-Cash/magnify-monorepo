@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { deployNftyFinance } from "../utils/fixtures";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-describe("Set loan origination fee", function () {
+describe("NFTY Finance: Set loan origination fee", function () {
   it("should fail when fee > 10%", async () => {
     const { nftyFinance } = await loadFixture(deployNftyFinance);
 

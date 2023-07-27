@@ -1,5 +1,6 @@
 import { ethers } from "hardhat";
 import {
+  NFTYERC721V1__factory,
   NFTYFinanceV1,
   NFTYFinanceV1__factory,
   NFTYLendingKeysV1__factory,
@@ -274,4 +275,51 @@ export const calculateRepaymentAmount = async (
   );
 
   return totalAmountDue;
+};
+
+export const deployNftyErc721 = async () => {
+  const name = "NFTY ERC721";
+  const symbol = "NFTY";
+  const baseUri = "https://metadata.nfty-erc721.local";
+
+  const [owner, alice, nftyFinance] = await ethers.getSigners();
+
+  const NFTYERC721V1 = (await ethers.getContractFactory(
+    "NFTYERC721V1"
+  )) as NFTYERC721V1__factory;
+  const nftyErc721 = await NFTYERC721V1.deploy(name, symbol, baseUri);
+  await nftyErc721.deployed();
+
+  return {
+    name,
+    symbol,
+    baseUri,
+    nftyErc721,
+    owner,
+    alice,
+    nftyFinance,
+  };
+};
+
+export const deployNftyErc721AndSetNftyFinance = async () => {
+  const { nftyErc721, owner, nftyFinance, ...rest } = await deployNftyErc721();
+
+  await nftyErc721.connect(owner).setNftyFinance(nftyFinance.address);
+
+  return {
+    nftyErc721,
+    owner,
+    nftyFinance,
+    ...rest,
+  };
+};
+
+export const deployNftyErc721AndMint = async () => {
+  const { nftyErc721, alice, nftyFinance, ...rest } =
+    await deployNftyErc721AndSetNftyFinance();
+
+  const tokenId = 1;
+  await nftyErc721.connect(nftyFinance).mint(alice.address, tokenId);
+
+  return { nftyErc721, alice, nftyFinance, tokenId, ...rest };
 };

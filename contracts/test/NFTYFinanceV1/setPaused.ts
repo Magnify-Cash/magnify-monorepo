@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { deployNftyFinance } from "../utils/fixtures";
 import { expect } from "chai";
 
-describe("Set paused", () => {
+describe("NFTY Finance: Set paused", () => {
   it("should fail when caller is not admin", async () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 

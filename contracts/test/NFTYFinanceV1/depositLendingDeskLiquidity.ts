@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { initializeLendingDesk } from "../utils/fixtures";
 
-describe("Deposit lending desk liquidity", () => {
+describe("NFTY Finance: Deposit lending desk liquidity", () => {
   const liquidityAmount = BigInt(1000 * 10 ** 18);
 
   const createLendingDeskAndApproveErc20 = async () => {

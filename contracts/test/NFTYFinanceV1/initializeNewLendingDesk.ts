@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { LendingDeskStatus } from "../utils/consts";
 
-describe("Initialize new lending desk", () => {
+describe("NFTY Finance: Initialize new lending desk", () => {
   const initialBalance = 10000;
 
   it("should fail for zero address ERC20", async () => {
