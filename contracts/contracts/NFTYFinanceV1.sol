@@ -685,8 +685,9 @@ contract NFTYFinanceV1 is
 
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest * hoursElapsed) /
-            (8760 * 10000); // Yearly scale, 8760 hours in a year
+            (loan.amount * loan.interest) /
+            (8760 * 10000 / hoursElapsed); // Yearly scale, 8760 hours in a year
+
 
         // Update amountPaidBack and check overflow.
         loan.amountPaidBack = loan.amountPaidBack + _amount;
