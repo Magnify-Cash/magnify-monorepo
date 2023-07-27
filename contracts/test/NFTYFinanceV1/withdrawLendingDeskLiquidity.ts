@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { initializeLendingDesk } from "../utils/fixtures";
 import { expect } from "chai";
 
-describe("Withdraw lending desk liquidity", () => {
+describe("NFTY Finance: Withdraw lending desk liquidity", () => {
   const amount = BigInt(10 * 10 ** 18);
 
   it("should fail for invalid lending desk id", async () => {

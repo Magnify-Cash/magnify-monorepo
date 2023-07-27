@@ -4,7 +4,7 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { LoanStatus } from "../utils/consts";
 
-describe("Liquidate defaulted loan", () => {
+describe("NFTY Finance: Liquidate defaulted loan", () => {
   it("should fail for invalid loan id", async () => {
     const { nftyFinance, lender, loanId } = await loadFixture(initializeLoan);
 

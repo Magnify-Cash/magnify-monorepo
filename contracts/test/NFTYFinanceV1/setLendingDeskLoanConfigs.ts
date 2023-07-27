@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { LoanConfig } from "../utils/consts";
 
-describe("Set lending desk loan configs", () => {
+describe("NFTY Finance: Set lending desk loan configs", () => {
   const setup = async () => {
     const { erc721, erc1155, ...rest } = await loadFixture(
       initializeLendingDesk

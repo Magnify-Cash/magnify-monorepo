@@ -4,7 +4,7 @@ import { initializeLoan } from "../utils/fixtures";
 import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { LoanStatus } from "../utils/consts";
 
-describe("Make loan payment", () => {
+describe("NFTY Finance: Make loan payment", () => {
   const partialPaymentAmount = ethers.utils.parseUnits("3", 18);
 
   const setup = async () => {

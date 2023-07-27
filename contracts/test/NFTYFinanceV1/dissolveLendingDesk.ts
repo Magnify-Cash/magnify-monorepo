@@ -4,7 +4,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { LendingDeskStatus } from "../utils/consts";
 import { ethers } from "hardhat";
 
-describe("Dissolve lending desk", () => {
+describe("NFTY Finance: Dissolve lending desk", () => {
   it("should fail for invalid lending desk id", async () => {
     const { nftyFinance, lender, lendingDeskId } = await loadFixture(
       initializeLendingDesk
