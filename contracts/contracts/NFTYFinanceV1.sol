@@ -826,14 +826,13 @@ contract NFTYFinanceV1 is
         address _receiver,
         address[] calldata _erc20s
     ) external onlyOwner {
-        // check inputs
+        // Check valid address
         require(_receiver != address(0), "invalid receiver");
 
-        // loop over erc20s
-        // TODO:
-        // is re-entry concern here with transfers in a loop?
-        // correct state is updated before transfer, but n transfer happens before n+1 state update / transfer
-        // also an onlyOwner function so smaller attack surface
+        // Update and withdraw platformFees
+        // Note: Two loops to avoid re-entry
+        // 1. Update platformFees
+        uint256[] memory queuedPlatformFees = new uint[](_erc20s.length);
         for (uint256 i = 0; i < _erc20s.length; i++) {
             require(_erc20s[i] != address(0), "invalid erc20");
 
@@ -842,12 +841,16 @@ contract NFTYFinanceV1 is
             require(amount > 0, "collected platform fees = 0");
 
             // update erc20 state
+            queuedPlatformFees[i] = platformFees[_erc20s[i]];
             platformFees[_erc20s[i]] = 0;
-
+        }
+        // 2. Withdraw queuedPlatformFees (platformFees)
+        for (uint256 i = 0; i < _erc20s.length; i++) {
             // transfer tokens
-            IERC20(_erc20s[i]).safeTransfer(_receiver, amount);
+            IERC20(_erc20s[i]).safeTransfer(_receiver, queuedPlatformFees[i]);
         }
 
+        // Emit event
         emit PlatformFeesWithdrawn(_receiver, _erc20s);
     }
 
