@@ -682,15 +682,15 @@ contract NFTYFinanceV1 is
         // Separate variable to get integer// floor value of hours elapsed
         uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
         require(hoursElapsed < loan.duration, "loan has defaulted");
+        require(hoursElapsed > 0, "loan must be active for minimum of 1 hour");
 
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
             (loan.amount * loan.interest) /
             (8760 * 10000 / hoursElapsed); // Yearly scale, 8760 hours in a year
 
-
         // Update amountPaidBack and check overflow.
-        loan.amountPaidBack = loan.amountPaidBack + _amount;
+        loan.amountPaidBack += _amount;
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
