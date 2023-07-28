@@ -233,14 +233,16 @@ contract NFTYFinanceV1 is
         promissoryNotes = _promissoryNotes;
         obligationNotes = _obligationNotes;
         lendingKeys = _lendingKeys;
+
+        // Set loan origination fee
+        setLoanOriginationFee(_loanOriginationFee);
+
+        // Emit event
         emit ProtocolInitialized(
             _promissoryNotes,
             _obligationNotes,
             _lendingKeys
         );
-
-        // Set loan origination fee
-        setLoanOriginationFee(_loanOriginationFee);
     }
 
     /* ******************** */
@@ -324,10 +326,6 @@ contract NFTYFinanceV1 is
             lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
-            emit LendingDeskLoanConfigsSet({
-                lendingDeskId: _lendingDeskId,
-                loanConfigs: _loanConfigs
-            });
 
             // Verify NFT collection is valid NFT, interaction so the last operation
             // 1155
@@ -351,6 +349,13 @@ contract NFTYFinanceV1 is
                 );
             }
         }
+
+        // Emit event
+        emit LendingDeskLoanConfigsSet({
+            lendingDeskId: _lendingDeskId,
+            loanConfigs: _loanConfigs
+        });
+
     }
 
     /**
