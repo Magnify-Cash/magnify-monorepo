@@ -226,23 +226,21 @@ contract NFTYFinanceV1 is
         address _lendingKeys,
         uint256 _loanOriginationFee
     ) {
-        // Check & set peripheral contract addresses
+        // Check & set peripheral contract addresses, emit event
         require(_promissoryNotes != address(0), "promissory note is zero addr");
         require(_obligationNotes != address(0), "obligation note is zero addr");
         require(_lendingKeys != address(0), "lending keys is zero addr");
         promissoryNotes = _promissoryNotes;
         obligationNotes = _obligationNotes;
         lendingKeys = _lendingKeys;
-
-        // Set loan origination fee
-        setLoanOriginationFee(_loanOriginationFee);
-
-        // Emit event
         emit ProtocolInitialized(
             _promissoryNotes,
             _obligationNotes,
             _lendingKeys
         );
+
+        // Set loan origination fee
+        setLoanOriginationFee(_loanOriginationFee);
     }
 
     /* ******************** */
@@ -322,10 +320,14 @@ contract NFTYFinanceV1 is
                 "max duration < min duration"
             );
 
-            // Add loan configuration to state
+            // Update loan config state, emit event
             lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
+            emit LendingDeskLoanConfigsSet({
+                lendingDeskId: _lendingDeskId,
+                loanConfigs: _loanConfigs
+            });
 
             // Verify NFT collection is valid NFT, interaction so the last operation
             // 1155
@@ -349,12 +351,6 @@ contract NFTYFinanceV1 is
                 );
             }
         }
-
-        // Emit event
-        emit LendingDeskLoanConfigsSet({
-            lendingDeskId: _lendingDeskId,
-            loanConfigs: _loanConfigs
-        });
     }
 
     /**
@@ -413,16 +409,16 @@ contract NFTYFinanceV1 is
             "not lending desk owner"
         );
 
-        // Update balance state, transfer tokens
+        // Update balance state, emit event
         lendingDesk.balance = lendingDesk.balance + _amount;
+        emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
+
+        // Transfer tokens
         IERC20(lendingDesk.erc20).safeTransferFrom(
             msg.sender,
             address(this),
             _amount
         );
-
-        // Emit event
-        emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
     }
 
     /**
@@ -448,12 +444,12 @@ contract NFTYFinanceV1 is
             "insufficient lending desk balance"
         );
 
-        // Update balance state, transfer tokens
+        // Update balance state, emit event
         lendingDesk.balance = lendingDesk.balance - _amount;
-        IERC20(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
-
-        // Emit event
         emit LendingDeskLiquidityWithdrawn(_lendingDeskId, _amount);
+
+        // Transfer tokens
+        IERC20(lendingDesk.erc20).safeTransfer(msg.sender, _amount);
     }
 
     /**
@@ -514,12 +510,12 @@ contract NFTYFinanceV1 is
         );
         require(lendingDesk.balance == 0, "lending desk not empty");
 
-        // Update status and burn lending key
+        // Update status, emit event
         lendingDesk.status = LendingDeskStatus.Dissolved;
-        INFTYERC721V1(lendingKeys).burn(_lendingDeskId);
-
-        // Emit event
         emit LendingDeskDissolved(_lendingDeskId);
+
+        // Burn lending key
+        INFTYERC721V1(lendingKeys).burn(_lendingDeskId);
     }
 
     /**
@@ -591,7 +587,7 @@ contract NFTYFinanceV1 is
         uint256 platformFee = (loanOriginationFee * _amount) / 10000;
         platformFees[lendingDesk.erc20] += platformFee;
 
-        // Set new desk in storage and update related storage
+        // Set new desk in storage and update related storage, emit event
         loanIdCounter++;
         Loan memory loan = Loan({
             amount: _amount,
@@ -606,6 +602,17 @@ contract NFTYFinanceV1 is
         });
         loans[loanIdCounter] = loan;
         lendingDesk.balance = lendingDesk.balance - _amount;
+        emit NewLoanInitialized(
+            _lendingDeskId,
+            loanIdCounter,
+            msg.sender,
+            _nftCollection,
+            _nftId,
+            _amount,
+            _duration,
+            interest,
+            platformFee
+        );
 
         // Mint promissory and obligation notes
         // Note: Promissory note is minted to the owner of the desk key
@@ -641,19 +648,6 @@ contract NFTYFinanceV1 is
             msg.sender,
             _amount - platformFee
         );
-
-        // Emit event
-        emit NewLoanInitialized(
-            _lendingDeskId,
-            loanIdCounter,
-            msg.sender,
-            _nftCollection,
-            _nftId,
-            _amount,
-            _duration,
-            interest,
-            platformFee
-        );
     }
 
     /**
@@ -688,9 +682,14 @@ contract NFTYFinanceV1 is
             (loan.amount * loan.interest) /
             (8760 * 10000 / hoursElapsed); // Yearly scale, 8760 hours in a year
 
-        // Update amountPaidBack and check overflow.
+        // Update amountPaidBack and check overflow, emit event
         loan.amountPaidBack += _amount;
         require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
+        emit LoanPaymentMade(
+            _loanId,
+            _amount,
+            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
+        );
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
@@ -729,13 +728,6 @@ contract NFTYFinanceV1 is
 
         // Transfer Tokens
         IERC20(lendingDesk.erc20).safeTransferFrom(msg.sender, lender, _amount);
-
-        // Emit Event
-        emit LoanPaymentMade(
-            _loanId,
-            _amount,
-            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
-        );
     }
 
     /**
@@ -760,8 +752,9 @@ contract NFTYFinanceV1 is
             "loan has not defaulted"
         );
 
-        // Update loan state to resolved
+        // Update loan state to resolved & emit event
         loan.status = LoanStatus.Defaulted;
+        emit DefaultedLoanLiquidated(_loanId);
 
         // Transfer NFT from escrow to promissory note holder
         if (
@@ -789,9 +782,6 @@ contract NFTYFinanceV1 is
         // burn both promissory note and obligation note
         INFTYERC721V1(promissoryNotes).burn(_loanId);
         INFTYERC721V1(obligationNotes).burn(_loanId);
-
-        // Emit event
-        emit DefaultedLoanLiquidated(_loanId);
     }
 
     /* ******************** */
@@ -806,11 +796,11 @@ contract NFTYFinanceV1 is
     function setLoanOriginationFee(
         uint256 _loanOriginationFee
     ) public onlyOwner {
-        // Set loan origination fees
+        // Check inputs (fee cannot be greater than 10%)
         require(_loanOriginationFee <= 10000, "fee > 10%");
-        loanOriginationFee = _loanOriginationFee;
 
-        // Emit event
+        // Set loan origination fees & emit event
+        loanOriginationFee = _loanOriginationFee;
         emit LoanOriginationFeeSet(_loanOriginationFee);
     }
 
@@ -831,7 +821,8 @@ contract NFTYFinanceV1 is
 
         // Update and withdraw platformFees
         // Note: Two loops to avoid re-entry
-        // 1. Update platformFees
+
+        // 1. Update platformFees & emit event
         uint256[] memory queuedPlatformFees = new uint[](_erc20s.length);
         for (uint256 i = 0; i < _erc20s.length; i++) {
             require(_erc20s[i] != address(0), "invalid erc20");
@@ -844,14 +835,13 @@ contract NFTYFinanceV1 is
             queuedPlatformFees[i] = platformFees[_erc20s[i]];
             platformFees[_erc20s[i]] = 0;
         }
+        emit PlatformFeesWithdrawn(_receiver, _erc20s);
+
         // 2. Withdraw queuedPlatformFees (platformFees)
         for (uint256 i = 0; i < _erc20s.length; i++) {
             // transfer tokens
             IERC20(_erc20s[i]).safeTransfer(_receiver, queuedPlatformFees[i]);
         }
-
-        // Emit event
-        emit PlatformFeesWithdrawn(_receiver, _erc20s);
     }
 
     /**
