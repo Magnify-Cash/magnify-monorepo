@@ -2,16 +2,6 @@
 
 Welcome to the NFTYFinanceV1 Integration Guide! This document is designed to help developers seamlessly integrate their applications with the NFTY Finance protocol. NFTYFinanceV1 is a smart contract protocol that facilitates lending and borrowing of ERC20 tokens using NFTs as collateral. The protocol is built with a focus on being fully on-chain, non-custodial, and independent of external oracles and intermediaries.
 
-## Protocol Overview
-
-NFTY Finance introduces "LAMM" (Lending Automated Market Maker), an innovative AMM-style architecture for lending markets. The core contracts that power the protocol are as follows:
-
-- `NFTYFinanceV1.sol`: Contains the core protocol module.
-- `NFTYFinanceERC721.sol`: An abstract ERC721 with built-in roles, meant for inheritance by other ERC721 contracts.
-- `NFTYLendingKeysV1.sol`: Manages lending desk ownership.
-- `NFTYObligationNotesV1.sol`: Handles a borrower's obligation to repay.
-- `NFTYPromissoryNotesV1.sol`: Represents the lender's promise to be repaid.
-
 ## Integration Steps
 
 Integrating your application with NFTYFinanceV1 is developer-friendly, offering flexibility in choosing the Ethereum RPC stack that suits your preferences. Below are the steps for lenders and borrowers:
@@ -101,7 +91,4 @@ print('Lending desk created successfully!')
 Hop into the discord!
 
 ## Read More
-For more in-depth information on the NFTY Finance protocol, contract interactions, and advanced features, please refer to the documentation in the `/contracts` directory.
-
-## Conclusion
-Integrating with NFTYFinanceV1 empowers developers with a powerful and flexible lending and borrowing solution, all directly on-chain. Utilize the provided examples and guidelines to seamlessly incorporate NFTY Finance into your application. For any challenges or questions, don't hesitate to seek support from the NFTY Finance community. Happy integrating!
+For more in-depth information on the NFTY Finance protocol, contract interactions, and advanced features, please refer to the documentation in the `/contracts` directory. 

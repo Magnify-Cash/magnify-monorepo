@@ -19,11 +19,11 @@ The contract relies on the following external contracts and libraries:
 - OpenZeppelin Contracts (version 4.3.0)
   - `Ownable.sol`
   - `Pausable.sol`
-  - `ReentrancyGuard.sol`
   - `SafeERC20.sol`
-  - `IERC20.sol`
   - `IERC721.sol`
   - `IERC1155.sol`
+  - `ERC721Holder.sol`
+  - `ERC1155Holder.sol`
   - `ERC165Checker.sol`
 
 ## Contract Structure
@@ -40,6 +40,7 @@ The contract is organized into the following sections:
 
 The contract provides the following functions:
 
+### Core Functions
 1. `initializeNewLendingDesk`: Initializes a new lending desk.
 2. `setLendingDeskLoanConfigs`: Sets loan parameters for a lending desk and NFT collection.
 3. `removeLendingDeskLoanConfig`: Removes support for an NFT collection from a lending desk.
@@ -48,25 +49,32 @@ The contract provides the following functions:
 6. `setLendingDeskState`: Pauses/unpauses the lending desk state (active or frozen).
 7. `dissolveLendingDesk`: Dissolves a lending desk (non-reversible action).
 8. `initializeNewLoan`: Creates a loan against an ERC20 token using NFT collateral.
-9. `liquidateDefaultedLoan`: Liquidates a defaulted loan.
-10. `setLoanOriginationFee`: Sets the loan origination fee.
-11. `withdrawPlatformFees`: Withdraws the loan origination fee for specified ERC20 tokens.
+9. `makeLoanPayment`: Make a payment on loan
+10. `liquidateDefaultedLoan`: Liquidates a defaulted loan.
+
+### Admin Functions
+11. `setLoanOriginationFee`: Sets the loan origination fee.
+12. `withdrawPlatformFees`: Withdraws the loan origination fee for specified ERC20 tokens.
+13. `setPaused`: Pauses / unpauses the contract
+
 
 ## Events
 
 The contract emits the following events:
 
-- `NewLendingDeskInitialized`: Emitted when a new lending desk is created.
-- `LendingDeskLoanConfigsSet`: Emitted when a lending desk's loan configurations are set.
-- `LendingDeskLoanConfigRemoved`: Emitted when a lending desk's support for an NFT collection is removed.
-- `LendingDeskLiquidityDeposited`: Emitted when liquidity is added to a lending desk.
-- `LendingDeskStateSet`: Emitted when a lending desk is frozen/unfrozen.
-- `LendingDeskLiquidityWithdrawn`: Emitted when liquidity is withdrawn from a lending desk.
-- `LendingDeskDissolved`: Emitted when a lending desk is dissolved.
-- `NewLoanInitialized`: Emitted when a new loan is created.
-- `LoanPaymentMade`: Emitted when a loan repayment is made.
-- `DefaultedLoanLiquidated`: Emitted when a defaulted loan is liquidated.
-- `LoanOriginationFeeSet`: Emitted when the loan origination fee is updated.
+1. `NewLendingDeskInitialized`: Emitted when a new lending desk is created.
+2. `LendingDeskLoanConfigsSet`: Emitted when a lending desk's loan configurations are set.
+3. `LendingDeskLoanConfigRemoved`: Emitted when a lending desk's support for an NFT collection is removed.
+4. `LendingDeskLiquidityDeposited`: Emitted when liquidity is added to a lending desk.
+5. `LendingDeskLiquidityWithdrawn`: Emitted when liquidity is withdrawn from a lending desk.
+6. `LendingDeskStateSet`: Emitted when a lending desk is frozen/unfrozen.
+7. `LendingDeskDissolved`: Emitted when a lending desk is dissolved.
+8. `NewLoanInitialized`: Emitted when a new loan is created.
+9. `LoanPaymentMade`: Emitted when a loan repayment is made.
+10. `DefaultedLoanLiquidated`: Emitted when a defaulted loan is liquidated.
+11. `ProtocolInitialized`: Emitted when protocol is first deployed and init'd.
+12. `LoanOriginationFeeSet`: Emitted when the loan origination fee is updated.
+13. `PlatformFeesWithdrawn`: Emitted when platform fees are withdrawn
 
 ## License
 

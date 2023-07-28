@@ -80,20 +80,6 @@ contract NFTYFinanceV1 is
     /* *********** */
     /*  EVENTS     */
     /* *********** */
-
-    /**
-     * @notice Event that will be when the contract is deployed
-     *
-     * @param promissoryNotes The address of the ERC721 to generate promissory notes for lenders
-     * @param obligationNotes The address of the ERC721 to generate obligation notes for borrowers
-     * @param lendingKeys The address of the lending desk ownership ERC721
-     */
-    event ProtocolInitialized(
-        address promissoryNotes,
-        address obligationNotes,
-        address lendingKeys
-    );
-
     /**
      * @notice Event that will be emitted every time a lending desk is created
      *
@@ -201,6 +187,19 @@ contract NFTYFinanceV1 is
      * @param loanId The unique identifier of the loan
      */
     event DefaultedLoanLiquidated(uint256 loanId);
+    
+    /**
+     * @notice Event that will be when the contract is deployed
+     *
+     * @param promissoryNotes The address of the ERC721 to generate promissory notes for lenders
+     * @param obligationNotes The address of the ERC721 to generate obligation notes for borrowers
+     * @param lendingKeys The address of the lending desk ownership ERC721
+     */
+    event ProtocolInitialized(
+        address promissoryNotes,
+        address obligationNotes,
+        address lendingKeys
+    );
 
     /**
      * @notice Event that will be emitted every time an admin updates loan origination fee
