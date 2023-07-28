@@ -265,7 +265,6 @@ contract NFTYFinanceV1 is
         require(_erc20 != address(0), "zero addr erc20");
 
         // Set new desk in storage and update related storage
-
         lendingDeskIdCounter++;
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskIdCounter];
         lendingDesk.erc20 = _erc20;
