@@ -6,7 +6,7 @@ In this section, we will extend the basic integration to fetch and display data 
 
 First, ensure you have set up your React application as shown in the previous section. If you haven't done that yet, follow the steps mentioned there to create a new React app and set up Apollo Client.
 
-## Graphql Client for NFTY Finance
+## GraphQL Client for NFTY Finance
 
 Just like before, we need to set up a middleware to make requests to the NFTY Finance subgraph. Replace the existing imports in your `App.js` file with the following code:
 
