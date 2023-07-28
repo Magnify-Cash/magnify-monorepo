@@ -73,7 +73,7 @@ describe("NFTY Finance: Make loan payment", () => {
     await expect(
       nftyFinance.connect(borrower).makeLoanPayment(
         loanId,
-        loanAmount.add(loanAmount.mul(loanConfig.maxInterest.add(1)))
+        loanAmount.add(loanAmount.mul(loanConfig.maxInterest.mul(loanConfig.maxDuration)))
       )
     ).to.be.revertedWith("payment amount > debt");
   });
@@ -100,17 +100,32 @@ describe("NFTY Finance: Make loan payment", () => {
   it("should make full loan payment", async () => {
     const {
       nftyFinance,
+      loan,
       loanId,
       borrower,
       lender,
       loanAmount,
+      loanConfig,
       promissoryNotes,
       obligationNotes,
     } = await loadFixture(setup);
 
+    // TODO: This should probably be its own read-only function on contract,
+    // to calculate amount due
+    const _loanAmount = ethers.BigNumber.from(loanAmount); // Convert loanAmount to ethers.BigNumber
+    const _loanInterest = ethers.BigNumber.from(loan.interest); // Convert loanInterest to ethers.BigNumber
+    const _hoursElapsed = ethers.BigNumber.from(loanConfig.minDuration); // Convert hoursElapsed to ethers.BigNumber
+    const hoursInYear = ethers.BigNumber.from(8760);
+    const multiplier = ethers.BigNumber.from(10000);
+    const totalAmountDue = _loanAmount.add(
+      _loanAmount.mul(_loanInterest).div(
+        hoursInYear.mul(multiplier).div(_hoursElapsed)
+      )
+    );
+
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, loanAmount);
+      .makeLoanPayment(loanId, totalAmountDue);
 
     // Check emitted event and storage
     expect(tx)
