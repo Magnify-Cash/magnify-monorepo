@@ -1,0 +1,8 @@
+sources:
+  - name: nftyFinance
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/44194/nftyfinance-mumbai/0.0.7
+
+documents:
+  - queries.graphql
