@@ -17,9 +17,6 @@
     "moduleResolution": "Node",
     "noEmit": true,
     "noImplicitAny": false,
-    "paths": {
-      "@/*": ["./dapp/src/*"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

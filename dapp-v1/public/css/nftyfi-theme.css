@@ -49,6 +49,7 @@
 
 	--base-body-bg-color: var(--dark-color);
 	--base-content-bg-color: var(--dark-color-very-light);
+
 }
 
 .readable-mode {
@@ -64,9 +65,9 @@
 :root {
 	/* NFTY Finance pink */
 
-	--nftyfi-pink-color-hue: 340;
-	--nftyfi-pink-color-saturation: 70%;
-	--nftyfi-pink-color-lightness: 60%;
+	--nftyfi-pink-color-hue: 262;
+	--nftyfi-pink-color-saturation: 75%;
+	--nftyfi-pink-color-lightness: 59%;
 	--nftyfi-pink-color-lightness-step-up-1: 65%;
 	--nftyfi-pink-color-lightness-step-up-2: 70%;
 	--nftyfi-pink-color-lightness-step-down-1: 55%;
@@ -355,6 +356,9 @@
 	--sidebar-padding: 0;
 	--sidebar-border-width: 0;
 
+	--sidebar-bg-color: hsl(240, 100%, 99%);
+	--sidebar-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
 	--sidebar-content-padding: 0.6rem 2rem;
 	--sidebar-content-margin: 0.4rem 0.8rem;
 
@@ -390,6 +394,10 @@
 	--sidebar-icon-active-bg-color: transparent;
 
 	--sidebar-icon-active-text-color-hover: var(--sidebar-link-active-text-color-hover);
+}
+
+.dark-mode {
+	--sidebar-bg-color: --base-body-bg-color;
 }
 
 /* Card */
@@ -430,6 +438,13 @@
 
 :root {
 	--sticky-alerts-width: 34rem;
+}
+
+/* Horizontal Rule */
+:root {
+	--horizontal-rule-box-shadow:0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	--horizontal-rule-color: #DCD9E0;
+	--horizontal-rule-height: 2px;
 }
 
 /* Gutter */

@@ -13,5 +13,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
       </ConnectKitProvider>
     </WagmiConfig>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

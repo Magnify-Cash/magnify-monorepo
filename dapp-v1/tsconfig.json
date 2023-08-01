@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
@@ -16,5 +17,6 @@
     "target": "ESNext",
     "useDefineForClassFields": true
   },
-  "include": ["./src"]
+  "include": ["src"],
+  "@/*": ["./dapp-v1/src/*"]
 }

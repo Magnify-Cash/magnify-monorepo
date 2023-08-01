@@ -1,13 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>wagmi</title>
+    <!-- Meta tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+
+    <!-- Meta Tags -->
+    <!-- Primary Meta Tags -->
+    <title>NFTY Finance - TestNet</title>
+    <meta name="title" content="NFTY Finance - TestNet">
+    <meta name="description" content="NFTY Finance is a decentralized protocol for NFT lending. NFTY Finance enables you to borrow against your NFTs without having to sell them. As a lender, you can lend against NFTs with minimal risk of impermanent loss because, if the borrower defaults, you will receive the NFT at a discount.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://testnet.nfty.finance/">
+    <meta property="og:title" content="NFTY Finance - TestNet">
+    <meta property="og:description" content="NFTY Finance is a decentralized protocol for NFT lending. NFTY Finance enables you to borrow against your NFTs without having to sell them. As a lender, you can lend against NFTs with minimal risk of impermanent loss because, if the borrower defaults, you will receive the NFT at a discount.">
+    <meta property="og:image" content="">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="http://testnet.nfty.finance/">
+    <meta property="twitter:title" content="NFTY Finance - TestNet">
+    <meta property="twitter:description" content="NFTY Finance is a decentralized protocol for NFT lending. NFTY Finance enables you to borrow against your NFTs without having to sell them. As a lender, you can lend against NFTs with minimal risk of impermanent loss because, if the borrower defaults, you will receive the NFT at a discount.">
+    <meta property="twitter:image" content="">
+
+    <!-- Google tag (gtag.js) (testnet.nfty.finance) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJQS54HL3V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZJQS54HL3V');
+    </script>
+
+    <!-- Halfmoon CSS -->
+    <link href="/css/halfmoon.min.css" rel="stylesheet" />
+
+    <!-- SocialPass CSS theme -->
+    <link href="/css/nftyfi-theme.css" rel="stylesheet" />
+
+    <!-- Halfmoon JS -->
+    <script type="text/javascript" src="/js/halfmoon.js"></script>
+
+    <!-- Font Awesome 6 -->
+    <script
+      src="https://kit.fontawesome.com/e222fd7f73.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Polyfill -->
     <script type="module" src="./polyfills.ts"></script>
   </head>
   <body>
+    <!-- App Root -->
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- App Script -->
+    <script type="module" src="/src/index.tsx"></script>
+
+    <!-- Script useful for debugging/testing -->
+    <script type="text/javascript">
+      /**
+       * Handle the keydown event (only on debug mode).
+       *
+       * This is used to create the dark mode and sidebar toggle shortcuts.
+       * These shortcuts are very useful for testing.
+       */
+      document.addEventListener("keydown", function (event) {
+        if (
+          !(
+            document.querySelector("input:focus") ||
+            document.querySelector("textarea:focus") ||
+            document.querySelector("select:focus")
+          )
+        ) {
+          event = event || window.event;
+
+          if (!(event.ctrlKey || event.metaKey)) {
+            // Toggle dark mode when [shift] + [D] keys are pressed
+            if (event.shiftKey && event.which == 68) {
+              halfmoon.toggleDarkMode();
+            }
+
+            // Toggle sidebar when [shift] + [S] keys are pressed
+            if (event.shiftKey && event.which == 83) {
+              halfmoon.toggleSidebar();
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </html>

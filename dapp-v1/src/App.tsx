@@ -1,12 +1,16 @@
-import { ConnectKitButton } from 'connectkit'
-import { useAccount } from 'wagmi'
+import * as Pages from "@/pages";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 export function App() {
-  const { isConnected } = useAccount()
   return (
-    <>
-      <h1>wagmi + ConnectKit + Vite</h1>
-      <ConnectKitButton />
-    </>
+   <BrowserRouter>
+     <Routes>
+       <Route path="/" element={<Pages.Base />}>
+         {/* General */}
+         <Route index element={<div>hi</div>} />
+         {/* End General */}
+       </Route>
+     </Routes>
+   </BrowserRouter>
   )
 }

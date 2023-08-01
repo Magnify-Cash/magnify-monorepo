@@ -8,11 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@graphprotocol/client-urql": "^2.0.0",
     "buffer": "^6.0.3",
     "connectkit": "^1.4.0",
+    "graphql": "^16.7.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
+    "urql": "^4.0.5",
     "util": "^0.12.4",
     "viem": "~0.3.36",
     "wagmi": "^1.0.6"
