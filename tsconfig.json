@@ -23,5 +23,5 @@
     "target": "ESNext",
     "useDefineForClassFields": true
   },
-  "include": ["dapp", "faucet", "contracts", "environment.d.ts"]
+  "include": ["dapp", "dapp-v1", "faucet", "contracts", "environment.d.ts"]
 }

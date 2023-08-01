@@ -1,12 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { createClient, Provider } from "urql";
-import { graphExchange } from "@graphprotocol/client-urql";
-import { useNetwork } from "wagmi";
 import { Sidebar, Wallet } from "@/components";
 import { toggleSidebar } from "@/helpers/SidebarToggle";
-import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
-import * as GraphClient from "../../.graphclient";
 import { ConnectKitProvider } from 'connectkit';
 
 function getCurrentTheme(): string {
@@ -61,6 +56,10 @@ export const Base = () => {
                     className="d-block w-100"
                   />
                 </div>
+                <div className="d-md-block d-none">
+                  <h1>Base</h1>
+                </div>
+
                 {/* Brand end */}
 
                 {/* Dark mode toggle start */}
@@ -83,40 +82,13 @@ export const Base = () => {
                 </button>
                 {/* Dark mode toggle end */}
 
-                {/* Notifications start */}
-                {/*
-                <div className="dropdown with-arrow ms-10">
-                  <button
-                    className="btn btn-sm btn-square rounded-circle"
-                    data-hm-toggle="dropdown"
-                    id="notifications-dropdown-toggle"
-                    aria-expanded="false"
-                  >
-                    <i className="fa-regular fa-bell"></i>
-                    <span className="visually-hidden">Notifications</span>
-                  </button>
-                  <div
-                    className="dropdown-menu dropdown-menu-center ws-250"
-                    aria-labelledby="notifications-dropdown-toggle"
-                  >
-                    <div className="dropdown-content text-center">
-                      <div className="text-primary">
-                        <i className="fa-light fa-folder-open"></i>
-                      </div>
-                      <div className="mt-10 text-muted">
-                        No new notifications.
-                      </div>
-                    </div>
-                  </div>
-                </div>*/}
-                {/* Notifications end */}
-
                 {/* Connect wallet button start */}
                 <Wallet />
                 {/* Connect wallet button end */}
+
               </nav>
             </div>
-            <hr className="w-100"/>
+            <hr className="w-100 mt-20"/>
             {/* Navbar end */}
 
             {/* Main content start */}
@@ -124,35 +96,6 @@ export const Base = () => {
             <Outlet />
             {/* Content end (React router outlet component) */}
             {/* Main content end */}
-
-            {/* Footer start */}
-            <div className="content text-center text-muted mt-auto mb-15 pt-50 fs-base-n2">
-              <a
-                href="#"
-                className="d-inline-block link-reset text-decoration-none mx-10 my-5"
-              >
-                Terms & Conditions
-              </a>
-              <a
-                href="#"
-                className="d-inline-block link-reset text-decoration-none mx-10 my-5"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="d-inline-block link-reset text-decoration-none mx-10 my-5"
-              >
-                About NFTY
-              </a>
-              <a
-                href="#"
-                className="d-inline-block link-reset text-decoration-none mx-10 my-5"
-              >
-                FAQs
-              </a>
-            </div>
-            {/* Footer end */}
           </div>
           {/* Content wrapper end */}
         </div>

@@ -8,7 +8,7 @@ export const Sidebar = () => {
     <nav className="sidebar min-vh-100 d-flex flex-column">
       <div className="sidebar-menu mt-0">
         {/* Sidebar brand start */}
-        <NavLink className="sidebar-brand m-0 hs-75 px-30">
+        <NavLink to="/" className="sidebar-brand m-0 hs-75 px-30">
           <img
             src="/images/logo.svg"
             className="mx-auto pe-none hidden-dm w-100 h-100"
@@ -68,31 +68,31 @@ export const Sidebar = () => {
         {/* Lend Start */}
         <div className="sidebar-title text-primary mt-20">Lend</div>
         <NavLink
-          to="lend/create-shop"
+          to="dashboard"
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-hexagon-plus"></i>
+            <i className="fa-light fa-grid-2"></i>
           </span>
-          Create Liquidity Shop
+          Dashboard
         </NavLink>
         <NavLink
-          to="lend/manage-shops"
+          to="quickloan"
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-hexagon-vertical-nft"></i>
+            <i className="fa-light fa-circle-plus"></i>
           </span>
-          Manage Liquidity Shops
+          Create Lending Desk
         </NavLink>
         <NavLink
-          to="lend/dashboard"
+          to="/borrow/explore-collections"
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-square-list"></i>
+            <i className="fa-light fa-bank"></i>
           </span>
-          Lending Dashboard
+          Manage Lending Desks
         </NavLink>
         {/* Lend End */}
 
@@ -103,9 +103,9 @@ export const Sidebar = () => {
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-square-list"></i>
+            <i className="fa-light fa-question"></i>
           </span>
-          Get NFTY
+          Help
         </NavLink>
         <NavLink
           to="get"
@@ -114,16 +114,16 @@ export const Sidebar = () => {
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
             <i className="fa-light fa-square-list"></i>
           </span>
-          Get NFTY
+          Docs
         </NavLink>
         <NavLink
           to="get"
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-square-list"></i>
+            <i className="fa-light fa-city"></i>
           </span>
-          Get NFTY
+          Community
         </NavLink>
 
         {/* Support End */}
@@ -135,7 +135,7 @@ export const Sidebar = () => {
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-square-list"></i>
+            <i className="fa-light fa-store"></i>
           </span>
           Get NFTY
         </NavLink>
@@ -144,7 +144,7 @@ export const Sidebar = () => {
           className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
         >
           <span className="ws-25 flex-shrink-0 fs-base-p2 me-10">
-            <i className="fa-light fa-square-list"></i>
+            <i className="fa-light fa-tent"></i>
           </span>
           Stake NFTY
         </NavLink>
