@@ -7,6 +7,7 @@ import { Sidebar, Wallet } from "@/components";
 import { toggleSidebar } from "@/helpers/SidebarToggle";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
 import * as GraphClient from "../../.graphclient";
+import { ConnectKitProvider } from 'connectkit';
 
 function getCurrentTheme(): string {
   let currentTheme: string = "light";
@@ -17,11 +18,13 @@ function getCurrentTheme(): string {
   return currentTheme;
 }
 
+
 export const Base = () => {
   // theme
   const [currentTheme, setCurrentTheme] = useState<any>(getCurrentTheme());
 
   return (
+    <ConnectKitProvider mode={currentTheme}>
         <div
           className="page-wrapper with-sidebar"
           data-hm-sidebar-type="overlayed-md-down"
@@ -153,5 +156,6 @@ export const Base = () => {
           </div>
           {/* Content wrapper end */}
         </div>
+    </ConnectKitProvider>
   );
 };
