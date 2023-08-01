@@ -8,15 +8,15 @@ export const Sidebar = () => {
     <nav className="sidebar min-vh-100 d-flex flex-column">
       <div className="sidebar-menu mt-0">
         {/* Sidebar brand start */}
-        <NavLink className="sidebar-brand m-0 hs-75 mb-20">
+        <NavLink className="sidebar-brand m-0 hs-75 px-30">
           <img
             src="/images/logo.svg"
-            className="mx-auto pe-none hidden-dm"
+            className="mx-auto pe-none hidden-dm w-100 h-100"
             alt="Logo"
           />
           <img
             src="/images/logo_white.svg"
-            className="mx-auto pe-none hidden-lm"
+            className="mx-auto pe-none hidden-lm w-100 h-100"
             alt="Logo"
           />
         </NavLink>
