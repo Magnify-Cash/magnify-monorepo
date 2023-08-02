@@ -17,9 +17,9 @@ export function Wallet() {
             onClick={show}
             className="btn btn-primary"
           >
-            <i className="fa-solid fa-wallet me-5"></i>
             {isConnected && <span>{truncatedAddress}</span>}
             {!isConnected && <span>Connect</span>}
+            <i className="fa-solid fa-wallet mx-2"></i>
           </button>
         );
       }}

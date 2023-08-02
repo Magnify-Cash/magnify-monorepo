@@ -2,23 +2,15 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ConnectKitProvider } from "connectkit";
 import { Wallet } from "@/components";
-
-function getCurrentTheme(): string {
-  let currentTheme: string = "light";
-  if (localStorage.getItem("storedTheme") === "dark") {
-    document.documentElement.classList.add("dark-mode");
-    currentTheme = "dark";
-  }
-  return currentTheme;
-}
+import { NavLink } from "react-router-dom";
 
 
 export const Base = () => {
   // theme
-  const [currentTheme, setCurrentTheme] = useState<any>(getCurrentTheme());
-
+  const activeClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal active";
+  const inactiveClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal";
   return (
-    <ConnectKitProvider mode={currentTheme}>
+    <ConnectKitProvider>
           {/* Sidebar start */}
           <div className="offcanvas-xl offcanvas-start" tabIndex={-1} id="sidebar">
               <div className="offcanvas-header d-flex align-items-center justify-content-start" style={{ height: '68px' }}>
@@ -31,8 +23,136 @@ export const Base = () => {
                       aria-label="Close" data-bs-target="#sidebar"></button>
               </div>
               <div className="offcanvas-body p-3 flex-column">
-                  {/* Other sidebar content... */}
-              </div>
+                  {/* Home */}
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-home"></i>
+                    </span>
+                    Home
+                  </NavLink>
+
+                  {/* Borrow */}
+                  <div className="text-body-secondary text-uppercase mt-4">
+                    <small>Borrow</small>
+                  </div>
+                  <NavLink
+                    to="dashboard"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-grid-2"></i>
+                    </span>
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    to="quickloan"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-bolt"></i>
+                    </span>
+                    Quick Loan
+                  </NavLink>
+                  <NavLink
+                    to="/borrow/explore-collections"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-folders"></i>
+                    </span>
+                    Browse Collections
+                  </NavLink>
+
+                  {/* Lend */}
+                  <div className="text-body-secondary text-uppercase mt-4">
+                    <small>Lend</small>
+                  </div>
+                 <NavLink
+                   to="dashboard"
+                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                 >
+                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                     <i className="fa-light fa-grid-2"></i>
+                   </span>
+                   Dashboard
+                 </NavLink>
+                 <NavLink
+                   to="quickloan"
+                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                 >
+                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                     <i className="fa-light fa-circle-plus"></i>
+                   </span>
+                   Create Lending Desk
+                 </NavLink>
+                 <NavLink
+                   to="/borrow/explore-collections"
+                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                 >
+                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                     <i className="fa-light fa-bank"></i>
+                   </span>
+                   Manage Lending Desks
+                 </NavLink>
+
+                  {/* Support */}
+                  <div className="text-body-secondary text-uppercase mt-4">
+                    <small>Support</small>
+                  </div>
+                  <NavLink
+                    to="get"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-question"></i>
+                    </span>
+                    Help
+                  </NavLink>
+                  <NavLink
+                    to="get"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-square-list"></i>
+                    </span>
+                    Docs
+                  </NavLink>
+                  <NavLink
+                    to="get"
+                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-city"></i>
+                    </span>
+                    Community
+                  </NavLink>
+
+                  {/* NFTY Token */}
+                  <div className="text-body-secondary text-uppercase mt-4">
+                    <small>$NFTY Token</small>
+                  </div>
+                    <NavLink
+                      to="get"
+                      className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                    >
+                      <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                        <i className="fa-light fa-store"></i>
+                      </span>
+                      Get NFTY
+                    </NavLink>
+                    <NavLink
+                      to="stake"
+                      className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+                    >
+                      <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                        <i className="fa-light fa-tent"></i>
+                      </span>
+                      Stake NFTY
+                    </NavLink>
+                </div>
           </div>
           {/* Sidebar end */}
 
