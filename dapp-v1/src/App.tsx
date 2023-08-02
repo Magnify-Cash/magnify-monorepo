@@ -6,17 +6,31 @@ export function App() {
    <BrowserRouter>
      <Routes>
        <Route path="/" element={<Pages.Base />}>
-         {/* Home */}
-         <Route index element={<Pages.Demo title="Demo" />} />
+        {/* Home */}
+        <Route index element={<Pages.Demo title="Home" />} />
 
-         {/* Borrow */}
+        {/* Borrow */}
+        <Route path="borrower-dashboard" element={<Pages.Demo title="Borrower Dashboard" />} />
+        <Route path="quick-loan" element={<Pages.Demo title="Quick Loan" />} />
+        <Route path="explore" element={<Pages.Demo title="Explore Colletions" />} />
 
-         {/* Lend */}
+        {/* Lend */}
+        <Route path="lender-dashboard" element={<Pages.Demo title="Lender Dashboard" />} />
+        <Route path="create-desk" element={<Pages.Demo title="Create Desk" />} />
+        <Route path="manage-desk" element={<Pages.Demo title="Manage Desk" />} />
+        <Route path="manage-desks" element={<Pages.Demo title="Manage Desks" />} />
 
-         {/* Support */}
+        {/* Support */}
+        <Route path="help" element={<Pages.Demo title="Help" />} />
+        <Route path="docs" element={<Pages.Demo title="Docs" />} />
+        <Route path="community" element={<Pages.Demo title="Community" />} />
 
-         {/* Catch All */}
-         <Route path="*" element={<Navigate to="/" />} />
+        {/* Token */}
+        <Route path="token" element={<Pages.Demo title="NFTY Token" />} />
+        <Route path="stake" element={<Pages.Demo title="NFTY Staking" />} />
+
+        {/* Catch All */}
+        <Route path="*" element={<Navigate to="/" />} />
        </Route>
      </Routes>
    </BrowserRouter>

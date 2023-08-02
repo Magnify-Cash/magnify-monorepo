@@ -58,7 +58,7 @@ export const Base = () => {
                     <small>Borrow</small>
                   </div>
                   <NavLink
-                    to="dashboard"
+                    to="borrower-dashboard"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -67,7 +67,7 @@ export const Base = () => {
                     Dashboard
                   </NavLink>
                   <NavLink
-                    to="quickloan"
+                    to="quick-loan"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -90,7 +90,7 @@ export const Base = () => {
                     <small>Lend</small>
                   </div>
                  <NavLink
-                   to="dashboard"
+                   to="lender-dashboard"
                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                  >
                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -99,7 +99,7 @@ export const Base = () => {
                    Dashboard
                  </NavLink>
                  <NavLink
-                   to="quickloan"
+                   to="create-desk"
                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                  >
                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -108,7 +108,7 @@ export const Base = () => {
                    Create Lending Desk
                  </NavLink>
                  <NavLink
-                   to="manage_desks"
+                   to="manage-desk"
                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                  >
                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
