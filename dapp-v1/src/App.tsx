@@ -7,7 +7,7 @@ export function App() {
      <Routes>
        <Route path="/" element={<Pages.Base />}>
          {/* General */}
-         <Route index element={<Pages.Demo />} />
+         <Route index element={<Pages.Demo title="Demo" />} />
          {/* End General */}
        </Route>
      </Routes>

@@ -1,14 +1,36 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider } from "connectkit";
 import { Wallet } from "@/components";
 import { NavLink } from "react-router-dom";
+
+function findTitleProps(obj) {
+  const titles = [];
+
+  if (obj.props && obj.props.title) {
+    return obj.props.title
+  }
+
+  if (obj.props && obj.props.children) {
+    if (Array.isArray(obj.props.children)) {
+      for (const child of obj.props.children) {
+        return findTitleProps(child);
+      }
+    } else {
+      return findTitleProps(obj.props.children);
+    }
+  }
+
+  return titles;
+}
 
 
 export const Base = () => {
   // theme
   const activeClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal active";
   const inactiveClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal";
+  const obj = useOutlet();
+  const title = findTitleProps(obj);
   return (
     <ConnectKitProvider>
           {/* Sidebar start */}
@@ -165,16 +187,16 @@ export const Base = () => {
                   </button>
                   <img src="/images/logo.svg" alt="SocialPass Logo"
                       className="d-block d-xl-none me-3 w-50" />
-                  <h5 className="mb-0 me-3 d-none d-md-block text-truncate">
-                      Page Title
-                  </h5>
+                  <h4 className="mb-0 me-3 d-none d-md-block text-truncate">
+                      {title}
+                  </h4>
                   <div className="ms-auto">
                       <Wallet/>
                   </div>
               </div>
               <div className="container px-3 px-sm-4 mt-3 d-md-none">
                   <h6>
-                      Page Title for Small Screens
+                      {title}
                   </h6>
               </div>
           </div>
