@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Sidebar, Wallet } from "@/components";
-import { toggleSidebar } from "@/helpers/SidebarToggle";
-import { ConnectKitProvider } from 'connectkit';
+import { ConnectKitProvider } from "connectkit";
+import { Wallet } from "@/components";
 
 function getCurrentTheme(): string {
   let currentTheme: string = "light";
@@ -20,85 +19,53 @@ export const Base = () => {
 
   return (
     <ConnectKitProvider mode={currentTheme}>
-        <div
-          className="page-wrapper with-sidebar"
-          data-hm-sidebar-type="overlayed-md-down"
-        >
-          {/* Sticky alerts start */}
-          <div className="sticky-alerts"></div>
-          {/* Sticky alerts end */}
-
           {/* Sidebar start */}
-          <Sidebar />
-          <div className="sidebar-overlay" onClick={toggleSidebar}></div>
+          <div className="offcanvas-xl offcanvas-start" tabIndex={-1} id="sidebar">
+              <div className="offcanvas-header d-flex align-items-center justify-content-start" style={{ height: '68px' }}>
+                  <img src="/images/logo.svg" alt="SocialPass Logo" className="d-block me-auto w-75" />
+                  <button type="button" className="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" onClick={() => window.toggleDarkMode()}
+                      style={{ width: '37px' }}>
+                      <i className="fa-solid fa-moon"></i>
+                  </button>
+                  <button type="button" className="btn-close d-xl-none ms-2" data-bs-dismiss="offcanvas"
+                      aria-label="Close" data-bs-target="#sidebar"></button>
+              </div>
+              <div className="offcanvas-body p-3 flex-column">
+                  {/* Other sidebar content... */}
+              </div>
+          </div>
           {/* Sidebar end */}
 
-          {/* Content wrapper start */}
-          <div className="content-wrapper min-vh-100 d-flex flex-column">
-            {/* Navbar start */}
-            <div>
-              <nav className="hs-75 d-flex align-items-center px-content">
-                {/* Menu toggle start */}
-                <button
-                  className="btn btn-sm btn-square rounded-circle d-md-none"
-                  onClick={toggleSidebar}
-                >
-                  <i className="fa-regular fa-bars"></i>
-                  <span className="visually-hidden">Toggle sidebar</span>
-                </button>
-                {/* Menu toggle end */}
-
-                {/* Brand start */}
-                <div className="ws-50 ms-20 d-md-none">
-                  <img
-                    src="/images/icon.svg"
-                    alt="icon"
-                    className="d-block w-100"
-                  />
-                </div>
-                <div className="d-md-block d-none">
-                  <h1>Base</h1>
-                </div>
-
-                {/* Brand end */}
-
-                {/* Dark mode toggle start */}
-                <button
-                  className="btn btn-sm btn-square rounded-circle ms-auto"
-                  onClick={() => {
-                    if (currentTheme === "light") {
-                      document.documentElement.classList.add("dark-mode");
-                      setCurrentTheme("dark");
-                      localStorage.setItem("storedTheme", "dark");
-                    } else {
-                      document.documentElement.classList.remove("dark-mode");
-                      setCurrentTheme("light");
-                      localStorage.setItem("storedTheme", "light");
-                    }
-                  }}
-                >
-                  <i className="fa-solid fa-moon"></i>
-                  <span className="visually-hidden">Toggle dark mode</span>
-                </button>
-                {/* Dark mode toggle end */}
-
-                {/* Connect wallet button start */}
-                <Wallet />
-                {/* Connect wallet button end */}
-
-              </nav>
-            </div>
-            <hr className="w-100 mt-20"/>
-            {/* Navbar end */}
-
-            {/* Main content start */}
-            {/* Content start (React router outlet component) */}
-            <Outlet />
-            {/* Content end (React router outlet component) */}
-            {/* Main content end */}
+          {/* Navbar start */}
+          <div className="border-bottom border-secondary border-opacity-25 py-2 py-md-3">
+              <div className="container px-3 px-sm-4 d-flex align-items-center h-100">
+                  <button className="btn btn-link px-0 d-xl-none me-3" type="button" data-bs-toggle="offcanvas"
+                      data-bs-target="#sidebar" aria-label="Toggle sidebar" style={{ width: '37px' }}>
+                      <i className="fa-solid fa-bars"></i>
+                  </button>
+                  <img src="/images/logo.svg" alt="SocialPass Logo"
+                      className="d-block d-xl-none me-3 w-50" />
+                  <h5 className="mb-0 me-3 d-none d-md-block text-truncate">
+                      Page Title
+                  </h5>
+                  <div className="ms-auto">
+                      <Wallet/>
+                  </div>
+              </div>
+              <div className="container px-3 px-sm-4 mt-3 d-md-none">
+                  <h6>
+                      Page Title for Small Screens
+                  </h6>
+              </div>
           </div>
-          {/* Content wrapper end */}
-        </div>
+          {/* Navbar end */}
+
+          {/* Content start */}
+          <div className="container px-3 px-sm-4 d-flex flex-column content-container">
+              <Outlet/>
+          </div>
+          {/* Content end */}
+
     </ConnectKitProvider>
   );
 };

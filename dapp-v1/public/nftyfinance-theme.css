@@ -236,14 +236,14 @@
  */
 
 @font-face {
-	font-family: "Averta";
-	src: url("AvertaRegular.otf");
+	font-family: "Urbane";
+	src: url("Urbane-Medium.otf");
 	font-weight: normal;
 }
 
 @font-face {
-	font-family: "Averta";
-	src: url("AvertaBold.otf");
+	font-family: "Urbane";
+	src: url("UrbaneBold.otf");
 	font-weight: bold;
 }
 
@@ -251,7 +251,7 @@
 [data-bs-theme=light] {
 	/* Font family */
 
-	--bs-font-sans-serif: "Averta", sans-serif;
+	--bs-font-sans-serif: "Urbane", sans-serif;
 
 	/* Font size */
 

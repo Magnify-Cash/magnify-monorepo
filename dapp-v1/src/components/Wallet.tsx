@@ -15,10 +15,11 @@ export function Wallet() {
         return (
           <button
             onClick={show}
-            className="btn btn-primary ms-10 ws-100"
+            className="btn btn-primary"
           >
-            <i className="fa-solid fa-plus me-5"></i>
+            <i className="fa-solid fa-wallet me-5"></i>
             {isConnected && <span>{truncatedAddress}</span>}
+            {!isConnected && <span>Connect</span>}
           </button>
         );
       }}

@@ -40,13 +40,13 @@
     </script>
 
     <!-- Halfmoon CSS -->
-    <link href="/css/halfmoon.min.css" rel="stylesheet" />
+    <link href="/halfmoon.css" rel="stylesheet" />
 
     <!-- SocialPass CSS theme -->
-    <link href="/css/nftyfi-theme.css" rel="stylesheet" />
+    <link href="/nftyfinance-theme.css" rel="stylesheet" />
 
     <!-- Halfmoon JS -->
-    <script type="text/javascript" src="/js/halfmoon.js"></script>
+    <script type="text/javascript" src="/bootstrap.bundle.js"></script>
 
     <!-- Font Awesome 6 -->
     <script
@@ -56,6 +56,59 @@
 
     <!-- Polyfill -->
     <script type="module" src="./polyfills.ts"></script>
+
+    <!-- Custom styles -->
+    <style type="text/css">
+      #sidebar {
+        width: 320px;
+        max-width: 100%;
+        border-right: 0;
+      }
+
+      @media (min-width: 1200px) {
+        body {
+          padding-left: 320px;
+        }
+
+        #sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          background-color: var(--bs-content-bg) !important;
+          overflow-y: auto;
+        }
+      }
+
+      .content-container {
+        min-height: calc(100vh - 112px);
+      }
+
+      @media (min-width: 768px) {
+        .content-container {
+          min-height: calc(100vh - 85px);
+        }
+      }
+
+      .cover-img-input {
+        width: 116px;
+        padding: var(--bs-spacer-1);
+        margin: var(--bs-spacer-1);
+        border-radius: var(--bs-border-radius);
+        overflow: hidden;
+      }
+
+      .cover-img-input .form-label,
+      .cover-img-input .form-text,
+      .cover-img-input .input-group {
+        display: none;
+      }
+
+      .cover-img-input * {
+        border-color: transparent !important;
+      }
+    </style>
+
   </head>
   <body>
     <!-- App Root -->
@@ -63,6 +116,76 @@
 
     <!-- App Script -->
     <script type="module" src="/src/index.tsx"></script>
+
+    <!-- Halfmoon helpers -->
+    <script type="text/javascript">
+      /* Enable all tooltips */
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+      /* Setting cookie */
+      function setCookie(name, value, days) {
+          var expires = "";
+          if (days) {
+              var date = new Date();
+              date.setTime(date.getTime() + (days*24*60*60*1000));
+              expires = "; expires=" + date.toUTCString();
+          }
+          document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+      }
+
+      /* Toggle dark mode */
+      function toggleDarkMode() {
+        var preference = document.documentElement.getAttribute("data-bs-theme");
+        if (!preference) {
+          document.documentElement.setAttribute("data-bs-theme", "dark");
+        }
+        else {
+          if (preference === "light") {
+            document.documentElement.setAttribute("data-bs-theme", "dark");
+          } else {
+            document.documentElement.setAttribute("data-bs-theme", "light");
+          }
+        }
+
+        setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
+      }
+    </script>
+
+    <script type="text/javascript">
+      /**
+       * Handle the keydown event (only on debug mode).
+       *
+       * This is used to create the dark mode and sidebar toggle shortcuts.
+       * These shortcuts are very useful for testing.
+       */
+      document.addEventListener("keydown", function (event) {
+        if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
+          event = event || window.event;
+
+          if (!(event.ctrlKey || event.metaKey)) {
+            // Toggle dark mode when [shift] + [D] keys are pressed
+            if (event.shiftKey && event.which == 68) {
+              if (
+                document.documentElement.getAttribute(
+                  "data-bs-theme"
+                ) === "light"
+              ) {
+                document.documentElement.setAttribute(
+                  "data-bs-theme",
+                  "dark"
+                );
+              } else {
+                document.documentElement.setAttribute(
+                  "data-bs-theme",
+                  "light"
+                );
+              }
+            }
+          }
+        }
+      });
+    </script>
 
     <!-- Script useful for debugging/testing -->
     <script type="text/javascript">
@@ -95,6 +218,11 @@
           }
         }
       });
+    </script>
+
+    <!-- Halfmoon window -->
+    <script>
+      window.toggleDarkMode = toggleDarkMode;
     </script>
   </body>
 </html>
