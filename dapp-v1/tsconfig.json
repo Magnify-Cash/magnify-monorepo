@@ -15,8 +15,10 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "paths": {
+      "@/*": ["dapp-v1/src/*"]
+    }
   },
   "include": ["src"],
-  "@/*": ["./dapp-v1/src/*"]
 }

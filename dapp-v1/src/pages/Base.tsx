@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
-import { ConnectKitProvider } from "connectkit";
-import { Wallet } from "@/components";
+import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
 
-function findTitleProps(obj) {
-  const titles = [];
-
+function findTitleProps(obj:any):string {
   if (obj.props && obj.props.title) {
     return obj.props.title
   }
@@ -21,7 +18,7 @@ function findTitleProps(obj) {
     }
   }
 
-  return titles;
+  return '';
 }
 
 
@@ -190,8 +187,30 @@ export const Base = () => {
                   <h4 className="mb-0 me-3 d-none d-md-block text-truncate">
                       {title}
                   </h4>
+                  {/* Wallet */}
                   <div className="ms-auto">
-                      <Wallet/>
+                      <ConnectKitButton.Custom>
+                        {({
+                          isConnected,
+                          isConnecting,
+                          truncatedAddress,
+                          show,
+                          hide,
+                          address,
+                          ensName,
+                        }) => {
+                          return (
+                            <button
+                              onClick={show}
+                              className="btn btn-sm btn-primary"
+                            >
+                              {isConnected && <span>{truncatedAddress}</span>}
+                              {!isConnected && <span>Connect</span>}
+                              <i className="fa-solid fa-wallet mx-2"></i>
+                            </button>
+                          );
+                        }}
+                      </ConnectKitButton.Custom>
                   </div>
               </div>
               <div className="container px-3 px-sm-4 mt-3 d-md-none">
