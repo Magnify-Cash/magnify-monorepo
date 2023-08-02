@@ -79,7 +79,7 @@ export const Base = () => {
                     Quick Loan
                   </NavLink>
                   <NavLink
-                    to="/borrow/explore-collections"
+                    to="explore"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -111,7 +111,7 @@ export const Base = () => {
                    Create Lending Desk
                  </NavLink>
                  <NavLink
-                   to="/borrow/explore-collections"
+                   to="manage_desks"
                    className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                  >
                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -125,7 +125,7 @@ export const Base = () => {
                     <small>Support</small>
                   </div>
                   <NavLink
-                    to="get"
+                    to="help"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -134,7 +134,7 @@ export const Base = () => {
                     Help
                   </NavLink>
                   <NavLink
-                    to="get"
+                    to="docs"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -143,7 +143,7 @@ export const Base = () => {
                     Docs
                   </NavLink>
                   <NavLink
-                    to="get"
+                    to="community"
                     className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -157,7 +157,7 @@ export const Base = () => {
                     <small>$NFTY Token</small>
                   </div>
                     <NavLink
-                      to="get"
+                      to="token"
                       className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                     >
                       <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">

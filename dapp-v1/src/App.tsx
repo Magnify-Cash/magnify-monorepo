@@ -1,14 +1,22 @@
 import * as Pages from "@/pages";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export function App() {
   return (
    <BrowserRouter>
      <Routes>
        <Route path="/" element={<Pages.Base />}>
-         {/* General */}
+         {/* Home */}
          <Route index element={<Pages.Demo title="Demo" />} />
-         {/* End General */}
+
+         {/* Borrow */}
+
+         {/* Lend */}
+
+         {/* Support */}
+
+         {/* Catch All */}
+         <Route path="*" element={<Navigate to="/" />} />
        </Route>
      </Routes>
    </BrowserRouter>
