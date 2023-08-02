@@ -201,7 +201,6 @@
 	--nf-purple-border-subtle: var(--nf-purple-600);
 
 	/* SocialPass orange */
-
 	--nf-orange-text-emphasis-hsl: var(--nf-orange-400-hsl);
 	--nf-orange-text-emphasis: hsl(var(--nf-orange-text-emphasis-hsl));
 	--nf-orange-bg-subtle: hsl(var(--nf-orange-hue), calc(var(--nf-orange-saturation)/3), 15%);
@@ -280,6 +279,11 @@
 
 	--bs-form-focus-border-color: var(--bs-primary-border-subtle);
 	--bs-form-check-focus-border-color: var(--bs-primary-border-subtle);
+
+	/* Overrides */
+	--bs-body-bg: rgba(129, 71, 229, 0.05);
+	--bs-btn-active-bg: rgba(129, 71, 229, 0.10);
+	--bs-btn-active-color: rgba(129, 71, 229, 1);
 }
 
 [data-bs-theme=dark] {
@@ -291,6 +295,9 @@
 
 	--bs-ctx-btn-border-color: transparent;
 	--bs-ctx-btn-bg-clip: border-box;
+
+	/* Overrides */
+	--bs-body-bg: rgba(29,33,37,1)
 }
 
 /**
