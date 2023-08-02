@@ -187,7 +187,7 @@ contract NFTYFinanceV1 is
      * @param loanId The unique identifier of the loan
      */
     event DefaultedLoanLiquidated(uint256 loanId);
-    
+
     /**
      * @notice Event that will be when the contract is deployed
      *
@@ -303,7 +303,8 @@ contract NFTYFinanceV1 is
             "not lending desk owner"
         );
 
-        // Loop over _loanConfigs
+        // Note: Two loops over _loanConfigs to avoid re-entry
+        // 1. Perform checks and update storage
         for (uint256 i = 0; i < _loanConfigs.length; i++) {
             require(_loanConfigs[i].minAmount > 0, "min amount = 0");
             require(
@@ -325,8 +326,16 @@ contract NFTYFinanceV1 is
             lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
+        }
 
-            // Verify NFT collection is valid NFT, interaction so the last operation
+        // Emit event
+        emit LendingDeskLoanConfigsSet({
+            lendingDeskId: _lendingDeskId,
+            loanConfigs: _loanConfigs
+        });
+
+        // 2. Verify NFT collection is valid NFT
+        for (uint256 i = 0; i < _loanConfigs.length; i++) {
             // 1155
             if (_loanConfigs[i].nftCollectionIsErc1155) {
                 require(
@@ -348,13 +357,6 @@ contract NFTYFinanceV1 is
                 );
             }
         }
-
-        // Emit event
-        emit LendingDeskLoanConfigsSet({
-            lendingDeskId: _lendingDeskId,
-            loanConfigs: _loanConfigs
-        });
-
     }
 
     /**
@@ -684,7 +686,7 @@ contract NFTYFinanceV1 is
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
             (loan.amount * loan.interest) /
-            (8760 * 10000 / hoursElapsed); // Yearly scale, 8760 hours in a year
+            ((8760 * 10000) / hoursElapsed); // Yearly scale, 8760 hours in a year
 
         // Update amountPaidBack and check overflow, emit event
         loan.amountPaidBack += _amount;
