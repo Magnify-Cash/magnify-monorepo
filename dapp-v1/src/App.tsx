@@ -7,7 +7,7 @@ export function App() {
      <Routes>
        <Route path="/" element={<Pages.Base />}>
         {/* Home */}
-        <Route index element={<Pages.Demo title="Home" />} />
+        <Route index element={<Pages.Home title="Home" />} />
 
         {/* Borrow */}
         <Route path="borrower-dashboard" element={<Pages.Demo title="Borrower Dashboard" />} />
