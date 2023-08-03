@@ -202,7 +202,7 @@ export const Base = () => {
                           return (
                             <button
                               onClick={show}
-                              className="btn btn-sm btn-primary"
+                              className="btn btn-md btn-primary"
                             >
                               {isConnected && <span>{truncatedAddress}</span>}
                               {!isConnected && <span>Connect</span>}
