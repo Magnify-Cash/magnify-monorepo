@@ -236,13 +236,13 @@
 
 @font-face {
 	font-family: "Urbane";
-	src: url("/theme/fonts/Urbane-Medium");
+	src: url("/theme/fonts/Urbane-Medium.ttf");
 	font-weight: normal;
 }
 
 @font-face {
 	font-family: "Urbane";
-	src: url("/theme/fonts/Urbane-Bold");
+	src: url("/theme/fonts/Urbane-Bold.ttf");
 	font-weight: bold;
 }
 

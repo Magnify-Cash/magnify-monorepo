@@ -229,14 +229,23 @@ export const Base = () => {
                           ensName,
                         }) => {
                           return (
+                            <>
                             <button
                               onClick={show}
-                              className="btn btn-md btn-primary"
+                              className="btn btn-md btn-primary d-none d-md-block"
                             >
-                              {isConnected && <span>{truncatedAddress}</span>}
-                              {!isConnected && <span>Connect</span>}
+                              {isConnected && <small>{truncatedAddress}</small>}
+                              {!isConnected && <small>Connect</small>}
                               <i className="fa-solid fa-wallet mx-2"></i>
                             </button>
+                            <button
+                              onClick={show}
+                              className="btn btn-sm btn-primary d-md-none"
+                            >
+                              {!isConnected && <small>Connect</small>}
+                              <i className="fa-solid fa-wallet mx-2"></i>
+                            </button>
+                            </>
                           );
                         }}
                       </ConnectKitButton.Custom>
