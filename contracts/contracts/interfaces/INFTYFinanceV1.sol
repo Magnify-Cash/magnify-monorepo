@@ -195,6 +195,15 @@ interface INFTYFinanceV1 {
     ) external;
 
     /**
+     * @notice This function can be called by anyone to get the remaining due amount of a loan
+     *
+     * @param _loanId ID of the loan
+     */
+    function remainingDueAmountOfLoan(
+        uint256 _loanId
+    ) external view returns (uint256 amount);
+
+    /**
      * @notice This function can be called by the obligation note holder to pay a loan and get the collateral back
      *
      * @param _loanId ID of the loan

@@ -657,6 +657,35 @@ contract NFTYFinanceV1 is
     }
 
     /**
+     * @notice This function can be called by anyone to get the remaining due amount of a loan
+     *
+     * @param _loanId ID of the loan
+     */
+    function remainingDueAmountOfLoan(
+        uint256 _loanId
+    ) public view returns (uint256 amount) {
+        // Get loan + related lending desk and check status
+        Loan storage loan = loans[_loanId];
+        require(loan.nftCollection != address(0), "invalid loan id");
+        require(loan.status == LoanStatus.Active, "loan not active");
+
+        // Separate variable to get integer// floor value of hours elapsed
+        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
+        require(hoursElapsed < loan.duration, "loan has defaulted");
+        require(hoursElapsed > 0, "loan must be active for minimum of 1 hour");
+
+        // Calculate total amount due
+        uint256 totalAmountDue = loan.amount +
+            (loan.amount * loan.interest) /
+            ((8760 * 10000) / hoursElapsed); // Yearly scale, 8760 hours in a year
+
+        // Check for underflow
+        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
+
+        return totalAmountDue - loan.amountPaidBack;
+    }
+
+    /**
      * @notice This function can be called by the obligation note holder to pay a loan and get the collateral back
      *
      * @param _loanId ID of the loan
@@ -678,29 +707,19 @@ contract NFTYFinanceV1 is
         address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
         require(borrower == msg.sender, "not borrower");
 
-        // Separate variable to get integer// floor value of hours elapsed
-        uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
-        require(hoursElapsed < loan.duration, "loan has defaulted");
-        require(hoursElapsed > 0, "loan must be active for minimum of 1 hour");
-
-        // Calculate total amount due
-        uint256 totalAmountDue = loan.amount +
-            (loan.amount * loan.interest) /
-            ((8760 * 10000) / hoursElapsed); // Yearly scale, 8760 hours in a year
-
-        // Update amountPaidBack and check overflow, emit event
+        // Update amountPaidBack, emit event
         loan.amountPaidBack += _amount;
-        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
+        uint256 remainingAmountDue = remainingDueAmountOfLoan(_loanId);
+
         emit LoanPaymentMade(
             _loanId,
             _amount,
-            loan.amountPaidBack >= totalAmountDue // loan is fully paid back
+            remainingAmountDue == 0 // loan is fully paid back
         );
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
-        // TODO: Check if this can be changed to equal
-        if (loan.amountPaidBack >= totalAmountDue) {
+        if (remainingAmountDue == 0) {
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 

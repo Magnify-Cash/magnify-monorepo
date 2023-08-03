@@ -13,7 +13,9 @@ describe("NFTY Finance: Make loan payment", () => {
 
     // Mint to borrower and approve for spending
     await erc20.connect(borrower).mint(loanAmount);
-    await erc20.connect(borrower).approve(nftyFinance.address, ethers.constants.MaxUint256);
+    await erc20
+      .connect(borrower)
+      .approve(nftyFinance.address, ethers.constants.MaxUint256);
 
     // pass time for loan duration
     await time.increase(loanConfig.minDuration.mul(3600));
@@ -66,15 +68,18 @@ describe("NFTY Finance: Make loan payment", () => {
   });
 
   it("should fail if payment amount > debt", async () => {
-    const { nftyFinance, loanId, borrower, loanAmount, loanConfig } = await loadFixture(
-      setup
-    );
+    const { nftyFinance, loanId, borrower, loanAmount, loanConfig } =
+      await loadFixture(setup);
 
     await expect(
-      nftyFinance.connect(borrower).makeLoanPayment(
-        loanId,
-        loanAmount.add(loanAmount.mul(loanConfig.maxInterest.mul(loanConfig.maxDuration)))
-      )
+      nftyFinance
+        .connect(borrower)
+        .makeLoanPayment(
+          loanId,
+          loanAmount.add(
+            loanAmount.mul(loanConfig.maxInterest.mul(loanConfig.maxDuration))
+          )
+        )
     ).to.be.revertedWith("payment amount > debt");
   });
 
@@ -100,32 +105,20 @@ describe("NFTY Finance: Make loan payment", () => {
   it("should make full loan payment", async () => {
     const {
       nftyFinance,
-      loan,
       loanId,
       borrower,
       lender,
-      loanAmount,
-      loanConfig,
       promissoryNotes,
       obligationNotes,
     } = await loadFixture(setup);
 
-    // TODO: This should probably be its own read-only function on contract,
-    // to calculate amount due
-    const _loanAmount = ethers.BigNumber.from(loanAmount); // Convert loanAmount to ethers.BigNumber
-    const _loanInterest = ethers.BigNumber.from(loan.interest); // Convert loanInterest to ethers.BigNumber
-    const _hoursElapsed = ethers.BigNumber.from(loanConfig.minDuration); // Convert hoursElapsed to ethers.BigNumber
-    const hoursInYear = ethers.BigNumber.from(8760);
-    const multiplier = ethers.BigNumber.from(10000);
-    const totalAmountDue = _loanAmount.add(
-      _loanAmount.mul(_loanInterest).div(
-        hoursInYear.mul(multiplier).div(_hoursElapsed)
-      )
+    // Pay back loan in full
+    const remainingDueAmount = await nftyFinance.remainingDueAmountOfLoan(
+      loanId
     );
-
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, totalAmountDue);
+      .makeLoanPayment(loanId, remainingDueAmount);
 
     // Check emitted event and storage
     expect(tx)
