@@ -243,7 +243,6 @@ export const Base = () => {
                               onClick={show}
                               className="btn btn-sm btn-primary d-md-none"
                             >
-                              {!isConnected && <small>Connect</small>}
                               <i className="fa-solid fa-wallet mx-2"></i>
                             </button>
                             </>
