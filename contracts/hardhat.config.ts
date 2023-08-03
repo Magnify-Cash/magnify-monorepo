@@ -1,6 +1,8 @@
 import "@nomicfoundation/hardhat-toolbox";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
+import 'dotenv/config'
+
 
 // Import tasks
 import "./tasks/deploy-nft-collection";
@@ -15,16 +17,19 @@ dotEnvConfig({ path: "../.env" });
 
 const config: HardhatUserConfig = {
   gasReporter: {
-    enabled: true,
-    currency: 'USD',
-    gasPrice: 21
+    enabled: process.env.REPORT_GAS,
+    currency: "USD",
+    coinmarketcap: process.env.CMC_KEY,
+    showTimeSpent: true,
+    excludeContracts: ["contracts/test"]
+   // onlyCalledMethods: false
   },
   solidity: {
     version: "0.8.18",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 100,
+        runs: 1,
       },
     },
   },
