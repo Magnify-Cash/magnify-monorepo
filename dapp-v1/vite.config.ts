@@ -16,7 +16,7 @@ export default defineConfig({
     },
   },
   plugins: [react()],
-  build: { //add this property
+  build: {
       sourcemap: true,
   }
 })
