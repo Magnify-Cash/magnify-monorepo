@@ -14,12 +14,17 @@ import "./tasks/set-oracle-price";
 dotEnvConfig({ path: "../.env" });
 
 const config: HardhatUserConfig = {
+  gasReporter: {
+    enabled: true,
+    currency: 'USD',
+    gasPrice: 21
+  },
   solidity: {
     version: "0.8.18",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 10,
+        runs: 100,
       },
     },
   },
