@@ -6,7 +6,7 @@ import { BigNumber } from "ethers";
 import { LoanConfig } from "../utils/consts";
 
 // Util function to calculate total due amount of loan locally
-const totalDueAmountOfLoan = (
+const getTotalAmountDue = (
   loanAmount: BigNumber,
   loan,
   loanConfig: LoanConfig
@@ -49,7 +49,7 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     expect(loanId).to.not.equal(invalidLoanId); // check if actually invalid
 
     await expect(
-      nftyFinance.remainingDueAmountOfLoan(invalidLoanId)
+      nftyFinance.getLoanAmountDue(invalidLoanId)
     ).to.be.revertedWith("invalid loan id");
   });
 
@@ -59,25 +59,21 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     // advance time and default the loan
     await time.increase(loanDuration * 3600);
 
-    await expect(
-      nftyFinance.remainingDueAmountOfLoan(loanId)
-    ).to.be.revertedWith("loan has defaulted");
+    await expect(nftyFinance.getLoanAmountDue(loanId)).to.be.revertedWith(
+      "loan has defaulted"
+    );
   });
 
   it("should fail when loan is resolved", async () => {
     const { nftyFinance, loanId, borrower } = await loadFixture(setup);
 
     // Pay back the loan fully
-    const remainingAmountDue = await nftyFinance.remainingDueAmountOfLoan(
-      loanId
-    );
-    await nftyFinance
-      .connect(borrower)
-      .makeLoanPayment(loanId, remainingAmountDue);
+    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
+    await nftyFinance.connect(borrower).makeLoanPayment(loanId, amountDue);
 
-    await expect(
-      nftyFinance.remainingDueAmountOfLoan(loanId)
-    ).to.be.revertedWith("loan not active");
+    await expect(nftyFinance.getLoanAmountDue(loanId)).to.be.revertedWith(
+      "loan not active"
+    );
   });
 
   it("should return remaining due amount when no payment has been made", async () => {
@@ -85,11 +81,9 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
       await loadFixture(setup);
 
     // Check remaining due amount
-    const remainingAmountDue = await nftyFinance.remainingDueAmountOfLoan(
-      loanId
-    );
-    const totalDueAmount = totalDueAmountOfLoan(loanAmount, loan, loanConfig);
-    expect(remainingAmountDue).to.equal(totalDueAmount);
+    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
+    const totalAmountDue = getTotalAmountDue(loanAmount, loan, loanConfig);
+    expect(amountDue).to.equal(totalAmountDue);
   });
 
   it("should return remaining due amount after partial payment has been made", async () => {
@@ -102,12 +96,8 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
       .makeLoanPayment(loanId, partialPaymentAmount);
 
     // Check remaining due amount
-    const remainingAmountDue = await nftyFinance.remainingDueAmountOfLoan(
-      loanId
-    );
-    const totalDueAmount = totalDueAmountOfLoan(loanAmount, loan, loanConfig);
-    expect(remainingAmountDue).to.equal(
-      totalDueAmount.sub(partialPaymentAmount)
-    );
+    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
+    const totalAmountDue = getTotalAmountDue(loanAmount, loan, loanConfig);
+    expect(amountDue).to.equal(totalAmountDue.sub(partialPaymentAmount));
   });
 });

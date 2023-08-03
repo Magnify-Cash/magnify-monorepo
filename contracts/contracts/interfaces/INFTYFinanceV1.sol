@@ -199,7 +199,7 @@ interface INFTYFinanceV1 {
      *
      * @param _loanId ID of the loan
      */
-    function remainingDueAmountOfLoan(
+    function getLoanAmountDue(
         uint256 _loanId
     ) external view returns (uint256 amount);
 

@@ -661,7 +661,7 @@ contract NFTYFinanceV1 is
      *
      * @param _loanId ID of the loan
      */
-    function remainingDueAmountOfLoan(
+    function getLoanAmountDue(
         uint256 _loanId
     ) public view returns (uint256 amount) {
         // Get loan + related lending desk and check status
@@ -709,17 +709,17 @@ contract NFTYFinanceV1 is
 
         // Update amountPaidBack, emit event
         loan.amountPaidBack += _amount;
-        uint256 remainingAmountDue = remainingDueAmountOfLoan(_loanId);
+        uint256 amountDue = getLoanAmountDue(_loanId);
 
         emit LoanPaymentMade(
             _loanId,
             _amount,
-            remainingAmountDue == 0 // loan is fully paid back
+            amountDue == 0 // loan is fully paid back
         );
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
-        if (remainingAmountDue == 0) {
+        if (amountDue == 0) {
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 

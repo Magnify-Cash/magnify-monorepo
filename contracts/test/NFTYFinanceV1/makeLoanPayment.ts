@@ -113,12 +113,10 @@ describe("NFTY Finance: Make loan payment", () => {
     } = await loadFixture(setup);
 
     // Pay back loan in full
-    const remainingDueAmount = await nftyFinance.remainingDueAmountOfLoan(
-      loanId
-    );
+    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, remainingDueAmount);
+      .makeLoanPayment(loanId, amountDue);
 
     // Check emitted event and storage
     expect(tx)
