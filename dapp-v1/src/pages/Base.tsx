@@ -3,6 +3,8 @@ import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
 
+interface Mode {}
+
 function findTitleProps(obj:any):string {
   if (obj.props && obj.props.title) {
     return obj.props.title
@@ -44,17 +46,16 @@ export const Base = () => {
   const inactiveClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal";
   const obj = useOutlet();
   const title = findTitleProps(obj);
-  const [mode, setMode] = useState("light");
+  const [ mode, setMode ] = useState<Mode | null>('light');
 
   function toggleDarkMode(){
-	  console.log('toggling')
+      window.toggleDarkMode();
 	  const cookie = getCookie("colorMode");
-	  if (cookie == "light-mode"){
+	  if (cookie == "light"){
 	  	setMode("light");
 	  } else {
 	  	setMode("dark");
 	  }
-	  window.toggleDarkMode();
   }
 
   return (
