@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
@@ -21,6 +21,22 @@ function findTitleProps(obj:any):string {
   return '';
 }
 
+function getCookie(cname:string) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+	let c = ca[i];
+	while (c.charAt(0) == ' ') {
+	  c = c.substring(1);
+	}
+	if (c.indexOf(name) == 0) {
+	  return c.substring(name.length, c.length);
+	}
+  }
+  return "";
+}
+
 
 export const Base = () => {
   // theme
@@ -28,13 +44,26 @@ export const Base = () => {
   const inactiveClass = "btn d-flex align-items-center w-100 mt-2 text-start focus-ring fw-normal";
   const obj = useOutlet();
   const title = findTitleProps(obj);
+  const [mode, setMode] = useState("light");
+
+  function toggleDarkMode(){
+	  console.log('toggling')
+	  const cookie = getCookie("colorMode");
+	  if (cookie == "light-mode"){
+	  	setMode("light");
+	  } else {
+	  	setMode("dark");
+	  }
+	  window.toggleDarkMode();
+  }
+
   return (
-    <ConnectKitProvider>
+    <ConnectKitProvider mode={mode}>
           {/* Sidebar start */}
           <div className="offcanvas-xl offcanvas-start" tabIndex={-1} id="sidebar">
               <div className="offcanvas-header d-flex align-items-center justify-content-start" style={{ height: '68px' }}>
                   <img src="/images/logo.svg" alt="SocialPass Logo" className="d-block me-auto w-75" />
-                  <button type="button" className="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" onClick={() => window.toggleDarkMode()}
+                  <button type="button" className="btn btn-link rounded-pill px-0" aria-label="Toggle dark mode" onClick={() => toggleDarkMode()}
                       style={{ width: '37px' }}>
                       <i className="fa-solid fa-moon"></i>
                   </button>
