@@ -16,7 +16,7 @@ export function App() {
 
         {/* Lend */}
         <Route path="lender-dashboard" element={<Pages.Demo title="Lender Dashboard" />} />
-        <Route path="create-desk" element={<Pages.Demo title="Create Desk" />} />
+        <Route path="create-desk" element={<Pages.CreateLendingDesk title="Create Lending Desk" />} />
         <Route path="manage-desk" element={<Pages.Demo title="Manage Desk" />} />
         <Route path="manage-desks" element={<Pages.Demo title="Manage Desks" />} />
 
