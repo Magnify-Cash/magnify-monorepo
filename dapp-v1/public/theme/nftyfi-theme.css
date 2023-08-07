@@ -1,0 +1,215 @@
+/**
+ * ----------------------------------------------------------------------------
+ * [ Color palette ]
+ * ----------------------------------------------------------------------------
+ */
+
+:root,
+[data-bs-theme=light] {
+	/* NFTY Finance purple */
+
+	--nfty-purple-hue: 261;
+	--nfty-purple-saturation: 75%;
+	--nfty-purple-100-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 90%;
+	--nfty-purple-200-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 80%;
+	--nfty-purple-300-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 70%;
+	--nfty-purple-400-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 60%;
+	--nfty-purple-500-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 50%;
+	--nfty-purple-600-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 40%;
+	--nfty-purple-700-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 30%;
+	--nfty-purple-800-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 20%;
+	--nfty-purple-900-hsl: var(--nfty-purple-hue), var(--nfty-purple-saturation), 10%;
+	--nfty-purple-100: hsl(var(--nfty-purple-100-hsl));
+	--nfty-purple-200: hsl(var(--nfty-purple-200-hsl));
+	--nfty-purple-300: hsl(var(--nfty-purple-300-hsl));
+	--nfty-purple-400: hsl(var(--nfty-purple-400-hsl));
+	--nfty-purple-500: hsl(var(--nfty-purple-500-hsl));
+	--nfty-purple-600: hsl(var(--nfty-purple-600-hsl));
+	--nfty-purple-700: hsl(var(--nfty-purple-700-hsl));
+	--nfty-purple-800: hsl(var(--nfty-purple-800-hsl));
+	--nfty-purple-900: hsl(var(--nfty-purple-900-hsl));
+	--nfty-purple-hsl: var(--nfty-purple-400-hsl);
+	--nfty-purple: hsl(var(--nfty-purple-hsl));
+	--nfty-purple-foreground-hsl: var(--bs-white-hsl);
+	--nfty-purple-foreground: hsl(var(--nfty-purple-foreground-hsl));
+	--nfty-purple-text-emphasis-hsl: var(--nfty-purple-500-hsl);
+	--nfty-purple-text-emphasis: hsl(var(--nfty-purple-text-emphasis-hsl));
+	--nfty-purple-hover-bg: var(--nfty-purple-500);
+	--nfty-purple-active-bg: var(--nfty-purple-600);
+	--nfty-purple-bg-subtle: hsl(var(--nfty-purple-hue), var(--nfty-purple-saturation), 95%);
+	--nfty-purple-border-subtle: var(--nfty-purple-400);
+	--nfty-purple-checkbox-svg: var(--bs-checkbox-svg-light);
+	--nfty-purple-dash-svg: var(--bs-dash-svg-light);
+	--nfty-purple-radio-svg: var(--bs-radio-svg-light);
+	--nfty-purple-switch-svg: var(--bs-switch-svg-light);
+
+	/* Primary */
+
+	--bs-primary-hue: var(--nfty-purple-hue);
+	--bs-primary-saturation: var(--nfty-purple-saturation);
+	--bs-primary-100-hsl: var(--nfty-purple-100-hsl);
+	--bs-primary-200-hsl: var(--nfty-purple-200-hsl);
+	--bs-primary-300-hsl: var(--nfty-purple-300-hsl);
+	--bs-primary-400-hsl: var(--nfty-purple-400-hsl);
+	--bs-primary-500-hsl: var(--nfty-purple-500-hsl);
+	--bs-primary-600-hsl: var(--nfty-purple-600-hsl);
+	--bs-primary-700-hsl: var(--nfty-purple-700-hsl);
+	--bs-primary-800-hsl: var(--nfty-purple-800-hsl);
+	--bs-primary-900-hsl: var(--nfty-purple-900-hsl);
+	--bs-primary-100: var(--nfty-purple-100);
+	--bs-primary-200: var(--nfty-purple-200);
+	--bs-primary-300: var(--nfty-purple-300);
+	--bs-primary-400: var(--nfty-purple-400);
+	--bs-primary-500: var(--nfty-purple-500);
+	--bs-primary-600: var(--nfty-purple-600);
+	--bs-primary-700: var(--nfty-purple-700);
+	--bs-primary-800: var(--nfty-purple-800);
+	--bs-primary-900: var(--nfty-purple-900);
+	--bs-primary-hsl: var(--nfty-purple-hsl);
+	--bs-primary: var(--nfty-purple);
+	--bs-primary-foreground-hsl: var(--nfty-purple-foreground-hsl);
+	--bs-primary-foreground: var(--nfty-purple-foreground);
+	--bs-primary-text-emphasis-hsl: var(--nfty-purple-text-emphasis-hsl);
+	--bs-primary-text-emphasis: var(--nfty-purple-text-emphasis);
+	--bs-primary-hover-bg: var(--nfty-purple-hover-bg);
+	--bs-primary-active-bg: var(--nfty-purple-active-bg);
+	--bs-primary-bg-subtle: var(--nfty-purple-bg-subtle);
+	--bs-primary-border-subtle: var(--nfty-purple-border-subtle);
+	--bs-primary-checkbox-svg: var(--nfty-purple-checkbox-svg);
+	--bs-primary-dash-svg: var(--nfty-purple-dash-svg);
+	--bs-primary-radio-svg: var(--nfty-purple-radio-svg);
+	--bs-primary-switch-svg: var(--nfty-purple-switch-svg);
+}
+
+[data-bs-theme=dark] {
+	/* /* NFTY Finance purple */
+
+	--nfty-purple-text-emphasis-hsl: var(--nfty-purple-400-hsl);
+	--nfty-purple-text-emphasis: hsl(var(--nfty-purple-text-emphasis-hsl));
+	--nfty-purple-bg-subtle: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/3), 15%);
+	--nfty-purple-border-subtle: var(--nfty-purple-600);
+
+	/* Primary */
+
+	--bs-primary-text-emphasis-hsl: var(--nfty-purple-text-emphasis-hsl);
+	--bs-primary-text-emphasis: var(--nfty-purple-text-emphasis);
+	--bs-primary-bg-subtle: var(--nfty-purple-bg-subtle);
+	--bs-primary-border-subtle: var(--nfty-purple-border-subtle);
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Variables ]
+ * ----------------------------------------------------------------------------
+ */
+
+@font-face {
+	font-family: "Urbane";
+	src: url("Urbane-Medium.ttf");
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: "Urbane";
+	src: url("Urbane-Bold.ttf");
+	font-weight: bold;
+}
+
+:root,
+[data-bs-theme=light] {
+	/* Font family */
+
+	--bs-font-sans-serif: "Urbane", sans-serif;
+
+	/* Action (used as needed in buttons, inputs, menu items, page links, etc.) */
+
+	--bs-action-padding-x: 0.625rem;
+	--bs-action-padding-y: 0.375rem;
+	--bs-action-sm-padding-x: 0.5rem;
+	--bs-action-sm-padding-y: 0.25rem;
+	--bs-action-lg-padding-x: 0.75rem;
+	--bs-action-lg-padding-y: 0.5rem;
+
+	/* Form */
+
+	--bs-form-focus-border-color: var(--bs-primary-border-subtle);
+	--bs-form-check-focus-border-color: var(--bs-primary-border-subtle);
+}
+
+[data-bs-theme=dark] {
+	/* Action (used as needed in buttons, inputs, menu items, page links, etc.) */
+
+	--bs-action-border-color: var(--bs-border-color);
+
+	/* Contextual buttons */
+
+	--bs-ctx-btn-border-color: transparent;
+	--bs-ctx-btn-bg-clip: border-box;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Body ]
+ * ----------------------------------------------------------------------------
+ */
+
+body {
+	background-color: #f9f6fe;
+}
+
+[data-bs-theme=dark] body {
+	background-color: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/5), 12.5%);
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Buttons ]
+ * ----------------------------------------------------------------------------
+ */
+
+.btn {
+	font-weight: bold;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.btn-link,
+.btn-link:hover,
+.btn-link:active,
+.btn-link:focus-visible {
+	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;
+	text-decoration: none;
+}
+
+.btn-secondary {
+	--bs-btn-color: var(--bs-primary);
+	--bs-btn-hover-color: var(--bs-primary);
+	--bs-btn-active-color: var(--bs-primary);
+	--bs-btn-border-color: var(--bs-primary);
+	--bs-btn-hover-border-color: var(--bs-primary);
+	--bs-btn-active-border-color: var(--bs-primary);
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Dropdowns ]
+ * ----------------------------------------------------------------------------
+ */
+
+.dropdown-menu {
+	border: 0;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Sidebar ]
+ * ----------------------------------------------------------------------------
+ */
+
+.sidebar {
+	--bs-sidebar-bg: #fbfbff;
+}
+
+[data-bs-theme=dark] .sidebar {
+	--bs-sidebar-bg: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/3), 12.5%);
+}

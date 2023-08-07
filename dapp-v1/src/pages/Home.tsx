@@ -1,92 +1,161 @@
 export const Home = (props:any) => {
 	return (
-		<div className="mt-4 mb-3">
-			<div className="row g-3">
-				<div className="col-lg-4 d-lg-flex flex-lg-column align-self-lg-stretch">
-					<div className="card shadow border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
-						<div className="card-body d-flex flex-column align-items-center justify-content-center">
-							<i className="fas fa-hand-holding-dollar text-primary-emphasis display-1"></i>
-							<h6 className="m-3">Borrow</h6>
-							<small className="text-center mb-3">Earn instant liquidity using your NFT as collateral</small>
-							<a href="#">Borrow now</a>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-4 d-lg-flex flex-lg-column align-self-lg-stretch">
-					<div className="card shadow border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
-						<div className="card-body d-flex flex-column align-items-center justify-content-center">
-							<i className="fas fa-piggy-bank text-primary-emphasis display-1"></i>
-							<h6 className="m-3">Lend</h6>
-							<small className="text-center mb-3">Customize lending desks & issue loans</small>
-							<a href="#">Lend now</a>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-4 d-lg-flex flex-lg-column align-self-lg-stretch">
-					<div className="card shadow border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
-						<div className="card-body d-flex flex-column align-items-center justify-content-center">
-							<i className="fas fa-tent text-primary-emphasis display-1"></i>
-							<h6 className="m-3">Stake</h6>
-							<small className="text-center mb-3">Stake $NFTY for protocol insurance and governance</small>
-							<a href="#">Stake $NFTY</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div className="row my-5">
-				<div className="col-12 d-lg-flex flex-lg-column align-self-lg-stretch">
-					<div className="card shadow border-0 rounded-4 shadow-sm overflow-hidden flex-grow-1">
-						<div className="card-body row d-lg-flex justify-content-around g-3">
-							<div className="col-lg-3 d-lg-flex align-items-center">
-								<i className="fas fa-hexagon-vertical-nft text-primary-emphasis display-5"></i>
-								<div className="flex-lg-column align-items-center">
-									<p className="m-0 h3">XX</p>
-									<p className="m-0">number of Collections</p>
-								</div>
+		<div className="container-md px-3 px-sm-4 px-xl-5">
+			<div className="row g-4 g-xl-5 justify-content-center">
+				<div className="col-sm-6 col-xl-4">
+					<div className="card border-0 shadow rounded-4 h-100">
+						<div className="card-body">
+							<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
+								<i className="fa-solid fa-hand-holding-dollar h1 m-0"></i>
 							</div>
-							<div className="col-lg-3 d-lg-flex align-items-center">
-								<i className="fas fa-vault text-primary-emphasis display-5"></i>
-								<div className="flex-lg-column align-items-center">
-									<p className="m-0 h3">XX</p>
-									<p className="m-0">total value locked (TVL)</p>
-								</div>
+							<div className="text-center mt-3">
+								<h5>Borrow</h5>
+								<p className="text-body-secondary">
+									Earn instant liquidity using your NFT as collateral
+								</p>
+								<a href="#">Borrow Now &rarr;</a>
 							</div>
-							<div className="col-lg-3 d-lg-flex align-items-center">
-								<i className="fas fa-sack-dollar text-primary-emphasis display-5"></i>
-								<div className="flex-lg-column align-items-center">
-									<p className="m-0 h3">XX</p>
-									<p className="m-0">total loans</p>
-								</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-sm-6 col-xl-4">
+					<div className="card border-0 shadow rounded-4 h-100">
+						<div className="card-body">
+							<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
+								<i className="fa-solid fa-piggy-bank h1 m-0"></i>
+							</div>
+							<div className="text-center mt-3">
+								<h5>Lend</h5>
+								<p className="text-body-secondary">
+									Customize lending desks & issue loans
+								</p>
+								<a href="#">Start Lending &rarr;</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-sm-6 col-xl-4">
+					<div className="card border-0 shadow rounded-4 h-100">
+						<div className="card-body">
+							<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
+								<i className="fa-solid fa-lock h1 m-0"></i>
+							</div>
+							<div className="text-center mt-3">
+								<h5>Stake</h5>
+								<p className="text-body-secondary">
+									Stake $NFTY and earn
+								</p>
+								<a href="#">Stake $NFTY &rarr;</a>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div className="table-responsive">
-				<table className="table" id="stats-table">
-					<thead className="bg-primary-subtle text-primary-emphasis">
-						<tr>
-							<th>Collection</th>
-							<th>Currencies</th>
-							<th>Desks</th>
-							<th>Utilization</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Test</td>
-							<td>Test</td>
-							<td>Test</td>
-							<td>Test</td>
-							<td>
-								<button className="btn btn-primary rounded-pill px-4 py-2">
-								Find a loan
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+			<div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
+				<div className="card-body py-4">
+					<div className="row g-4 g-xl-5 justify-content-center">
+						<div className="col-sm-6 col-xl-4">
+							<div className="d-flex align-items-center">
+								<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+									<i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
+								</div>
+								<div className="ps-3">
+									<h3 className="m-0">30</h3>
+									<p className="m-0 text-primary-emphasis">number of collections</p>
+								</div>
+							</div>
+						</div>
+						<div className="col-sm-6 col-xl-4">
+							<div className="d-flex align-items-center">
+								<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+									<i className="fa-solid fa-square-dollar h2 m-0"></i>
+								</div>
+								<div className="ps-3">
+									<h3 className="m-0">20K <small className="fw-normal">USD</small></h3>
+									<p className="m-0 text-primary-emphasis">total value locked (TVL)</p>
+								</div>
+							</div>
+						</div>
+						<div className="col-sm-6 col-xl-4">
+							<div className="d-flex align-items-center">
+								<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+									<i className="fa-solid fa-sack-dollar h2 m-0"></i>
+								</div>
+								<div className="ps-3">
+									<h3 className="m-0">20K <small className="fw-normal">USD</small></h3>
+									<p className="m-0 text-primary-emphasis">total available liquidity (TAL)</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
+				<div className="table-responsive">
+					<table className="table m-0 text-nowrap">
+						<thead>
+							<tr>
+								<th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">Collection</th>
+								<th className="py-3 bg-primary-subtle text-primary-emphasis">Currency</th>
+								<th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
+								<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">TAL (USD)</th>
+								<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3" colSpan={2}>Utilization</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr className="align-middle">
+								<td className="py-3 ps-3">Pudgy Penguins</td>
+								<td className="py-3 align-center">USD, Tether, etc.</td>
+								<td className="py-3">3</td>
+								<td className="py-3">$60,000</td>
+								<td className="py-3">67%</td>
+								<td className="py-3 pe-3">
+									<button className="btn btn-primary rounded-pill">Find a Loan</button>
+								</td>
+							</tr>
+							<tr className="align-middle">
+								<td className="py-3 ps-3">Pudgy Penguins</td>
+								<td className="py-3 align-center">USD, Tether, etc.</td>
+								<td className="py-3">3</td>
+								<td className="py-3">$60,000</td>
+								<td className="py-3">67%</td>
+								<td className="py-3 pe-3">
+									<button className="btn btn-primary rounded-pill">Find a Loan</button>
+								</td>
+							</tr>
+							<tr className="align-middle">
+								<td className="py-3 ps-3">Pudgy Penguins</td>
+								<td className="py-3 align-center">USD, Tether, etc.</td>
+								<td className="py-3">3</td>
+								<td className="py-3">$60,000</td>
+								<td className="py-3">67%</td>
+								<td className="py-3 pe-3">
+									<button className="btn btn-primary rounded-pill">Find a Loan</button>
+								</td>
+							</tr>
+							<tr className="align-middle">
+								<td className="py-3 ps-3">Pudgy Penguins</td>
+								<td className="py-3 align-center">USD, Tether, etc.</td>
+								<td className="py-3">3</td>
+								<td className="py-3">$60,000</td>
+								<td className="py-3">67%</td>
+								<td className="py-3 pe-3">
+									<button className="btn btn-primary rounded-pill">Find a Loan</button>
+								</td>
+							</tr>
+							<tr className="align-middle">
+								<td className="py-3 ps-3">Pudgy Penguins</td>
+								<td className="py-3 align-center">USD, Tether, etc.</td>
+								<td className="py-3">3</td>
+								<td className="py-3">$60,000</td>
+								<td className="py-3">67%</td>
+								<td className="py-3 pe-3">
+									<button className="btn btn-primary rounded-pill">Find a Loan</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	)
