@@ -39,7 +39,6 @@
     <!-- THEME -->
     <link href="/theme/halfmoon.css" rel="stylesheet" />
     <link href="/theme/nftyfi-theme.css" rel="stylesheet" />
-    <script type="text/javascript" src="/theme/bootstrap.bundle.js"></script>
     <script
       src="https://kit.fontawesome.com/e222fd7f73.js"
       crossorigin="anonymous">
@@ -49,14 +48,17 @@
     <script type="module" src="./polyfills.ts"></script>
 
   </head>
-  <body>
+  <body class="ps-lg-sbwidth">
     <!-- App Root -->
     <div id="root"></div>
 
     <!-- App Script -->
     <script type="module" src="/src/index.tsx"></script>
 
-    <!-- Halfmoon helpers -->
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="/theme/bootstrap.bundle.js"></script>
+
+    <!-- Dark Mode -->
     <script type="text/javascript">
       /* Enable all tooltips */
       const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -89,74 +91,6 @@
 
         setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
       }
-    </script>
-
-    <script type="text/javascript">
-      /**
-       * Handle the keydown event (only on debug mode).
-       *
-       * This is used to create the dark mode and sidebar toggle shortcuts.
-       * These shortcuts are very useful for testing.
-       */
-      document.addEventListener("keydown", function (event) {
-        if (!(document.querySelector("input:focus") || document.querySelector("textarea:focus") || document.querySelector("select:focus"))) {
-          event = event || window.event;
-
-          if (!(event.ctrlKey || event.metaKey)) {
-            // Toggle dark mode when [shift] + [D] keys are pressed
-            if (event.shiftKey && event.which == 68) {
-              if (
-                document.documentElement.getAttribute(
-                  "data-bs-theme"
-                ) === "light"
-              ) {
-                document.documentElement.setAttribute(
-                  "data-bs-theme",
-                  "dark"
-                );
-              } else {
-                document.documentElement.setAttribute(
-                  "data-bs-theme",
-                  "light"
-                );
-              }
-            }
-          }
-        }
-      });
-    </script>
-
-    <!-- Script useful for debugging/testing -->
-    <script type="text/javascript">
-      /**
-       * Handle the keydown event (only on debug mode).
-       *
-       * This is used to create the dark mode and sidebar toggle shortcuts.
-       * These shortcuts are very useful for testing.
-       */
-      document.addEventListener("keydown", function (event) {
-        if (
-          !(
-            document.querySelector("input:focus") ||
-            document.querySelector("textarea:focus") ||
-            document.querySelector("select:focus")
-          )
-        ) {
-          event = event || window.event;
-
-          if (!(event.ctrlKey || event.metaKey)) {
-            // Toggle dark mode when [shift] + [D] keys are pressed
-            if (event.shiftKey && event.which == 68) {
-              halfmoon.toggleDarkMode();
-            }
-
-            // Toggle sidebar when [shift] + [S] keys are pressed
-            if (event.shiftKey && event.which == 83) {
-              halfmoon.toggleSidebar();
-            }
-          }
-        }
-      });
     </script>
 
     <!-- Halfmoon window -->
