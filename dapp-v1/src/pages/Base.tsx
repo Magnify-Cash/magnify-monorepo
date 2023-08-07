@@ -1,9 +1,9 @@
+//@ts-nocheck
+//TODO: Figure out 'mode' typing for ConnectKitProvider
 import { useEffect, useState } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
-
-interface Mode {}
 
 function findTitleProps(obj:any):string {
   if (obj.props && obj.props.title) {
@@ -46,7 +46,7 @@ export const Base = () => {
   const inactiveClass = "nav-link d-flex align-items-center";
   const obj = useOutlet();
   const title = findTitleProps(obj);
-  const [ mode, setMode ] = useState<Mode | null>('light');
+  const [ mode, setMode ] = useState('light');
 
   function toggleDarkMode(){
       window.toggleDarkMode();
