@@ -12,7 +12,7 @@ export function App() {
         {/* Borrow */}
         <Route path="borrower-dashboard" element={<Pages.Demo title="Borrower Dashboard" />} />
         <Route path="quick-loan" element={<Pages.QuickLoan title="Quick Loan" />} />
-        <Route path="explore" element={<Pages.Demo title="Explore Colletions" />} />
+        <Route path="explore" element={<Pages.Demo title="Explore Collections" />} />
 
         {/* Lend */}
         <Route path="lender-dashboard" element={<Pages.Demo title="Lender Dashboard" />} />
