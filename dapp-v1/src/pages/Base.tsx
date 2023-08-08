@@ -246,7 +246,7 @@ export const Base = () => {
           <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-md-flex align-items-center">
             <h3 className="m-0 text-center text-md-start">{title}</h3>
             <div className="ps-md-3 ms-auto mt-3 mt-md-0 text-center d-md-flex">
-              <button type="button" className="btn btn-secondary rounded-pill me-2 d-md-none" aria-label="Toggle sidebar" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+              <button type="button" className="btn btn-secondary rounded-pill me-2 d-lg-none" aria-label="Toggle sidebar" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
                 <i className="fa-solid fa-bars"></i>
               </button>
               <button type="button" className="btn btn-secondary rounded-pill me-2" aria-label="Toggle dark mode" onClick={() => toggleDarkMode()}
