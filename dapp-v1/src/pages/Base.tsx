@@ -103,7 +103,7 @@ export const Base = () => {
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
                   <i className="fa-light fa-bolt"></i>
                 </span>
-                Quick Loan
+                Get Quick Loan
                 </NavLink>
               </li>
               <li className="nav-item">
