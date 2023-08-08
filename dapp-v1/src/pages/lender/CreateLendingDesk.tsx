@@ -35,7 +35,7 @@ export const CreateLendingDesk = (props:any) => {
 										Choose Collection(s) & Paramaters
 									</p>
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
-										Choose Currency...
+										Choose NFT Collection...
 									</div>
 								</div>
 								<div className="row mt-4">
