@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 export const Home = (props:any) => {
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
@@ -13,7 +15,7 @@ export const Home = (props:any) => {
 								<p className="text-body-secondary">
 									Earn instant liquidity using your NFT as collateral
 								</p>
-								<a href="#">Borrow Now &rarr;</a>
+								<NavLink to="/quick-loan">Borrow Now &rarr;</NavLink>
 							</div>
 						</div>
 					</div>
@@ -29,7 +31,7 @@ export const Home = (props:any) => {
 								<p className="text-body-secondary">
 									Customize lending desks & issue loans
 								</p>
-								<a href="#">Start Lending &rarr;</a>
+								<NavLink to="/create-desk">Start Lending &rarr;</NavLink>
 							</div>
 						</div>
 					</div>
@@ -45,7 +47,7 @@ export const Home = (props:any) => {
 								<p className="text-body-secondary">
 									Stake $NFTY and earn
 								</p>
-								<a href="#">Stake $NFTY &rarr;</a>
+								<NavLink to="/stake">Start Lending &rarr;</NavLink>
 							</div>
 						</div>
 					</div>

@@ -151,7 +151,7 @@ export const Base = () => {
             </li>
             <li className="nav-item">
               <NavLink
-              to="manage-desk"
+              to="manage-desks"
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
