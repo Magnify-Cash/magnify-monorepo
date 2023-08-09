@@ -1,6 +1,11 @@
+import {useState} from "react";
 import { TokenLists } from "@/components";
 
 export const CreateLendingDesk = (props:any) => {
+	const [token, _setToken] = useState();
+	const [nftCollection, _setNftCollection] = useState();
+	const setToken = (e:string) => _setToken(JSON.parse(e));
+	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 		{/* Start Content */}
@@ -13,7 +18,10 @@ export const CreateLendingDesk = (props:any) => {
 								<div>
 									<p className="text-primary fw-bold">Choose Currency</p>
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
-										Choose Currency...
+										{token
+											? token.token.name
+											: "Choose Currency..."
+										}
 									</div>
 									<TokenLists
 										token
@@ -21,6 +29,7 @@ export const CreateLendingDesk = (props:any) => {
 											"https://tokens.coingecko.com/uniswap/all.json",
 										]}
 										id="tokenModal"
+										onClick={setToken}
 									/>
 								</div>
 							</div>
@@ -42,6 +51,7 @@ export const CreateLendingDesk = (props:any) => {
 										nft
 										urls={[]}
 										id="nftModal"
+										onClick={setNftCollection}
 									/>
 								</div>
 								<div className="row mt-4">

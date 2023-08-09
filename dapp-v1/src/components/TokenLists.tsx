@@ -10,6 +10,7 @@ interface _TokenListProps {
 	token?:boolean
 	id:string
 	urls:Array<string>
+	onClick?:Function
 }
 interface NFTTokenListProps extends _TokenListProps {
   nft: boolean;
@@ -67,35 +68,41 @@ export const TokenLists = (props:TokenListProps) => {
 	*/
 	const [searchQuery, setSearchQuery] = useState('');
 	const [tokenLists, setTokenLists] = useState(Array<TokenListItem>);
+
+	// Token (ERC-20) Fetch
+	async function fetchTokenData() {
+	  try {
+		// get responses
+		const responses = await Promise.all(props.urls.map(url => axios.get(url)));
+		const jsonData = responses.map(response => response.data);
+		// format responses
+		const combinedArray = jsonData.flatMap(parentObj => {
+		  return parentObj.tokens.map((token:Token) => ({
+			provider: {
+			  keywords: parentObj.keywords,
+			  logoURI: parentObj.logoURI,
+			  name: parentObj.name,
+			  timestamp: parentObj.timestamp,
+			  version: parentObj.version
+			},
+			token
+		  }));
+		})
+		.sort((a, b) => {
+			return a.token.name.localeCompare(b.token.name)
+		});
+		setTokenLists(combinedArray);
+	} catch (error) {
+			console.error('Error fetching data:', error);
+		  }
+	}
+
+	// Fetch data
 	useEffect(() => {
-		async function fetchData() {
-  		try {
-			// get responses
-			const responses = await Promise.all(props.urls.map(url => axios.get(url)));
-			const jsonData = responses.map(response => response.data);
-			// format responses
-			const combinedArray = jsonData.flatMap(parentObj => {
-			  return parentObj.tokens.map((token:Token) => ({
-				provider: {
-				  keywords: parentObj.keywords,
-				  logoURI: parentObj.logoURI,
-				  name: parentObj.name,
-				  timestamp: parentObj.timestamp,
-				  version: parentObj.version
-				},
-				token
-			  }));
-			})
-			.sort((a, b) => {
-				return a.token.name.localeCompare(b.token.name)
-			});
-			setTokenLists(combinedArray);
-		} catch (error) {
-				console.error('Error fetching data:', error);
-  			}
-		}
-		fetchData();
+		props.nft && fetchTokenData();
+		props.token && fetchTokenData();
 	}, []);
+
 	const filteredData = useMemo(() => {
 		// Filter data based on searchQuery
 		return tokenLists.filter((item:TokenListItem) =>
@@ -116,6 +123,18 @@ export const TokenLists = (props:TokenListProps) => {
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => 25,
 	})
+
+	/*
+	On Click Callback
+	*/
+	function onClickCallback(e){
+		props.onClick && props.onClick(e.target.value)
+
+		// hide modal
+		var el = document.getElementById(props.id)
+		var modal = bootstrap.Modal.getInstance(el)
+		modal.hide();
+	}
 
 	return (
 		<>
@@ -160,6 +179,8 @@ export const TokenLists = (props:TokenListProps) => {
 					  {rowVirtualizer.getVirtualItems().map((virtualItem) => (
 						<button
 						  key={virtualItem.index + filteredData[virtualItem.index].token.address}
+						  onClick={(e) => onClickCallback(e)}
+						  value={JSON.stringify(filteredData[virtualItem.index])}
 						  className="btn"
 						  style={{
 							position: 'absolute',
