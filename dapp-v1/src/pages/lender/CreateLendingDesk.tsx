@@ -23,14 +23,6 @@ export const CreateLendingDesk = (props:any) => {
 										id="tokenModal"
 									/>
 								</div>
-								<div className="text-priamry col-lg-6">
-									<p className="text-primary fw-bold">Top Currencies</p>
-									<button className="btn btn-outline-secondary">USDC</button>
-									<button className="btn btn-outline-secondary">USDC</button>
-									<button className="btn btn-outline-secondary">USDC</button>
-									<button className="btn btn-outline-secondary">USDC</button>
-									<button className="btn btn-outline-secondary">USDC</button>
-								</div>
 							</div>
 						</div>
 					</div>

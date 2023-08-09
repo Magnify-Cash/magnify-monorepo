@@ -2,13 +2,28 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import axios from 'axios';
 
-interface TokenListProps {
-	nft:boolean
-	token:boolean
+/*
+Component Props
+*/
+interface _TokenListProps {
+	nft?:boolean
+	token?:boolean
 	id:string
 	urls:Array<string>
 }
+interface NFTTokenListProps extends _TokenListProps {
+  nft: boolean;
+  token?: never;
+}
+interface TokenTokenListProps extends _TokenListProps {
+  nft?: never;
+  token: boolean;
+}
+type TokenListProps = NFTTokenListProps | TokenTokenListProps;
 
+/*
+TokenList Props - Fungible
+*/
 interface Provider {
 	keywords: Array<string>
 	logoURI: string
@@ -25,7 +40,14 @@ interface Token {
 	name: string
 	symbol: string
 }
+interface TokenListItem {
+	parent: Provider
+	token: Token
+}
 
+/*
+TokenList Props - NonFungible
+*/
 interface NFT {
 	address: string
 	chainId: number
@@ -34,12 +56,6 @@ interface NFT {
 	name: string
 	symbol: string
 }
-
-interface TokenListItem {
-	parent: Provider
-	token: Token
-}
-
 interface NFTListItem {
 	parent: Provider
 	nft: NFT
@@ -59,7 +75,7 @@ export const TokenLists = (props:TokenListProps) => {
 			const jsonData = responses.map(response => response.data);
 			// format responses
 			const combinedArray = jsonData.flatMap(parentObj => {
-			  return parentObj.tokens.map(token => ({
+			  return parentObj.tokens.map((token:Token) => ({
 				provider: {
 				  keywords: parentObj.keywords,
 				  logoURI: parentObj.logoURI,
