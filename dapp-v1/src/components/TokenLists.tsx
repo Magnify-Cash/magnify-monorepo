@@ -121,7 +121,7 @@ export const TokenLists = (props:TokenListProps) => {
 	const rowVirtualizer = useVirtualizer({
 		count: filteredData.length,
 		getScrollElement: () => parentRef.current,
-		estimateSize: () => 25,
+		estimateSize: () => 50,
 	})
 
 	/*
