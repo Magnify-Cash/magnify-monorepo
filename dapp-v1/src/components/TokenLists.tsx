@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+
+interface TokenListProps {
+	nft:boolean
+	token:boolean
+	id:string
+	urls:Array<string>
+}
 
 interface Provider {
 	keywords: Array<string>
@@ -20,18 +26,31 @@ interface Token {
 	symbol: string
 }
 
-interface FungibleTokenList {
+interface NFT {
+	address: string
+	chainId: number
+	decimals: number
+	logoURI: string
+	name: string
+	symbol: string
+}
+
+interface TokenListItem {
 	parent: Provider
 	token: Token
 }
 
-export const TokenLists = (props) => {
+interface NFTListItem {
+	parent: Provider
+	nft: NFT
+}
+
+export const TokenLists = (props:TokenListProps) => {
 	/*
 	Handle TokenList Logic
 	*/
-	const location = useLocation();
 	const [searchQuery, setSearchQuery] = useState('');
-	const [tokenLists, setTokenLists] = useState(Array<FungibleTokenList>);
+	const [tokenLists, setTokenLists] = useState(Array<TokenListItem>);
 	useEffect(() => {
 		async function fetchData() {
   		try {
@@ -50,6 +69,9 @@ export const TokenLists = (props) => {
 				},
 				token
 			  }));
+			})
+			.sort((a, b) => {
+				return a.token.name.localeCompare(b.token.name)
 			});
 			setTokenLists(combinedArray);
 		} catch (error) {
@@ -60,8 +82,7 @@ export const TokenLists = (props) => {
 	}, []);
 	const filteredData = useMemo(() => {
 		// Filter data based on searchQuery
-		console.log(tokenLists);
-		return tokenLists.filter((item:FungibleTokenList) =>
+		return tokenLists.filter((item:TokenListItem) =>
 		  item.token.name.toLowerCase().includes(searchQuery.toLowerCase())
 		  ||
 		  item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -73,7 +94,7 @@ export const TokenLists = (props) => {
 	/*
 	Handle TokenList virtualization
 	*/
-	const parentRef = React.useRef()
+	const parentRef = useRef();
 	const rowVirtualizer = useVirtualizer({
 		count: filteredData.length,
 		getScrollElement: () => parentRef.current,
