@@ -62,7 +62,7 @@ interface NFTListItem {
 	nft: NFT
 }
 
-export const TokenLists = (props:TokenListProps) => {
+export const PopupTokenList = (props:TokenListProps) => {
 	/*
 	Handle TokenList Logic
 	*/

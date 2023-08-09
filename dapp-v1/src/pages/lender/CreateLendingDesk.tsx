@@ -1,5 +1,5 @@
 import {useState} from "react";
-import { TokenLists } from "@/components";
+import { PopupTokenList } from "@/components";
 
 export const CreateLendingDesk = (props:any) => {
 	const [token, _setToken] = useState();
@@ -23,7 +23,7 @@ export const CreateLendingDesk = (props:any) => {
 											: "Choose Currency..."
 										}
 									</div>
-									<TokenLists
+									<PopupTokenList
 										token
 										urls={[
 											"https://tokens.coingecko.com/uniswap/all.json",
@@ -47,7 +47,7 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
 										Choose NFT Collection...
 									</div>
-									<TokenLists
+									<PopupTokenList
 										nft
 										urls={[]}
 										id="nftModal"
