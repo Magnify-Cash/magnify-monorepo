@@ -1,3 +1,5 @@
+import { TokenLists } from "@/components";
+
 export const CreateLendingDesk = (props:any) => {
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
@@ -34,7 +36,7 @@ export const CreateLendingDesk = (props:any) => {
 									<p className="text-primary fw-bold">
 										Choose Collection(s) & Paramaters
 									</p>
-									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
+									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
 										Choose NFT Collection...
 									</div>
 								</div>
@@ -126,50 +128,18 @@ export const CreateLendingDesk = (props:any) => {
 			</div>
 		</div>
 
-
-		{/* ERC20 Modal */}
-		<div className="modal" id="tokenModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div className="modal-dialog modal-dialog-centered">
-			<div className="modal-content">
-			  <div className="modal-header">
-				<h5 className="modal-title text-center">Select Token</h5>
-				<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div className="modal-body">
-			  	<ul>
-			  		<li></li>
-			  		<li></li>
-			  		<li></li>
-			  		<li></li>
-			  		<li></li>
-			  	</ul>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		{/* End ERC20 modal */}
-
-		{/* NFT Modal */}
-		<div className="modal" id="nftModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div className="modal-dialog modal-dialog-centered">
-			<div className="modal-content">
-			  <div className="modal-header">
-				<h5 className="modal-title text-center">Select NFT...</h5>
-				<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			  </div>
-			  <div className="modal-body">
-				  <ul>
-					  <li></li>
-					  <li></li>
-					  <li></li>
-					  <li></li>
-					  <li></li>
-				  </ul>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		{/* End NFT modal */}
+		<TokenLists
+			token
+			urls={[
+				"https://tokens.coingecko.com/uniswap/all.json",
+			]}
+			id="tokenModal"
+		/>
+		<TokenLists
+			nft
+			urls={[]}
+			id="nftModal"
+		/>
 
 		{/* End Content */}
 		</div>
