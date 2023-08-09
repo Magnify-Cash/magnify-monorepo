@@ -7,10 +7,10 @@ export const CreateLendingDesk = (props:any) => {
 		<div className="row g-3 g-xl-5">
 			<div className="col-xl-8">
 				<div className="row g-4 g-xl-5">
-					<div className="col-12">
+					<div className="col-xl-6">
 						<div className="card border-0 shadow rounded-4 h-100">
 							<div className="card-body row">
-								<div className="col-lg-6">
+								<div>
 									<p className="text-primary fw-bold">Choose Currency</p>
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
 										Choose Currency...
