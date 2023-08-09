@@ -15,6 +15,13 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
 										Choose Currency...
 									</div>
+									<TokenLists
+										token
+										urls={[
+											"https://tokens.coingecko.com/uniswap/all.json",
+										]}
+										id="tokenModal"
+									/>
 								</div>
 								<div className="text-priamry col-lg-6">
 									<p className="text-primary fw-bold">Top Currencies</p>
@@ -39,6 +46,11 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
 										Choose NFT Collection...
 									</div>
+									<TokenLists
+										nft
+										urls={[]}
+										id="nftModal"
+									/>
 								</div>
 								<div className="row mt-4">
 									<h6>Loan Value</h6>
@@ -127,19 +139,6 @@ export const CreateLendingDesk = (props:any) => {
 				</div>
 			</div>
 		</div>
-
-		<TokenLists
-			token
-			urls={[
-				"https://tokens.coingecko.com/uniswap/all.json",
-			]}
-			id="tokenModal"
-		/>
-		<TokenLists
-			nft
-			urls={[]}
-			id="nftModal"
-		/>
 
 		{/* End Content */}
 		</div>

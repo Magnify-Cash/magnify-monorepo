@@ -1,3 +1,5 @@
+import { TokenLists } from "@/components";
+
 export const QuickLoan = (props:any) => {
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
@@ -11,9 +13,10 @@ export const QuickLoan = (props:any) => {
 					</div>
 					<div className="card border-0 shadow rounded-4 h-100">
 						<div className="card-body">
-							<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
+							<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
 								Choose NFT Collection...
 							</div>
+							<TokenLists nft id="nftModal" urls={[]} />
 						</div>
 					</div>
 				</div>
