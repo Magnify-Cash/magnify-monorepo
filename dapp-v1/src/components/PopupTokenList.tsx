@@ -208,3 +208,8 @@ export const PopupTokenList = (props:ITokenList) => {
 		</>
 	)
 }
+
+// TODO
+/*
+1. Add uniswap typing where relevant
+*/
