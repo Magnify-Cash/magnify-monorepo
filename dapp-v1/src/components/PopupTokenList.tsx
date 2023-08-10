@@ -5,27 +5,27 @@ import axios from 'axios';
 /*
 Component Props
 */
-interface _TokenListProps {
+interface IBaseTokenList {
 	nft?:boolean
 	token?:boolean
 	id:string
 	urls:Array<string>
 	onClick?:Function
 }
-interface NFTTokenListProps extends _TokenListProps {
+interface INFTTokenList extends IBaseTokenList {
   nft: boolean;
   token?: never;
 }
-interface TokenTokenListProps extends _TokenListProps {
+interface ITokenTokenList extends IBaseTokenList {
   nft?: never;
   token: boolean;
 }
-type TokenListProps = NFTTokenListProps | TokenTokenListProps;
+type ITokenList = INFTTokenList | ITokenTokenList;
 
 /*
 TokenList Props - Fungible
 */
-interface Provider {
+interface IProvider {
 	keywords: Array<string>
 	logoURI: string
 	name: string
@@ -33,7 +33,7 @@ interface Provider {
 	version: object
 }
 
-interface Token {
+interface IToken {
 	address: string
 	chainId: number
 	decimals: number
@@ -41,15 +41,15 @@ interface Token {
 	name: string
 	symbol: string
 }
-interface TokenListItem {
-	parent: Provider
-	token: Token
+interface ITokenListItem {
+	parent: IProvider
+	token: IToken
 }
 
 /*
 TokenList Props - NonFungible
 */
-interface NFT {
+interface INFT {
 	address: string
 	chainId: number
 	decimals: number
@@ -57,17 +57,17 @@ interface NFT {
 	name: string
 	symbol: string
 }
-interface NFTListItem {
-	parent: Provider
-	nft: NFT
+interface INFTListItem {
+	parent: IProvider
+	nft: INFT
 }
 
-export const PopupTokenList = (props:TokenListProps) => {
+export const PopupTokenList = (props:ITokenList) => {
 	/*
 	Handle TokenList Logic
 	*/
 	const [searchQuery, setSearchQuery] = useState('');
-	const [tokenLists, setTokenLists] = useState(Array<TokenListItem>);
+	const [tokenLists, setTokenLists] = useState(Array<ITokenListItem>);
 
 	// Token (ERC-20) Fetch
 	async function fetchTokenData() {
@@ -77,7 +77,7 @@ export const PopupTokenList = (props:TokenListProps) => {
 		const jsonData = responses.map(response => response.data);
 		// format responses
 		const combinedArray = jsonData.flatMap(parentObj => {
-		  return parentObj.tokens.map((token:Token) => ({
+		  return parentObj.tokens.map((token:IToken) => ({
 			provider: {
 			  keywords: parentObj.keywords,
 			  logoURI: parentObj.logoURI,
@@ -105,7 +105,7 @@ export const PopupTokenList = (props:TokenListProps) => {
 
 	const filteredData = useMemo(() => {
 		// Filter data based on searchQuery
-		return tokenLists.filter((item:TokenListItem) =>
+		return tokenLists.filter((item:ITokenListItem) =>
 		  item.token.name.toLowerCase().includes(searchQuery.toLowerCase())
 		  ||
 		  item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -117,7 +117,7 @@ export const PopupTokenList = (props:TokenListProps) => {
 	/*
 	Handle TokenList virtualization
 	*/
-	const parentRef = useRef();
+	const parentRef = useRef<HTMLInputElement>(null);
 	const rowVirtualizer = useVirtualizer({
 		count: filteredData.length,
 		getScrollElement: () => parentRef.current,
