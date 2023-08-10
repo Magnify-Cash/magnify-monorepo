@@ -56,10 +56,22 @@ const LendingDeskCard = () => (
 					</div>
 				</div>
 				<div className="col-lg-3">
-					<button className="col-lg-12">Edit</button>
-					<button className="col-lg-12">Withdraw</button>
-					<button className="col-lg-12">Deposit</button>
-					<button className="col-lg-12">Freeze</button>
+					<NavLink to="/manage-desk" className="col-6 col-lg-12 btn">
+						Edit
+						<i className="fa-solid fa-pencil h2 m-0"></i>
+					</NavLink>
+					<button className="col-6 col-lg-12 btn">
+						Withdraw
+						<i className="fa-solid fa-arrow-down-to-line h2 m-0"></i>
+					</button>
+					<button className="col-6 col-lg-12 btn">
+						Deposit
+						<i className="fa-solid fa-arrow-up-to-line h2 m-0"></i>
+					</button>
+					<button className="col-6 col-lg-12 btn">
+						Freeze
+						<i className="fa-solid fa-snowflake h2 m-0"></i>
+					</button>
 				</div>
 			</div>
 		</div>
