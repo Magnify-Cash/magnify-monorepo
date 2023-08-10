@@ -2,10 +2,26 @@ import {useState} from "react";
 import { PopupTokenList } from "@/components";
 
 export const CreateLendingDesk = (props:any) => {
+	// tokenlist state management
 	const [token, _setToken] = useState();
 	const [nftCollection, _setNftCollection] = useState();
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
+
+	// Lending Desk Config submit
+	function handleConfigSubmit(e) {
+		// Prevent the browser from reloading the page
+		e.preventDefault();
+
+		// Read the form data
+		const form = e.target;
+		const formData = new FormData(form);
+
+		// Or you can work with it as a plain object:
+		const formJson = Object.fromEntries(formData.entries());
+		console.log(formJson);
+	}
+
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 		{/* Start Content */}
@@ -130,8 +146,17 @@ export const CreateLendingDesk = (props:any) => {
 			<div className="col-xl-4">
 				<div className="card border-0 shadow rounded-4 h-100">
 					<div className="card-body">
-						<img height="200" width="100%" src="/theme/images/thinking_guy.svg" alt="Thinking..."/>
-						<p className="text-center">Start customizing to see details...</p>
+						{token
+							?
+							<div>
+								{token.token.name}
+							</div>
+							:
+							<div>
+								<img height="200" width="100%" src="/theme/images/thinking_guy.svg" alt="Thinking..."/>
+								<p className="text-center">Start customizing to see details...</p>
+							</div>
+						}
 					</div>
 				</div>
 				<div className="d-flex mb-2 mt-2">
