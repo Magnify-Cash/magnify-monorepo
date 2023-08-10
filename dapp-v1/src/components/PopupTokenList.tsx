@@ -5,18 +5,18 @@ import axios from 'axios';
 /*
 Component Props
 */
-interface IBaseTokenList {
+export interface IBaseTokenList {
 	nft?:boolean
 	token?:boolean
 	id:string
 	urls:Array<string>
 	onClick?:Function
 }
-interface INFTTokenList extends IBaseTokenList {
+export interface INFTTokenList extends IBaseTokenList {
   nft: boolean;
   token?: never;
 }
-interface ITokenTokenList extends IBaseTokenList {
+export interface ITokenTokenList extends IBaseTokenList {
   nft?: never;
   token: boolean;
 }
@@ -25,7 +25,7 @@ type ITokenList = INFTTokenList | ITokenTokenList;
 /*
 TokenList Props - Fungible
 */
-interface IProvider {
+export interface IProvider {
 	keywords: Array<string>
 	logoURI: string
 	name: string
@@ -33,7 +33,7 @@ interface IProvider {
 	version: object
 }
 
-interface IToken {
+export interface IToken {
 	address: string
 	chainId: number
 	decimals: number
@@ -41,7 +41,7 @@ interface IToken {
 	name: string
 	symbol: string
 }
-interface ITokenListItem {
+export interface ITokenListItem {
 	parent: IProvider
 	token: IToken
 }
@@ -49,7 +49,7 @@ interface ITokenListItem {
 /*
 TokenList Props - NonFungible
 */
-interface INFT {
+export interface INFT {
 	address: string
 	chainId: number
 	decimals: number
@@ -57,7 +57,7 @@ interface INFT {
 	name: string
 	symbol: string
 }
-interface INFTListItem {
+export interface INFTListItem {
 	parent: IProvider
 	nft: INFT
 }
@@ -132,8 +132,10 @@ export const PopupTokenList = (props:ITokenList) => {
 
 		// hide modal
 		var el = document.getElementById(props.id)
-		var modal = bootstrap.Modal.getInstance(el)
-		modal.hide();
+		if (el){
+			var modal = window.bootstrap.Modal.getInstance(el)
+			modal && modal.hide();
+		}
 	}
 
 	return (

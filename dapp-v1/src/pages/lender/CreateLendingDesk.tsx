@@ -1,9 +1,10 @@
 import {useState} from "react";
 import { PopupTokenList } from "@/components";
+import { ITokenListItem } from "@/components/PopupTokenList";
 
 export const CreateLendingDesk = (props:any) => {
 	// tokenlist state management
-	const [token, _setToken] = useState();
+	const [token, _setToken] = useState<ITokenListItem|null>();
 	const [nftCollection, _setNftCollection] = useState();
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
