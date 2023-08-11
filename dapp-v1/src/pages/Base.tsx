@@ -40,8 +40,8 @@ function getCookie(cname:string) {
 }
 
 function closeSidebar(){
-  const offcanvas = bootstrap.Offcanvas.getInstance('#sidebar')
-  offcanvas.hide();
+  const offcanvas = bootstrap.Offcanvas.getInstance('#sidebar');
+  offcanvas && offcanvas.hide();
 }
 
 
