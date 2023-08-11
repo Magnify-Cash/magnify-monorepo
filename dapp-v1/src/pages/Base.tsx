@@ -39,6 +39,12 @@ function getCookie(cname:string) {
   return "";
 }
 
+function closeSidebar(){
+  const offcanvas = bootstrap.Offcanvas.getInstance('#sidebar')
+  offcanvas.hide();
+}
+
+
 
 export const Base = () => {
   // theme
@@ -71,6 +77,7 @@ export const Base = () => {
           <div className="offcanvas-body">
             <NavLink
             to="/"
+            onClick={()=> closeSidebar()}
             className="btn btn-link d-block w-100 text-start bg-primary-subtle"
             >
             <i className="fa-light fa-home me-1"></i>
@@ -87,6 +94,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                 to="borrower-dashboard"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -98,6 +106,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                 to="quick-loan"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -109,6 +118,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                 to="explore"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -130,6 +140,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="lender-dashboard"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -141,6 +152,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="create-desk"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -152,6 +164,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="manage-desks"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -173,6 +186,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="help"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -184,6 +198,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="docs"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -195,6 +210,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="community"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -216,6 +232,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                   to="token"
+                  onClick={()=> closeSidebar()}
                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -227,6 +244,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                   to="stake"
+                  onClick={()=> closeSidebar()}
                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
