@@ -2324,6 +2324,10 @@
     "@motionone/dom" "^10.16.2"
     tslib "^2.3.1"
 
+"@nftyfinance/nft-lists@git+ssh://git@github.com:NFTYLabs/nft-lists.git":
+  version "1.0.0-beta.33"
+  resolved "git+ssh://git@github.com:NFTYLabs/nft-lists.git#3aa2ae2bb2ce90aaba75fbdec45c55c401933807"
+
 "@noble/curves@1.0.0", "@noble/curves@~1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.0.0.tgz#e40be8c7daf088aaf291887cbc73f43464a92932"
@@ -3460,6 +3464,11 @@
   integrity sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==
   dependencies:
     "@types/node" "*"
+
+"@uniswap/token-lists@^1.0.0-beta.33":
+  version "1.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.33.tgz#966ba96c9ccc8f0e9e09809890b438203f2b1911"
+  integrity sha512-JQkXcpRI3jFG8y3/CGC4TS8NkDgcxXaOQuYW8Qdvd6DcDiIyg2vVYCG9igFEzF0G6UvxgHkBKC7cWCgzZNYvQg==
 
 "@urql/core@^4.0.0":
   version "4.0.7"
