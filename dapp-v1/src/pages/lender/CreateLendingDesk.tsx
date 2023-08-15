@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import { PopupTokenList } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
