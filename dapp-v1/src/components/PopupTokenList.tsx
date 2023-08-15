@@ -53,7 +53,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	*/
 	const [searchQuery, setSearchQuery] = useState('');
 	const [tokenLists, setTokenLists] = useState(Array<ITokenListItem>);
-	const [nftLists, setNftLists] = useState(Array<ITokenListItem>);
+	const [nftLists, setNftLists] = useState(Array<INFTListItem>);
 
 	async function fetchListData() {
 	  try {
@@ -98,7 +98,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 
 		// Sort & update list data state
 		props.token && setTokenLists(combinedLists);
-		props.nft && setTokenLists(combinedLists);
+		props.nft && setNftLists(combinedLists);
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	  }
@@ -114,23 +114,37 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	/*
 	Handle Data Filtering
 	*/
-	const filteredData = useMemo(() => {
-		// Filter data based on searchQuery
-		return tokenLists.filter((item:ITokenListItem) =>
-		  item.token.name.toLowerCase().includes(searchQuery.toLowerCase())
-		  ||
-		  item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-		  ||
-		  item.token.address.includes(searchQuery.toLowerCase())
-		);
+	const filteredTokens = useMemo(() => {
+		if (tokenLists.length > 0){
+			return tokenLists.filter((item:ITokenListItem) =>
+	  		item.token.name.toLowerCase().includes(searchQuery.toLowerCase())
+	  		||
+	  		item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+	  		||
+	  		item.token.address.includes(searchQuery.toLowerCase())
+		)}
+		return [];
 	  }, [tokenLists, searchQuery]);
+
+	const filteredNfts = useMemo(() => {
+		console.log(nftLists)
+		if (nftLists.length > 0){
+			return nftLists.filter((item:INFTListItem) =>
+			  item.nft.name.toLowerCase().includes(searchQuery.toLowerCase())
+			  ||
+			  item.nft.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+			  ||
+			  item.nft.address.includes(searchQuery.toLowerCase())
+		)}
+		return [];
+	  }, [nftLists, searchQuery]);
 
 	/*
 	Handle TokenList virtualization
 	*/
 	const parentRef = useRef<HTMLInputElement>(null);
 	const rowVirtualizer = useVirtualizer({
-		count: filteredData.length,
+		count: props.token ? filteredTokens.length : filteredNfts.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => 50,
 	})
@@ -192,11 +206,11 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 					  }}
 					>
 					  {/* Only the visible items in the virtualizer, manually positioned to be in view */}
-					  {rowVirtualizer.getVirtualItems().map((virtualItem) => (
+					  {props.token && rowVirtualizer.getVirtualItems().map((virtualItem) => (
 						<button
-						  key={virtualItem.index + filteredData[virtualItem.index].token.address}
+						  key={virtualItem.index + filteredTokens[virtualItem.index].token.address}
 						  onClick={(e) => onClickCallback(e)}
-						  value={JSON.stringify(filteredData[virtualItem.index])}
+						  value={JSON.stringify(filteredTokens[virtualItem.index])}
 						  className="btn"
 						  style={{
 							position: 'absolute',
@@ -207,10 +221,29 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 							transform: `translateY(${virtualItem.start}px)`,
 						  }}
 						>
-						<img src={filteredData[virtualItem.index].token.logoURI} alt={`${filteredData[virtualItem.index].token.name} Logo`}/>
-						  {filteredData[virtualItem.index].token.name}
+						<img src={filteredTokens[virtualItem.index].token.logoURI} alt={`${filteredTokens[virtualItem.index].token.name} Logo`}/>
+						  {filteredTokens[virtualItem.index].token.name}
 						</button >
 					  ))}
+					  {props.nft && rowVirtualizer.getVirtualItems().map((virtualItem) => (
+						  <button
+							key={virtualItem.index + filteredNfts[virtualItem.index].nft.address}
+							onClick={(e) => onClickCallback(e)}
+							value={JSON.stringify(filteredNfts[virtualItem.index])}
+							className="btn"
+							style={{
+							  position: 'absolute',
+							  top: 0,
+							  left: 0,
+							  width: '100%',
+							  height: `${virtualItem.size}px`,
+							  transform: `translateY(${virtualItem.start}px)`,
+							}}
+						  >
+						  <img src={filteredNfts[virtualItem.index].nft.logoURI} alt={`${filteredNfts[virtualItem.index].nft.name} Logo`}/>
+							{filteredNfts[virtualItem.index].nft.name}
+						  </button >
+						))}
 					</div>
 				  </div>
 				{/* End List */}
