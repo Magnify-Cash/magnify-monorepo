@@ -53,43 +53,63 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	*/
 	const [searchQuery, setSearchQuery] = useState('');
 	const [tokenLists, setTokenLists] = useState(Array<ITokenListItem>);
+	const [nftLists, setNftLists] = useState(Array<ITokenListItem>);
 
-	// Token (ERC-20) Fetch
-	async function fetchTokenData() {
+	async function fetchListData() {
 	  try {
-		// get responses
+		// get list data
+		let combinedLists;
 		const responses = await Promise.all(props.urls.map(url => axios.get(url)));
 		const jsonData = responses.map(response => response.data);
-		// format responses
-		const combinedArray = jsonData.flatMap((parentObj) => {
-		  return parentObj.tokens.map((token:TokenInfo) => ({
-			provider: {
-			  keywords: parentObj.keywords,
-			  logoURI: parentObj.logoURI,
-			  name: parentObj.name,
-			  timestamp: parentObj.timestamp,
-			  version: parentObj.version
-			},
-			token
-		  }));
-		})
-		.sort((a, b) => {
-			return a.token.name.localeCompare(b.token.name)
-		});
-		setTokenLists(combinedArray);
+		if (props.nft){
+			combinedLists = jsonData.flatMap((parentObj) => {
+			  return parentObj.nfts.map((nft:NFTInfo) => ({
+				provider: {
+				  keywords: parentObj.keywords,
+				  logoURI: parentObj.logoURI,
+				  name: parentObj.name,
+				  timestamp: parentObj.timestamp,
+				  version: parentObj.version
+				},
+				nft
+			  }));
+			})
+			combinedLists.sort((a:INFTListItem, b:INFTListItem) => {
+				return a.nft.name.localeCompare(b.nft.name)
+			});
+		}
+		if (props.token){
+			combinedLists = jsonData.flatMap((parentObj) => {
+		  		return parentObj.tokens.map((token:TokenInfo) => ({
+					provider: {
+			  		keywords: parentObj.keywords,
+			  		logoURI: parentObj.logoURI,
+			  		name: parentObj.name,
+			  		timestamp: parentObj.timestamp,
+			  		version: parentObj.version
+					},
+					token
+		  		}));
+		  	})
+			combinedLists.sort((a:ITokenListItem, b:ITokenListItem) => {
+				return a.token.name.localeCompare(b.token.name)
+			});
+		}
+
+		// Sort & update list data state
+		props.token && setTokenLists(combinedLists);
+		props.nft && setTokenLists(combinedLists);
 	} catch (error) {
-			console.error('Error fetching data:', error);
-		  }
+		console.error('Error fetching data:', error);
+	  }
 	}
 
 	/*
-	Fetch data
+	Fetch list data
 	*/
 	useEffect(() => {
-		props.nft && null;
-		props.token && fetchTokenData();
+		fetchListData();
 	}, []);
-
 
 	/*
 	Handle Data Filtering
