@@ -1,68 +1,53 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import axios from 'axios';
+import { NFTInfo } from '@nftylabs/nft-lists';
+import { TokenInfo } from '@uniswap/token-lists';
 
 /*
 Component Props
 */
-export interface IBaseTokenList {
+export interface BaseListProps {
 	nft?:boolean
 	token?:boolean
 	id:string
 	urls:Array<string>
 	onClick?:Function
 }
-export interface INFTTokenList extends IBaseTokenList {
+export interface NFTListProps extends BaseListProps {
   nft: boolean;
   token?: never;
 }
-export interface ITokenTokenList extends IBaseTokenList {
+export interface TokenListProps extends BaseListProps {
   nft?: never;
   token: boolean;
 }
-type ITokenList = INFTTokenList | ITokenTokenList;
+type PopupTokenListProps = NFTListProps | TokenListProps;
 
 /*
-TokenList Props - Fungible
+TokenList Props
 */
-export interface IProvider {
+export interface IParent {
 	keywords: Array<string>
 	logoURI: string
 	name: string
 	timestamp: number,
 	version: object
 }
-
-export interface IToken {
-	address: string
-	chainId: number
-	decimals: number
-	logoURI: string
-	name: string
-	symbol: string
-}
 export interface ITokenListItem {
-	parent: IProvider
-	token: IToken
-}
-
-/*
-TokenList Props - NonFungible
-*/
-export interface INFT {
-	address: string
-	chainId: number
-	decimals: number
-	logoURI: string
-	name: string
-	symbol: string
+	parent: IParent
+	token: TokenInfo
 }
 export interface INFTListItem {
-	parent: IProvider
-	nft: INFT
+	parent: IParent
+	nft: NFTInfo
 }
 
-export const PopupTokenList = (props:ITokenList) => {
+
+/*
+PopupTokenList Component
+*/
+export const PopupTokenList = (props:PopupTokenListProps) => {
 	/*
 	Handle TokenList Logic
 	*/
@@ -76,8 +61,8 @@ export const PopupTokenList = (props:ITokenList) => {
 		const responses = await Promise.all(props.urls.map(url => axios.get(url)));
 		const jsonData = responses.map(response => response.data);
 		// format responses
-		const combinedArray = jsonData.flatMap(parentObj => {
-		  return parentObj.tokens.map((token:IToken) => ({
+		const combinedArray = jsonData.flatMap((parentObj) => {
+		  return parentObj.tokens.map((token:TokenInfo) => ({
 			provider: {
 			  keywords: parentObj.keywords,
 			  logoURI: parentObj.logoURI,
@@ -97,12 +82,18 @@ export const PopupTokenList = (props:ITokenList) => {
 		  }
 	}
 
-	// Fetch data
+	/*
+	Fetch data
+	*/
 	useEffect(() => {
-		props.nft && fetchTokenData();
+		props.nft && null;
 		props.token && fetchTokenData();
 	}, []);
 
+
+	/*
+	Handle Data Filtering
+	*/
 	const filteredData = useMemo(() => {
 		// Filter data based on searchQuery
 		return tokenLists.filter((item:ITokenListItem) =>
@@ -138,6 +129,9 @@ export const PopupTokenList = (props:ITokenList) => {
 		}
 	}
 
+	/*
+	Return
+	*/
 	return (
 		<>
 		{/* ERC20 Modal */}
@@ -208,8 +202,3 @@ export const PopupTokenList = (props:ITokenList) => {
 		</>
 	)
 }
-
-// TODO
-/*
-1. Add uniswap typing where relevant
-*/

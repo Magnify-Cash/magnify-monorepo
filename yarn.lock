@@ -2324,10 +2324,6 @@
     "@motionone/dom" "^10.16.2"
     tslib "^2.3.1"
 
-"@nftyfinance/nft-lists@git+ssh://git@github.com:NFTYLabs/nft-lists.git":
-  version "1.0.0-beta.33"
-  resolved "git+ssh://git@github.com:NFTYLabs/nft-lists.git#3aa2ae2bb2ce90aaba75fbdec45c55c401933807"
-
 "@nftylabs/nft-lists@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@nftylabs/nft-lists/-/nft-lists-0.0.1.tgz#10dc8feca97b1f9be337ceba76aae475c0c33521"
