@@ -68,7 +68,7 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="form-select w-100 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#nftModal">
 										{nftCollection
 											? nftCollection.nft.name
-											: "Choose Currency..."
+											: "Choose NFT Collection..."
 										}
 									</div>
 									<PopupTokenList
@@ -169,12 +169,13 @@ export const CreateLendingDesk = (props:any) => {
 								</div>
 								<hr/>
 								{deskConfigs.map((config, index) => {
+									console.log(config)
 									return (
 										<div key={index}>
 										<p>Collection {index}</p>
 										<div className="d-flex align-items-center">
-											<img src={config} alt={`${token.token.name} Logo`} height="20" width="20"/>
-											<p className="m-0 ms-1">{token.token.name}</p>
+											<img src={config.hidden_input_nft.nft?.logoURI} alt={`${config.hidden_input_nft.nft.name} Logo`} height="20" width="20"/>
+											<p className="m-0 ms-1">{config.hidden_input_nft.nft.name}</p>
 										</div>
 										</div>
 									)
