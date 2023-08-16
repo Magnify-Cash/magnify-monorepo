@@ -154,7 +154,7 @@ export const CreateLendingDesk = (props:any) => {
 									</div>
 								</div>
 								<div className="row">
-								<button className="btn btn-primary ms-auto col-4"
+								<button disabled={!nftCollection} className="btn btn-primary ms-auto col-4"
 								onClick={(e) => handleConfigSubmit(e)}>
 									Add to Desk
 								</button>
