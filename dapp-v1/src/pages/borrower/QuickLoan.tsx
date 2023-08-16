@@ -24,7 +24,10 @@ export const QuickLoan = (props:any) => {
 						<div className="card-body">
 							<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
 								{nftCollection
-									? nftCollection.nft.name
+									? <div className="d-flex align-items-center">
+										<img src={nftCollection.nft.logoURI} alt={`${nftCollection.nft.name} Logo`} height="20" width="20"/>
+										<p className="m-0 ms-1">{nftCollection.nft.name}</p>
+									</div>
 									: "Choose NFT Collection..."
 								}
 							</div>
@@ -52,7 +55,11 @@ export const QuickLoan = (props:any) => {
 								<div>
 									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
 										{token
-											? token.token.name
+											?
+											<div className="d-flex align-items-center">
+												<img src={token.token.logoURI} alt={`${token.token.name} Logo`} height="20" width="20"/>
+												<p className="m-0 ms-1">{token.token.name}</p>
+											</div>
 											: "Choose Currency..."
 										}
 									</div>

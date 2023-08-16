@@ -238,8 +238,8 @@ export const CreateLendingDesk = (props:any) => {
 									})}
 								</div>
 								<div className="input-group">
+								<input value={deskFundingAmount} onChange={e => setDeskFundingAmount(e.target.value)} type="number" className="me-2"/>
 								<span>Funding Amount</span>
-								<input value={deskFundingAmount} onChange={e => setDeskFundingAmount(e.target.value)} type="number"/>
 								</div>
 							</div>
 						}
