@@ -17,8 +17,13 @@ export const CreateLendingDesk = (props:any) => {
 		const form = document.getElementById("configForm") as HTMLFormElement;;
 		const formData = new FormData(form);
 		const formJson = Object.fromEntries(formData.entries());
+		if (formJson.hidden_input_nft){
+			formJson.hidden_input_nft = JSON.parse(formJson.hidden_input_nft);
+		}
+		if (formJson.hidden_input_token){
+			formJson.hidden_input_token = JSON.parse(formJson.hidden_input_token)
+		}
 		setDeskConfigs([...deskConfigs, formJson]);
-		console.log(formJson)
 	}
 
 	return (
@@ -163,6 +168,17 @@ export const CreateLendingDesk = (props:any) => {
 									<p className="m-0 ms-1">{token.token.name}</p>
 								</div>
 								<hr/>
+								{deskConfigs.map((config, index) => {
+									return (
+										<div key={index}>
+										<p>Collection {index}</p>
+										<div className="d-flex align-items-center">
+											<img src={config} alt={`${token.token.name} Logo`} height="20" width="20"/>
+											<p className="m-0 ms-1">{token.token.name}</p>
+										</div>
+										</div>
+									)
+								})}
 							</div>
 							:
 							<div>
