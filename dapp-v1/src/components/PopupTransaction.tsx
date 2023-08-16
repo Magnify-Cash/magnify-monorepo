@@ -1,9 +1,11 @@
+import { useAccount } from 'wagmi'
+
+
 /*
 Component Props
 */
 export interface PopupTransactionProps {
 	loading?: boolean; // loading state
-    isConnected?: boolean; // whether or not wallet is connected
   	error?: any | null; // error state
 	divClass?: string;
 	btnClass: string; // modal btn trigger classname
@@ -17,6 +19,7 @@ export interface PopupTransactionProps {
 
 
 export const PopupTransaction = (props:PopupTransactionProps) => {
+	const { isConnected } = useAccount();
 	let snippet = (
 		<button
 		  className={props.btnClass}
@@ -26,7 +29,7 @@ export const PopupTransaction = (props:PopupTransactionProps) => {
 			{props.btnText}
 		</button>
 	  );
-	if (props.isConnected === false) {
+	if (isConnected === false) {
 		snippet = (
 		  <button className={props.btnClass} disabled={true}>
 			Connect Wallet
