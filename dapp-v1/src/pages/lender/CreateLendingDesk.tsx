@@ -58,6 +58,7 @@ export const CreateLendingDesk = (props:any) => {
 					<div className="col-12">
 						<div className="card border-0 shadow rounded-4 h-100">
 							<div className="card-body">
+								<form>
 								<div>
 									<p className="text-primary fw-bold">
 										Choose Collection(s) & Paramaters
@@ -82,18 +83,18 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Min Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
 									</div>
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Max Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
 									</div>
@@ -103,18 +104,18 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Min Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
 									</div>
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Max Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
 									</div>
@@ -124,27 +125,29 @@ export const CreateLendingDesk = (props:any) => {
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Min Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>
 									</div>
 									<div className="col-6 border border-primary rounded">
 										<p className="text-center">Max Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
-											<button className="btn btn-secondary">-</button>
-											<input type="number" className="form-control"/>
-											<button className="btn btn-secondary">+</button>
+											<span className="btn btn-secondary">-</span>
+											<input type="number" className="form-control w-50"/>
+											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>
 									</div>
 								</div>
 								<div className="row">
-								<button className="btn btn-primary ms-auto col-4">
+								<button className="btn btn-primary ms-auto col-4"
+								onClick={(e) => handleConfigSubmit(e)}>
 									Add to Desk
 								</button>
 								</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -153,10 +156,16 @@ export const CreateLendingDesk = (props:any) => {
 			<div className="col-xl-4">
 				<div className="card border-0 shadow rounded-4 h-100">
 					<div className="card-body">
+						<h6 className="mb-4">Lending Desk Details</h6>
 						{token
 							?
 							<div>
-								{token.token.name}
+								<p>Currency Type</p>
+								<div className="d-flex align-items-center">
+									<img src={token.token.logoURI} alt={`${token.token.name} Logo`} height="20" width="20"/>
+									<p className="m-0 ms-1">{token.token.name}</p>
+								</div>
+								<hr/>
 							</div>
 							:
 							<div>

@@ -127,7 +127,6 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	  }, [tokenLists, searchQuery]);
 
 	const filteredNfts = useMemo(() => {
-		console.log(nftLists)
 		if (nftLists.length > 0){
 			return nftLists.filter((item:INFTListItem) =>
 			  item.nft.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -231,6 +230,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 							onClick={(e) => onClickCallback(e)}
 							value={JSON.stringify(filteredNfts[virtualItem.index])}
 							className="btn"
+							type="button"
 							style={{
 							  position: 'absolute',
 							  top: 0,
