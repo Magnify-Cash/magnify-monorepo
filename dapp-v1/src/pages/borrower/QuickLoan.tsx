@@ -33,7 +33,7 @@ export const QuickLoan = (props:any) => {
 								urls={[
 									"https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json"
 								]}
-								id="nftModal"
+								modalId="nftModal"
 								onClick={setNftCollection}
 							/>
 						</div>
@@ -61,7 +61,7 @@ export const QuickLoan = (props:any) => {
 										urls={[
 											"https://tokens.coingecko.com/uniswap/all.json",
 										]}
-										id="tokenModal"
+										modalId="tokenModal"
 										onClick={setToken}
 									/>
 								</div>

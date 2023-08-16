@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PopupTokenList } from "@/components";
+import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
@@ -8,6 +8,8 @@ export const CreateLendingDesk = (props:any) => {
 	const [token, _setToken] = useState<ITokenListItem|null>();
 	const [nftCollection, _setNftCollection] = useState<INFTListItem|null>();
 	const [deskConfigs, setDeskConfigs] = useState([]);
+	const [deskFundingAmount, setDeskFundingAmount] = useState(0);
+
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
 
@@ -24,6 +26,14 @@ export const CreateLendingDesk = (props:any) => {
 			formJson.hidden_input_token = JSON.parse(formJson.hidden_input_token)
 		}
 		setDeskConfigs([...deskConfigs, formJson]);
+	}
+
+	// modal submit
+	function handleModalSubmit(x){
+		console.log('token', token)
+		console.log('deskConfigs', deskConfigs)
+		console.log('deskFundingAmount', deskFundingAmount)
+		console.log('wagmi function with above data.....')
 	}
 
 	return (
@@ -48,7 +58,7 @@ export const CreateLendingDesk = (props:any) => {
 										urls={[
 											"https://tokens.coingecko.com/uniswap/all.json",
 										]}
-										id="tokenModal"
+										modalId="tokenModal"
 										onClick={setToken}
 									/>
 								</div>
@@ -76,7 +86,7 @@ export const CreateLendingDesk = (props:any) => {
 										urls={[
 											"https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json"
 										]}
-										id="nftModal"
+										modalId="nftModal"
 										onClick={setNftCollection}
 									/>
 								</div>
@@ -190,9 +200,39 @@ export const CreateLendingDesk = (props:any) => {
 					</div>
 				</div>
 				<div className="d-flex mb-2 mt-2">
-					<button className="btn btn-primary btn-lg mt-2 mb-4 ms-auto">
-						Finalize Lending Desk
-					</button>
+					<PopupTransaction
+						className="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
+						btnText="Finalize Lending Desk"
+						modalId="txModal"
+						modalBtnText="Launch Lending Desk"
+						modalFunc={() => handleModalSubmit('')}
+						modalTitle="Confirm Lending Desk"
+						modalContent={
+							<div>
+								<p>Loan Details</p>
+								<div className="d-flex flex-column">
+									<p>Currency Type</p>
+									<div className="d-flex">
+									<img src={token?.token.logoURI} alt={`${token?.token.name} Logo`} height="20" width="20"/>
+									<p className="m-0 ms-1">{token?.token.name}</p>
+									</div>
+									{deskConfigs.map((config, index) => {
+										return (
+											<div key={index}>
+											<p>Collection {index}</p>
+											<div className="d-flex align-items-center">
+												<img src={config?.hidden_input_nft.nft?.logoURI} alt={`${config?.hidden_input_nft.nft.name} Logo`} height="20" width="20"/>
+												<p className="m-0 ms-1">{config?.hidden_input_nft.nft.name}</p>
+											</div>
+											</div>
+										)
+									})}
+								</div>
+								<p>Lending Desk Funding</p>
+								<input value={deskFundingAmount} onChange={e => setDeskFundingAmount(e.target.value)} type="number"/>
+							</div>
+						}
+					/>
 				</div>
 			</div>
 		</div>

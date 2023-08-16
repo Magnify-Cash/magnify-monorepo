@@ -10,7 +10,7 @@ Component Props
 export interface BaseListProps {
 	nft?:boolean
 	token?:boolean
-	id:string
+	modalId:string
 	urls:Array<string>
 	onClick?:Function
 }
@@ -155,7 +155,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 		props.onClick && props.onClick(e.target.value);
 
 		// hide modal
-		var el = document.getElementById(props.id)
+		var el = document.getElementById(props.modalId)
 		if (el){
 			var modal = window.bootstrap.Modal.getInstance(el);
 			modal && modal.hide();
@@ -178,7 +178,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	return (
 		<>
 		{/* ERC20 Modal */}
-		<div className="modal" id={props.id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div className="modal" id={props.modalId} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div className="modal-dialog modal-dialog-centered">
 			<div className="modal-content">
 			  <div className="modal-header">
