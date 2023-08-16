@@ -29,7 +29,7 @@ export const CreateLendingDesk = (props:any) => {
 	}
 
 	// modal submit
-	function handleModalSubmit(x){
+	function handleModalSubmit(){
 		console.log('token', token)
 		console.log('deskConfigs', deskConfigs)
 		console.log('deskFundingAmount', deskFundingAmount)
@@ -208,11 +208,11 @@ export const CreateLendingDesk = (props:any) => {
 				</div>
 				<div className="d-flex mb-2 mt-2">
 					<PopupTransaction
-						className="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
+						btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
 						btnText="Finalize Lending Desk"
 						modalId="txModal"
 						modalBtnText="Launch Lending Desk"
-						modalFunc={() => handleModalSubmit('')}
+						modalFunc={() => handleModalSubmit()}
 						modalTitle="Confirm Lending Desk"
 						modalContent={
 							<div>

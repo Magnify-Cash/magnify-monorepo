@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PopupTokenList } from "@/components";
+import { PopupTokenList, PopupTransaction} from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
@@ -9,6 +9,13 @@ export const QuickLoan = (props:any) => {
 	const [nftCollection, _setNftCollection] = useState<INFTListItem|null>();
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
+
+	// modal submit
+	function handleModalSubmit(){
+		console.log('token', token)
+		console.log('nftCollection', nftCollection)
+		console.log('wagmi function with above data.....')
+	}
 
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
@@ -94,6 +101,16 @@ export const QuickLoan = (props:any) => {
 						</div>
 					</div>
 				</div>
+				<PopupTransaction
+					divClass="col-12 d-flex"
+					btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
+					btnText="Get Loan"
+					modalId="txModal"
+					modalBtnText="Get Loan"
+					modalFunc={() => handleModalSubmit()}
+					modalTitle="Get Loan"
+					modalContent={<></>}
+				/>
 			</div>
 
 			{/* End Container*/}

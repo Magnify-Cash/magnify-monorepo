@@ -5,7 +5,8 @@ export interface PopupTransactionProps {
 	loading?: boolean; // loading state
     isConnected?: boolean; // whether or not wallet is connected
   	error?: any | null; // error state
-	className: string; // modal btn trigger classname
+	divClass?: string;
+	btnClass: string; // modal btn trigger classname
 	btnText: string; // modal btn trigger text
 	modalId: string; // id of modal
 	modalBtnText: string; // btn text of modal
@@ -18,7 +19,7 @@ export interface PopupTransactionProps {
 export const PopupTransaction = (props:PopupTransactionProps) => {
 	let snippet = (
 		<button
-		  className={props.className}
+		  className={props.btnClass}
 		  disabled={props.loading || !!props.error}
 		  data-bs-toggle="modal" data-bs-target={`#${props.modalId}`}
 		>
@@ -27,28 +28,28 @@ export const PopupTransaction = (props:PopupTransactionProps) => {
 	  );
 	if (props.isConnected === false) {
 		snippet = (
-		  <button className={props.className} disabled={true}>
+		  <button className={props.btnClass} disabled={true}>
 			Connect Wallet
 		  </button>
 		);
 	  }
 	  if (props.error) {
 		snippet = (
-		  <button className={props.className} disabled={true}>
+		  <button className={props.btnClass} disabled={true}>
 			{props.error.reason}
 		  </button>
 		);
 	  }
 	  if (props.loading) {
 		snippet = (
-		  <button className={props.className} disabled={true}>
+		  <button className={props.btnClass} disabled={true}>
 			Loading...
 		  </button>
 		);
 	  }
 
 	return (
-		<div>
+		<div className={props.divClass}>
 		{snippet}
 		<div className="modal modal-md" id={props.modalId} tabIndex={-1} aria-labelledby="test" aria-hidden="true">
 		  <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
