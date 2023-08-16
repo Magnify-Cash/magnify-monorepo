@@ -49,7 +49,11 @@ export const CreateLendingDesk = (props:any) => {
 									<p className="text-primary fw-bold">Choose Currency</p>
 									<div className="form-select w-100 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#tokenModal">
 										{token
-											? token.token.name
+											?
+											<div className="d-flex align-items-center">
+												<img src={token.token.logoURI} alt={`${token.token.name} Logo`} height="20" width="20"/>
+												<p className="m-0 ms-1">{token.token.name}</p>
+											</div>
 											: "Choose Currency..."
 										}
 									</div>
@@ -77,7 +81,10 @@ export const CreateLendingDesk = (props:any) => {
 									</p>
 									<div className="form-select w-100 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#nftModal">
 										{nftCollection
-											? nftCollection.nft.name
+											? <div className="d-flex align-items-center">
+												<img src={nftCollection.nft.logoURI} alt={`${nftCollection.nft.name} Logo`} height="20" width="20"/>
+												<p className="m-0 ms-1">{nftCollection.nft.name}</p>
+											</div>
 											: "Choose NFT Collection..."
 										}
 									</div>
@@ -211,15 +218,17 @@ export const CreateLendingDesk = (props:any) => {
 							<div>
 								<p>Loan Details</p>
 								<div className="d-flex flex-column">
-									<p>Currency Type</p>
-									<div className="d-flex">
-									<img src={token?.token.logoURI} alt={`${token?.token.name} Logo`} height="20" width="20"/>
-									<p className="m-0 ms-1">{token?.token.name}</p>
+									<div className="mb-2">
+										<small className="m-0">Currency Type</small>
+										<div className="d-flex">
+											<img src={token?.token.logoURI} alt={`${token?.token.name} Logo`} height="20" width="20"/>
+											<p className="m-0 ms-1">{token?.token.name}</p>
+										</div>
 									</div>
 									{deskConfigs.map((config, index) => {
 										return (
-											<div key={index}>
-											<p>Collection {index}</p>
+											<div key={index} className="col-12 my-2">
+											<small className="m-0">Collection {index + 1}</small>
 											<div className="d-flex align-items-center">
 												<img src={config?.hidden_input_nft.nft?.logoURI} alt={`${config?.hidden_input_nft.nft.name} Logo`} height="20" width="20"/>
 												<p className="m-0 ms-1">{config?.hidden_input_nft.nft.name}</p>
@@ -228,8 +237,10 @@ export const CreateLendingDesk = (props:any) => {
 										)
 									})}
 								</div>
-								<p>Lending Desk Funding</p>
+								<div className="input-group">
+								<span>Funding Amount</span>
 								<input value={deskFundingAmount} onChange={e => setDeskFundingAmount(e.target.value)} type="number"/>
+								</div>
 							</div>
 						}
 					/>

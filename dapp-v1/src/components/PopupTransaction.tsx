@@ -50,8 +50,8 @@ export const PopupTransaction = (props:PopupTransactionProps) => {
 	return (
 		<div>
 		{snippet}
-		<div className="modal" id={props.modalId} tabIndex={-1} aria-labelledby="test" aria-hidden="true">
-		  <div className="modal-dialog modal-dialog-centered">
+		<div className="modal modal-md" id={props.modalId} tabIndex={-1} aria-labelledby="test" aria-hidden="true">
+		  <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div className="modal-content">
 			  <div className="modal-header">
 				<h5 className="modal-title text-center">

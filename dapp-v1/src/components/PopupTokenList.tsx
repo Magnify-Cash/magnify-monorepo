@@ -179,7 +179,7 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 		<>
 		{/* ERC20 Modal */}
 		<div className="modal" id={props.modalId} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div className="modal-dialog modal-dialog-centered">
+		  <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div className="modal-content">
 			  <div className="modal-header">
 				<h5 className="modal-title text-center">
