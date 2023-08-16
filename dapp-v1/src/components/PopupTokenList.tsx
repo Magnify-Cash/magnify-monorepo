@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import axios from 'axios';
 import { NFTInfo } from '@nftylabs/nft-lists';
 import { TokenInfo } from '@uniswap/token-lists';
 
@@ -59,8 +58,13 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	  try {
 		// get list data
 		let combinedLists;
-		const responses = await Promise.all(props.urls.map(url => axios.get(url)));
-		const jsonData = responses.map(response => response.data);
+		const responses = await Promise.all(
+		  props.urls.map(async (url) => {
+			const response = await fetch(url);
+			return response.json();
+		  })
+		);
+		const jsonData = responses.map(response => response);
 		if (props.nft){
 			combinedLists = jsonData.flatMap((parentObj) => {
 			  return parentObj.nfts.map((nft:NFTInfo) => ({
