@@ -7,21 +7,18 @@ export const CreateLendingDesk = (props:any) => {
 	// tokenlist state management
 	const [token, _setToken] = useState<ITokenListItem|null>();
 	const [nftCollection, _setNftCollection] = useState<INFTListItem|null>();
+	const [deskConfigs, setDeskConfigs] = useState([]);
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
 
-	// Lending Desk Config submit
+	// lending desk config submit
 	function handleConfigSubmit(e) {
-		// Prevent the browser from reloading the page
 		e.preventDefault();
-
-		// Read the form data
-		const form = e.target;
+		const form = document.getElementById("configForm") as HTMLFormElement;;
 		const formData = new FormData(form);
-
-		// Or you can work with it as a plain object:
 		const formJson = Object.fromEntries(formData.entries());
-		console.log(formJson);
+		setDeskConfigs([...deskConfigs, formJson]);
+		console.log(formJson)
 	}
 
 	return (
@@ -35,7 +32,7 @@ export const CreateLendingDesk = (props:any) => {
 							<div className="card-body">
 								<div>
 									<p className="text-primary fw-bold">Choose Currency</p>
-									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#tokenModal">
+									<div className="form-select w-100 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#tokenModal">
 										{token
 											? token.token.name
 											: "Choose Currency..."
@@ -58,12 +55,12 @@ export const CreateLendingDesk = (props:any) => {
 					<div className="col-12">
 						<div className="card border-0 shadow rounded-4 h-100">
 							<div className="card-body">
-								<form>
+								<form id="configForm">
 								<div>
 									<p className="text-primary fw-bold">
 										Choose Collection(s) & Paramaters
 									</p>
-									<div className="form-select w-100 btn btn-secondary" id="currency" data-bs-toggle="modal" data-bs-target="#nftModal">
+									<div className="form-select w-100 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#nftModal">
 										{nftCollection
 											? nftCollection.nft.name
 											: "Choose Currency..."
@@ -84,7 +81,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="min_offer" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
@@ -93,7 +90,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="max_offer" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
@@ -105,7 +102,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="min_duration" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
@@ -114,7 +111,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="max_duration" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
@@ -126,7 +123,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="min_interest" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>
@@ -135,7 +132,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input type="number" className="form-control w-50"/>
+											<input name="max_interest" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>

@@ -152,13 +152,23 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 	On Click Callback
 	*/
 	function onClickCallback(e){
-		props.onClick && props.onClick(e.target.value)
+		props.onClick && props.onClick(e.target.value);
 
 		// hide modal
 		var el = document.getElementById(props.id)
 		if (el){
-			var modal = window.bootstrap.Modal.getInstance(el)
+			var modal = window.bootstrap.Modal.getInstance(el);
 			modal && modal.hide();
+		}
+
+		// set hidden input
+		if (props.nft){
+			let inpt = (document.getElementById("hidden_input_nft") as HTMLInputElement);
+			inpt.value = e.target.value;
+		}
+		if (props.token){
+			let inpt = (document.getElementById("hidden_input_token") as HTMLInputElement);
+			inpt.value = e.target.value;
 		}
 	}
 
@@ -252,6 +262,10 @@ export const PopupTokenList = (props:PopupTokenListProps) => {
 		  </div>
 		</div>
 		{/* End NFT modal */}
+
+		{/* Hidden form inputs */}
+		{props.token && <input id="hidden_input_token" name="hidden_input_token" type="hidden" />}
+		{props.nft && <input id="hidden_input_nft" name="hidden_input_nft" type="hidden" />}
 		</>
 	)
 }
