@@ -3,12 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@graphprotocol/client-urql": "^2.0.0",
+    "@nftylabs/nft-lists": "^0.0.1",
+    "@tanstack/react-virtual": "^3.0.0-beta.36",
+    "@uniswap/token-lists": "^1.0.0-beta.33",
     "buffer": "^6.0.3",
     "connectkit": "^1.4.0",
     "graphql": "^16.7.1",
@@ -22,6 +25,7 @@
     "wagmi": "^1.0.6"
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.6",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
     "@vitejs/plugin-react": "^4.0.0",

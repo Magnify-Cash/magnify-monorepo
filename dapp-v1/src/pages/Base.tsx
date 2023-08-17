@@ -39,6 +39,12 @@ function getCookie(cname:string) {
   return "";
 }
 
+function closeSidebar(){
+  const offcanvas = bootstrap.Offcanvas.getInstance('#sidebar');
+  offcanvas && offcanvas.hide();
+}
+
+
 
 export const Base = () => {
   // theme
@@ -71,6 +77,7 @@ export const Base = () => {
           <div className="offcanvas-body">
             <NavLink
             to="/"
+            onClick={()=> closeSidebar()}
             className="btn btn-link d-block w-100 text-start bg-primary-subtle"
             >
             <i className="fa-light fa-home me-1"></i>
@@ -87,6 +94,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                 to="borrower-dashboard"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -98,17 +106,19 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                 to="quick-loan"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
                   <i className="fa-light fa-bolt"></i>
                 </span>
-                Quick Loan
+                Get Quick Loan
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink
                 to="explore"
+                onClick={()=> closeSidebar()}
                 className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                 <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -130,6 +140,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="lender-dashboard"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -141,6 +152,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="create-desk"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -151,7 +163,8 @@ export const Base = () => {
             </li>
             <li className="nav-item">
               <NavLink
-              to="manage-desk"
+              to="manage-desks"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -173,6 +186,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="help"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -184,6 +198,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="docs"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -195,6 +210,7 @@ export const Base = () => {
             <li className="nav-item">
               <NavLink
               to="community"
+              onClick={()=> closeSidebar()}
               className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
               >
               <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -216,6 +232,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                   to="token"
+                  onClick={()=> closeSidebar()}
                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -227,6 +244,7 @@ export const Base = () => {
               <li className="nav-item">
                 <NavLink
                   to="stake"
+                  onClick={()=> closeSidebar()}
                   className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
                 >
                   <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
@@ -246,7 +264,7 @@ export const Base = () => {
           <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-md-flex align-items-center">
             <h3 className="m-0 text-center text-md-start">{title}</h3>
             <div className="ps-md-3 ms-auto mt-3 mt-md-0 text-center d-md-flex">
-              <button type="button" className="btn btn-secondary rounded-pill me-2 d-md-none" aria-label="Toggle sidebar" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+              <button type="button" className="btn btn-secondary rounded-pill me-2 d-lg-none" aria-label="Toggle sidebar" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
                 <i className="fa-solid fa-bars"></i>
               </button>
               <button type="button" className="btn btn-secondary rounded-pill me-2" aria-label="Toggle dark mode" onClick={() => toggleDarkMode()}

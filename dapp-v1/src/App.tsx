@@ -11,14 +11,14 @@ export function App() {
 
         {/* Borrow */}
         <Route path="borrower-dashboard" element={<Pages.Demo title="Borrower Dashboard" />} />
-        <Route path="quick-loan" element={<Pages.Demo title="Quick Loan" />} />
-        <Route path="explore" element={<Pages.Demo title="Explore Colletions" />} />
+        <Route path="quick-loan" element={<Pages.QuickLoan title="Quick Loan" />} />
+        <Route path="explore" element={<Pages.Demo title="Explore Collections" />} />
 
         {/* Lend */}
         <Route path="lender-dashboard" element={<Pages.Demo title="Lender Dashboard" />} />
-        <Route path="create-desk" element={<Pages.Demo title="Create Desk" />} />
+        <Route path="create-desk" element={<Pages.CreateLendingDesk title="Create Lending Desk" />} />
         <Route path="manage-desk" element={<Pages.Demo title="Manage Desk" />} />
-        <Route path="manage-desks" element={<Pages.Demo title="Manage Desks" />} />
+        <Route path="manage-desks" element={<Pages.ManageLendingDesks title="Manage Lending Desks" />} />
 
         {/* Support */}
         <Route path="help" element={<Pages.Demo title="Help" />} />
