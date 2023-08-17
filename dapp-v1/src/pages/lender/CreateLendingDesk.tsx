@@ -17,8 +17,13 @@ export const CreateLendingDesk = (props:any) => {
 	function handleConfigSubmit(e) {
 		e.preventDefault();
 		const form = document.getElementById("configForm") as HTMLFormElement;;
+		const isValid = form.checkValidity();
+		if (!isValid) {
+			form.reportValidity();
+		}
 		const formData = new FormData(form);
 		const formJson = Object.fromEntries(formData.entries());
+		console.log(formJson)
 		if (formJson.hidden_input_nft){
 			formJson.hidden_input_nft = JSON.parse(formJson.hidden_input_nft);
 		}
@@ -103,7 +108,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="min_offer" type="number" className="form-control w-50"/>
+											<input min="0" name="min_offer" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
@@ -112,7 +117,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Offer</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="max_offer" type="number" className="form-control w-50"/>
+											<input min="0" name="max_offer" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Currency</div>
@@ -124,7 +129,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="min_duration" type="number" className="form-control w-50"/>
+											<input min="0" name="min_duration" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
@@ -133,7 +138,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Duration</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="max_duration" type="number" className="form-control w-50"/>
+											<input min="0" name="max_duration" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Days</div>
@@ -145,7 +150,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Min Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="min_interest" type="number" className="form-control w-50"/>
+											<input min="0" name="min_interest" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>
@@ -154,7 +159,7 @@ export const CreateLendingDesk = (props:any) => {
 										<p className="text-center">Max Interest Rate</p>
 										<div className="d-flex justify-content-around align-items-center mb-2">
 											<span className="btn btn-secondary">-</span>
-											<input name="max_interest" type="number" className="form-control w-50"/>
+											<input min="0" name="max_interest" type="number" className="form-control w-50"/>
 											<span className="btn btn-secondary">+</span>
 										</div>
 										<div className="d-flex justify-content-center">Percent (%)</div>
