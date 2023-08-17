@@ -3,35 +3,52 @@ import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
+interface IConfigForm {
+hidden_input_token?:ITokenListItem
+hidden_input_nft: INFTListItem
+max_duration: string
+max_interest: string
+max_offer: string
+min_duration: string
+min_interest: string
+min_offer: string
+}
+
 export const CreateLendingDesk = (props:any) => {
 	// tokenlist state management
 	const [token, _setToken] = useState<ITokenListItem|null>();
 	const [nftCollection, _setNftCollection] = useState<INFTListItem|null>();
-	const [deskConfigs, setDeskConfigs] = useState([]);
-	const [deskFundingAmount, setDeskFundingAmount] = useState(0);
+	const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
+	const [deskFundingAmount, setDeskFundingAmount] = useState("");
 
 	const setToken = (e:string) => _setToken(JSON.parse(e));
 	const setNftCollection = (e:string) => _setNftCollection(JSON.parse(e));
 
 	// lending desk config submit
-	function handleConfigSubmit(e) {
-		e.preventDefault();
-		const form = document.getElementById("configForm") as HTMLFormElement;;
-		const isValid = form.checkValidity();
-		if (!isValid) {
-			form.reportValidity();
+	function handleConfigSubmit(e:React.MouseEvent<HTMLButtonElement>) {
+	  e.preventDefault();
+	  const form = document.getElementById("configForm") as HTMLFormElement;
+	  const isValid = form.checkValidity();
+	  if (!isValid) {
+		form.reportValidity();
+		return;
+	  }
+	  const formData = new FormData(form);
+	  const formJson:IConfigForm = {} as IConfigForm;
+	  formData.forEach((value, key) => {
+		if (key === 'hidden_input_nft' || key === 'hidden_input_token') {
+		  try {
+			formJson[key] = JSON.parse(value as string);
+		  } catch (error) {
+			console.error(`Error parsing JSON for key '${key}':`, error);
+		  }
+		} else {
+		  formJson[key] = value;
 		}
-		const formData = new FormData(form);
-		const formJson = Object.fromEntries(formData.entries());
-		console.log(formJson)
-		if (formJson.hidden_input_nft){
-			formJson.hidden_input_nft = JSON.parse(formJson.hidden_input_nft);
-		}
-		if (formJson.hidden_input_token){
-			formJson.hidden_input_token = JSON.parse(formJson.hidden_input_token)
-		}
-		setDeskConfigs([...deskConfigs, formJson]);
+	  });
+	  setDeskConfigs([...deskConfigs, formJson]);
 	}
+
 
 	// modal submit
 	function handleModalSubmit(){
