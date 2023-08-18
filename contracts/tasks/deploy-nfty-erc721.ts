@@ -1,8 +1,8 @@
 import { task, types } from "hardhat/config";
-import { NFTYNotes__factory } from "../../typechain-types";
+import { NFTYERC721V1__factory } from "../../typechain-types";
 
-// Task to deploy NFTYNotes contract
-task("deploy-nfty-notes", "Deploy NFTYNotes contract")
+// Task to deploy NFTYERC721 contract
+task("deploy-nfty-erc721", "Deploy NFTYERC721 contract")
   .addParam(
     "name",
     "Name of the NFT collection",
@@ -26,11 +26,11 @@ task("deploy-nfty-notes", "Deploy NFTYNotes contract")
   )
   .setAction(async ({ name, baseuri, symbol }, hre) => {
     // Deploy contract
-    const NFTYNotes = (await hre.ethers.getContractFactory(
-      "NFTYNotes"
-    )) as NFTYNotes__factory;
-    const nftyNotes = await NFTYNotes.deploy(name, symbol, baseuri);
-    await nftyNotes.deployed();
-    console.log("NFTYNotes deployed @", nftyNotes.address);
-    return nftyNotes;
+    const NFTYERC721 = (await hre.ethers.getContractFactory(
+      "NFTYERC721V1"
+    )) as NFTYERC721V1__factory;
+    const nftyErc721 = await NFTYERC721.deploy(name, symbol, baseuri);
+    await nftyErc721.deployed();
+    console.log("NFTYERC721 deployed @", nftyErc721.address);
+    return nftyErc721;
   });

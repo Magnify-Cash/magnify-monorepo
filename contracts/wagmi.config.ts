@@ -17,7 +17,7 @@ export default defineConfig({
         NFTYLending: {
           5: "0xF4F1C3db0205d055f5A081482e0A84Ff71c42102", // Goerli
           // @ts-ignore
-          31337: deployments.nftyLending.address, // Hardhat
+          31337: deployments.nftyFinance.address, // Hardhat
           80001: "0x348db0CDC8031901d126878bF0DF663FbB5afc1e", // Mumbai
         },
       },

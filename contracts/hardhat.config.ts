@@ -1,17 +1,13 @@
 import "@nomicfoundation/hardhat-toolbox";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
-import 'dotenv/config'
-
+import "dotenv/config";
 
 // Import tasks
 import "./tasks/deploy-nft-collection";
-import "./tasks/deploy-nfty-notes";
-import "./tasks/deploy-oracle";
+import "./tasks/deploy-nfty-erc721";
 import "./tasks/deploy-token";
 import "./tasks/deploy";
-import "./tasks/set-node-admin";
-import "./tasks/set-oracle-price";
 
 dotEnvConfig({ path: "../.env" });
 
@@ -21,8 +17,8 @@ const config: HardhatUserConfig = {
     currency: "USD",
     coinmarketcap: process.env.CMC_KEY,
     showTimeSpent: true,
-    excludeContracts: ["contracts/test"]
-   // onlyCalledMethods: false
+    excludeContracts: ["contracts/test"],
+    // onlyCalledMethods: false
   },
   solidity: {
     version: "0.8.18",
