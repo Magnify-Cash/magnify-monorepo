@@ -17,7 +17,7 @@ const NftCollectionRow = (nftCollection: any) => {
   );
 };
 
-export const Home = () => {
+export const Home = (props) => {
   // GraphQL
   const [result] = useQuery({
     query: HomeDocument,
