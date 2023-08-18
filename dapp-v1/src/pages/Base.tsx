@@ -1,9 +1,11 @@
 //@ts-nocheck
 //TODO: Figure out 'mode' typing for ConnectKitProvider
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
+import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+
 
 function findTitleProps(obj:any):string {
   if (obj.props && obj.props.title) {
@@ -53,7 +55,6 @@ export const Base = () => {
   const obj = useOutlet();
   const title = findTitleProps(obj);
   const [ mode, setMode ] = useState('light');
-
   function toggleDarkMode(){
       window.toggleDarkMode();
 	  const cookie = getCookie("colorMode");
@@ -64,8 +65,16 @@ export const Base = () => {
 	  }
   }
 
+  // graphQL
+  const client = new Client({
+    url: "http://localhost:8000/subgraphs/name/nftyfinance-local",
+    exchanges: [cacheExchange, fetchExchange],
+  });
+
+
   return (
       <ConnectKitProvider mode={mode}>
+        <Provider value={client}>
         {/* Sidebar start */}
         <nav id="sidebar" className="sidebar shadow border-0 offcanvas-start offcanvas-lg" tabIndex={-1}>
           <div className="offcanvas-header">
@@ -315,7 +324,7 @@ export const Base = () => {
             <Outlet/>
         </main>
         {/* Content end */}
-
+        </Provider>
         </ConnectKitProvider>
   );
 };
