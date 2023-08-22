@@ -1,141 +1,60 @@
+import { LoanCard } from "@/components";
+
 export const ManageLoans = (props:any) => {
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
+			<div className="d-lg-flex align-items-center">
+				<ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+				  <li className="nav-item" role="presentation">
+					<button className="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Loans</button>
+				  </li>
+				  <li className="nav-item" role="presentation">
+					<button className="nav-link" id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" type="button" role="tab" aria-controls="pills-completed" aria-selected="false">Completed Loans</button>
+				  </li>
+				  <li className="nav-item" role="presentation">
+					<button className="nav-link" id="pills-pending-default-tab" data-bs-toggle="pill" data-bs-target="#pills-pending-default" type="button" role="tab" aria-controls="pills-pending-default" aria-selected="false">Pending Default</button>
+				  </li>
+				  <li className="nav-item" role="presentation">
+					  <button className="nav-link" id="pills-defaulted-tab" data-bs-toggle="pill" data-bs-target="#pills-defaulted" type="button" role="tab" aria-controls="pills-defaulted" aria-selected="false">Defaulted Loans</button>
+					</li>
+				</ul>
 
-				{/* Demo Row Card */}
-				<div className="row g-4 g-xl-5 justify-content-center">
-					<div className="col-sm-6 col-xl-4">
-						<div className="card border-0 shadow rounded-4 h-100">
-							<div className="card-body">
-								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-hand-holding-dollar h1 m-0"></i>
-								</div>
-								<div className="text-center mt-3">
-									<h5>Demo Card</h5>
-									<p className="text-body-secondary">
-										Earn instant liquidity using your NFT as collateral
-									</p>
-									<a href="#">Borrow Now &rarr;</a>
-								</div>
-							</div>
-						</div>
-					</div>
+			</div>
+
+			<div className="tab-content" id="pills-tabContent">
+				{/* Active Row */}
+				<div className="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab">
+				<div className="row g-4 g-xl-5">
+					<LoanCard type="lender"/>
 				</div>
-				{/* End demo card */}
-
-				{/* Demo Row */}
-				<div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
-					<div className="card-body py-4">
-						<div className="row g-4 g-xl-5 justify-content-center">
-							<div className="col-sm-6 col-xl-4">
-								<div className="d-flex align-items-center">
-									<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-										<i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
-									</div>
-									<div className="ps-3">
-										<h3 className="m-0">30</h3>
-										<p className="m-0 text-primary-emphasis">number of collections</p>
-									</div>
-								</div>
-							</div>
-							<div className="col-sm-6 col-xl-4">
-								<div className="d-flex align-items-center">
-									<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-										<i className="fa-solid fa-square-dollar h2 m-0"></i>
-									</div>
-									<div className="ps-3">
-										<h3 className="m-0">20K <small className="fw-normal">USD</small></h3>
-										<p className="m-0 text-primary-emphasis">total value locked (TVL)</p>
-									</div>
-								</div>
-							</div>
-							<div className="col-sm-6 col-xl-4">
-								<div className="d-flex align-items-center">
-									<div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-										<i className="fa-solid fa-sack-dollar h2 m-0"></i>
-									</div>
-									<div className="ps-3">
-										<h3 className="m-0">20K <small className="fw-normal">USD</small></h3>
-										<p className="m-0 text-primary-emphasis">total available liquidity (TAL)</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
-				{/* End row */}
+				{/* End Active Row */}
 
-				{/* Demo table */}
-				<div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
-					<div className="table-responsive">
-						<table className="table m-0 text-nowrap">
-							<thead>
-								<tr>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">Collection</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis">Currency</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">TAL (USD)</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3" colSpan={2}>Utilization</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<button className="btn btn-primary rounded-pill">Find a Loan</button>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<button className="btn btn-primary rounded-pill">Find a Loan</button>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<button className="btn btn-primary rounded-pill">Find a Loan</button>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<button className="btn btn-primary rounded-pill">Find a Loan</button>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<button className="btn btn-primary rounded-pill">Find a Loan</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+				{/* Pending Default Row */}
+				<div className="tab-pane fade" id="pills-pending-default" role="tabpanel" aria-labelledby="pills-pending-default-tab">
+				<div className="row g-4 g-xl-5">
+					  <LoanCard type="lender"/>
+				  </div>
 				</div>
-				{/* End Table */}
+				{/* End Pending Default Row */}
 
-				{/* End Container*/}
+				{/* Defaulted Row */}
+				<div className="tab-pane fade" id="pills-defaulted" role="tabpanel" aria-labelledby="pills-defaulted-tab">
+				<div className="row g-4 g-xl-5">
+					  <LoanCard type="lender"/>
+				  </div>
+				</div>
+				{/* End Defaulted Row */}
+
+				{/* Completed Row */}
+				<div className="tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">
+				  <div className="row g-4 g-xl-5">
+					  <LoanCard type="lender"/>
+				  </div>
+				</div>
+				{/* End Completed Row */}
+			</div>
+
 		</div>
 	)
 }
