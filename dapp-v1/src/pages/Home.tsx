@@ -66,7 +66,7 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
-                <p className="text-body-secondary">Stake $NFTY and earn</p>
+                <p className="text-body-secondary">Stake NFTY and earn</p>
                 <NavLink to="/stake">Start Lending &rarr;</NavLink>
               </div>
             </div>

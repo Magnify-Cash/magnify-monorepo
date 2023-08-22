@@ -235,7 +235,7 @@ export const Base = () => {
             <ul className="sidebar-nav mt-3">
               <li>
                 <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                $NFTY Token
+                NFTY Token
                 </h6>
               </li>
               <li className="nav-item">

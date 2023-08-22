@@ -56,7 +56,7 @@ const LendingDeskCard = () => (
 					</div>
 				</div>
 				<div className="col-lg-3">
-					<NavLink to="/manage-desk" className="col-6 col-lg-12 btn">
+					<NavLink to="/manage-desks/1" className="col-6 col-lg-12 btn">
 						Edit
 						<i className="fa-solid fa-pencil h2 m-0"></i>
 					</NavLink>
