@@ -1,3 +1,5 @@
+import { PopupTransaction } from "./PopupTransaction";
+
 interface ILoanCardProps {
 	type: string;
 }
@@ -29,7 +31,15 @@ export const LoanCard = (props:ILoanCardProps) => {
 							</div>
 						</div>
 						{props.type =="borrower" &&
-						<button className="btn btn-primary btn-lg">Pay Back</button>
+						<PopupTransaction
+						btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
+						btnText="Finalize Lending Desk"
+						modalId="txModal"
+						modalBtnText="Launch Lending Desk"
+						modalFunc={() => console.log('hi')}
+						modalTitle="Confirm Lending Desk"
+						modalContent={<div></div>}
+						/>
 						}
 					</div>
 				</div>
