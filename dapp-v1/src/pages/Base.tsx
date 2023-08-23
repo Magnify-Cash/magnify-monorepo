@@ -78,10 +78,10 @@ export const Base = () => {
         {/* Sidebar start */}
         <nav id="sidebar" className="sidebar shadow border-0 offcanvas-start offcanvas-lg" tabIndex={-1}>
           <div className="offcanvas-header">
-            <a className="sidebar-brand d-flex align-items-center me-auto" href="#">
+            <NavLink to="/" className="sidebar-brand d-flex align-items-center me-auto" href="#">
                   <img src="/theme/icon.svg" alt="Logo" width="28" height="28" className="d-block flex-shrink-0 me-2"/>
                   <strong>nfty.finance</strong>
-                </a>
+            </NavLink>
           </div>
           <div className="offcanvas-body">
             <NavLink
