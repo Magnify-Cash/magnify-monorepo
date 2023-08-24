@@ -167,7 +167,9 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         },
       ];
 
+      // @ts-expect-error
       props.token && setTokenLists(tokenLists);
+      // @ts-expect-error
       props.nft && setNftLists(nftLists);
     };
 

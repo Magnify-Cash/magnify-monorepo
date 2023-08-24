@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
+import { usePrepareNftyFinanceV1InitializeNewLendingDesk } from "wagmi-generated";
+import { useNftyFinanceV1InitializeNewLendingDesk } from "wagmi-generated";
 
 interface IConfigForm {
   nftCollection: INFTListItem;
