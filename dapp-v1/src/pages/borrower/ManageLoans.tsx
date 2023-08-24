@@ -22,7 +22,7 @@ export const ManageLoans = (props:any) => {
 				{/* active Row */}
 			    <div className="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab">
 				<div className="row g-4 g-xl-5">
-					<LoanCard type="borrower"/>
+					<LoanCard userType="borrower" loanID={1}/>
 				</div>
 				</div>
 				{/* End Active Row */}
@@ -30,7 +30,7 @@ export const ManageLoans = (props:any) => {
 				{/* Inactive Row */}
 			    <div className="tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">
 			  	<div className="row g-4 g-xl-5">
-				  	<LoanCard type="borrower"/>
+				  	<LoanCard userType="borrower" loanID={1}/>
 			  	</div>
 				</div>
 				{/* End Inactive Row */}
@@ -38,7 +38,7 @@ export const ManageLoans = (props:any) => {
 				{/* Inactive Row */}
 			    <div className="tab-pane fade" id="pills-defaulted" role="tabpanel" aria-labelledby="pills-defaulted-tab">
 				<div className="row g-4 g-xl-5">
-					  <LoanCard type="borrower"/>
+					  <LoanCard userType="borrower" loanID={1}/>
 			  	</div>
 				</div>
 				{/* End Inactive Row */}

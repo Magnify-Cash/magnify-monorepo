@@ -1,12 +1,21 @@
+import { useState } from "react";
 import { PopupTransaction } from "./PopupTransaction";
 
 interface ILoanCardProps {
-	type: string;
+	userType: string;
+	loanID: number;
 }
 
 
-
 export const LoanCard = (props:ILoanCardProps) => {
+	const [payBackAmount, setPayBackAmount] = useState("0");
+
+	// modal submit
+	function handleModalSubmit(loanID:number){
+		console.log("loanID", loanID)
+		console.log('payBackAmount', payBackAmount)
+	}
+
 	return (
 		<div className="col-sm-6 col-xl-4">
 			<style>
@@ -27,12 +36,12 @@ export const LoanCard = (props:ILoanCardProps) => {
 						<div className="row g-4">
 							<div className="col-6 bg-info">
 								<i className="fa-regular fa-hand-holding-dollar h1 me-1"></i>
-								<p>[x] [Currency]</p>
+								<h6>[x] [Currency]</h6>
 								<small>borrowed</small>
 							</div>
 							<div className="col-6 bg-success">
 								<i className="fa-regular fa-calendar h1 me-1"></i>
-								<p>[x] [Currency]</p>
+								<h6>[x] [Currency]</h6>
 								<small>payoff amount</small>
 							</div>
 							<div className="col-12">
@@ -50,15 +59,32 @@ export const LoanCard = (props:ILoanCardProps) => {
 								</div>
 							</div>
 						</div>
-						{props.type =="borrower" &&
+						{props.userType =="borrower" &&
 						<PopupTransaction
-						btnClass="btn btn-primary btn-lg mt-5"
-						btnText="Finalize Lending Desk"
+						btnClass="btn btn-primary btn-lg mt-4"
+						btnText="Pay Back"
 						modalId="txModal"
-						modalBtnText="Launch Lending Desk"
-						modalFunc={() => console.log('hi')}
-						modalTitle="Confirm Lending Desk"
-						modalContent={<div></div>}
+						modalBtnText="Pay Now"
+						modalFunc={() => handleModalSubmit(props.loanID)}
+						modalTitle="Pay Back Loan"
+						modalContent={
+							<div>
+								<small>Loan Details</small>
+								<h6>Collection Name] #[NFT ID]</h6>
+								<div className="row g-4">
+									<div className="col-6 bg-secondary">test</div>
+									<div className="col-6 bg-secondary">test</div>
+									<div className="col-6 bg-secondary">test</div>
+									<div className="col-6 bg-secondary">test</div>
+									<div className="col-12 bg-success">test</div>
+								</div>
+								<hr/>
+								<div className="input-group">
+									<input value={payBackAmount} onChange={e => setPayBackAmount(e.target.value)} type="number" className="me-2"/>
+									<span>[Currency]</span>
+								</div>
+							</div>
+						}
 						/>
 						}
 					</div>
