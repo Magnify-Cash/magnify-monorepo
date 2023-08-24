@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { PopupTransaction } from "@/components";
 
 export const ManageLendingDesk = (props:any) => {
 	var title = document.getElementById("base-title");
@@ -31,20 +32,37 @@ export const ManageLendingDesk = (props:any) => {
 								<div className="d-flex flex-column align-items-left">
 									<div className="mt-3">
 										<p className="m-0">Currency Type</p>
-										<p className="m-0">VALUE</p>
+										<h5 className="m-0">[currency]</h5>
 									</div>
 								</div>
 							</div>
 							<div className="col-lg-4">
 								<div className="d-flex flex-column align-items-left">
 									<div className="mt-3">
-										<p className="m-0">Active Loans</p>
-										<p className="m-0">VALUE</p>
+										<p className="m-0">Available Liquidity</p>
+										<h5 className="m-0">[available]/[total] [currency]</h5>
 									</div>
 								</div>
 							</div>
-							<div className="col-lg-4">
-								<button className="btn btn-primary btn-lg">Add Funds</button>
+							<div className="col-lg-4 d-flex flex-column">
+								<PopupTransaction
+								btnClass="btn btn-primary btn-lg mt-4"
+								btnText="Add Funds"
+								modalId="txModal"
+								modalBtnText="Add Funds Now"
+								modalFunc={() => console.log(1)}
+								modalTitle="Add Funds"
+								modalContent={<></>}
+								/>
+								<PopupTransaction
+								btnClass="btn btn-primary btn-lg mt-4"
+								btnText="Withdraw Funds"
+								modalId="txModal2"
+								modalBtnText="Withdraw Funds Now"
+								modalFunc={() => console.log(1)}
+								modalTitle="Withdraw Funds"
+								modalContent={<></>}
+								/>
 							</div>
 						</div>
 					</div>

@@ -9,7 +9,7 @@ export interface PopupTransactionProps {
   	error?: any | null; // error state
 	divClass?: string;
 	btnClass: string; // modal btn trigger classname
-	btnText: string; // modal btn trigger text
+	btnText: string | React.ReactNode; // modal btn trigger text
 	modalId: string; // id of modal
 	modalBtnText: string; // btn text of modal
 	modalContent: React.ReactNode; // modal content

@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { PopupTransaction } from "@/components";
 
 const LendingDeskCard = () => (
 	<div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
@@ -60,18 +61,15 @@ const LendingDeskCard = () => (
 						Edit
 						<i className="fa-solid fa-pencil h2 m-0"></i>
 					</NavLink>
-					<button className="col-6 col-lg-12 btn">
-						Withdraw
-						<i className="fa-solid fa-arrow-down-to-line h2 m-0"></i>
-					</button>
-					<button className="col-6 col-lg-12 btn">
-						Deposit
-						<i className="fa-solid fa-arrow-up-to-line h2 m-0"></i>
-					</button>
-					<button className="col-6 col-lg-12 btn">
-						Freeze
-						<i className="fa-solid fa-snowflake h2 m-0"></i>
-					</button>
+					<PopupTransaction
+					btnClass="btn w-100"
+					btnText={<div className="d-flex">Freeze<i className="fa-solid fa-snowflake h2 m-0"></i></div>}
+					modalId="txModal"
+					modalBtnText="Freeze Liquidity Desk"
+					modalFunc={() => console.log(1)}
+					modalTitle="Freeze Desk"
+					modalContent={<></>}
+					/>
 				</div>
 			</div>
 		</div>
