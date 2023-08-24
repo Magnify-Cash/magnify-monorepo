@@ -1,6 +1,17 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
 export const BrowseCollection = (props) => {
+	var title = document.getElementById("base-title");
+
+	useEffect(() => {
+		console.log('hii')
+		console.log(title)
+		if (title){
+			title.innerHTML = `[x Collection] Liquidity Desks`;
+		}
+	}, [title])
+
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 				<p>

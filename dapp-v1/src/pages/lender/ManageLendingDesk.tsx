@@ -1,6 +1,17 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
 export const ManageLendingDesk = (props:any) => {
+	var title = document.getElementById("base-title");
+
+	useEffect(() => {
+		console.log('hii')
+		console.log(title)
+		if (title){
+			title.innerHTML = `Manage Lending Desk [x]`;
+		}
+	}, [title])
+
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 				{/* Demo Row */}
