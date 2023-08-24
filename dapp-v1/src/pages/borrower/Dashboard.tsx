@@ -1,6 +1,6 @@
 import { LoanCard } from "@/components";
 
-export const ManageLoans = (props:any) => {
+export const Dashboard = (props:any) => {
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 			<div className="d-lg-flex align-items-center">
