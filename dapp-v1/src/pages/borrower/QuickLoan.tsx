@@ -3,6 +3,12 @@ import { PopupTokenList, PopupTransaction} from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
+interface IQuickLoanForm {
+loan_duration: string
+loan_amount: string
+loan_nft: any
+}
+
 export const QuickLoan = (props:any) => {
 	// tokenlist state management
 	const [token, _setToken] = useState<ITokenListItem|null>();
@@ -12,8 +18,30 @@ export const QuickLoan = (props:any) => {
 
 	// modal submit
 	function handleModalSubmit(){
-		console.log('token', token)
-		console.log('nftCollection', nftCollection)
+		const form = document.getElementById("quickLoanForm") as HTMLFormElement;
+		const isValid = form.checkValidity();
+		if (!isValid) {
+		form.reportValidity();
+		return;
+		}
+		const formData = new FormData(form);
+		const formJson:IQuickLoanForm = {} as IQuickLoanForm;
+		formData.forEach((value, key) => {
+			if (key === 'hidden_input_nft' || key === 'hidden_input_token') {
+			  try {
+				formJson[key] = JSON.parse(value as string);
+			  } catch (error) {
+				console.error(`Error parsing JSON for key '${key}':`, error);
+			  }
+			} else {
+			  formJson[key] = value;
+			}
+		  });
+		console.log({
+			'token': token,
+			'nftCollection': nftCollection,
+			'form data': formJson
+		})
 		console.log('wagmi function with above data.....')
 	}
 
@@ -107,9 +135,69 @@ export const QuickLoan = (props:any) => {
 					btnText="Get Loan"
 					modalId="txModal"
 					modalBtnText="Get Loan"
-					modalFunc={() => handleModalSubmit()}
-					modalTitle="Get Loan"
-					modalContent={<></>}
+					modalFunc={(e) => handleModalSubmit()}
+					modalTitle="Request Loan"
+					modalContent={
+						<div>
+							<form id="quickLoanForm">
+							<small>Loan Details</small>
+							<div className="row g-4">
+								<div className="col-6 bg-secondary">
+									<h6>[collection]</h6>
+									<small>NFT Collection</small>
+								</div>
+								<div className="col-6 bg-secondary">
+									<h6>[x]-[x] [currency]</h6>
+									<small>min/max offer</small>
+								</div>
+								<div className="col-6 bg-secondary">
+									<h6>[x]-[x] [days]</h6>
+									<small>min/max duration</small>
+								</div>
+								<div className="col-6 bg-secondary">
+									<h6>[x]-[x] %</h6>
+									<small>min/max interest</small>
+								</div>
+								<div className="col-12">
+									<small>Select NFT</small>
+									<div>
+										<input name="loan_nft"/>
+									</div>
+								</div>
+								<div className="col-12">
+									<small>Select Duration</small>
+									<div>
+										<input name="loan_duration"/>
+									</div>
+								</div>
+								<div className="col-12">
+									<small>Select Amount</small>
+									<div>
+										<input name="loan_amount"/>
+									</div>
+								</div>
+							</div>
+							<hr/>
+							<div className="col-12">
+								<small>Loan Overview</small>
+								<div>
+									<p>[NFT #ID]</p>
+									<ul>
+										<li>Duration:</li>
+										<li>Interest Rate:</li>
+										<li>Requested Amount:</li>
+										<li>2% Loan Origination Fee:</li>
+									</ul>
+								</div>
+							</div>
+							<hr/>
+							<div className="col-12 d-flex justify-content-between">
+								<p>Gross Amount</p>
+								<h2 className="text-primary">[amount]</h2>
+							</div>
+							</form>
+						</div>
+					}
 				/>
 			</div>
 
