@@ -1,6 +1,11 @@
-import { LoanCard } from "@/components";
+import { LoanCard, PopupTransaction } from "@/components";
 
 export const Dashboard = (props:any) => {
+	// modal submit
+	function handleModalSubmit(loanID:number){
+		console.log("loanID", loanID)
+	}
+
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 			<div className="d-lg-flex align-items-center">
@@ -9,23 +14,22 @@ export const Dashboard = (props:any) => {
 					<button className="nav-link active" id="pills-active-tab" data-bs-toggle="pill" data-bs-target="#pills-active" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Active Loans</button>
 				  </li>
 				  <li className="nav-item" role="presentation">
-					<button className="nav-link" id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" type="button" role="tab" aria-controls="pills-completed" aria-selected="false">Completed Loans</button>
-				  </li>
-				  <li className="nav-item" role="presentation">
 					<button className="nav-link" id="pills-pending-default-tab" data-bs-toggle="pill" data-bs-target="#pills-pending-default" type="button" role="tab" aria-controls="pills-pending-default" aria-selected="false">Pending Default</button>
 				  </li>
+				  <li className="nav-item" role="presentation">
+					  <button className="nav-link" id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" type="button" role="tab" aria-controls="pills-completed" aria-selected="false">Completed Loans</button>
+					</li>
 				  <li className="nav-item" role="presentation">
 					  <button className="nav-link" id="pills-defaulted-tab" data-bs-toggle="pill" data-bs-target="#pills-defaulted" type="button" role="tab" aria-controls="pills-defaulted" aria-selected="false">Defaulted Loans</button>
 					</li>
 				</ul>
-
 			</div>
 
 			<div className="tab-content" id="pills-tabContent">
 				{/* Active Row */}
 				<div className="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab">
 				<div className="row g-4 g-xl-5">
-					<LoanCard loanID={1}/>
+					<LoanCard loanInfo={null}/>
 				</div>
 				</div>
 				{/* End Active Row */}
@@ -33,7 +37,32 @@ export const Dashboard = (props:any) => {
 				{/* Pending Default Row */}
 				<div className="tab-pane fade" id="pills-pending-default" role="tabpanel" aria-labelledby="pills-pending-default-tab">
 				<div className="row g-4 g-xl-5">
-					  <LoanCard loanID={1}/>
+					  <LoanCard
+					  popupTx={
+						  <PopupTransaction
+						  btnClass="btn btn-primary btn-lg mt-4"
+						  btnText="Liquidate Loan"
+						  modalId="txModal"
+						  modalBtnText="Liquidate Now"
+						  modalFunc={() => handleModalSubmit(1)}
+						  modalTitle="Liquidate Loan"
+						  modalContent={
+							  <div>
+								  <small>Loan Details</small>
+								  <h6>Collection Name] #[NFT ID]</h6>
+								  <div className="row g-4">
+									  <div className="col-6 bg-secondary">test</div>
+									  <div className="col-6 bg-secondary">test</div>
+									  <div className="col-6 bg-secondary">test</div>
+									  <div className="col-6 bg-secondary">test</div>
+									  <div className="col-12 bg-success">test</div>
+								  </div>
+								  <hr/>
+							  </div>
+							  }
+						  />
+					  }
+					  loanInfo={null}/>
 				  </div>
 				</div>
 				{/* End Pending Default Row */}
@@ -41,7 +70,7 @@ export const Dashboard = (props:any) => {
 				{/* Defaulted Row */}
 				<div className="tab-pane fade" id="pills-defaulted" role="tabpanel" aria-labelledby="pills-defaulted-tab">
 				<div className="row g-4 g-xl-5">
-					  <LoanCard loanID={1}/>
+					  <LoanCard loanInfo={null}/>
 				  </div>
 				</div>
 				{/* End Defaulted Row */}
@@ -49,7 +78,7 @@ export const Dashboard = (props:any) => {
 				{/* Completed Row */}
 				<div className="tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">
 				  <div className="row g-4 g-xl-5">
-					  <LoanCard loanID={1}/>
+					  <LoanCard loanInfo={null}/>
 				  </div>
 				</div>
 				{/* End Completed Row */}

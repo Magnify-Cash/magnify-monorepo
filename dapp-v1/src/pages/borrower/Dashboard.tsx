@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { LoanCard } from "@/components";
-import { PopupTransaction } from "@/components/PopupTransaction";
+import { PopupTransaction, LoanCard } from "@/components";
 
 
 export const Dashboard = (props:any) => {
@@ -40,7 +39,7 @@ export const Dashboard = (props:any) => {
 						btnText="Pay Back"
 						modalId="txModal"
 						modalBtnText="Pay Now"
-						modalFunc={() => handleModalSubmit(props.loanID)}
+						modalFunc={() => handleModalSubmit(1)}
 						modalTitle="Pay Back Loan"
 						modalContent={
 							<div>
@@ -62,87 +61,31 @@ export const Dashboard = (props:any) => {
 							}
 						/>
 					}
-					loanID={1}
+					loanInfo={null}
 					/>
 				</div>
 				</div>
 				{/* End Active Row */}
 
-				{/* Inactive Row */}
+				{/* completed Row */}
 			    <div className="tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">
 			  	<div className="row g-4 g-xl-5">
-				  	<LoanCard
-					  popupTx={
-						  <PopupTransaction
-						  btnClass="btn btn-primary btn-lg mt-4"
-						  btnText="Pay Back"
-						  modalId="txModal"
-						  modalBtnText="Pay Now"
-						  modalFunc={() => handleModalSubmit(props.loanID)}
-						  modalTitle="Pay Back Loan"
-						  modalContent={
-							  <div>
-								  <small>Loan Details</small>
-								  <h6>Collection Name] #[NFT ID]</h6>
-								  <div className="row g-4">
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-12 bg-success">test</div>
-								  </div>
-								  <hr/>
-								  <div className="input-group">
-									  <input value={payBackAmount} onChange={e => setPayBackAmount(e.target.value)} type="number" className="me-2"/>
-									  <span>[Currency]</span>
-								  </div>
-							  </div>
-							}
-						  />
-					  }
-					  loanID={1}
+					  <LoanCard
+					  loanInfo={null}
 					  />
 			  	</div>
 				</div>
-				{/* End Inactive Row */}
+				{/* End completed Row */}
 
-				{/* Inactive Row */}
+				{/* defaulted Row */}
 			    <div className="tab-pane fade" id="pills-defaulted" role="tabpanel" aria-labelledby="pills-defaulted-tab">
 				<div className="row g-4 g-xl-5">
 					  <LoanCard
-					  popupTx={
-						  <PopupTransaction
-						  btnClass="btn btn-primary btn-lg mt-4"
-						  btnText="Pay Back"
-						  modalId="txModal"
-						  modalBtnText="Pay Now"
-						  modalFunc={() => handleModalSubmit(props.loanID)}
-						  modalTitle="Pay Back Loan"
-						  modalContent={
-							  <div>
-								  <small>Loan Details</small>
-								  <h6>Collection Name] #[NFT ID]</h6>
-								  <div className="row g-4">
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-6 bg-secondary">test</div>
-									  <div className="col-12 bg-success">test</div>
-								  </div>
-								  <hr/>
-								  <div className="input-group">
-									  <input value={payBackAmount} onChange={e => setPayBackAmount(e.target.value)} type="number" className="me-2"/>
-									  <span>[Currency]</span>
-								  </div>
-							  </div>
-					  		}
-					  	/>
-					  }
-					  loanID={1}
+					  loanInfo={null}
 					  />
 			  	</div>
 				</div>
-				{/* End Inactive Row */}
+				{/* End defaulted Row */}
 
 
 			</div>

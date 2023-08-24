@@ -1,6 +1,6 @@
 interface ILoanCardProps {
 	popupTx?: any;
-	loanID: number;
+	loanInfo: object | null;
 }
 
 export const LoanCard = (props:ILoanCardProps) => {
