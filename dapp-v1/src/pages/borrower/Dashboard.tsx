@@ -44,15 +44,31 @@ export const Dashboard = (props:any) => {
 						modalContent={
 							<div>
 								<small>Loan Details</small>
-								<h6>Collection Name] #[NFT ID]</h6>
+								<p>Collection Name] #[NFT ID]</p>
 								<div className="row g-4">
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-12 bg-success">test</div>
+									<div className="col-6 bg-secondary">
+										<h6>[x][currency]</h6>
+										<small>original borrow</small>
+									</div>
+									<div className="col-6 bg-secondary">
+										<h6>[x] %</h6>
+										<small>interest date</small>
+									</div>
+									<div className="col-6 bg-secondary">
+										<h6>[x] days / [x] days</h6>
+										<small>loan duration</small>
+									</div>
+									<div className="col-6 bg-secondary">
+										<h6>[x][currency]</h6>
+										<small>amount due on expiry date</small>
+									</div>
+									<div className="col-12 bg-success">
+										<h6>[x][currency]</h6>
+										<small>current payoff amount</small>
+									</div>
 								</div>
 								<hr/>
+								<p className="text-start">Enter Amount</p>
 								<div className="input-group">
 									<input value={payBackAmount} onChange={e => setPayBackAmount(e.target.value)} type="number" className="me-2"/>
 									<span>[Currency]</span>
