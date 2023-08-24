@@ -25,7 +25,7 @@ export const Dashboard = (props:any) => {
 				{/* Active Row */}
 				<div className="tab-pane fade show active" id="pills-active" role="tabpanel" aria-labelledby="pills-active-tab">
 				<div className="row g-4 g-xl-5">
-					<LoanCard userType="lender" loanID={1}/>
+					<LoanCard loanID={1}/>
 				</div>
 				</div>
 				{/* End Active Row */}
@@ -33,7 +33,7 @@ export const Dashboard = (props:any) => {
 				{/* Pending Default Row */}
 				<div className="tab-pane fade" id="pills-pending-default" role="tabpanel" aria-labelledby="pills-pending-default-tab">
 				<div className="row g-4 g-xl-5">
-					  <LoanCard userType="lender" loanID={1}/>
+					  <LoanCard loanID={1}/>
 				  </div>
 				</div>
 				{/* End Pending Default Row */}
@@ -41,7 +41,7 @@ export const Dashboard = (props:any) => {
 				{/* Defaulted Row */}
 				<div className="tab-pane fade" id="pills-defaulted" role="tabpanel" aria-labelledby="pills-defaulted-tab">
 				<div className="row g-4 g-xl-5">
-					  <LoanCard userType="lender" loanID={1}/>
+					  <LoanCard loanID={1}/>
 				  </div>
 				</div>
 				{/* End Defaulted Row */}
@@ -49,7 +49,7 @@ export const Dashboard = (props:any) => {
 				{/* Completed Row */}
 				<div className="tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">
 				  <div className="row g-4 g-xl-5">
-					  <LoanCard userType="lender" loanID={1}/>
+					  <LoanCard loanID={1}/>
 				  </div>
 				</div>
 				{/* End Completed Row */}

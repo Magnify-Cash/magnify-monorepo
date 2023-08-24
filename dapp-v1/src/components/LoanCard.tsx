@@ -1,21 +1,9 @@
-import { useState } from "react";
-import { PopupTransaction } from "./PopupTransaction";
-
 interface ILoanCardProps {
-	userType: string;
+	popupTx?: any;
 	loanID: number;
 }
 
-
 export const LoanCard = (props:ILoanCardProps) => {
-	const [payBackAmount, setPayBackAmount] = useState("0");
-
-	// modal submit
-	function handleModalSubmit(loanID:number){
-		console.log("loanID", loanID)
-		console.log('payBackAmount', payBackAmount)
-	}
-
 	return (
 		<div className="col-sm-6 col-xl-4">
 			<style>
@@ -59,34 +47,7 @@ export const LoanCard = (props:ILoanCardProps) => {
 								</div>
 							</div>
 						</div>
-						{props.userType =="borrower" &&
-						<PopupTransaction
-						btnClass="btn btn-primary btn-lg mt-4"
-						btnText="Pay Back"
-						modalId="txModal"
-						modalBtnText="Pay Now"
-						modalFunc={() => handleModalSubmit(props.loanID)}
-						modalTitle="Pay Back Loan"
-						modalContent={
-							<div>
-								<small>Loan Details</small>
-								<h6>Collection Name] #[NFT ID]</h6>
-								<div className="row g-4">
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-6 bg-secondary">test</div>
-									<div className="col-12 bg-success">test</div>
-								</div>
-								<hr/>
-								<div className="input-group">
-									<input value={payBackAmount} onChange={e => setPayBackAmount(e.target.value)} type="number" className="me-2"/>
-									<span>[Currency]</span>
-								</div>
-							</div>
-						}
-						/>
-						}
+						{props.popupTx && props.popupTx}
 					</div>
 				</div>
 			</div>
