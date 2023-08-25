@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
-import { usePrepareNftyFinanceV1InitializeNewLendingDesk } from "wagmi-generated";
-import { useNftyFinanceV1InitializeNewLendingDesk } from "wagmi-generated";
+import {
+  useNftyFinanceV1InitializeNewLendingDesk,
+  nftyFinanceV1Address,
+  useErc20Approve,
+} from "@/wagmi-generated";
+import { useChainId } from "wagmi";
 
 interface IConfigForm {
-  nftCollection: INFTListItem;
+  hiddenInputNft: INFTListItem;
   maxDuration: string;
   maxInterest: string;
   maxOffer: string;
@@ -16,6 +20,8 @@ interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
+  const chainId = useChainId();
+
   // tokenlist state management
   const [token, _setToken] = useState<ITokenListItem | null>();
   const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
@@ -50,19 +56,38 @@ export const CreateLendingDesk = (props: any) => {
     setDeskConfigs([...deskConfigs, formJson]);
   }
 
-  useEffect(() => {
-    console.log("token", token);
-    console.log("nftCollection", nftCollection);
-    console.log("deskConfigs", deskConfigs);
-    console.log("deskFundingAmount", deskFundingAmount);
-  }, [token, nftCollection, deskConfigs, deskFundingAmount]);
+  const { writeAsync: approveErc20 } = useErc20Approve({
+    address: token?.token?.address as `0x${string}`,
+    args: [nftyFinanceV1Address[chainId], BigInt(deskFundingAmount)],
+  });
+
+  const { writeAsync: initializeNewLendingDesk } =
+    useNftyFinanceV1InitializeNewLendingDesk({
+      args: [
+        token?.token?.address as `0x${string}`,
+        BigInt(deskFundingAmount),
+        deskConfigs.map((config) => ({
+          nftCollection: config.hiddenInputNft.nft.address as `0x${string}`,
+          nftCollectionIsErc1155: false,
+          minAmount: BigInt(config.minOffer),
+          maxAmount: BigInt(config.maxOffer),
+          minDuration: BigInt(config.minDuration),
+          maxDuration: BigInt(config.maxDuration),
+          minInterest: BigInt(config.minInterest),
+          maxInterest: BigInt(config.maxInterest),
+        })),
+      ],
+    });
 
   // modal submit
-  function handleModalSubmit() {
+  async function handleModalSubmit() {
     console.log("token", token);
     console.log("deskConfigs", deskConfigs);
+    console.log("nftCollection", nftCollection);
     console.log("deskFundingAmount", deskFundingAmount);
     console.log("wagmi function with above data.....");
+    await approveErc20();
+    await initializeNewLendingDesk();
   }
 
   return (
@@ -287,13 +312,13 @@ export const CreateLendingDesk = (props: any) => {
                         <p>Collection {index}</p>
                         <div className="d-flex align-items-center">
                           <img
-                            src={config.nftCollection.nft?.logoURI}
-                            alt={`${config.nftCollection.nft.name} Logo`}
+                            src={config.hiddenInputNft.nft?.logoURI}
+                            alt={`${config.hiddenInputNft.nft.name} Logo`}
                             height="20"
                             width="20"
                           />
                           <p className="m-0 ms-1">
-                            {config.nftCollection.nft.name}
+                            {config.hiddenInputNft.nft.name}
                           </p>
                         </div>
                       </div>
@@ -345,13 +370,13 @@ export const CreateLendingDesk = (props: any) => {
                           <small className="m-0">Collection {index + 1}</small>
                           <div className="d-flex align-items-center">
                             <img
-                              src={config?.nftCollection.nft?.logoURI}
-                              alt={`${config?.nftCollection.nft.name} Logo`}
+                              src={config?.hiddenInputNft.nft?.logoURI}
+                              alt={`${config?.hiddenInputNft.nft.name} Logo`}
                               height="20"
                               width="20"
                             />
                             <p className="m-0 ms-1">
-                              {config?.nftCollection.nft.name}
+                              {config?.hiddenInputNft.nft.name}
                             </p>
                           </div>
                         </div>

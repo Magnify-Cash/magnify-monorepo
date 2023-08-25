@@ -18,6 +18,10 @@ task(
     symbol: "DAI",
   });
 
+  // Mint 10,000 ERC20s to deployer
+  await usdc.mint(hre.ethers.utils.parseEther("10000"));
+  await dai.mint(hre.ethers.utils.parseEther("10000"));
+
   // Deploy NFT Collections
   const doodles: Contract = await hre.run("deploy-nft-collection", {
     name: "Doodles",
@@ -29,6 +33,10 @@ task(
     symbol: "ρ",
     baseuri: "https://api.polygonpunks.io/metadata/",
   });
+
+  // Mint 10 NFTs to deployer
+  await doodles.mint(10);
+  await punks.mint(10);
 
   // Deploy NFTYFinance's dependencies
   const promissoryNotes: Contract = await hre.run("deploy-nfty-erc721", {

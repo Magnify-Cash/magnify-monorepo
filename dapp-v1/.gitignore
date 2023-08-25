@@ -47,4 +47,4 @@ yarn-error.log*
 next-env.d.ts
 
 .graphclient
-wagmi-generated.ts
+src/wagmi-generated.ts

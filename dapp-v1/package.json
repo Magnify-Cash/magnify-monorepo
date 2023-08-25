@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "generate": "wagmi generate",
+    "generate": "graphclient build && wagmi generate",
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"

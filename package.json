@@ -9,7 +9,7 @@
     "subgraph": "yarn workspace nftyfinance-subgraph",
     "dapp-v1": "yarn workspace nftyfinance-dapp-v1",
     "graph-node": "cd ../graph-node/docker && rm -rf data && docker compose down && docker compose up",
-    "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local",
+    "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local && yarn dapp-v1 generate ",
     "build:dapp": "yarn contracts build && yarn dapp build:prod",
     "build:faucet": "yarn contracts build && yarn faucet build"
   },
