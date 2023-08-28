@@ -3,6 +3,12 @@ import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
+interface IQuickLoanForm {
+loan_duration: string
+loan_amount: string
+loan_nft: any
+}
+
 export const QuickLoan = (props: any) => {
   // tokenlist state management
   const [token, _setToken] = useState<ITokenListItem | null>();
@@ -138,7 +144,6 @@ export const QuickLoan = (props: any) => {
           modalContent={<></>}
         />
       </div>
-
       {/* End Container*/}
     </div>
   );

@@ -1,3 +1,4 @@
 export { CreateLendingDesk } from "./CreateLendingDesk";
 export { ManageLendingDesks } from "./ManageLendingDesks";
-//export { ManageLoans as LenderManageLoans } from "./ManageLoans";
+export { ManageLendingDesk } from "./ManageLendingDesk";
+export { Dashboard as LenderDashboard } from "./Dashboard";

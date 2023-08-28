@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { PopupTokenList, PopupTransaction } from "@/components";
-import { ITokenListItem } from "@/components/PopupTokenList";
-import { INFTListItem } from "@/components/PopupTokenList";
+import { ITokenListItem, INFTListItem } from "@/components/PopupTokenList";
 import {
   useNftyFinanceV1InitializeNewLendingDesk,
   nftyFinanceV1Address,

@@ -72,7 +72,7 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
-                <p className="text-body-secondary">Stake $NFTY and earn</p>
+                <p className="text-body-secondary">Stake NFTY and earn</p>
                 <NavLink to="/stake">Start Lending &rarr;</NavLink>
               </div>
             </div>
@@ -98,14 +98,14 @@ export const Home = (props) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-square-dollar h2 m-0"></i>
+                  <i className="fa-solid fa-paper-plane h2 m-0"></i>
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
-                    20K <small className="fw-normal">USD</small>
+                    [x]
                   </h3>
                   <p className="m-0 text-primary-emphasis">
-                    total value locked (TVL)
+                    loans issued
                   </p>
                 </div>
               </div>
@@ -117,7 +117,7 @@ export const Home = (props) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
-                    20K <small className="fw-normal">USD</small>
+                    [x] <small className="fw-normal">USD</small>
                   </h3>
                   <p className="m-0 text-primary-emphasis">
                     total available liquidity (TAL)

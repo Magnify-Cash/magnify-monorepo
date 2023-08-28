@@ -1,10 +1,10 @@
-import { ManageLendingDesksDocument } from "../../../.graphclient";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
+import { PopupTransaction } from "@/components";
+import { ManageLendingDesksDocument } from "../../../.graphclient";
 
-const LendingDeskCard = ({ desk }) => {
-  return (
+const LendingDeskCard = ({ desk }) => (
     <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
       <div className="card-body py-4">
         <div className="row g-4 g-xl-5">
@@ -71,29 +71,25 @@ const LendingDeskCard = ({ desk }) => {
               </div>
             </div>
           </div>
-          <div className="col-lg-3">
-            <NavLink to="/manage-desk" className="col-6 col-lg-12 btn">
-              Edit
-              <i className="fa-solid fa-pencil h2 m-0"></i>
-            </NavLink>
-            <button className="col-6 col-lg-12 btn">
-              Withdraw
-              <i className="fa-solid fa-arrow-down-to-line h2 m-0"></i>
-            </button>
-            <button className="col-6 col-lg-12 btn">
-              Deposit
-              <i className="fa-solid fa-arrow-up-to-line h2 m-0"></i>
-            </button>
-            <button className="col-6 col-lg-12 btn">
-              Freeze
-              <i className="fa-solid fa-snowflake h2 m-0"></i>
-            </button>
-          </div>
+         <div className="col-lg-3">
+           <NavLink to="/manage-desks/1" className="col-6 col-lg-12 btn">
+             Edit
+             <i className="fa-solid fa-pencil h2 m-0"></i>
+           </NavLink>
+           <PopupTransaction
+             btnClass="btn w-100"
+             btnText={<div className="d-flex">Freeze<i className="fa-solid fa-snowflake h2 m-0"></i></div>}
+             modalId="txModal"
+             modalBtnText="Freeze Liquidity Desk"
+             modalFunc={() => console.log(1)}
+             modalTitle="Freeze Desk"
+             modalContent={<></>}
+           />
+         </div>
         </div>
       </div>
     </div>
-  );
-};
+);
 
 export const ManageLendingDesks = (props: any) => {
   const { address } = useAccount();
