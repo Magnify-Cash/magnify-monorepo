@@ -348,6 +348,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                           alt={`${
                             filteredTokens[virtualItem.index].token.name
                           } Logo`}
+                          height="100%"
                         />
                         {filteredTokens[virtualItem.index].token.name}
                       </button>
@@ -377,6 +378,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                           alt={`${
                             filteredNfts[virtualItem.index].nft.name
                           } Logo`}
+                          height="100%"
                         />
                         {filteredNfts[virtualItem.index].nft.name}
                       </button>
