@@ -6,3 +6,4 @@ cache
 graph-node
 **.DS_Store
 .nova
+deployments.json
