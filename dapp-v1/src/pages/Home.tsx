@@ -2,11 +2,15 @@ import { NavLink } from "react-router-dom";
 import { HomeDocument } from "../../.graphclient";
 import { useQuery } from "urql";
 
-const NftCollectionRow = (nftCollection: any) => {
+const NftCollectionRow = ({ nftCollection }) => {
+  const currencies: string[] = nftCollection.loanConfigs.map(
+    (x) => x.lendingDesk.erc20.symbol
+  );
+
   return (
     <tr className="align-middle">
       <td className="py-3 ps-3">Pudgy Penguins</td>
-      <td className="py-3 align-center">USD, Tether, etc.</td>
+      <td className="py-3 align-center">{currencies.join(", ")}</td>
       <td className="py-3">{nftCollection.loanConfigs.length}</td>
       <td className="py-3">$60,000</td>
       <td className="py-3">67%</td>
@@ -22,6 +26,8 @@ export const Home = (props) => {
   const [result] = useQuery({
     query: HomeDocument,
   });
+
+  // console.log(result.data?.nftCollections[0].loanConfigs.map((x) => );
 
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
