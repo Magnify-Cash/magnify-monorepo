@@ -1,17 +1,28 @@
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "urql";
+import { useParams } from 'react-router-dom';
 import { PopupTransaction } from "@/components";
+import { ManageLendingDeskDocument } from "../../../.graphclient";
 
 export const ManageLendingDesk = (props:any) => {
+	// Title
 	var title = document.getElementById("base-title");
-
 	useEffect(() => {
-		console.log('hii')
-		console.log(title)
 		if (title){
 			title.innerHTML = `Manage Lending Desk [x]`;
 		}
 	}, [title])
+
+  	// GraphQL
+  	const { id } = useParams();
+	const [result] = useQuery({
+		query: ManageLendingDeskDocument,
+		variables: {
+  			deskId: id
+		},
+  	});
+	console.log(result.data?.lendingDesk)
 
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
@@ -26,13 +37,13 @@ export const ManageLendingDesk = (props:any) => {
 					<div className="card-body py-4">
 						<div className="row d-lg-flex align-items-center g-4 g-xl-5">
 							<div className="col-12">
-								<h3 className="m-0">Lending Desk X</h3>
+								<h3 className="m-0">Lending Desk {result.data?.lendingDesk?.id}</h3>
 							</div>
 							<div className="col-lg-4">
 								<div className="d-flex flex-column align-items-left">
 									<div className="mt-3">
 										<p className="m-0">Currency Type</p>
-										<h5 className="m-0">[currency]</h5>
+										<h5 className="m-0">{result.data?.lendingDesk?.erc20.symbol}</h5>
 									</div>
 								</div>
 							</div>
@@ -40,7 +51,10 @@ export const ManageLendingDesk = (props:any) => {
 								<div className="d-flex flex-column align-items-left">
 									<div className="mt-3">
 										<p className="m-0">Available Liquidity</p>
-										<h5 className="m-0">[available]/[total] [currency]</h5>
+										<h5 className="m-0">
+											{result.data?.lendingDesk?.balance}&nbsp;
+											{result.data?.lendingDesk?.erc20.symbol}
+										</h5>
 									</div>
 								</div>
 							</div>
@@ -72,10 +86,26 @@ export const ManageLendingDesk = (props:any) => {
 					<div className="col-lg-6">
 						<div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
 						<div className="card-body py-4">
-							<p className="text-primary fw-bold">
-								Collections
-							</p>
-						</div>
+							{result.data?.lendingDesk?.loanConfigs.map((config, index) => {
+								return (
+								  <div key={index}>
+									<p>Collection {index+1}</p>
+									<div className="d-flex align-items-center">
+									  <img
+										height="20"
+										width="20"
+									  />
+									  <p className="m-0 ms-1">
+										{config.id}
+									  </p>
+									</div>
+									<p><strong>Offer:</strong> {config.minAmount} - {config.maxAmount} {result.data?.lendingDesk?.erc20.symbol}</p>
+									<p><strong>Duration:</strong> {config.minDuration} - {config.maxDuration} Days</p>
+									<p><strong>Interest:</strong> {config.minInterest} - {config.maxInterest} %</p>
+								  </div>
+								);
+							  })}
+							</div>
 						</div>
 					</div>
 					<div className="col-lg-6">

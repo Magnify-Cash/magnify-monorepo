@@ -25,3 +25,27 @@ query ManageLendingDesks($walletAddress: Bytes!) {
     }
   }
 }
+
+query ManageLendingDesk($deskId: ID!) {
+  lendingDesk(id: $deskId) {
+    id
+    owner
+    erc20 {
+      symbol
+    }
+    balance
+    status
+    loanConfigs {
+      id
+      minAmount
+      maxAmount
+      minInterest
+      maxInterest
+      minDuration
+      maxDuration
+    }
+    loans {
+      status
+    }
+  }
+}
