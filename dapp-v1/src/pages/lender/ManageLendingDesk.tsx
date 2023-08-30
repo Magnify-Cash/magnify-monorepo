@@ -3,9 +3,23 @@ import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useParams } from 'react-router-dom';
 import { PopupTransaction } from "@/components";
+import {
+  useNftyFinanceV1SetLendingDeskState,
+  useNftyFinanceV1DepositLendingDeskLiquidity,
+  useNftyFinanceV1WithdrawLendingDeskLiquidity,
+  usePrepareNftyFinanceV1SetLendingDeskState,
+  usePrepareNftyFinanceV1DepositLendingDeskLiquidity,
+  usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity,
+  nftyFinanceV1Address,
+  useErc20Approve,
+} from "@/wagmi-generated";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
+import { useChainId } from "wagmi";
 
 export const ManageLendingDesk = (props:any) => {
+	// constants
+	const chainId = useChainId();
+
   	// GraphQL
   	const { id } = useParams();
 	const [result] = useQuery({
@@ -23,7 +37,32 @@ export const ManageLendingDesk = (props:any) => {
 		}
 	}, [result])
 
-	return (
+
+	// Freeze / Unfreeze
+	const boolStatus = result.data?.lendingDesk?.status === 'Frozen' ? false : true
+	const boolText = boolStatus ? "freeze" : "unfreeze"
+	console.log(result.data?.lendingDesk?.status)
+	const { config } = usePrepareNftyFinanceV1SetLendingDeskState({
+		args: [
+			BigInt(1),
+			boolStatus
+		]
+	})
+    const { writeAsync:freezeWrite, isSuccess:freezeSuccess } = useNftyFinanceV1SetLendingDeskState(config)
+	const freezeUnfreeze = async (e) => {
+		e.preventDefault();
+		if (window.confirm(`Do you want to ${boolText} this shop?`)) {
+		  let d = await freezeWrite?.();
+		  if (d?.hash){
+		  	e.target.checked = !e.target.checked;
+		  }
+		}
+	}
+
+	// Deposit Liquidity
+
+	// Withdraw Liquidity
+	return result.data?.lendingDesk && (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 				{/* Demo Row */}
 				<p>
@@ -38,7 +77,7 @@ export const ManageLendingDesk = (props:any) => {
 							<div className="col-12 d-flex justify-content-between">
 								<h3 className="m-0">Lending Desk {result.data?.lendingDesk?.id}</h3>
 								<div className="form-check form-switch h3">
-								  <input className="form-check-input" type="checkbox" role="switch" checked={result.data?.lendingDesk?.status === 'Active'}/>
+								  <input onClick={(e) => freezeUnfreeze(e)}className="form-check-input" type="checkbox" role="switch" defaultChecked={result.data?.lendingDesk?.status === 'Active'}/>
 								</div>
 							</div>
 							<div className="col-lg-4">
