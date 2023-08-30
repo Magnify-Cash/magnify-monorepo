@@ -20,6 +20,7 @@ query Home {
 query ManageLendingDesks($walletAddress: Bytes!) {
   lendingDesks(where: { owner: $walletAddress }) {
     id
+    balance
     status
     erc20 {
       symbol
