@@ -4,7 +4,38 @@ import { useAccount } from "wagmi";
 import { PopupTransaction } from "@/components";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
-const LendingDeskCard = ({ desk }) => (
+const LendingDeskRow = ({ desks, status }) => {
+  // Filter by status
+  desks = desks.filter((desk) => desk.status === status);
+
+  // Empty
+  if (desks.length === 0){
+    return (
+      <div className="col-lg-8">
+      <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
+      <div className="card-body py-4 text-center">
+      <h1>No desks found</h1>
+        <div>
+          <img
+            height="200"
+            width="100%"
+            src="/theme/images/thinking_guy.svg"
+            alt="Thinking..."
+          />
+          <p className="text-center">
+
+          </p>
+        </div>
+      </div>
+      </div>
+      </div>
+    )
+  }
+
+  // Return
+  return desks
+  .map((desk) => {
+    return (
     <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
       <div className="card-body py-4">
         <div className="row g-4 g-xl-5">
@@ -89,7 +120,9 @@ const LendingDeskCard = ({ desk }) => (
         </div>
       </div>
     </div>
-);
+  )
+  })
+};
 
 export const ManageLendingDesks = (props: any) => {
   const { address } = useAccount();
@@ -148,11 +181,7 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-home-tab"
         >
-          {result.data?.lendingDesks
-            .filter((desk) => desk.status === "Active")
-            .map((desk) => (
-              <LendingDeskCard desk={desk} key={desk.id} />
-            ))}
+            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Active" />
         </div>
         {/* End Active Row */}
 
@@ -163,11 +192,7 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-profile-tab"
         >
-          {result.data?.lendingDesks
-            .filter((desk) => desk.status === "Frozen")
-            .map((desk) => (
-              <LendingDeskCard desk={desk} key={desk.id} />
-            ))}
+            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Frozen" />
         </div>
         {/* End Inactive Row */}
       </div>
