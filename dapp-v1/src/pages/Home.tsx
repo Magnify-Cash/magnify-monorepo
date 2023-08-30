@@ -102,7 +102,7 @@ export const Home = (props) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
-                    [x]
+                    {result.data?.loans.length}
                   </h3>
                   <p className="m-0 text-primary-emphasis">
                     loans issued
@@ -120,7 +120,7 @@ export const Home = (props) => {
                     [x] <small className="fw-normal">USD</small>
                   </h3>
                   <p className="m-0 text-primary-emphasis">
-                    total available liquidity (TAL)
+                    total valued locked (TVL)
                   </p>
                 </div>
               </div>

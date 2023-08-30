@@ -1,6 +1,14 @@
 import { NavLink } from "react-router-dom";
+import { useQuery } from "urql";
+import { ExploreCollectionsDocument } from "../../../.graphclient";
+
 
 export const BrowseCollections = (props:any) => {
+	// GraphQL
+	const [result] = useQuery({
+		query: ExploreCollectionsDocument
+	  });
+
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 
@@ -13,9 +21,9 @@ export const BrowseCollections = (props:any) => {
 									<i className="fa-solid fa-hexagon-vertical-nft h1 m-0"></i>
 								</div>
 								<div className="mt-3">
-									<h5>[x]</h5>
+									<h5>{result.data?.nftCollections.length}</h5>
 									<p className="text-body-secondary">
-										Number of Collections
+										Collections Supported
 									</p>
 								</div>
 							</div>
@@ -25,27 +33,12 @@ export const BrowseCollections = (props:any) => {
 						<div className="card border-0 shadow rounded-4">
 							<div className="card-body d-flex">
 								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-lock h1 m-0"></i>
+									<i className="fa-solid fa-infinity h1 m-0"></i>
 								</div>
 								<div className="mt-3">
-									<h5>[x]</h5>
+									<h5>{result.data?.erc20S.length}</h5>
 									<p className="text-body-secondary">
-										Total Value Locked
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-sm-6 col-xl-4">
-						<div className="card border-0 shadow rounded-4">
-							<div className="card-body d-flex">
-								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-sack-dollar h1 m-0"></i>
-								</div>
-								<div className="mt-3">
-									<h5>[x]</h5>
-									<p className="text-body-secondary">
-										Total Available Liquidity
+										Currencies Supported
 									</p>
 								</div>
 							</div>
@@ -69,56 +62,18 @@ export const BrowseCollections = (props:any) => {
 								</tr>
 							</thead>
 							<tbody>
+								{result.data?.nftCollections.map((collection) =>
 								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
+									<td className="py-3 ps-3">{collection.id}</td>
+									<td className="py-3 align-center">[currencies]</td>
+									<td className="py-3">{collection.loanConfigs.length}</td>
+									<td className="py-3">[TAL]</td>
+									<td className="py-3">[utilization]</td>
 									<td className="py-3 pe-3">
 										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
 									</td>
 								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
+								)}
 							</tbody>
 						</table>
 					</div>

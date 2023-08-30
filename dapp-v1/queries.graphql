@@ -8,6 +8,9 @@ query Home {
       }
     }
   }
+  loans {
+    id
+  }
 }
 
 query ManageLendingDesks($walletAddress: Bytes!) {
@@ -47,5 +50,21 @@ query ManageLendingDesk($deskId: ID!) {
     loans {
       status
     }
+  }
+}
+
+query ExploreCollections {
+  nftCollections {
+    id
+    loanConfigs {
+      lendingDesk {
+        erc20 {
+          symbol
+        }
+      }
+    }
+  }
+  erc20S {
+    symbol
   }
 }
