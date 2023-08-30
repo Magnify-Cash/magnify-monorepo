@@ -6,14 +6,6 @@ import { PopupTransaction } from "@/components";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 
 export const ManageLendingDesk = (props:any) => {
-	// Title
-	var title = document.getElementById("base-title");
-	useEffect(() => {
-		if (title){
-			title.innerHTML = `Manage Lending Desk [x]`;
-		}
-	}, [title])
-
   	// GraphQL
   	const { id } = useParams();
 	const [result] = useQuery({
@@ -22,7 +14,14 @@ export const ManageLendingDesk = (props:any) => {
   			deskId: id
 		},
   	});
-	console.log(result.data?.lendingDesk)
+
+	// Title
+	var title = document.getElementById("base-title");
+	useEffect(() => {
+		if (title && result.data?.lendingDesk){
+			title.innerHTML = `Manage Lending Desk ${result.data?.lendingDesk?.id}`;
+		}
+	}, [result])
 
 	return (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
