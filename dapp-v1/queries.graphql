@@ -39,6 +39,7 @@ query ManageLendingDesk($deskId: ID!) {
     id
     owner
     erc20 {
+      id
       symbol
     }
     balance

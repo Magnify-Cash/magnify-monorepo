@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useParams } from 'react-router-dom';
@@ -41,27 +41,51 @@ export const ManageLendingDesk = (props:any) => {
 	// Freeze / Unfreeze
 	const boolStatus = result.data?.lendingDesk?.status === 'Frozen' ? false : true
 	const boolText = boolStatus ? "freeze" : "unfreeze"
-	console.log(result.data?.lendingDesk?.status)
-	const { config } = usePrepareNftyFinanceV1SetLendingDeskState({
+	const { config:freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
 		args: [
-			BigInt(1),
+			BigInt(result.data?.lendingDesk?.id || 0),
 			boolStatus
 		]
 	})
-    const { writeAsync:freezeWrite, isSuccess:freezeSuccess } = useNftyFinanceV1SetLendingDeskState(config)
+    const { writeAsync:freezeWrite, isSuccess:freezeSuccess } = useNftyFinanceV1SetLendingDeskState(freezeConfig)
 	const freezeUnfreeze = async (e) => {
-		e.preventDefault();
-		if (window.confirm(`Do you want to ${boolText} this shop?`)) {
-		  let d = await freezeWrite?.();
-		  if (d?.hash){
-		  	e.target.checked = !e.target.checked;
-		  }
-		}
+		await freezeWrite?.();
 	}
 
 	// Deposit Liquidity
+	const [depositAmount, setDepositAmount] = useState(0);
+	const { writeAsync: approveErc20 } = useErc20Approve({
+		address: result.data?.lendingDesk?.erc20.id as `0x${string}`,
+		args: [nftyFinanceV1Address[chainId], BigInt(depositAmount)],
+  	});
+	const { config:depositConfig } = usePrepareNftyFinanceV1DepositLendingDeskLiquidity({
+		args: [
+			BigInt(result.data?.lendingDesk?.id || 0),
+			BigInt(depositAmount)
+		]
+	})
+	const { writeAsync:depositWrite } = useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
+	const depositLiquidity = async () => {
+		await approveErc20();
+		await depositWrite?.()
+	}
 
 	// Withdraw Liquidity
+	const [withdrawAmount, setWithdrawAmount] = useState(0);
+	const [amount, setAmount] = useState(0);
+	const { config:withdrawConfig } = usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
+		args: [
+			BigInt(result.data?.lendingDesk?.id || 0),
+			BigInt(withdrawAmount)
+		]
+	})
+	const { writeAsync:withdrawWrite } = useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
+	const withdrawLiquidity = async () => {
+		await withdrawWrite?.()
+	}
+
+
+	// Return
 	return result.data?.lendingDesk && (
 		<div className="container-md px-3 px-sm-4 px-xl-5">
 				{/* Demo Row */}
@@ -105,18 +129,44 @@ export const ManageLendingDesk = (props:any) => {
 								btnText="Add Funds"
 								modalId="txModal"
 								modalBtnText="Add Funds Now"
-								modalFunc={() => console.log(1)}
+								modalFunc={() => depositLiquidity()}
 								modalTitle="Add Funds"
-								modalContent={<></>}
+								modalContent={
+									<div>
+									  <p>Deposit Liquidity</p>
+									  <div className="input-group">
+										<input
+										  value={depositAmount}
+										  onChange={(e) => setDepositAmount(e.target.value)}
+										  type="number"
+										  className="me-2"
+										/>
+										<span>{result.data?.lendingDesk?.erc20.symbol}</span>
+									  </div>
+									</div>
+								  }
 								/>
 								<PopupTransaction
 								btnClass="btn btn-primary btn-lg mt-4"
 								btnText="Withdraw Funds"
 								modalId="txModal2"
 								modalBtnText="Withdraw Funds Now"
-								modalFunc={() => console.log(1)}
+								modalFunc={() => withdrawLiquidity()}
 								modalTitle="Withdraw Funds"
-								modalContent={<></>}
+								modalContent={
+									<div>
+									  <p>Withdraw Liquidity</p>
+									  <div className="input-group">
+										<input
+										  value={withdrawAmount}
+										  onChange={(e) => setWithdrawAmount(e.target.value)}
+										  type="number"
+										  className="me-2"
+										/>
+										<span>{result.data?.lendingDesk?.erc20.symbol}</span>
+									  </div>
+									</div>
+								  }
 								/>
 							</div>
 						</div>
