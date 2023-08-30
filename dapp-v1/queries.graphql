@@ -1,5 +1,6 @@
 query Home {
   nftCollections {
+    id
     loanConfigs {
       lendingDesk {
         erc20 {
@@ -9,6 +10,9 @@ query Home {
     }
   }
   loans {
+    id
+  }
+  lendingDesks {
     id
   }
 }

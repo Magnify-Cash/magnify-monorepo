@@ -55,25 +55,27 @@ export const BrowseCollections = (props:any) => {
 							<thead>
 								<tr>
 									<th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">Collection</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis">Currency</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis">Currencies</th>
 									<th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">TAL (USD)</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3" colSpan={2}>Utilization</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
+									</th>
 								</tr>
 							</thead>
 							<tbody>
-								{result.data?.nftCollections.map((collection) =>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">{collection.id}</td>
-									<td className="py-3 align-center">[currencies]</td>
-									<td className="py-3">{collection.loanConfigs.length}</td>
-									<td className="py-3">[TAL]</td>
-									<td className="py-3">[utilization]</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								)}
+								{result.data?.nftCollections.map((nftCollection) => {
+								const currencies: string[] = nftCollection.loanConfigs.map(
+									(x) => x.lendingDesk.erc20.symbol
+							  	);
+								return (
+									<tr className="align-middle">
+										<td className="py-3 ps-3">{nftCollection.id}</td>
+										<td className="py-3 align-center">{currencies.join(", ")}</td>
+										<td className="py-3">{nftCollection.loanConfigs.length}</td>
+										<td className="py-3 pe-3">
+											<NavLink to={`/explore/${nftCollection.id}`} className="btn btn-primary rounded-pill">Find a Loan</NavLink>
+										</td>
+									</tr>
+								)})}
 							</tbody>
 						</table>
 					</div>

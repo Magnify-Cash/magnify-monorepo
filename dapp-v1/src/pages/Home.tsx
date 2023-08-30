@@ -2,32 +2,11 @@ import { NavLink } from "react-router-dom";
 import { HomeDocument } from "../../.graphclient";
 import { useQuery } from "urql";
 
-const NftCollectionRow = ({ nftCollection }) => {
-  const currencies: string[] = nftCollection.loanConfigs.map(
-    (x) => x.lendingDesk.erc20.symbol
-  );
-
-  return (
-    <tr className="align-middle">
-      <td className="py-3 ps-3">Pudgy Penguins</td>
-      <td className="py-3 align-center">{currencies.join(", ")}</td>
-      <td className="py-3">{nftCollection.loanConfigs.length}</td>
-      <td className="py-3">$60,000</td>
-      <td className="py-3">67%</td>
-      <td className="py-3 pe-3">
-        <button className="btn btn-primary rounded-pill">Find a Loan</button>
-      </td>
-    </tr>
-  );
-};
-
 export const Home = (props) => {
   // GraphQL
   const [result] = useQuery({
     query: HomeDocument,
   });
-
-  // console.log(result.data?.nftCollections[0].loanConfigs.map((x) => );
 
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
@@ -41,7 +20,7 @@ export const Home = (props) => {
               <div className="text-center mt-3">
                 <h5>Borrow</h5>
                 <p className="text-body-secondary">
-                  Earn instant liquidity using your NFT as collateral
+                  Instant liquidity for your NFT as collateral
                 </p>
                 <NavLink to="/quick-loan">Borrow Now &rarr;</NavLink>
               </div>
@@ -72,8 +51,8 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
-                <p className="text-body-secondary">Stake NFTY and earn</p>
-                <NavLink to="/stake">Start Lending &rarr;</NavLink>
+                <p className="text-body-secondary">Stake NFTY and participate</p>
+                <NavLink to="/stake">Start Staking &rarr;</NavLink>
               </div>
             </div>
           </div>
@@ -90,7 +69,7 @@ export const Home = (props) => {
                 <div className="ps-3">
                   <h3 className="m-0">{result.data?.nftCollections.length}</h3>
                   <p className="m-0 text-primary-emphasis">
-                    number of collections
+                    collections supported
                   </p>
                 </div>
               </div>
@@ -117,10 +96,10 @@ export const Home = (props) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
-                    [x] <small className="fw-normal">USD</small>
+                    {result.data?.lendingDesks.length}
                   </h3>
                   <p className="m-0 text-primary-emphasis">
-                    total valued locked (TVL)
+                    lending desks
                   </p>
                 </div>
               </div>
@@ -137,26 +116,31 @@ export const Home = (props) => {
                   Collection
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Currency
+                  Currencies
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Desks
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
-                  TAL (USD)
-                </th>
-                <th
-                  className="py-3 bg-primary-subtle text-primary-emphasis pe-3"
-                  colSpan={2}
-                >
-                  Utilization
                 </th>
               </tr>
             </thead>
             <tbody>
-              {result.data?.nftCollections.map((nftCollection) => (
-                <NftCollectionRow nftCollection={nftCollection} />
-              ))}
+              {result.data?.nftCollections.map((nftCollection) => {
+                const currencies: string[] = nftCollection.loanConfigs.map(
+                  (x) => x.lendingDesk.erc20.symbol
+                );
+                return (
+                  <tr className="align-middle">
+                    <td className="py-3 ps-3">{nftCollection.id}</td>
+                    <td className="py-3">{currencies.join(", ")}</td>
+                    <td className="py-3">{nftCollection.loanConfigs.length}</td>
+                    <td className="py-3 pe-3">
+                      <NavLink to={`/explore/${nftCollection.id}`} className="btn btn-primary rounded-pill">Find a Loan</NavLink>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

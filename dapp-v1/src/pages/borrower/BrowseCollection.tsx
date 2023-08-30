@@ -20,56 +20,6 @@ export const BrowseCollection = (props) => {
 						Explore Collections
 					</NavLink>
 				</p>
-				{/* Demo Row Card */}
-				<div className="row g-4 g-xl-5 justify-content-center">
-					<div className="col-sm-6 col-xl-4">
-						<div className="card border-0 shadow rounded-4">
-							<div className="card-body d-flex">
-								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-hexagon-vertical-nft h1 m-0"></i>
-								</div>
-								<div className="mt-3">
-									<h5>[x]</h5>
-									<p className="text-body-secondary">
-										Number of Collections
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-sm-6 col-xl-4">
-						<div className="card border-0 shadow rounded-4">
-							<div className="card-body d-flex">
-								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-lock h1 m-0"></i>
-								</div>
-								<div className="mt-3">
-									<h5>[x]</h5>
-									<p className="text-body-secondary">
-										Total Value Locked
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="col-sm-6 col-xl-4">
-						<div className="card border-0 shadow rounded-4">
-							<div className="card-body d-flex">
-								<div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-									<i className="fa-solid fa-sack-dollar h1 m-0"></i>
-								</div>
-								<div className="mt-3">
-									<h5>[x]</h5>
-									<p className="text-body-secondary">
-										Total Available Liquidity
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* End demo card */}
 
 				{/* Demo table */}
 				<div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
