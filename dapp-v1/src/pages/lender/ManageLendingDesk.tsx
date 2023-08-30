@@ -35,8 +35,11 @@ export const ManageLendingDesk = (props:any) => {
 				<div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
 					<div className="card-body py-4">
 						<div className="row d-lg-flex align-items-center g-4 g-xl-5">
-							<div className="col-12">
+							<div className="col-12 d-flex justify-content-between">
 								<h3 className="m-0">Lending Desk {result.data?.lendingDesk?.id}</h3>
+								<div className="form-check form-switch h3">
+								  <input className="form-check-input" type="checkbox" role="switch" checked={result.data?.lendingDesk?.status === 'Active'}/>
+								</div>
 							</div>
 							<div className="col-lg-4">
 								<div className="d-flex flex-column align-items-left">
