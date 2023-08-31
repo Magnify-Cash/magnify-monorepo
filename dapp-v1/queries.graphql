@@ -59,7 +59,7 @@ query ManageLendingDesk($deskId: ID!) {
   }
 }
 
-query ExploreCollections {
+query BrowseCollections {
   nftCollections {
     id
     loanConfigs {
@@ -73,4 +73,28 @@ query ExploreCollections {
   erc20S {
     symbol
   }
+}
+
+query BrowseCollection($nftCollectionId: String) {
+    loanConfigs(where:{
+      nftCollection: $nftCollectionId
+    }) {
+      minAmount
+      maxAmount
+      minDuration
+      maxDuration
+      minInterest
+      maxInterest
+      nftCollection {
+        id
+      }
+      lendingDesk {
+        id
+        balance
+        status
+        erc20 {
+          symbol
+        }
+      }
+    }
 }

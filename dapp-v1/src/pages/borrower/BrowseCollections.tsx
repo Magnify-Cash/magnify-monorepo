@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
-import { ExploreCollectionsDocument } from "../../../.graphclient";
+import { BrowseCollectionsDocument } from "../../../.graphclient";
 
 
 export const BrowseCollections = (props:any) => {
 	// GraphQL
 	const [result] = useQuery({
-		query: ExploreCollectionsDocument
+		query: BrowseCollectionsDocument
 	  });
 
 	return (

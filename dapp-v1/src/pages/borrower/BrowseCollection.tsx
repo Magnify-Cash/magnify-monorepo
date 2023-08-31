@@ -1,14 +1,26 @@
 import { useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { useParams, NavLink} from "react-router-dom";
+import { useQuery } from "urql";
+import { PopupTransaction } from "@/components";
+import { BrowseCollectionDocument } from "../../../.graphclient";
+
 
 export const BrowseCollection = (props) => {
-	var title = document.getElementById("base-title");
+	// GraphQL
+	const { collection_address } = useParams();
+	const [result] = useQuery({
+		query: BrowseCollectionDocument,
+		variables: {
+		  nftCollectionId: collection_address
+		},
+	  });
+	console.log(result)
 
+	// Title
+	var title = document.getElementById("base-title");
 	useEffect(() => {
-		console.log('hii')
-		console.log(title)
 		if (title){
-			title.innerHTML = `[x Collection] Liquidity Desks`;
+			title.innerHTML = `$x Liquidity Desks`;
 		}
 	}, [title])
 
@@ -29,62 +41,47 @@ export const BrowseCollection = (props) => {
 								<tr>
 									<th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">Collection</th>
 									<th className="py-3 bg-primary-subtle text-primary-emphasis">Currency</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">TAL (USD)</th>
-									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3" colSpan={2}>Utilization</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis">Offer</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis">Duration</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis">Interest</th>
+									<th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
+									&nbsp;
+									</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
-								<tr className="align-middle">
-									<td className="py-3 ps-3">Pudgy Penguins</td>
-									<td className="py-3 align-center">USD, Tether, etc.</td>
-									<td className="py-3">3</td>
-									<td className="py-3">$60,000</td>
-									<td className="py-3">67%</td>
-									<td className="py-3 pe-3">
-										<NavLink to="/explore/123" className="btn btn-primary rounded-pill">Find a Loan</NavLink>
-									</td>
-								</tr>
+								{result.data?.loanConfigs.map((loanConfigs) => {
+								return (
+									<tr className="align-middle">
+										<td className="py-3 ps-3">Lending Desk {loanConfigs.lendingDesk.id}</td>
+										<td className="py-3 align-center">
+											{loanConfigs.lendingDesk.erc20.symbol}
+										</td>
+										<td className="py-3 align-center">
+											{loanConfigs.minAmount}-{loanConfigs.maxAmount}
+										</td>
+										<td className="py-3">
+											{loanConfigs.minDuration}-{loanConfigs.maxDuration} days
+										</td>
+										<td className="py-3">
+											{loanConfigs.minInterest}-{loanConfigs.maxInterest}%
+										</td>
+										<td className="py-3">
+											<PopupTransaction
+											  btnClass="btn btn-primary"
+											  btnText="Request Loan"
+											  modalId="txModal"
+											  modalBtnText="Request Now"
+											  modalFunc={() => console.log(1)}
+											  modalTitle="Request Loan"
+											  modalContent={
+												  <div>
+												  </div>
+												  }
+											  />
+										</td>
+									</tr>
+								)})}
 							</tbody>
 						</table>
 					</div>
