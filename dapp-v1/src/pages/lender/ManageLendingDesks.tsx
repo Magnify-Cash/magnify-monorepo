@@ -1,17 +1,24 @@
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
-import { PopupTransaction } from "@/components";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
-const LendingDeskCard = ({ desk }) => (
-    <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
+const LendingDeskRow = ({ desks, status }) => {
+  // Filter by status and return
+  desks = desks.filter((desk) => desk.status === status);
+  return desks
+  .map((desk) => {
+    return (
+    <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5" key={desk.id}>
       <div className="card-body py-4">
         <div className="row g-4 g-xl-5">
-          <div className="col-12">
+          <div className="col-12 d-flex justify-content-between">
             <h3 className="m-0">Lending Desk {desk.id}</h3>
+            <NavLink to={`/manage-desks/${desk.id}`} className="btn btn-outline-primary">
+               <i className="fa-solid fa-pencil h2 m-0"></i>
+             </NavLink>
           </div>
-          <div className="col-lg-3">
+          <div className="col-lg-4">
             <div className="d-flex flex-column align-items-left">
               <div className="mt-3">
                 <p className="m-0">Currency Type</p>
@@ -23,11 +30,11 @@ const LendingDeskCard = ({ desk }) => (
               </div>
               <div className="mt-3">
                 <p className="m-0">Available Liquidity</p>
-                <p className="m-0">VALUE</p>
+                <p className="m-0">{desk.balance}</p>
               </div>
             </div>
           </div>
-          <div className="col-lg-3">
+          <div className="col-lg-4">
             <div className="d-flex flex-column align-items-left">
               <div className="mt-3">
                 <p className="m-0">Active Loans</p>
@@ -55,41 +62,15 @@ const LendingDeskCard = ({ desk }) => (
               </div>
             </div>
           </div>
-          <div className="col-lg-3">
-            <div className="d-flex flex-column align-items-left">
-              <div className="mt-3">
-                <p className="m-0">Net Liquidity Issued</p>
-                <p className="m-0">VALUE</p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Net Profit/Revenue</p>
-                <p className="m-0">VALUE</p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Desk Score</p>
-                <p className="m-0">VALUE</p>
-              </div>
-            </div>
-          </div>
-         <div className="col-lg-3">
-           <NavLink to="/manage-desks/1" className="col-6 col-lg-12 btn">
-             Edit
-             <i className="fa-solid fa-pencil h2 m-0"></i>
-           </NavLink>
-           <PopupTransaction
-             btnClass="btn w-100"
-             btnText={<div className="d-flex">Freeze<i className="fa-solid fa-snowflake h2 m-0"></i></div>}
-             modalId="txModal"
-             modalBtnText="Freeze Liquidity Desk"
-             modalFunc={() => console.log(1)}
-             modalTitle="Freeze Desk"
-             modalContent={<></>}
-           />
+         <div className="col-lg-4 d-flex align-items-center">
+
          </div>
         </div>
       </div>
     </div>
-);
+  )
+  })
+};
 
 export const ManageLendingDesks = (props: any) => {
   const { address } = useAccount();
@@ -143,31 +124,23 @@ export const ManageLendingDesks = (props: any) => {
       <div className="tab-content" id="pills-tabContent">
         {/* Active Row */}
         <div
-          className="tab-pane fade show active"
+          className="col-md-8 tab-pane fade show active"
           id="pills-home"
           role="tabpanel"
           aria-labelledby="pills-home-tab"
         >
-          {result.data?.lendingDesks
-            .filter((desk) => desk.status === "Active")
-            .map((desk) => (
-              <LendingDeskCard desk={desk} key={desk.id} />
-            ))}
+            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Active" />
         </div>
         {/* End Active Row */}
 
         {/* Inactive Row */}
         <div
-          className="tab-pane fade"
+          className="col-md-8 tab-pane fade"
           id="pills-profile"
           role="tabpanel"
           aria-labelledby="pills-profile-tab"
         >
-          {result.data?.lendingDesks
-            .filter((desk) => desk.status === "Frozen")
-            .map((desk) => (
-              <LendingDeskCard desk={desk} key={desk.id} />
-            ))}
+            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Frozen" />
         </div>
         {/* End Inactive Row */}
       </div>

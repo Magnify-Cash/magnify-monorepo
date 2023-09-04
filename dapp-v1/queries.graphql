@@ -1,5 +1,6 @@
 query Home {
   nftCollections {
+    id
     loanConfigs {
       lendingDesk {
         erc20 {
@@ -8,11 +9,18 @@ query Home {
       }
     }
   }
+  loans {
+    id
+  }
+  lendingDesks {
+    id
+  }
 }
 
 query ManageLendingDesks($walletAddress: Bytes!) {
   lendingDesks(where: { owner: $walletAddress }) {
     id
+    balance
     status
     erc20 {
       symbol
@@ -24,4 +32,69 @@ query ManageLendingDesks($walletAddress: Bytes!) {
       status
     }
   }
+}
+
+query ManageLendingDesk($deskId: ID!) {
+  lendingDesk(id: $deskId) {
+    id
+    owner
+    erc20 {
+      id
+      symbol
+    }
+    balance
+    status
+    loanConfigs {
+      id
+      minAmount
+      maxAmount
+      minInterest
+      maxInterest
+      minDuration
+      maxDuration
+    }
+    loans {
+      status
+    }
+  }
+}
+
+query BrowseCollections {
+  nftCollections {
+    id
+    loanConfigs {
+      lendingDesk {
+        erc20 {
+          symbol
+        }
+      }
+    }
+  }
+  erc20S {
+    symbol
+  }
+}
+
+query BrowseCollection($nftCollectionId: String) {
+    loanConfigs(where:{
+      nftCollection: $nftCollectionId
+    }) {
+      minAmount
+      maxAmount
+      minDuration
+      maxDuration
+      minInterest
+      maxInterest
+      nftCollection {
+        id
+      }
+      lendingDesk {
+        id
+        balance
+        status
+        erc20 {
+          symbol
+        }
+      }
+    }
 }

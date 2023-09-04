@@ -46,15 +46,17 @@ function closeSidebar(){
   offcanvas && offcanvas.hide();
 }
 
-
-
 export const Base = () => {
+  // title
+  const obj = useOutlet();
+  const title = findTitleProps(obj);
+
   // theme
   const activeClass = "nav-link d-flex align-items-center active";
   const inactiveClass = "nav-link d-flex align-items-center";
-  const obj = useOutlet();
-  const title = findTitleProps(obj);
-  const [ mode, setMode ] = useState('light');
+  const cookie = getCookie("colorMode");
+  const [ mode, setMode ] = useState(cookie);
+  document.documentElement.setAttribute('data-bs-theme', cookie);
   function toggleDarkMode(){
       window.toggleDarkMode();
 	  const cookie = getCookie("colorMode");

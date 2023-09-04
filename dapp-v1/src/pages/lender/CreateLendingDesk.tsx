@@ -305,7 +305,6 @@ export const CreateLendingDesk = (props: any) => {
                   </div>
                   <hr />
                   {deskConfigs.map((config, index) => {
-                    console.log(config);
                     return (
                       <div key={index}>
                         <p>Collection {index}</p>

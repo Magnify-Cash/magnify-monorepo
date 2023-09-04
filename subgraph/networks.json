@@ -37,20 +37,20 @@
   },
   "mainnet": {
     "NFTYFinance": {
-      "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-      "startBlock": 12
+      "address": "0xA75E74a5109Ed8221070142D15cEBfFe9642F489",
+      "startBlock": 507
     },
     "PromissoryNotes": {
-      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "startBlock": 9
+      "address": "0x1757a98c1333B9dc8D408b194B2279b5AFDF70Cc",
+      "startBlock": 504
     },
     "ObligationNotes": {
-      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "startBlock": 10
+      "address": "0x6484EB0792c646A4827638Fc1B6F20461418eB00",
+      "startBlock": 505
     },
     "LendingKeys": {
-      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "startBlock": 11
+      "address": "0xf201fFeA8447AB3d43c98Da3349e0749813C9009",
+      "startBlock": 506
     }
   }
 }
