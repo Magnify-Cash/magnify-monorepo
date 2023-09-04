@@ -76,9 +76,36 @@ query BrowseCollections {
 }
 
 query BrowseCollection($nftCollectionId: String) {
-    loanConfigs(where:{
-      nftCollection: $nftCollectionId
-    }) {
+  loanConfigs(where: { nftCollection: $nftCollectionId }) {
+    minAmount
+    maxAmount
+    minDuration
+    maxDuration
+    minInterest
+    maxInterest
+    nftCollection {
+      id
+    }
+    lendingDesk {
+      id
+      balance
+      status
+      erc20 {
+        symbol
+      }
+    }
+  }
+}
+
+query QuickLoan($erc20Id: String, $nftCollectionId: String) {
+  lendingDesks(where: { erc20: $erc20Id }) {
+    id
+    balance
+    status
+    erc20 {
+      symbol
+    }
+    loanConfigs(where: { nftCollection: $nftCollectionId }) {
       minAmount
       maxAmount
       minDuration
@@ -88,13 +115,6 @@ query BrowseCollection($nftCollectionId: String) {
       nftCollection {
         id
       }
-      lendingDesk {
-        id
-        balance
-        status
-        erc20 {
-          symbol
-        }
-      }
     }
+  }
 }

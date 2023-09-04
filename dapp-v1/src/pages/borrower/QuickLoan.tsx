@@ -1,13 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
-
-interface IQuickLoanForm {
-loan_duration: string
-loan_amount: string
-loan_nft: any
-}
+import { useNftyFinanceV1InitializeNewLoan } from "@/wagmi-generated";
+import { useQuery } from "urql";
+import { QuickLoanDocument } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
   // tokenlist state management
@@ -16,11 +13,49 @@ export const QuickLoan = (props: any) => {
   const setToken = (e: string) => _setToken(JSON.parse(e));
   const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
 
+  // Loan params selection
+  const [nftId, setNftId] = useState<string>("1");
+  const [duration, setDuration] = useState<string>("1");
+  const [amount, setAmount] = useState<string>("1");
+
+  // GraphQL query
+  const [result] = useQuery({
+    query: QuickLoanDocument,
+    variables: {
+      nftCollectionId: nftCollection?.nft?.address?.toLowerCase(),
+      erc20Id: token?.token?.address?.toLowerCase(),
+    },
+  });
+
+  const flatResult: any[] = [];
+  for (const lendingDesk of result.data?.lendingDesks ?? []) {
+    for (const loanConfig of lendingDesk.loanConfigs) {
+      flatResult.push({ lendingDesk, loanConfig });
+    }
+  }
+  const [selectedLendingDesk, setSelectedLendingDesk] = useState<string>();
+  useEffect(() => {
+    setSelectedLendingDesk(flatResult[0]?.lendingDesk?.id);
+  }, [flatResult]);
+
+  // Wagmi hooks
+  const { writeAsync: initializeNewLoan } = useNftyFinanceV1InitializeNewLoan({
+    args: [
+      BigInt(selectedLendingDesk ?? 0),
+      nftCollection?.nft.address as `0x${string}`,
+      BigInt(1),
+      BigInt(1),
+      BigInt(1),
+    ],
+  });
+
   // modal submit
   function handleModalSubmit() {
     console.log("token", token);
     console.log("nftCollection", nftCollection);
+    console.log("selectedLendingDesk", selectedLendingDesk);
     console.log("wagmi function with above data.....");
+    initializeNewLoan?.();
   }
 
   return (
@@ -121,15 +156,47 @@ export const QuickLoan = (props: any) => {
           </div>
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body">
-              <img
-                height="200"
-                width="100%"
-                src="/theme/images/thinking_guy.svg"
-                alt="Thinking..."
-              />
-              <p className="text-center">
-                Select currency & NFT to see offers...
-              </p>
+              {nftCollection && token ? (
+                flatResult.length ? (
+                  <select
+                    name="lendingDesk"
+                    id="lendingDesk"
+                    value={selectedLendingDesk}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      setSelectedLendingDesk(e.target.value);
+                    }}
+                  >
+                    {flatResult.map((item) => (
+                      <option
+                        value={item.lendingDesk.id}
+                        key={item.lendingDesk.id}
+                      >
+                        Offer: {item.loanConfig.minAmount}-
+                        {item.loanConfig.maxAmount}, Duration:{" "}
+                        {item.loanConfig.minDuration}-
+                        {item.loanConfig.maxDuration}, Interest:{" "}
+                        {item.loanConfig.minInterest}-
+                        {item.loanConfig.maxInterest}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  "No offers available"
+                )
+              ) : (
+                <>
+                  <img
+                    height="200"
+                    width="100%"
+                    src="/theme/images/thinking_guy.svg"
+                    alt="Thinking..."
+                  />
+                  <p className="text-center">
+                    Select currency & NFT to see offers...
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
