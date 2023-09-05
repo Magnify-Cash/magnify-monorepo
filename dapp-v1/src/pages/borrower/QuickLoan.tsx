@@ -14,11 +14,13 @@ export const QuickLoan = (props: any) => {
   const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
 
   // Loan params selection
+  const [selectedLendingDesk, setSelectedLendingDesk] = useState<string>();
   const [nftId, setNftId] = useState<string>("1");
   const [duration, setDuration] = useState<string>("1");
   const [amount, setAmount] = useState<string>("1");
 
   // GraphQL query
+  const flatResult: any[] = [];
   const [result] = useQuery({
     query: QuickLoanDocument,
     variables: {
@@ -26,19 +28,13 @@ export const QuickLoan = (props: any) => {
       erc20Id: token?.token?.address?.toLowerCase(),
     },
   });
-
-  const flatResult: any[] = [];
   for (const lendingDesk of result.data?.lendingDesks ?? []) {
     for (const loanConfig of lendingDesk.loanConfigs) {
       flatResult.push({ lendingDesk, loanConfig });
     }
   }
-  const [selectedLendingDesk, setSelectedLendingDesk] = useState<string>();
-  useEffect(() => {
-    setSelectedLendingDesk(flatResult[0]?.lendingDesk?.id);
-  }, [flatResult]);
 
-  // Wagmi hooks
+  // Initialize New Loan Hook
   const { writeAsync: initializeNewLoan } = useNftyFinanceV1InitializeNewLoan({
     args: [
       BigInt(selectedLendingDesk ?? 0),
@@ -49,7 +45,7 @@ export const QuickLoan = (props: any) => {
     ],
   });
 
-  // modal submit
+  // Modal submit
   function handleModalSubmit() {
     console.log("token", token);
     console.log("nftCollection", nftCollection);
@@ -156,46 +152,26 @@ export const QuickLoan = (props: any) => {
           </div>
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body">
-              {nftCollection && token ? (
-                flatResult.length ? (
-                  <select
-                    name="lendingDesk"
-                    id="lendingDesk"
-                    value={selectedLendingDesk}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setSelectedLendingDesk(e.target.value);
-                    }}
-                  >
-                    {flatResult.map((item) => (
-                      <option
-                        value={item.lendingDesk.id}
-                        key={item.lendingDesk.id}
-                      >
-                        Offer: {item.loanConfig.minAmount}-
-                        {item.loanConfig.maxAmount}, Duration:{" "}
-                        {item.loanConfig.minDuration}-
-                        {item.loanConfig.maxDuration}, Interest:{" "}
-                        {item.loanConfig.minInterest}-
-                        {item.loanConfig.maxInterest}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  "No offers available"
-                )
+              {flatResult.length > 0 ? (
+                flatResult.map((item) => (
+                  <label className="col-12">
+                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk(e.target.value)} className="border" value={item.lendingDesk.id} key={item.lendingDesk.id}/>
+                      <p>{item.lendingDesk.owner}</p>
+                      <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
+                      <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
+                      <p>Interest: {item.loanConfig.minInterest}-{item.loanConfig.maxInterest}%</p>
+                  </label>
+                ))
               ) : (
-                <>
+                <div>
                   <img
                     height="200"
                     width="100%"
                     src="/theme/images/thinking_guy.svg"
                     alt="Thinking..."
                   />
-                  <p className="text-center">
-                    Select currency & NFT to see offers...
-                  </p>
-                </>
+                  <p className="text-center">Select currency & NFT to see offers...</p>
+                </div>
               )}
             </div>
           </div>
@@ -203,6 +179,7 @@ export const QuickLoan = (props: any) => {
         <PopupTransaction
           divClass="col-12 d-flex"
           btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
+          disabled={!token || !nftCollection || !selectedLendingDesk}
           btnText="Get Loan"
           modalId="txModal"
           modalBtnText="Get Loan"

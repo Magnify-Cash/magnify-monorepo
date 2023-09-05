@@ -7,6 +7,7 @@ Component Props
 export interface PopupTransactionProps {
 	loading?: boolean; // loading state
   	error?: any | null; // error state
+	disabled?:boolean;
 	divClass?: string;
 	btnClass: string; // modal btn trigger classname
 	btnText: string | React.ReactNode; // modal btn trigger text
@@ -23,7 +24,7 @@ export const PopupTransaction = (props:PopupTransactionProps) => {
 	let snippet = (
 		<button
 		  className={props.btnClass}
-		  disabled={props.loading || !!props.error}
+		  disabled={props.loading || !!props.error || props.disabled}
 		  data-bs-toggle="modal" data-bs-target={`#${props.modalId}`}
 		>
 			{props.btnText}
