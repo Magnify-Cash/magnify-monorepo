@@ -4,9 +4,9 @@ import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 
 interface IQuickLoanForm {
-loan_duration: string
-loan_amount: string
-loan_nft: any
+  loan_duration: string;
+  loan_amount: string;
+  loan_nft: any;
 }
 
 export const QuickLoan = (props: any) => {

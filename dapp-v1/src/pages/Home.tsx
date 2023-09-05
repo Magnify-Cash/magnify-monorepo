@@ -51,7 +51,9 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
-                <p className="text-body-secondary">Stake NFTY and participate</p>
+                <p className="text-body-secondary">
+                  Stake NFTY and participate
+                </p>
                 <NavLink to="/stake">Start Staking &rarr;</NavLink>
               </div>
             </div>
@@ -80,12 +82,8 @@ export const Home = (props) => {
                   <i className="fa-solid fa-paper-plane h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">
-                    {result.data?.loans.length}
-                  </h3>
-                  <p className="m-0 text-primary-emphasis">
-                    loans issued
-                  </p>
+                  <h3 className="m-0">{result.data?.loans.length}</h3>
+                  <p className="m-0 text-primary-emphasis">loans issued</p>
                 </div>
               </div>
             </div>
@@ -95,12 +93,8 @@ export const Home = (props) => {
                   <i className="fa-solid fa-sack-dollar h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">
-                    {result.data?.lendingDesks.length}
-                  </h3>
-                  <p className="m-0 text-primary-emphasis">
-                    lending desks
-                  </p>
+                  <h3 className="m-0">{result.data?.lendingDesks.length}</h3>
+                  <p className="m-0 text-primary-emphasis">lending desks</p>
                 </div>
               </div>
             </div>
@@ -121,8 +115,7 @@ export const Home = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Desks
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -136,7 +129,12 @@ export const Home = (props) => {
                     <td className="py-3">{currencies.join(", ")}</td>
                     <td className="py-3">{nftCollection.loanConfigs.length}</td>
                     <td className="py-3 pe-3">
-                      <NavLink to={`/explore/${nftCollection.id}`} className="btn btn-primary rounded-pill">Find a Loan</NavLink>
+                      <NavLink
+                        to={`/explore/${nftCollection.id}`}
+                        className="btn btn-primary rounded-pill"
+                      >
+                        Find a Loan
+                      </NavLink>
                     </td>
                   </tr>
                 );

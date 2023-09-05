@@ -6,70 +6,76 @@ import { ManageLendingDesksDocument } from "../../../.graphclient";
 const LendingDeskRow = ({ desks, status }) => {
   // Filter by status and return
   desks = desks.filter((desk) => desk.status === status);
-  return desks
-  .map((desk) => {
+  return desks.map((desk) => {
     return (
-    <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5" key={desk.id}>
-      <div className="card-body py-4">
-        <div className="row g-4 g-xl-5">
-          <div className="col-12 d-flex justify-content-between">
-            <h3 className="m-0">Lending Desk {desk.id}</h3>
-            <NavLink to={`/manage-desks/${desk.id}`} className="btn btn-outline-primary">
-               <i className="fa-solid fa-pencil h2 m-0"></i>
-             </NavLink>
-          </div>
-          <div className="col-lg-4">
-            <div className="d-flex flex-column align-items-left">
-              <div className="mt-3">
-                <p className="m-0">Currency Type</p>
-                <p className="m-0">{desk.erc20.symbol}</p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Collections</p>
-                <p className="m-0">{desk.loanConfigs.length}</p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Available Liquidity</p>
-                <p className="m-0">{desk.balance}</p>
+      <div
+        className="card border-0 shadow rounded-4 mt-4 mt-xl-5"
+        key={desk.id}
+      >
+        <div className="card-body py-4">
+          <div className="row g-4 g-xl-5">
+            <div className="col-12 d-flex justify-content-between">
+              <h3 className="m-0">Lending Desk {desk.id}</h3>
+              <NavLink
+                to={`/manage-desks/${desk.id}`}
+                className="btn btn-outline-primary"
+              >
+                <i className="fa-solid fa-pencil h2 m-0"></i>
+              </NavLink>
+            </div>
+            <div className="col-lg-4">
+              <div className="d-flex flex-column align-items-left">
+                <div className="mt-3">
+                  <p className="m-0">Currency Type</p>
+                  <p className="m-0">{desk.erc20.symbol}</p>
+                </div>
+                <div className="mt-3">
+                  <p className="m-0">Collections</p>
+                  <p className="m-0">{desk.loanConfigs.length}</p>
+                </div>
+                <div className="mt-3">
+                  <p className="m-0">Available Liquidity</p>
+                  <p className="m-0">{desk.balance}</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-lg-4">
-            <div className="d-flex flex-column align-items-left">
-              <div className="mt-3">
-                <p className="m-0">Active Loans</p>
-                <p className="m-0">
-                  {desk.loans.filter((loan) => loan.status == "Active").length}
-                </p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Defaulted Loans</p>
-                <p className="m-0">
-                  {
-                    desk.loans.filter((loan) => loan.status == "Defaulted")
-                      .length
-                  }
-                </p>
-              </div>
-              <div className="mt-3">
-                <p className="m-0">Completed Loans</p>
-                <p className="m-0">
-                  {
-                    desk.loans.filter((loan) => loan.status == "Resolved")
-                      .length
-                  }
-                </p>
+            <div className="col-lg-4">
+              <div className="d-flex flex-column align-items-left">
+                <div className="mt-3">
+                  <p className="m-0">Active Loans</p>
+                  <p className="m-0">
+                    {
+                      desk.loans.filter((loan) => loan.status == "Active")
+                        .length
+                    }
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <p className="m-0">Defaulted Loans</p>
+                  <p className="m-0">
+                    {
+                      desk.loans.filter((loan) => loan.status == "Defaulted")
+                        .length
+                    }
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <p className="m-0">Completed Loans</p>
+                  <p className="m-0">
+                    {
+                      desk.loans.filter((loan) => loan.status == "Resolved")
+                        .length
+                    }
+                  </p>
+                </div>
               </div>
             </div>
+            <div className="col-lg-4 d-flex align-items-center"></div>
           </div>
-         <div className="col-lg-4 d-flex align-items-center">
-
-         </div>
         </div>
       </div>
-    </div>
-  )
-  })
+    );
+  });
 };
 
 export const ManageLendingDesks = (props: any) => {
@@ -129,7 +135,10 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-home-tab"
         >
-            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Active" />
+          <LendingDeskRow
+            desks={result.data?.lendingDesks || []}
+            status="Active"
+          />
         </div>
         {/* End Active Row */}
 
@@ -140,7 +149,10 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-profile-tab"
         >
-            <LendingDeskRow desks={result.data?.lendingDesks || []} status="Frozen" />
+          <LendingDeskRow
+            desks={result.data?.lendingDesks || []}
+            status="Frozen"
+          />
         </div>
         {/* End Inactive Row */}
       </div>
