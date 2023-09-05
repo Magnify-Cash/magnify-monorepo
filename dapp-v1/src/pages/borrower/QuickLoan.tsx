@@ -7,17 +7,18 @@ import { useQuery } from "urql";
 import { QuickLoanDocument } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
-  // tokenlist state management
+  // tokenlist / nftlist state management
   const [token, _setToken] = useState<ITokenListItem | null>();
   const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
   const setToken = (e: string) => _setToken(JSON.parse(e));
   const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
 
   // Loan params selection
-  const [selectedLendingDesk, setSelectedLendingDesk] = useState<string>();
+  const [selectedLendingDesk, _setSelectedLendingDesk] = useState<string>();
   const [nftId, setNftId] = useState<string>("1");
   const [duration, setDuration] = useState<string>("1");
   const [amount, setAmount] = useState<string>("1");
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
 
   // GraphQL query
   const flatResult: any[] = [];
@@ -37,7 +38,7 @@ export const QuickLoan = (props: any) => {
   // Initialize New Loan Hook
   const { writeAsync: initializeNewLoan } = useNftyFinanceV1InitializeNewLoan({
     args: [
-      BigInt(selectedLendingDesk ?? 0),
+      BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
       BigInt(1),
       BigInt(1),
@@ -47,10 +48,19 @@ export const QuickLoan = (props: any) => {
 
   // Modal submit
   function handleModalSubmit() {
+    const form = document.getElementById("quickLoanForm") as HTMLFormElement;
+    const isValid = form.checkValidity();
+    if (!isValid) {
+      form.reportValidity();
+      return;
+    }
     console.log("token", token);
     console.log("nftCollection", nftCollection);
     console.log("selectedLendingDesk", selectedLendingDesk);
-    console.log("wagmi function with above data.....");
+    console.log("nftId", nftId)
+    console.log("duration", duration)
+    console.log("amount", amount)
+    console.log("form is valid, wagmi function with above data.....");
     initializeNewLoan?.();
   }
 
@@ -153,15 +163,16 @@ export const QuickLoan = (props: any) => {
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body">
               {flatResult.length > 0 ? (
-                flatResult.map((item) => (
-                  <label className="col-12">
-                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk(e.target.value)} className="border" value={item.lendingDesk.id} key={item.lendingDesk.id}/>
+                flatResult.map((item) => {
+                  return (
+                  <label className="col-12" key={item.lendingDesk.id}>
+                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk(e.target.value)} className="border" value={JSON.stringify(item)}/>
                       <p>{item.lendingDesk.owner}</p>
                       <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
                       <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
                       <p>Interest: {item.loanConfig.minInterest}-{item.loanConfig.maxInterest}%</p>
                   </label>
-                ))
+                )})
               ) : (
                 <div>
                   <img
@@ -184,8 +195,48 @@ export const QuickLoan = (props: any) => {
           modalId="txModal"
           modalBtnText="Get Loan"
           modalFunc={() => handleModalSubmit()}
-          modalTitle="Get Loan"
-          modalContent={<></>}
+          modalTitle="Request Loan"
+          modalContent={
+            selectedLendingDesk && (
+            <form id="quickLoanForm">
+              <small>Lending Desk Details</small>
+              <div className="row g-4">
+                <div className="col-6 bg-secondary">
+                  <h6>{selectedLendingDesk.loanConfig.nftCollection.id}</h6>
+                  <small>collection type</small>
+                </div>
+                <div className="col-6 bg-secondary">
+                  <h6>{selectedLendingDesk.loanConfig.minAmount} - {selectedLendingDesk.loanConfig.maxAmount} {selectedLendingDesk.lendingDesk.erc20.symbol}</h6>
+                  <small>min/max offer</small>
+                </div>
+                <div className="col-6 bg-secondary">
+                  <h6>{selectedLendingDesk.loanConfig.minDuration} days - {selectedLendingDesk.loanConfig.maxDuration} days</h6>
+                  <small>min/max duration</small>
+                </div>
+                <div className="col-6 bg-secondary">
+                  <h6>{selectedLendingDesk.loanConfig.minInterest} - {selectedLendingDesk.loanConfig.maxInterest} %</h6>
+                  <small>min/max interest</small>
+                </div>
+              </div>
+              <hr/>
+              <div className="">
+                <label className="form-label">Select NFT</label>
+                <select name="nftID" className="form-select" onChange={(e) => setNftId(e.target.value)}>
+                  <option value="1">test</option>
+                  <option value="2">test</option>
+                </select>
+              </div>
+              <div className="mt-3">
+                <label className="form-label">Select Duration</label>
+                <input name="duration" min={0} max={0} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
+              </div>
+              <div className="mt-3">
+                <label className="form-label">Select Amount</label>
+                <input name="amount" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)} type="number" className="form-control"/>
+              </div>
+            </form>
+          )
+          }
         />
       </div>
       {/* End Container*/}
