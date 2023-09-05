@@ -24,7 +24,7 @@ export const QuickLoan = (props: any) => {
 
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<string>();
-  const [nftId, setNftId] = useState<string>("1");
+  const [nftId, setNftId] = useState<string>();
   const [duration, setDuration] = useState<string>("1");
   const [amount, setAmount] = useState<string>("1");
   const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
@@ -239,6 +239,7 @@ export const QuickLoan = (props: any) => {
               <div className="">
                 <label className="form-label">Select NFT</label>
                 <select name="nftID" className="form-select" onChange={(e) => setNftId(e.target.value)}>
+                  <option disabled selected> -- select an option -- </option>
                   <option value="1">test</option>
                   <option value="2">test</option>
                 </select>
@@ -251,6 +252,34 @@ export const QuickLoan = (props: any) => {
                 <label className="form-label">Select Amount</label>
                 <input name="amount" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)} type="number" className="form-control"/>
               </div>
+              {selectedLendingDesk && nftId && duration && amount &&
+              <div className="mt-3">
+                <hr/>
+                <small>Loan Details</small>
+                <p>{nftId}</p>
+                <div className="d-flex justify-content-between">
+                  <p>Duration: </p>
+                  <p>{duration}</p>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <p>Interest Rate</p>
+                  <p>[interest</p>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <p>Requested Amount</p>
+                  <p>{amount}</p>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <p>2% Loan Origination Fee</p>
+                  <p>[LOF]</p>
+                </div>
+                <hr/>
+                <div className="d-flex justify-content-between">
+                  <p>Gross Amount</p>
+                  <h2 className="text-primary">[AMOUNT]</h2>
+                </div>
+              </div>
+            }
             </form>
           )
           }

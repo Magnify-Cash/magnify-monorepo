@@ -14,7 +14,7 @@ interface PopupTransactionProps {
   modalTitle: string; // Title of the modal
 }
 
-const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
+export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
   const { isConnected } = useAccount();
 
   let snippet: JSX.Element;
