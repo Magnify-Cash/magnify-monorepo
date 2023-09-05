@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "urql";
+import { useChainId } from "wagmi";
 import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
-import { useNftyFinanceV1InitializeNewLoan } from "@/wagmi-generated";
-import { useQuery } from "urql";
+import {
+  useErc721Approve,
+  useNftyFinanceV1InitializeNewLoan,
+  usePrepareNftyFinanceV1InitializeNewLoan,
+  nftyFinanceV1Address
+} from "@/wagmi-generated";
 import { QuickLoanDocument } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
+  // constants
+  const chainId = useChainId();
+
   // tokenlist / nftlist state management
   const [token, _setToken] = useState<ITokenListItem | null>();
   const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
@@ -36,7 +45,12 @@ export const QuickLoan = (props: any) => {
   }
 
   // Initialize New Loan Hook
-  const { writeAsync: initializeNewLoan } = useNftyFinanceV1InitializeNewLoan({
+  const { writeAsync: approveErc721 } = useErc721Approve({
+    address: nftCollection?.nft.address as `0x${string}`,
+    args: [nftyFinanceV1Address[chainId], BigInt(amount)],
+  });
+  const { config:newLoanConfig, refetch: newLoanRefetch } = usePrepareNftyFinanceV1InitializeNewLoan({
+    enabled:false,
     args: [
       BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
@@ -44,10 +58,11 @@ export const QuickLoan = (props: any) => {
       BigInt(1),
       BigInt(1),
     ],
-  });
+  })
+  const { write:newLoanWrite } = useNftyFinanceV1InitializeNewLoan(newLoanConfig);
 
   // Modal submit
-  function handleModalSubmit() {
+  async function handleModalSubmit() {
     const form = document.getElementById("quickLoanForm") as HTMLFormElement;
     const isValid = form.checkValidity();
     if (!isValid) {
@@ -57,11 +72,13 @@ export const QuickLoan = (props: any) => {
     console.log("token", token);
     console.log("nftCollection", nftCollection);
     console.log("selectedLendingDesk", selectedLendingDesk);
-    console.log("nftId", nftId)
-    console.log("duration", duration)
-    console.log("amount", amount)
-    console.log("form is valid, wagmi function with above data.....");
-    initializeNewLoan?.();
+    console.log("nftId", nftId);
+    console.log("duration", duration);
+    console.log("amount", amount);
+    console.log("form is valid, wagmi functions with above data.....");
+    await approveErc721();
+    newLoanRefetch();
+    await newLoanWrite?.();
   }
 
   return (
@@ -228,7 +245,7 @@ export const QuickLoan = (props: any) => {
               </div>
               <div className="mt-3">
                 <label className="form-label">Select Duration</label>
-                <input name="duration" min={0} max={0} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
+                <input name="duration" min={selectedLendingDesk.loanConfig.minDuration} max={selectedLendingDesk.loanConfig.maxDuration} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
               </div>
               <div className="mt-3">
                 <label className="form-label">Select Amount</label>
