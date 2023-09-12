@@ -59,7 +59,7 @@ export const QuickLoan = (props: any) => {
       BigInt(1),
     ],
   })
-  const { write:newLoanWrite } = useNftyFinanceV1InitializeNewLoan(newLoanConfig);
+  const { writeAsync:newLoanWrite } = useNftyFinanceV1InitializeNewLoan(newLoanConfig);
 
   // Modal submit
   async function handleModalSubmit() {
@@ -76,8 +76,8 @@ export const QuickLoan = (props: any) => {
     console.log("duration", duration);
     console.log("amount", amount);
     console.log("form is valid, wagmi functions with above data.....");
-    await approveErc721();
     newLoanRefetch();
+    await approveErc721();
     await newLoanWrite?.();
   }
 

@@ -1,14 +1,19 @@
-import { useState } from "react";
-import { PopupTransaction, LoanCard } from "@/components";
+import { useQuery } from "urql";
+import { useAccount } from "wagmi";
+import { BorrowerDashboardDocument } from "../../../.graphclient";
+import { LoanCard } from "@/components";
 
 export const Dashboard = (props: any) => {
-  const [payBackAmount, setPayBackAmount] = useState("0");
+  // GraphQL
+  const { address } = useAccount();
+  const [result] = useQuery({
+    query: BorrowerDashboardDocument,
+    variables: {
+      walletAddress: address,
+    },
+  });
 
-  // modal submit
-  function handleModalSubmit(loanID: number) {
-    console.log("loanID", loanID);
-    console.log("payBackAmount", payBackAmount);
-  }
+  console.log(result?.data?.loans)
 
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
@@ -68,58 +73,11 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-active-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanCard
-              popupTx={
-                <PopupTransaction
-                  btnClass="btn btn-primary btn-lg mt-4"
-                  btnText="Pay Back"
-                  modalId="txModal"
-                  modalBtnText="Pay Now"
-                  modalFunc={() => handleModalSubmit(1)}
-                  modalTitle="Pay Back Loan"
-                  modalContent={
-                    <div>
-                      <small>Loan Details</small>
-                      <p>Collection Name] #[NFT ID]</p>
-                      <div className="row g-4">
-                        <div className="col-6 bg-secondary">
-                          <h6>[x][currency]</h6>
-                          <small>original borrow</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>[x] %</h6>
-                          <small>interest date</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>[x] days / [x] days</h6>
-                          <small>loan duration</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>[x][currency]</h6>
-                          <small>amount due on expiry date</small>
-                        </div>
-                        <div className="col-12 bg-success">
-                          <h6>[x][currency]</h6>
-                          <small>current payoff amount</small>
-                        </div>
-                      </div>
-                      <hr />
-                      <p className="text-start">Enter Amount</p>
-                      <div className="input-group">
-                        <input
-                          value={payBackAmount}
-                          onChange={(e) => setPayBackAmount(e.target.value)}
-                          type="number"
-                          className="me-2"
-                        />
-                        <span>[Currency]</span>
-                      </div>
-                    </div>
-                  }
-                />
-              }
-              loanInfo={null}
-            />
+            {result?.data?.loans
+            .filter(loan => loan.status === 'Active')
+            .map(loan => (
+              <LoanCard payback loanInfo={loan} />
+            ))}
           </div>
         </div>
         {/* End Active Row */}
@@ -132,7 +90,11 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanCard loanInfo={null} />
+            {result?.data?.loans
+            .filter(loan => loan.status === 'Resolved')
+            .map(loan => (
+              <LoanCard loanInfo={loan} />
+            ))}
           </div>
         </div>
         {/* End completed Row */}
@@ -145,7 +107,11 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanCard loanInfo={null} />
+            {result?.data?.loans
+            .filter(loan => loan.status === 'Resolved')
+            .map(loan => (
+              <LoanCard loanInfo={loan} />
+            ))}
           </div>
         </div>
         {/* End defaulted Row */}

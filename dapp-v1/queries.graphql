@@ -118,3 +118,25 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
     }
   }
 }
+
+query BorrowerDashboard($walletAddress: Bytes!) {
+  loans(where: { borrower: $walletAddress }) {
+    id
+    amount
+    amountPaidBack
+    duration
+    startTime
+    nftCollection {
+      id
+    }
+    lendingDesk {
+      erc20 {
+        symbol
+      }
+    }
+    nftId
+    interest
+    status
+    lender
+  }
+}

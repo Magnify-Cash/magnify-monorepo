@@ -79,9 +79,8 @@ const LendingDeskRow = ({ desks, status }) => {
 };
 
 export const ManageLendingDesks = (props: any) => {
-  const { address } = useAccount();
-
   // GraphQL
+  const { address } = useAccount();
   const [result] = useQuery({
     query: ManageLendingDesksDocument,
     variables: {
