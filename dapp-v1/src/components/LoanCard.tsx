@@ -11,10 +11,9 @@ TODO
 
 // Interface
 interface ILoanCardProps {
-  popupTx?: any;
-  loanInfo: object | null;
-  payback: boolean; // whether or not loan card should have payback UI
-  liquidate:boolean; // whether or not loan card should have liquidate UI
+  loanInfo: object | null; // loan info object
+  payback?: boolean; // whether or not loan card should have payback UI
+  liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
 
 export const LoanCard = (props: ILoanCardProps) => {
@@ -87,7 +86,6 @@ export const LoanCard = (props: ILoanCardProps) => {
               btnText="Pay Back"
               modalId="txModal"
               modalBtnText="Pay Now"
-              modalFunc={() => handleModalSubmit(1)}
               modalTitle="Pay Back Loan"
               modalContent={
                 <div>
@@ -126,6 +124,9 @@ export const LoanCard = (props: ILoanCardProps) => {
                     />
                     <span>{props.loanInfo?.lendingDesk?.erc20.symbol}</span>
                   </div>
+                  <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit(1)}>
+                    Button Text
+                  </button>
                 </div>
               }
             />

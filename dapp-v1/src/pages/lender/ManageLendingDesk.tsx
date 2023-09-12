@@ -41,7 +41,6 @@ export const ManageLendingDesk = (props: any) => {
   // Freeze / Unfreeze
   const boolStatus =
     result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolText = boolStatus ? "freeze" : "unfreeze";
   const { config: freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
     args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
   });
@@ -70,7 +69,6 @@ export const ManageLendingDesk = (props: any) => {
 
   // Withdraw Liquidity
   const [withdrawAmount, setWithdrawAmount] = useState(0);
-  const [amount, setAmount] = useState(0);
   const { config: withdrawConfig } =
     usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
       args: [BigInt(result.data?.lendingDesk?.id || 0), BigInt(withdrawAmount)],
@@ -136,7 +134,6 @@ export const ManageLendingDesk = (props: any) => {
                   btnText="Add Funds"
                   modalId="txModal"
                   modalBtnText="Add Funds Now"
-                  modalFunc={() => depositLiquidity()}
                   modalTitle="Add Funds"
                   modalContent={
                     <div>
@@ -151,6 +148,9 @@ export const ManageLendingDesk = (props: any) => {
                         />
                         <span>{result.data?.lendingDesk?.erc20.symbol}</span>
                       </div>
+                      <button type="button" className="btn btn-primary" onClick={() => depositLiquidity()}>
+                      Button Text
+                      </button>
                     </div>
                   }
                 />
@@ -159,7 +159,6 @@ export const ManageLendingDesk = (props: any) => {
                   btnText="Withdraw Funds"
                   modalId="txModal2"
                   modalBtnText="Withdraw Funds Now"
-                  modalFunc={() => withdrawLiquidity()}
                   modalTitle="Withdraw Funds"
                   modalContent={
                     <div>
@@ -174,6 +173,9 @@ export const ManageLendingDesk = (props: any) => {
                         />
                         <span>{result.data?.lendingDesk?.erc20.symbol}</span>
                       </div>
+                      <button type="button" className="btn btn-primary" onClick={() => withdrawLiquidity()}>
+                      Button Text
+                      </button>
                     </div>
                   }
                 />

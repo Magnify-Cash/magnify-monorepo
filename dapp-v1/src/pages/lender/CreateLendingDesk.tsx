@@ -344,7 +344,6 @@ export const CreateLendingDesk = (props: any) => {
               btnText="Finalize Lending Desk"
               modalId="txModal"
               modalBtnText="Launch Lending Desk"
-              modalFunc={() => handleModalSubmit()}
               modalTitle="Confirm Lending Desk"
               modalContent={
                 <div>
@@ -390,6 +389,9 @@ export const CreateLendingDesk = (props: any) => {
                     />
                     <span>Funding Amount</span>
                   </div>
+                  <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit()}>
+                    Button Text
+                  </button>
                 </div>
               }
             />

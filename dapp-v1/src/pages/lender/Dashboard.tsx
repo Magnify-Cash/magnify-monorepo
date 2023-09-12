@@ -162,7 +162,6 @@ export const Dashboard = (props: any) => {
                   btnText="Liquidate Loan"
                   modalId="txModal"
                   modalBtnText="Liquidate Now"
-                  modalFunc={() => handleModalSubmit(1)}
                   modalTitle="Liquidate Loan"
                   modalContent={
                     <div>
@@ -176,6 +175,9 @@ export const Dashboard = (props: any) => {
                         <div className="col-12 bg-success">test</div>
                       </div>
                       <hr />
+                      <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit(1)}>
+                      Button Text
+                      </button>
                     </div>
                   }
                 />

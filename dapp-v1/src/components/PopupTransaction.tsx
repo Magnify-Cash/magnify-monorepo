@@ -10,7 +10,6 @@ interface PopupTransactionProps {
   modalId: string; // ID of the modal
   modalBtnText: string; // Button text of the modal
   modalContent: React.ReactNode; // Modal content
-  modalFunc: () => void; // Transaction function used in modal onclick
   modalTitle: string; // Title of the modal
 }
 
@@ -58,9 +57,6 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
 			</div>
 			<div className="modal-body">
 			  {props.modalContent}
-			  <button className="btn btn-primary" onClick={props.modalFunc}>
-				{props.modalBtnText}
-			  </button>
 			</div>
 		  </div>
 		</div>

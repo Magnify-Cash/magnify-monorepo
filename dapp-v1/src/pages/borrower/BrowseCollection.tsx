@@ -81,9 +81,14 @@ export const BrowseCollection = (props) => {
                         btnText="Request Loan"
                         modalId="txModal"
                         modalBtnText="Request Now"
-                        modalFunc={() => console.log(1)}
                         modalTitle="Request Loan"
-                        modalContent={<div></div>}
+                        modalContent={
+                          <div>
+                            <button className="btn btn-primary" onClick={() => console.log(1)}>
+                            Button Text
+                            </button>
+                          </div>
+                        }
                       />
                     </td>
                   </tr>

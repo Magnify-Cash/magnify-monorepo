@@ -211,7 +211,6 @@ export const QuickLoan = (props: any) => {
           btnText="Get Loan"
           modalId="txModal"
           modalBtnText="Get Loan"
-          modalFunc={() => handleModalSubmit()}
           modalTitle="Request Loan"
           modalContent={
             selectedLendingDesk && (
@@ -278,6 +277,9 @@ export const QuickLoan = (props: any) => {
                   <p>Gross Amount</p>
                   <h2 className="text-primary">[AMOUNT]</h2>
                 </div>
+                <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit()}>
+                Button Text
+                </button>
               </div>
             }
             </form>
