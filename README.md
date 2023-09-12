@@ -1,6 +1,6 @@
 # NFTY Finance V1 Monorepo
 
-![NFTY Finance Logo](https://example.com/nfty-finance-logo.png)
+![NFTY Finance Logo](https://nfty.finance/icon.svg)
 
 Welcome to NFTY Finance V1! This repository serves as the central hub for various subprojects that collectively constitute the NFTY Finance protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
 
