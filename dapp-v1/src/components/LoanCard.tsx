@@ -1,5 +1,12 @@
 import { useState } from "react";
+import { useChainId } from "wagmi";
 import { PopupTransaction } from "@/components";
+import {
+  usePrepareNftyFinanceV1MakeLoanPayment,
+  useNftyFinanceV1MakeLoanPayment,
+  nftyFinanceV1Address,
+  useErc20Approve,
+} from "@/wagmi-generated";
 
 /*
 TODO
@@ -17,14 +24,27 @@ interface ILoanCardProps {
 }
 
 export const LoanCard = (props: ILoanCardProps) => {
-  // modal submit
+  // Make Loan Payment Hook
   const [payBackAmount, setPayBackAmount] = useState("0");
-  function handleModalSubmit(loanID: number) {
+  const chainId = useChainId();
+  const { writeAsync: approveErc20 } = useErc20Approve({
+    address: props.loanInfo?.lendingDesk?.erc20.id as `0x${string}`,
+    args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
+  });
+  const { config: makeLoanPaymentConfig } =
+    usePrepareNftyFinanceV1MakeLoanPayment({
+      args: [
+        BigInt(props.loanInfo?.id || 0), // loan ID
+        BigInt(payBackAmount), // amout
+      ],
+  });
+  const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
+  function makeLoanPayment(loanID: number) {
     console.log("loanID", loanID);
     console.log("payBackAmount", payBackAmount);
+    makeLoanPaymentWrite?.()
   }
 
-  console.log(props)
   return (
     <div className="col-sm-6 col-xl-4">
       <style>
@@ -59,7 +79,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                 <small>payoff amount</small>
               </div>
               <div className="col-12">
-                <h5 className="text-start">{props.loanInfo?.duration} Days Left</h5>
+                <h5 className="text-start">[x] Days Left</h5>
                 <div className="progress my-2">
                   <div
                     className="progress-bar progress-bar-striped progress-bar-animated"
@@ -72,7 +92,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                 </div>
                 <div className="start">
                   <p className="text-start m-0">{props.loanInfo?.startTime}</p>
-                  <small>loan issued</small>
+                  <small>issued date</small>
                 </div>
                 <div className="end">
                   <p className="text-end m-0">[due date]</p>
@@ -124,7 +144,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                     />
                     <span>{props.loanInfo?.lendingDesk?.erc20.symbol}</span>
                   </div>
-                  <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit(1)}>
+                  <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(1)}>
                     Button Text
                   </button>
                 </div>

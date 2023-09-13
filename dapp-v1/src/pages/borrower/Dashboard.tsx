@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
 import { LoanCard } from "@/components";
 
+
 export const Dashboard = (props: any) => {
   // GraphQL
   const { address } = useAccount();
@@ -78,6 +79,9 @@ export const Dashboard = (props: any) => {
             .map(loan => (
               <LoanCard payback loanInfo={loan} />
             ))}
+            {result?.data?.loans.filter(loan => loan.status === 'Active').length === 0 && (
+              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+            )}
           </div>
         </div>
         {/* End Active Row */}
@@ -95,6 +99,9 @@ export const Dashboard = (props: any) => {
             .map(loan => (
               <LoanCard loanInfo={loan} />
             ))}
+            {result?.data?.loans.filter(loan => loan.status === 'Resolved').length === 0 && (
+              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+            )}
           </div>
         </div>
         {/* End completed Row */}
@@ -108,10 +115,13 @@ export const Dashboard = (props: any) => {
         >
           <div className="row g-4 g-xl-5">
             {result?.data?.loans
-            .filter(loan => loan.status === 'Resolved')
+            .filter(loan => loan.status === 'Defaulted')
             .map(loan => (
               <LoanCard loanInfo={loan} />
             ))}
+            {result?.data?.loans.filter(loan => loan.status === 'Defaulted').length === 0 && (
+              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+            )}
           </div>
         </div>
         {/* End defaulted Row */}

@@ -131,6 +131,7 @@ query BorrowerDashboard($walletAddress: Bytes!) {
     }
     lendingDesk {
       erc20 {
+        id
         symbol
       }
     }

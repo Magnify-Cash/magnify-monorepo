@@ -19,16 +19,13 @@ interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
-  const chainId = useChainId();
-
   // tokenlist state management
   const [token, _setToken] = useState<ITokenListItem | null>();
   const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
-  const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
-  const [deskFundingAmount, setDeskFundingAmount] = useState("");
-
   const setToken = (e: string) => _setToken(JSON.parse(e));
   const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
+  const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
+  const [deskFundingAmount, setDeskFundingAmount] = useState("");
 
   // lending desk config submit
   function handleConfigSubmit(e: React.MouseEvent<HTMLButtonElement>) {
@@ -55,11 +52,12 @@ export const CreateLendingDesk = (props: any) => {
     setDeskConfigs([...deskConfigs, formJson]);
   }
 
+  // Create Lending Desk Hook
+  const chainId = useChainId();
   const { writeAsync: approveErc20 } = useErc20Approve({
     address: token?.token?.address as `0x${string}`,
     args: [nftyFinanceV1Address[chainId], BigInt(deskFundingAmount)],
   });
-
   const { writeAsync: initializeNewLendingDesk } =
     useNftyFinanceV1InitializeNewLendingDesk({
       args: [
