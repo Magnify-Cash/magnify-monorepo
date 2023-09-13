@@ -138,6 +138,9 @@ export const ManageLendingDesks = (props: any) => {
             desks={result.data?.lendingDesks || []}
             status="Active"
           />
+          {result?.data?.lendingDesks.filter(desk => desk.status === 'Active').length === 0 && (
+            <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+          )}
         </div>
         {/* End Active Row */}
 
@@ -152,6 +155,9 @@ export const ManageLendingDesks = (props: any) => {
             desks={result.data?.lendingDesks || []}
             status="Frozen"
           />
+          {result?.data?.lendingDesks.filter(desk => desk.status === 'Frozen').length === 0 && (
+            <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+          )}
         </div>
         {/* End Inactive Row */}
       </div>
