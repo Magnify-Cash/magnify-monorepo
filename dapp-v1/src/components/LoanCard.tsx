@@ -1,3 +1,9 @@
+/*
+TODO
+- add typing for loaninfo
+- ensure all [] placeholders are complete
+*/
+
 import { useState } from "react";
 import { useChainId } from "wagmi";
 import { PopupTransaction } from "@/components";
@@ -8,12 +14,64 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 
-/*
-TODO
-- add typing for loaninfo
-- calculate date/time
-- ensure all [] placeholders are complete
-*/
+// date rendering
+function calculateTimeInfo(startTime, durationInHours) {
+  // Convert the Unix timestamp to milliseconds
+  const startTimeInMillis = startTime * 1000;
+
+  // Calculate the end time in milliseconds
+  const endTimeInMillis = startTimeInMillis + durationInHours * 3600 * 1000;
+
+  // Create JavaScript date objects
+  const currentDate = new Date();
+  const startDate = new Date(startTimeInMillis);
+  const endDate = new Date(endTimeInMillis);
+
+  // Calculate total duration in milliseconds
+  const totalDurationInMillis = durationInHours * 3600 * 1000;
+
+  // Calculate remaining duration in milliseconds
+  const currentTimeInMillis = currentDate.getTime();
+  let remainingDurationInMillis = endTimeInMillis - currentTimeInMillis;
+
+  // Check if remaining duration is negative and set it to zero if needed
+  if (remainingDurationInMillis < 0) {
+    remainingDurationInMillis = 0;
+  }
+
+  // Calculate remaining days and hours
+  const remainingDays = Math.floor(remainingDurationInMillis / (24 * 3600 * 1000));
+  remainingDurationInMillis %= 24 * 3600 * 1000;
+  const remainingHours = Math.floor(remainingDurationInMillis / (3600 * 1000));
+
+  // Construct the remaining time string
+  let remainingTime;
+  if (remainingDays > 0) {
+    remainingTime = `${remainingDays} days and ${remainingHours} hours`;
+  } else {
+    remainingTime = `${remainingHours} hours`;
+  }
+
+  // Return the values as an object, including the remaining time string
+  return {
+    currentDate,
+    startDate,
+    endDate,
+    totalDuration: totalDurationInMillis,
+    remainingTime, // Add the remaining time string
+  };
+}
+
+function formatTimeInfo(dateTime) {
+  const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+  return dateTime.toLocaleString(undefined, options);
+}
 
 
 // Interface
@@ -22,8 +80,17 @@ interface ILoanCardProps {
   payback?: boolean; // whether or not loan card should have payback UI
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
-
 export const LoanCard = (props: ILoanCardProps) => {
+  // Date rendering
+  const {
+    currentDate,
+    startDate,
+    endDate,
+    totalDuration,
+    remainingTime
+  } = calculateTimeInfo(props.loanInfo?.startTime, props.loanInfo?.duration);
+  console.log(remainingTime)
+
   // Make Loan Payment Hook
   const [payBackAmount, setPayBackAmount] = useState("0");
   const chainId = useChainId();
@@ -79,7 +146,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                 <small>payoff amount</small>
               </div>
               <div className="col-12">
-                <h5 className="text-start">[x] Days Left</h5>
+                <h5 className="text-start">{remainingTime}</h5>
                 <div className="progress my-2">
                   <div
                     className="progress-bar progress-bar-striped progress-bar-animated"
@@ -91,11 +158,11 @@ export const LoanCard = (props: ILoanCardProps) => {
                   />
                 </div>
                 <div className="start">
-                  <p className="text-start m-0">{props.loanInfo?.startTime}</p>
+                  <p className="text-start m-0">{formatTimeInfo(startDate)}</p>
                   <small>issued date</small>
                 </div>
                 <div className="end">
-                  <p className="text-end m-0">[due date]</p>
+                  <p className="text-end m-0">{formatTimeInfo(endDate)}</p>
                   <small>due date</small>
                 </div>
               </div>
