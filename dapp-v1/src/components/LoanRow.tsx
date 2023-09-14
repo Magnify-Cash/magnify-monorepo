@@ -22,28 +22,6 @@ interface ILoanRowProps {
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
 export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
-  // Make Loan Payment Hook
-  const [payBackAmount, setPayBackAmount] = useState("0");
-  const chainId = useChainId();
-  const { writeAsync: approveErc20 } = useErc20Approve({
-    address: loans?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
-  });
-  const { config: makeLoanPaymentConfig } =
-    usePrepareNftyFinanceV1MakeLoanPayment({
-      args: [
-        BigInt(loans?.id || 0), // loan ID
-        BigInt(payBackAmount), // amout
-      ],
-  });
-  const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
-  async function makeLoanPayment(loanID: number) {
-    console.log("loanID", loanID);
-    console.log("payBackAmount", payBackAmount);
-    await approveErc20?.()
-    await makeLoanPaymentWrite?.()
-  }
-
   // Setup loan data && handle empty state
   console.log(loans, status)
   loans = loans.filter((loan) => loan.status === status);
@@ -55,14 +33,37 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
 
   // OK
   return loans.map((loan) => {
+    // Date rendering
     const {
-    startDate,
-    endDate,
-    remainingTime,
-    elapsedTime,
-    isTimeLeft,
+      startDate,
+      endDate,
+      remainingTime,
+      elapsedTime,
+      isTimeLeft,
     } = calculateTimeInfo(loan?.startTime, loan?.duration);
-    console.log(isTimeLeft)
+
+    // Make Loan Payment Hook
+    const [payBackAmount, setPayBackAmount] = useState("0");
+    const chainId = useChainId();
+    const { writeAsync: approveErc20 } = useErc20Approve({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
+    });
+    const { config: makeLoanPaymentConfig } =
+      usePrepareNftyFinanceV1MakeLoanPayment({
+        args: [
+          BigInt(loan?.id || 0), // loan ID
+          BigInt(payBackAmount), // amout
+        ],
+    });
+    const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
+    async function makeLoanPayment(loanID: number) {
+      console.log("loanID", loanID);
+      console.log("payBackAmount", payBackAmount);
+      await approveErc20?.()
+      await makeLoanPaymentWrite?.()
+    }
+
     return (
     <div className="col-sm-6 col-xl-4">
       <style>
