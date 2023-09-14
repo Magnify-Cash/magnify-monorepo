@@ -1,4 +1,4 @@
-import { LoanCard, PopupTransaction } from "@/components";
+import { LoanRow, PopupTransaction } from "@/components";
 
 const LoanCardParent = () => (
   <div>
@@ -141,7 +141,7 @@ export const Dashboard = (props: any) => {
         >
           <div className="row g-4 g-xl-5">
             <LoanCardParent />
-            <LoanCard loanInfo={null} />
+            <LoanRow loans={[]} />
           </div>
         </div>
         {/* End Active Row */}
@@ -155,34 +155,7 @@ export const Dashboard = (props: any) => {
         >
           <div className="row g-4 g-xl-5">
             <LoanCardParent />
-            <LoanCard
-              popupTx={
-                <PopupTransaction
-                  btnClass="btn btn-primary btn-lg mt-4"
-                  btnText="Liquidate Loan"
-                  modalId="txModal"
-                  modalBtnText="Liquidate Now"
-                  modalTitle="Liquidate Loan"
-                  modalContent={
-                    <div>
-                      <small>Loan Details</small>
-                      <h6>Collection Name] #[NFT ID]</h6>
-                      <div className="row g-4">
-                        <div className="col-6 bg-secondary">test</div>
-                        <div className="col-6 bg-secondary">test</div>
-                        <div className="col-6 bg-secondary">test</div>
-                        <div className="col-6 bg-secondary">test</div>
-                        <div className="col-12 bg-success">test</div>
-                      </div>
-                      <hr />
-                      <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit(1)}>
-                      Button Text
-                      </button>
-                    </div>
-                  }
-                />
-              }
-              loanInfo={null}
+            <LoanRow loans={[]}
             />
           </div>
         </div>
@@ -197,7 +170,7 @@ export const Dashboard = (props: any) => {
         >
           <div className="row g-4 g-xl-5">
             <LoanCardParent />
-            <LoanCard loanInfo={null} />
+            <LoanRow loans={[]} />
           </div>
         </div>
         {/* End Defaulted Row */}
@@ -211,7 +184,7 @@ export const Dashboard = (props: any) => {
         >
           <div className="row g-4 g-xl-5">
             <LoanCardParent />
-            <LoanCard loanInfo={null} />
+            <LoanRow loans={[]} />
           </div>
         </div>
         {/* End Completed Row */}

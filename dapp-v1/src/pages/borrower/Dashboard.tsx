@@ -1,7 +1,7 @@
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
-import { LoanCard } from "@/components";
+import { LoanRow } from "@/components";
 
 
 export const Dashboard = (props: any) => {
@@ -72,7 +72,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-active-tab"
         >
           <div className="row g-4 g-xl-5">
-              <LoanCard payback loans={result?.data?.loans || []} status="Active" />
+              <LoanRow payback loans={result?.data?.loans || []} status="Active" />
           </div>
         </div>
         {/* End Active Row */}
@@ -85,7 +85,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanCard payback loans={result?.data?.loans || []} status="Completed" />
+            <LoanRow payback loans={result?.data?.loans || []} status="Completed" />
           </div>
         </div>
         {/* End completed Row */}
@@ -98,7 +98,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanCard payback loans={result?.data?.loans || []} status="Defaulted" />
+            <LoanRow payback loans={result?.data?.loans || []} status="Defaulted" />
           </div>
         </div>
         {/* End defaulted Row */}

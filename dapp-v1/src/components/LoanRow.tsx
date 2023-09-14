@@ -15,13 +15,13 @@ import {
 import { calculateTimeInfo, formatTimeInfo } from "@/utils"
 
 // Interface
-interface ILoanCardProps {
+interface ILoanRowProps {
   loans: any; // loans array
   status?: string // Status of the loan row
   payback?: boolean; // whether or not loan card should have payback UI
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
-export const LoanCard = ({loans, payback, status, liquidate}: ILoanCardProps) => {
+export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
   // Make Loan Payment Hook
   const [payBackAmount, setPayBackAmount] = useState("0");
   const chainId = useChainId();
