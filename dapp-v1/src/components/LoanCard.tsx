@@ -14,7 +14,6 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 
-// date rendering
 function calculateTimeInfo(startTime, durationInHours) {
   // Convert the Unix timestamp to milliseconds
   const startTimeInMillis = startTime * 1000;
@@ -26,9 +25,6 @@ function calculateTimeInfo(startTime, durationInHours) {
   const currentDate = new Date();
   const startDate = new Date(startTimeInMillis);
   const endDate = new Date(endTimeInMillis);
-
-  // Calculate total duration in milliseconds
-  const totalDurationInMillis = durationInHours * 3600 * 1000;
 
   // Calculate remaining duration in milliseconds
   const currentTimeInMillis = currentDate.getTime();
@@ -52,13 +48,38 @@ function calculateTimeInfo(startTime, durationInHours) {
     remainingTime = `${remainingHours} hours`;
   }
 
-  // Return the values as an object, including the remaining time string
+  // Calculate elapsed duration in milliseconds
+  let elapsedDurationInMillis = currentTimeInMillis - startTimeInMillis;
+
+  // Check if elapsed duration is negative and set it to zero if needed
+  if (elapsedDurationInMillis < 0) {
+    elapsedDurationInMillis = 0;
+  }
+
+  // Calculate elapsed days
+  const elapsedDays = Math.floor(elapsedDurationInMillis / (24 * 3600 * 1000));
+
+  // Calculate elapsed hours
+  const elapsedHours = Math.floor((elapsedDurationInMillis % (24 * 3600 * 1000)) / (3600 * 1000));
+
+  // Calculate total days and total hours
+  const totalDays = Math.floor(durationInHours / 24);
+  const totalHours = durationInHours % 24;
+
+  // Construct the elapsed time string
+  const elapsedTime = `${elapsedDays}D ${elapsedHours}HR / ${totalDays}D ${totalHours}HR`;
+
+
+  // Check if there is any time left
+  const isTimeLeft = remainingDurationInMillis > 0;
+
+  // Return the values as an object
   return {
-    currentDate,
     startDate,
     endDate,
-    totalDuration: totalDurationInMillis,
-    remainingTime, // Add the remaining time string
+    remainingTime,
+    elapsedTime,
+    isTimeLeft,
   };
 }
 
@@ -83,13 +104,13 @@ interface ILoanCardProps {
 export const LoanCard = (props: ILoanCardProps) => {
   // Date rendering
   const {
-    currentDate,
     startDate,
     endDate,
-    totalDuration,
-    remainingTime
+    remainingTime,
+    elapsedTime,
+    isTimeLeft,
   } = calculateTimeInfo(props.loanInfo?.startTime, props.loanInfo?.duration);
-  console.log(remainingTime)
+  console.log(isTimeLeft)
 
   // Make Loan Payment Hook
   const [payBackAmount, setPayBackAmount] = useState("0");
@@ -106,10 +127,11 @@ export const LoanCard = (props: ILoanCardProps) => {
       ],
   });
   const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
-  function makeLoanPayment(loanID: number) {
+  async function makeLoanPayment(loanID: number) {
     console.log("loanID", loanID);
     console.log("payBackAmount", payBackAmount);
-    makeLoanPaymentWrite?.()
+    await approveErc20?.()
+    await makeLoanPaymentWrite?.()
   }
 
   return (
@@ -146,7 +168,14 @@ export const LoanCard = (props: ILoanCardProps) => {
                 <small>payoff amount</small>
               </div>
               <div className="col-12">
-                <h5 className="text-start">{remainingTime}</h5>
+                {
+                  isTimeLeft
+                  ? <h5 className="text-start">{remainingTime}</h5>
+                  : <p className="text-danger text-start">
+                    Loan is overdue! <br/> Make payment or face liquidation.
+                    </p>
+                }
+
                 <div className="progress my-2">
                   <div
                     className="progress-bar progress-bar-striped progress-bar-animated"
@@ -188,7 +217,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                       <small>interest date</small>
                     </div>
                     <div className="col-6 bg-secondary">
-                      <h6>[x] days / [x] days</h6>
+                      <h6>{elapsedTime}</h6>
                       <small>loan duration</small>
                     </div>
                     <div className="col-6 bg-secondary">
