@@ -3,9 +3,99 @@ import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
+export const ManageLendingDesks = (props: any) => {
+  // GraphQL
+  const { address } = useAccount();
+  const [result] = useQuery({
+    query: ManageLendingDesksDocument,
+    variables: {
+      walletAddress: address,
+    },
+  });
+
+  return (
+    <div className="container-md px-3 px-sm-4 px-xl-5">
+      <div className="d-lg-flex align-items-center">
+        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link active"
+              id="pills-home-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-home"
+              type="button"
+              role="tab"
+              aria-controls="pills-home"
+              aria-selected="true"
+            >
+              Active Desks
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link"
+              id="pills-profile-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-profile"
+              type="button"
+              role="tab"
+              aria-controls="pills-profile"
+              aria-selected="false"
+            >
+              Inactive Desks
+            </button>
+          </li>
+        </ul>
+        <NavLink to="/create-desk" className="btn btn-primary ms-auto">
+          Create Lending Desk
+        </NavLink>
+      </div>
+
+      <div className="tab-content" id="pills-tabContent">
+        {/* Active Row */}
+        <div
+          className="col-md-8 tab-pane fade show active"
+          id="pills-home"
+          role="tabpanel"
+          aria-labelledby="pills-home-tab"
+        >
+          <LendingDeskRow
+            desks={result.data?.lendingDesks || []}
+            status="Active"
+          />
+        </div>
+        {/* End Active Row */}
+
+        {/* Inactive Row */}
+        <div
+          className="col-md-8 tab-pane fade"
+          id="pills-profile"
+          role="tabpanel"
+          aria-labelledby="pills-profile-tab"
+        >
+          <LendingDeskRow
+            desks={result.data?.lendingDesks || []}
+            status="Frozen"
+          />
+        </div>
+        {/* End Inactive Row */}
+      </div>
+    </div>
+  );
+};
+
 const LendingDeskRow = ({ desks, status }) => {
   // Filter by status and return
   desks = desks.filter((desk) => desk.status === status);
+
+  // Handle empty state
+  if (desks.length === 0) {
+    return (
+      <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+    )
+  }
+
+  // OK
   return desks.map((desk) => {
     return (
       <div
@@ -76,91 +166,4 @@ const LendingDeskRow = ({ desks, status }) => {
       </div>
     );
   });
-};
-
-export const ManageLendingDesks = (props: any) => {
-  // GraphQL
-  const { address } = useAccount();
-  const [result] = useQuery({
-    query: ManageLendingDesksDocument,
-    variables: {
-      walletAddress: address,
-    },
-  });
-
-  return (
-    <div className="container-md px-3 px-sm-4 px-xl-5">
-      <div className="d-lg-flex align-items-center">
-        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link active"
-              id="pills-home-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#pills-home"
-              type="button"
-              role="tab"
-              aria-controls="pills-home"
-              aria-selected="true"
-            >
-              Active Desks
-            </button>
-          </li>
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link"
-              id="pills-profile-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#pills-profile"
-              type="button"
-              role="tab"
-              aria-controls="pills-profile"
-              aria-selected="false"
-            >
-              Inactive Desks
-            </button>
-          </li>
-        </ul>
-        <NavLink to="/create-desk" className="btn btn-primary ms-auto">
-          Create Lending Desk
-        </NavLink>
-      </div>
-
-      <div className="tab-content" id="pills-tabContent">
-        {/* Active Row */}
-        <div
-          className="col-md-8 tab-pane fade show active"
-          id="pills-home"
-          role="tabpanel"
-          aria-labelledby="pills-home-tab"
-        >
-          <LendingDeskRow
-            desks={result.data?.lendingDesks || []}
-            status="Active"
-          />
-          {result?.data?.lendingDesks.filter(desk => desk.status === 'Active').length === 0 && (
-            <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-          )}
-        </div>
-        {/* End Active Row */}
-
-        {/* Inactive Row */}
-        <div
-          className="col-md-8 tab-pane fade"
-          id="pills-profile"
-          role="tabpanel"
-          aria-labelledby="pills-profile-tab"
-        >
-          <LendingDeskRow
-            desks={result.data?.lendingDesks || []}
-            status="Frozen"
-          />
-          {result?.data?.lendingDesks.filter(desk => desk.status === 'Frozen').length === 0 && (
-            <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-          )}
-        </div>
-        {/* End Inactive Row */}
-      </div>
-    </div>
-  );
 };
