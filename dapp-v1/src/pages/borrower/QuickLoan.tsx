@@ -183,7 +183,7 @@ export const QuickLoan = (props: any) => {
                 flatResult.map((item) => {
                   return (
                   <label className="col-12" key={item.lendingDesk.id}>
-                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk(e.target.value)} className="border" value={JSON.stringify(item)}/>
+                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} className="border" value={JSON.stringify(item)}/>
                       <p>{item.lendingDesk.owner}</p>
                       <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
                       <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
