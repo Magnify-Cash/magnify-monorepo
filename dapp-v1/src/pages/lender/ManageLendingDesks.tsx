@@ -85,10 +85,8 @@ export const ManageLendingDesks = (props: any) => {
 };
 
 const LendingDeskRow = ({ desks, status }) => {
-  // Filter by status and return
+  // Filter by status and handle empty state
   desks = desks.filter((desk) => desk.status === status);
-
-  // Handle empty state
   if (desks.length === 0) {
     return (
       <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />

@@ -16,32 +16,23 @@ import { calculateTimeInfo, formatTimeInfo } from "@/utils"
 
 // Interface
 interface ILoanCardProps {
-  loanInfo: object | null; // loan info object
+  loans: any; // loans array
+  status?: string // Status of the loan row
   payback?: boolean; // whether or not loan card should have payback UI
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
-export const LoanCard = (props: ILoanCardProps) => {
-  // Date rendering
-  const {
-    startDate,
-    endDate,
-    remainingTime,
-    elapsedTime,
-    isTimeLeft,
-  } = calculateTimeInfo(props.loanInfo?.startTime, props.loanInfo?.duration);
-  console.log(isTimeLeft)
-
+export const LoanCard = ({loans, payback, status, liquidate}: ILoanCardProps) => {
   // Make Loan Payment Hook
   const [payBackAmount, setPayBackAmount] = useState("0");
   const chainId = useChainId();
   const { writeAsync: approveErc20 } = useErc20Approve({
-    address: props.loanInfo?.lendingDesk?.erc20.id as `0x${string}`,
+    address: loans?.lendingDesk?.erc20.id as `0x${string}`,
     args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
   });
   const { config: makeLoanPaymentConfig } =
     usePrepareNftyFinanceV1MakeLoanPayment({
       args: [
-        BigInt(props.loanInfo?.id || 0), // loan ID
+        BigInt(loans?.id || 0), // loan ID
         BigInt(payBackAmount), // amout
       ],
   });
@@ -53,7 +44,26 @@ export const LoanCard = (props: ILoanCardProps) => {
     await makeLoanPaymentWrite?.()
   }
 
-  return (
+  // Setup loan data && handle empty state
+  console.log(loans, status)
+  loans = loans.filter((loan) => loan.status === status);
+  if (loans.length === 0) {
+    return (
+      <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+    )
+  }
+
+  // OK
+  return loans.map((loan) => {
+    const {
+    startDate,
+    endDate,
+    remainingTime,
+    elapsedTime,
+    isTimeLeft,
+    } = calculateTimeInfo(loan?.startTime, loan?.duration);
+    console.log(isTimeLeft)
+    return (
     <div className="col-sm-6 col-xl-4">
       <style>
         {`
@@ -74,16 +84,16 @@ export const LoanCard = (props: ILoanCardProps) => {
             />
           </div>
           <div className="text-center mt-3">
-            <h5>{props.loanInfo?.nftCollection.id} #{props.loanInfo?.nftId}</h5>
+            <h5>{loan?.nftCollection.id} #{loan?.nftId}</h5>
             <div className="row g-4">
               <div className="col-6 bg-info">
                 <i className="fa-regular fa-hand-holding-dollar h1 me-1"></i>
-                <h6>{props.loanInfo?.amount} {props.loanInfo?.lendingDesk?.erc20.symbol}</h6>
+                <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
                 <small>borrowed</small>
               </div>
               <div className="col-6 bg-success">
                 <i className="fa-regular fa-calendar h1 me-1"></i>
-                <h6>{props.loanInfo?.amount - props.loanInfo?.amountPaidBack} {props.loanInfo?.lendingDesk?.erc20.symbol}</h6>
+                <h6>{loan?.amount - loan?.amountPaidBack} {loan?.lendingDesk?.erc20.symbol}</h6>
                 <small>payoff amount</small>
               </div>
               <div className="col-12">
@@ -94,7 +104,6 @@ export const LoanCard = (props: ILoanCardProps) => {
                     Loan is overdue! <br/> Make payment or face liquidation.
                     </p>
                 }
-
                 <div className="progress my-2">
                   <div
                     className="progress-bar progress-bar-striped progress-bar-animated"
@@ -115,7 +124,7 @@ export const LoanCard = (props: ILoanCardProps) => {
                 </div>
               </div>
             </div>
-            {props.payback ?
+            {payback ?
             <PopupTransaction
               btnClass="btn btn-primary btn-lg mt-4"
               btnText="Pay Back"
@@ -125,14 +134,14 @@ export const LoanCard = (props: ILoanCardProps) => {
               modalContent={
                 <div>
                   <small>Loan Details</small>
-                  <p>[Collection Name] #{props.loanInfo?.nftId}</p>
+                  <p>{loan?.nftCollection.id} #{loan?.nftId}</p>
                   <div className="row g-4">
                     <div className="col-6 bg-secondary">
-                      <h6>{props.loanInfo?.amount} {props.loanInfo?.lendingDesk?.erc20.symbol}</h6>
+                      <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
                       <small>original borrow</small>
                     </div>
                     <div className="col-6 bg-secondary">
-                      <h6>{props.loanInfo.interest} %</h6>
+                      <h6>{loan?.interest} %</h6>
                       <small>interest date</small>
                     </div>
                     <div className="col-6 bg-secondary">
@@ -140,11 +149,11 @@ export const LoanCard = (props: ILoanCardProps) => {
                       <small>loan duration</small>
                     </div>
                     <div className="col-6 bg-secondary">
-                      <h6>[x]{props.loanInfo?.lendingDesk?.erc20.symbol}</h6>
+                      <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
                       <small>amount due on expiry date</small>
                     </div>
                     <div className="col-12 bg-success">
-                      <h6>[x]{props.loanInfo?.lendingDesk?.erc20.symbol}</h6>
+                      <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
                       <small>current payoff amount</small>
                     </div>
                   </div>
@@ -157,9 +166,9 @@ export const LoanCard = (props: ILoanCardProps) => {
                       type="number"
                       className="me-2"
                     />
-                    <span>{props.loanInfo?.lendingDesk?.erc20.symbol}</span>
+                    <span>{loan?.lendingDesk?.erc20.symbol}</span>
                   </div>
-                  <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(1)}>
+                  <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(loan?.id)}>
                     Button Text
                   </button>
                 </div>
@@ -170,5 +179,6 @@ export const LoanCard = (props: ILoanCardProps) => {
         </div>
       </div>
     </div>
-  );
+    )
+  });
 };

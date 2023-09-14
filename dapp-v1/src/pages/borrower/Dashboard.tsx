@@ -14,8 +14,6 @@ export const Dashboard = (props: any) => {
     },
   });
 
-  console.log(result?.data?.loans)
-
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="d-lg-flex align-items-center">
@@ -74,14 +72,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-active-tab"
         >
           <div className="row g-4 g-xl-5">
-            {result?.data?.loans
-            .filter(loan => loan.status === 'Active')
-            .map(loan => (
-              <LoanCard payback loanInfo={loan} />
-            ))}
-            {result?.data?.loans.filter(loan => loan.status === 'Active').length === 0 && (
-              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-            )}
+              <LoanCard payback loans={result?.data?.loans || []} status="Active" />
           </div>
         </div>
         {/* End Active Row */}
@@ -94,14 +85,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 g-xl-5">
-            {result?.data?.loans
-            .filter(loan => loan.status === 'Resolved')
-            .map(loan => (
-              <LoanCard loanInfo={loan} />
-            ))}
-            {result?.data?.loans.filter(loan => loan.status === 'Resolved').length === 0 && (
-              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-            )}
+            <LoanCard payback loans={result?.data?.loans || []} status="Completed" />
           </div>
         </div>
         {/* End completed Row */}
@@ -114,14 +98,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 g-xl-5">
-            {result?.data?.loans
-            .filter(loan => loan.status === 'Defaulted')
-            .map(loan => (
-              <LoanCard loanInfo={loan} />
-            ))}
-            {result?.data?.loans.filter(loan => loan.status === 'Defaulted').length === 0 && (
-              <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-            )}
+            <LoanCard payback loans={result?.data?.loans || []} status="Defaulted" />
           </div>
         </div>
         {/* End defaulted Row */}
