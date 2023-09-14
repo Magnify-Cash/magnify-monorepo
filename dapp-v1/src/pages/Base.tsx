@@ -262,44 +262,6 @@ export const Base = () => {
               </li>
             </ul>
             {/* End Support */}
-
-            {/* NFTY Token */}
-            <ul className="sidebar-nav mt-3">
-              <li>
-                <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                  NFTY Token
-                </h6>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="token"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-store"></i>
-                  </span>
-                  Get NFTY
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="stake"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-tent"></i>
-                  </span>
-                  Stake NFTY
-                </NavLink>
-              </li>
-            </ul>
-            {/* End Token */}
           </div>
         </nav>
         {/* Sidebar end */}
