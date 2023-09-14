@@ -1,8 +1,3 @@
-/*
-TODO
-- add typing for loaninfo
-- ensure all [] placeholders are complete
-*/
 import { useState } from "react";
 import { useChainId } from "wagmi";
 import { PopupTransaction } from "@/components";
@@ -13,18 +8,18 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 import { calculateTimeInfo, formatTimeInfo } from "@/utils"
+import { Loan } from "../../.graphclient";
 
 // Interface
 interface ILoanRowProps {
-  loans: any; // loans array
+  loans: Array<Loan> | any; // loans array
   status?: string // Status of the loan row
   payback?: boolean; // whether or not loan card should have payback UI
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
 export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
   // Setup loan data && handle empty state
-  console.log(loans, status)
-  loans = loans.filter((loan) => loan.status === status);
+  loans = loans.filter((loan:Loan) => loan.status === status);
   if (loans.length === 0) {
     return (
       <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
@@ -57,7 +52,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
         ],
     });
     const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
-    async function makeLoanPayment(loanID: number) {
+    async function makeLoanPayment(loanID: string) {
       console.log("loanID", loanID);
       console.log("payBackAmount", payBackAmount);
       await approveErc20?.()
@@ -65,7 +60,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
     }
 
     return (
-    <div className="col-sm-6 col-xl-4">
+    <div className="col-sm-6 col-xl-4" key={loan?.id}>
       <style>
         {`
 		  .progress {margin-bottom:0;}

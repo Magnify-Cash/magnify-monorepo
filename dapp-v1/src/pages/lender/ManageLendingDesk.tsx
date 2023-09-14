@@ -80,8 +80,7 @@ export const ManageLendingDesk = (props: any) => {
   };
 
   // Return
-  return (
-    result.data?.lendingDesk && (
+  return result.data?.lendingDesk ? (
       <div className="container-md px-3 px-sm-4 px-xl-5">
         {/* Demo Row */}
         <p>
@@ -226,6 +225,5 @@ export const ManageLendingDesk = (props: any) => {
 
         {/* End Container*/}
       </div>
-    )
-  );
+  ) : null
 };

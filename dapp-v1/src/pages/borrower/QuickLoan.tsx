@@ -23,7 +23,7 @@ export const QuickLoan = (props: any) => {
   const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
 
   // Loan params selection
-  const [selectedLendingDesk, _setSelectedLendingDesk] = useState<string>();
+  const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
   const [nftId, setNftId] = useState<string>();
   const [duration, setDuration] = useState<string>("1");
   const [amount, setAmount] = useState<string>("1");
