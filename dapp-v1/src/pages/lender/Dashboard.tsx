@@ -111,8 +111,8 @@ export const Dashboard = (props: any) => {
               result?.data?.lendingDesks
                 .map((desk) =>{
                   return (
-                  <LoanCardParent desk={desk} status="Defaulted">
-                    <LoanRow loans={desk.loans} status="Defaulted"/>
+                  <LoanCardParent desk={desk} status="Pending Default">
+                    <LoanRow loans={desk.loans} status="Pending Default" liquidate/>
                   </LoanCardParent>
                 )
                 })

@@ -17,6 +17,7 @@ interface ILoanRowProps {
   payback?: boolean; // whether or not loan card should have payback UI
   liquidate?:boolean; // whether or not loan card should have liquidate UI
 }
+
 export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
   // Setup loan data && handle empty state
   loans = loans.filter((loan:Loan) => loan.status === status);
@@ -58,6 +59,9 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
       await approveErc20?.()
       await makeLoanPaymentWrite?.()
     }
+
+
+    // Liquidate Overdue loan Hook
 
     return (
     <div className="col-sm-6 col-xl-4" key={loan?.id}>
@@ -165,7 +169,48 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
                     <span>{loan?.lendingDesk?.erc20.symbol}</span>
                   </div>
                   <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(loan?.id)}>
-                    Button Text
+                    Make Loan Payment
+                  </button>
+                </div>
+              }
+            />
+          : null}
+          {liquidate ?
+            <PopupTransaction
+              btnClass="btn btn-primary btn-lg mt-4"
+              btnText="Pay Back"
+              modalId="txModal"
+              modalBtnText="Pay Now"
+              modalTitle="Pay Back Loan"
+              modalContent={
+                <div>
+                  <small>Loan Details</small>
+                  <p>{loan?.nftCollection.id} #{loan?.nftId}</p>
+                  <div className="row g-4">
+                    <div className="col-6 bg-secondary">
+                      <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
+                      <small>original borrow</small>
+                    </div>
+                    <div className="col-6 bg-secondary">
+                      <h6>{loan?.interest} %</h6>
+                      <small>interest date</small>
+                    </div>
+                    <div className="col-6 bg-secondary">
+                      <h6>{elapsedTime}</h6>
+                      <small>loan duration</small>
+                    </div>
+                    <div className="col-6 bg-secondary">
+                      <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                      <small>amount due on expiry date</small>
+                    </div>
+                    <div className="col-12 bg-success">
+                      <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                      <small>current payoff amount</small>
+                    </div>
+                  </div>
+                  <hr />
+                  <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(loan?.id)}>
+                    Liquidate Overdue Loan
                   </button>
                 </div>
               }
