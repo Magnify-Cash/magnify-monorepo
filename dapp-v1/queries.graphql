@@ -141,3 +141,24 @@ query BorrowerDashboard($walletAddress: Bytes!) {
     lender
   }
 }
+
+query LenderDashboard($walletAddress: Bytes!) {
+  lendingDesks {
+    id
+    loans(where: { lender: $walletAddress }) {
+      id
+      amount
+      amountPaidBack
+      duration
+      startTime
+      nftCollection {
+        id
+      }
+      nftId
+      interest
+      status
+      lender
+      borrower
+    }
+  }
+}
