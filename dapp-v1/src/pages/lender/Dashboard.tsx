@@ -89,7 +89,7 @@ export const Dashboard = (props: any) => {
               result?.data?.lendingDesks
                 .map((desk) =>{
                   return (
-                  <LoanCardParent desk={desk} status="Active">
+                  <LoanCardParent key={desk.id} desk={desk} status="Active">
                     <LoanRow loans={desk.loans} status="Active"/>
                   </LoanCardParent>
                 )
@@ -111,7 +111,7 @@ export const Dashboard = (props: any) => {
               result?.data?.lendingDesks
                 .map((desk) =>{
                   return (
-                  <LoanCardParent desk={desk} status="Pending Default">
+                  <LoanCardParent key={desk.id} desk={desk} status="Pending Default">
                     <LoanRow loans={desk.loans} status="Pending Default" liquidate/>
                   </LoanCardParent>
                 )
@@ -133,7 +133,7 @@ export const Dashboard = (props: any) => {
               result?.data?.lendingDesks
                 .map((desk) =>{
                   return (
-                  <LoanCardParent desk={desk} status="Defaulted">
+                  <LoanCardParent key={desk.id} desk={desk} status="Defaulted">
                     <LoanRow loans={desk.loans} status="Defaulted"/>
                   </LoanCardParent>
                 )
@@ -155,7 +155,7 @@ export const Dashboard = (props: any) => {
               result?.data?.lendingDesks
                 .map((desk) =>{
                   return (
-                  <LoanCardParent desk={desk} status="Completed">
+                  <LoanCardParent key={desk.id} desk={desk} status="Completed">
                     <LoanRow loans={desk.loans} status="Completed"/>
                   </LoanCardParent>
                 )

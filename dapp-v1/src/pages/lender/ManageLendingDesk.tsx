@@ -132,7 +132,6 @@ export const ManageLendingDesk = (props: any) => {
                   btnClass="btn btn-primary btn-lg mt-4"
                   btnText="Add Funds"
                   modalId="txModal"
-                  modalBtnText="Add Funds Now"
                   modalTitle="Add Funds"
                   modalContent={
                     <div>
@@ -157,7 +156,6 @@ export const ManageLendingDesk = (props: any) => {
                   btnClass="btn btn-primary btn-lg mt-4"
                   btnText="Withdraw Funds"
                   modalId="txModal2"
-                  modalBtnText="Withdraw Funds Now"
                   modalTitle="Withdraw Funds"
                   modalContent={
                     <div>

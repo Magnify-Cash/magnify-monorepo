@@ -341,7 +341,6 @@ export const CreateLendingDesk = (props: any) => {
               btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
               btnText="Finalize Lending Desk"
               modalId="txModal"
-              modalBtnText="Launch Lending Desk"
               modalTitle="Confirm Lending Desk"
               modalContent={
                 <div>

@@ -8,7 +8,6 @@ interface PopupTransactionProps {
   btnClass: string; // Modal button trigger classname
   btnText: string | React.ReactNode; // Modal button trigger text
   modalId: string; // ID of the modal
-  modalBtnText: string; // Button text of the modal
   modalContent: React.ReactNode; // Modal content
   modalTitle: string; // Title of the modal
 }

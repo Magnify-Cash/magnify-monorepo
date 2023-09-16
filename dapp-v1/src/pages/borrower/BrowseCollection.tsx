@@ -80,7 +80,6 @@ export const BrowseCollection = (props) => {
                         btnClass="btn btn-primary"
                         btnText="Request Loan"
                         modalId="txModal"
-                        modalBtnText="Request Now"
                         modalTitle="Request Loan"
                         modalContent={
                           <div>
