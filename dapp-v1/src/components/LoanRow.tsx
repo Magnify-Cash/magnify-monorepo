@@ -25,7 +25,9 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan:Loan) => {
   if (status === "Pending Default"){
-    return loan
+    if (loan.status === "Active"){
+      return loan
+    }
   }
   if (loan.status === status){
     return loan
@@ -127,9 +129,14 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
           {
             timeInfo.isTimeLeft
             ? <h5 className="text-start">{timeInfo.remainingTime}</h5>
-            : <p className="text-danger text-start">
-            Loan is overdue! <br/> Make payment or face liquidation.
-            </p>
+            : (
+              status !== "Defaulted"
+              ? <p className="text-danger text-start">
+              Loan is overdue! <br/> Make payment or face liquidation.
+              </p>
+              : null
+            )
+
           }
           <div className="progress my-2">
             <div

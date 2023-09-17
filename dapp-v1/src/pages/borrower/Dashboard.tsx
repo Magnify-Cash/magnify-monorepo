@@ -85,7 +85,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanRow payback loans={result?.data?.loans || []} status="Completed" />
+            <LoanRow loans={result?.data?.loans || []} status="Completed" />
           </div>
         </div>
         {/* End completed Row */}
@@ -98,7 +98,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 g-xl-5">
-            <LoanRow payback loans={result?.data?.loans || []} status="Defaulted" />
+            <LoanRow loans={result?.data?.loans || []} status="Defaulted" />
           </div>
         </div>
         {/* End defaulted Row */}
