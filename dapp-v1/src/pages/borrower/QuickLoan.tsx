@@ -62,7 +62,7 @@ export const QuickLoan = (props: any) => {
   const { writeAsync:newLoanWrite } = useNftyFinanceV1InitializeNewLoan(newLoanConfig);
 
   // Modal submit
-  async function handleModalSubmit() {
+  async function requestLoan() {
     const form = document.getElementById("quickLoanForm") as HTMLFormElement;
     const isValid = form.checkValidity();
     if (!isValid) {
@@ -277,8 +277,8 @@ export const QuickLoan = (props: any) => {
                   <p>Gross Amount</p>
                   <h2 className="text-primary">[AMOUNT]</h2>
                 </div>
-                <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit()}>
-                Button Text
+                <button type="button" className="btn btn-primary" onClick={() => requestLoan()}>
+                Request Loan
                 </button>
               </div>
             }

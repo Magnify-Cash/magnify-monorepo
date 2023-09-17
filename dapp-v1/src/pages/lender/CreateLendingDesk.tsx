@@ -77,7 +77,7 @@ export const CreateLendingDesk = (props: any) => {
     });
 
   // modal submit
-  async function handleModalSubmit() {
+  async function initLendingDesk() {
     console.log("token", token);
     console.log("deskConfigs", deskConfigs);
     console.log("nftCollection", nftCollection);
@@ -386,8 +386,8 @@ export const CreateLendingDesk = (props: any) => {
                     />
                     <span>Funding Amount</span>
                   </div>
-                  <button type="button" className="btn btn-primary" onClick={() => handleModalSubmit()}>
-                    Button Text
+                  <button type="button" className="btn btn-primary" onClick={() => initLendingDesk()}>
+                    Create Lending Desk
                   </button>
                 </div>
               }

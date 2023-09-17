@@ -147,7 +147,7 @@ export const ManageLendingDesk = (props: any) => {
                         <span>{result.data?.lendingDesk?.erc20.symbol}</span>
                       </div>
                       <button type="button" className="btn btn-primary" onClick={() => depositLiquidity()}>
-                      Button Text
+                      Deposit Liquidity
                       </button>
                     </div>
                   }
@@ -171,7 +171,7 @@ export const ManageLendingDesk = (props: any) => {
                         <span>{result.data?.lendingDesk?.erc20.symbol}</span>
                       </div>
                       <button type="button" className="btn btn-primary" onClick={() => withdrawLiquidity()}>
-                      Button Text
+                      Withdraw Liquidity
                       </button>
                     </div>
                   }

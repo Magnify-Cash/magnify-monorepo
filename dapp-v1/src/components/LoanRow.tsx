@@ -148,7 +148,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
       {payback ?
       <PopupTransaction
         btnClass="btn btn-primary btn-lg mt-4"
-        btnText="Make Loan"
+        btnText="Make Loan Payment"
         modalId="txModal"
         modalTitle="Make Loan Payment"
         modalContent={

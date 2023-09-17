@@ -84,7 +84,7 @@ export const BrowseCollection = (props) => {
                         modalContent={
                           <div>
                             <button className="btn btn-primary" onClick={() => console.log(1)}>
-                            Button Text
+                            Request Loan
                             </button>
                           </div>
                         }
