@@ -24,9 +24,9 @@ export const QuickLoan = (props: any) => {
 
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
-  const [nftId, setNftId] = useState<string>();
-  const [duration, setDuration] = useState<string>("1");
-  const [amount, setAmount] = useState<string>("1");
+  const [nftId, setNftId] = useState<number>();
+  const [duration, setDuration] = useState<number>();
+  const [amount, setAmount] = useState<number>();
   const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
 
   // GraphQL query
@@ -47,16 +47,15 @@ export const QuickLoan = (props: any) => {
   // Initialize New Loan Hook
   const { writeAsync: approveErc721 } = useErc721Approve({
     address: nftCollection?.nft.address as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(amount)],
+    args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
   });
-  const { config:newLoanConfig, refetch: newLoanRefetch } = usePrepareNftyFinanceV1InitializeNewLoan({
-    enabled:false,
+  const { config:newLoanConfig } = usePrepareNftyFinanceV1InitializeNewLoan({
     args: [
       BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
-      BigInt(1),
-      BigInt(1),
-      BigInt(1),
+      BigInt(nftId || 0),
+      BigInt(duration || 0),
+      BigInt(amount || 0),
     ],
   })
   const { writeAsync:newLoanWrite } = useNftyFinanceV1InitializeNewLoan(newLoanConfig);
@@ -76,7 +75,7 @@ export const QuickLoan = (props: any) => {
     console.log("duration", duration);
     console.log("amount", amount);
     console.log("form is valid, wagmi functions with above data.....");
-    newLoanRefetch();
+    console.log(newLoanConfig);
     await approveErc721();
     await newLoanWrite?.();
   }
@@ -210,7 +209,6 @@ export const QuickLoan = (props: any) => {
           disabled={!token || !nftCollection || !selectedLendingDesk}
           btnText="Get Loan"
           modalId="txModal"
-          modalBtnText="Get Loan"
           modalTitle="Request Loan"
           modalContent={
             selectedLendingDesk && (
@@ -237,8 +235,8 @@ export const QuickLoan = (props: any) => {
               <hr/>
               <div className="">
                 <label className="form-label">Select NFT</label>
-                <select name="nftID" className="form-select" onChange={(e) => setNftId(e.target.value)}>
-                  <option disabled selected> -- select an option -- </option>
+                <select name="nftID" defaultValue="disabled" className="form-select" onChange={(e) => setNftId(e.target.value)}>
+                  <option disabled value="disabled"> -- select an option -- </option>
                   <option value="1">test</option>
                   <option value="2">test</option>
                 </select>
@@ -257,24 +255,24 @@ export const QuickLoan = (props: any) => {
                 <small>Loan Details</small>
                 <p>{nftId}</p>
                 <div className="d-flex justify-content-between">
-                  <p>Duration: </p>
+                  <p>Duration:</p>
                   <p>{duration}</p>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <p>Interest Rate</p>
-                  <p>[interest</p>
+                  <p>Interest Rate:</p>
+                  <p>[INTEREST RATE]</p>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <p>Requested Amount</p>
+                  <p>Requested Amount:</p>
                   <p>{amount}</p>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <p>2% Loan Origination Fee</p>
+                  <p>2% Loan Origination Fee:</p>
                   <p>[LOF]</p>
                 </div>
                 <hr/>
                 <div className="d-flex justify-content-between">
-                  <p>Gross Amount</p>
+                  <p>Gross Amount:</p>
                   <h2 className="text-primary">[AMOUNT]</h2>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={() => requestLoan()}>
