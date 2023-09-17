@@ -100,7 +100,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
         <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle overflow-hidden">
         <img
           className="object-fit-cover"
-          src="/images/placeholder/doodles.png"
+          src="/images/placeholder/pengu.png"
           alt="test"
           height="100%"
         />
@@ -150,7 +150,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
         <PopupTransaction
           btnClass="btn btn-primary btn-lg mt-4"
           btnText="Make Loan Payment"
-          modalId="txModal"
+          modalId={`paybackModal${loan?.id}`}
           modalTitle="Make Loan Payment"
           modalContent={
           <div>
@@ -200,7 +200,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
         <PopupTransaction
           btnClass="btn btn-primary btn-lg mt-4"
           btnText="Liquidate Overdue Loan"
-          modalId="txModal"
+          modalId={`liquidateModal${loan?.id}`}
           modalTitle="Liquidate Overdue Loan"
           modalContent={
           <div>
