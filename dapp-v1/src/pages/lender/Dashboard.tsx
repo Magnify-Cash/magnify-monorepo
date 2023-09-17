@@ -82,19 +82,9 @@ export const Dashboard = (props: any) => {
           className="tab-pane fade show active"
           id="pills-active"
           role="tabpanel"
-          aria-labelledby="pills-active-tab"
-        >
+          aria-labelledby="pills-active-tab">
           <div className="row g-4 g-xl-5">
-            {
-              result?.data?.lendingDesks
-                .map((desk) =>{
-                  return (
-                  <LoanCardParent key={desk.id} desk={desk} status="Active">
-                    <LoanRow loans={desk.loans} status="Active"/>
-                  </LoanCardParent>
-                )
-                })
-            }
+              <LoanCardParent desks={result?.data?.lendingDesks || []} status="Active"/>
           </div>
         </div>
         {/* End Active Row */}
@@ -107,16 +97,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-pending-default-tab"
         >
           <div className="row g-4 g-xl-5">
-            {
-              result?.data?.lendingDesks
-                .map((desk) =>{
-                  return (
-                  <LoanCardParent key={desk.id} desk={desk} status="Pending Default">
-                    <LoanRow loans={desk.loans} status="Pending Default" liquidate/>
-                  </LoanCardParent>
-                )
-                })
-            }
+            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Pending Default" liquidate/>
           </div>
         </div>
         {/* End Pending Default Row */}
@@ -129,16 +110,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 g-xl-5">
-            {
-              result?.data?.lendingDesks
-                .map((desk) =>{
-                  return (
-                  <LoanCardParent key={desk.id} desk={desk} status="Defaulted">
-                    <LoanRow loans={desk.loans} status="Defaulted"/>
-                  </LoanCardParent>
-                )
-                })
-            }
+            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Defaulted"/>
           </div>
         </div>
         {/* End Defaulted Row */}
@@ -151,16 +123,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 g-xl-5">
-            {
-              result?.data?.lendingDesks
-                .map((desk) =>{
-                  return (
-                  <LoanCardParent key={desk.id} desk={desk} status="Completed">
-                    <LoanRow loans={desk.loans} status="Completed"/>
-                  </LoanCardParent>
-                )
-                })
-            }
+            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Completed"/>
           </div>
         </div>
         {/* End Completed Row */}
@@ -169,54 +132,64 @@ export const Dashboard = (props: any) => {
   );
 };
 
-const LoanCardParent = ({desk, children, status}) => {
-  return (
-  <div>
-    <h5>Lending Desk {desk.id}</h5>
-    <div className="col-12">
-      <div className="card border-0 shadow rounded-4 h-100">
-        <div className="card-body">
-          <div className="d-lg-flex">
-            <div className="col-sm-6 col-xl-4">
-              <div className="d-flex align-items-center">
-                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
+const LoanCardParent = ({desks, status}) => {
+  // setup desks data
+  if (desks.length === 0){
+    return (
+      <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
+    )
+  }
+
+  // OK
+  desks.map((desk) => {
+    return (
+      <div key={desk.id}>
+        <h5>Lending Desk {desk.id}</h5>
+        <div className="col-12">
+          <div className="card border-0 shadow rounded-4 h-100">
+            <div className="card-body">
+              <div className="d-lg-flex">
+                <div className="col-sm-6 col-xl-4">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">{desk.loans.filter((loan) => loan.status === status).length}</h3>
+                      <p className="m-0 text-primary-emphasis">loans</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="ps-3">
-                  <h3 className="m-0">{desk.loans.filter((loan) => loan.status === status).length}</h3>
-                  <p className="m-0 text-primary-emphasis">loans</p>
+                <div className="col-sm-6 col-xl-4">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-square-dollar h2 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">{desk.erc20.symbol}</h3>
+                      <p className="m-0 text-primary-emphasis">currency</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-sm-6 col-xl-4">
-              <div className="d-flex align-items-center">
-                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-square-dollar h2 m-0"></i>
-                </div>
-                <div className="ps-3">
-                  <h3 className="m-0">{desk.erc20.symbol}</h3>
-                  <p className="m-0 text-primary-emphasis">currency</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6 col-xl-4">
-              <div className="d-flex align-items-center">
-                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-sack-dollar h2 m-0"></i>
-                </div>
-                <div className="ps-3">
-                  <h3 className="m-0">
-                    {desk.balance} <small className="fw-normal">{desk.erc20.symbol}</small>
-                  </h3>
-                  <p className="m-0 text-primary-emphasis">balance</p>
+                <div className="col-sm-6 col-xl-4">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-sack-dollar h2 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">
+                        {desk.balance} <small className="fw-normal">{desk.erc20.symbol}</small>
+                      </h3>
+                      <p className="m-0 text-primary-emphasis">balance</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <LoanRow loans={desk.loans} status="Active"/>
       </div>
-    </div>
-    {children}
-  </div>
-)
+    )
+  })
 };

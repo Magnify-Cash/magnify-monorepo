@@ -124,7 +124,7 @@ export const Home = (props) => {
                   (x) => x.lendingDesk.erc20.symbol
                 );
                 return (
-                  <tr className="align-middle">
+                  <tr className="align-middle" key={nftCollection.id}>
                     <td className="py-3 ps-3">{nftCollection.id}</td>
                     <td className="py-3">{currencies.join(", ")}</td>
                     <td className="py-3">{nftCollection.loanConfigs.length}</td>

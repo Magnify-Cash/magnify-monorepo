@@ -145,6 +145,11 @@ query BorrowerDashboard($walletAddress: Bytes!) {
 query LenderDashboard($walletAddress: Bytes!) {
   lendingDesks {
     id
+    balance
+    erc20 {
+      id
+      symbol
+    }
     loans(where: { lender: $walletAddress }) {
       id
       amount
