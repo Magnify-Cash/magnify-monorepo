@@ -57,8 +57,9 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
       address: loan?.lendingDesk?.erc20.id as `0x${string}`,
       args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
     });
-    const { config: makeLoanPaymentConfig } =
+    const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
       usePrepareNftyFinanceV1MakeLoanPayment({
+      enabled:false,
       args: [
         BigInt(loan?.id || 0), // loan ID
         BigInt(payBackAmount), // amout
@@ -69,20 +70,24 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
       console.log("loanID", loanID);
       console.log("payBackAmount", payBackAmount);
       await approveErc20?.()
+      await makeLoanPaymentRefetch?.()
       await makeLoanPaymentWrite?.()
     }
 
     // Liquidate Overdue loan Hook
-    // Make Loan Payment Hook
-    const { config: liquidateConfig } =
+    const { config: liquidateConfig, refetch: liquidateRefetch } =
       usePrepareNftyFinanceV1LiquidateDefaultedLoan({
+      enabled: false,
       args: [
         BigInt(loan?.id || 0), // loan ID
       ],
     });
     const { writeAsync: liquidateWrite } = useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig)
-    async function liquidateOverdueLoan() {
-      await liquidateWrite?.()
+    async function liquidateOverdueLoan(loanID: string) {
+      console.log("loanID", loanID);
+      console.log('hi');
+      await liquidateRefetch();
+      await liquidateWrite?.();
     }
 
     return (
@@ -229,7 +234,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
             </div>
             </div>
             <hr />
-            <button type="button" className="btn btn-primary" onClick={() => liquidateOverdueLoan()}>
+            <button type="button" className="btn btn-primary" onClick={() => liquidateOverdueLoan(loan?.id)}>
             Liquidate Overdue Loan
             </button>
           </div>
