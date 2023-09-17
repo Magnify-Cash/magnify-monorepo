@@ -38,7 +38,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
   }
 
   // OK
-  return loans.map((loan) => {
+  return loans.map((loan:Loan) => {
   // Date rendering
   const {
     startDate,
@@ -79,7 +79,7 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
       BigInt(loan?.id || 0), // loan ID
     ],
   });
-  const { writeAsync: liquidateWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
+  const { writeAsync: liquidateWrite } = useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig)
   async function liquidateOverdueLoan() {
     await liquidateWrite?.()
   }
