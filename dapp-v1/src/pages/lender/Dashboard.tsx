@@ -1,7 +1,8 @@
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { LoanRow } from "@/components";
-import { LenderDashboardDocument } from "../../../.graphclient";
+import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
+
 
 export const Dashboard = (props: any) => {
   // GraphQL
@@ -132,16 +133,16 @@ export const Dashboard = (props: any) => {
   );
 };
 
-const LoanCardParent = ({desks, status}) => {
+const LoanCardParent = (props) => {
   // setup desks data
-  if (desks.length === 0){
+  if (props.desks.length === 0){
     return (
       <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
     )
   }
 
   // OK
-  desks.map((desk) => {
+  return props.desks.map((desk:LendingDesk) => {
     return (
       <div key={desk.id}>
         <h5>Lending Desk {desk.id}</h5>
@@ -155,7 +156,7 @@ const LoanCardParent = ({desks, status}) => {
                       <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
                     </div>
                     <div className="ps-3">
-                      <h3 className="m-0">{desk.loans.filter((loan) => loan.status === status).length}</h3>
+                      <h3 className="m-0">{desk.loans.filter((loan) => loan.status === props.status).length}</h3>
                       <p className="m-0 text-primary-emphasis">loans</p>
                     </div>
                   </div>
@@ -188,7 +189,9 @@ const LoanCardParent = ({desks, status}) => {
             </div>
           </div>
         </div>
-        <LoanRow loans={desk.loans} status="Active"/>
+        <div className="row g-4 g-xl-5">
+          <LoanRow loans={desk.loans} status={props.status} liquidate={props?.liquidate}/>
+        </div>
       </div>
     )
   })
