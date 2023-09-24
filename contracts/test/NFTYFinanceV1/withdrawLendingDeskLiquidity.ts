@@ -88,4 +88,14 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
         .withdrawLendingDeskLiquidity(lendingDeskId, highAmount)
     ).to.be.revertedWith("insufficient lending desk balance");
   });
+
+  it("should fail for zero amount", async () => {
+    const { nftyFinance, lendingDeskId, lender } = await loadFixture(
+      initializeLendingDesk
+    );
+
+    await expect(
+      nftyFinance.connect(lender).withdrawLendingDeskLiquidity(lendingDeskId, 0)
+    ).to.be.revertedWith("amount = 0");
+  });
 });

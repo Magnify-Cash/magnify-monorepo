@@ -451,6 +451,7 @@ contract NFTYFinanceV1 is
             lendingDesk.balance >= _amount,
             "insufficient lending desk balance"
         );
+        require(_amount > 0, "amount = 0");
 
         // Update balance state, emit event
         lendingDesk.balance = lendingDesk.balance - _amount;
