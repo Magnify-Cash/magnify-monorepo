@@ -237,4 +237,59 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       }).to.deep.equal(loanConfigInput);
     }
   });
+
+  it("should update loan configs when duplicate nft collections are passed", async () => {
+    const { nftyFinance, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
+
+    const tx = await nftyFinance
+      .connect(lender)
+      .setLendingDeskLoanConfigs(lendingDeskId, [
+        loanConfigParams[0],
+        loanConfigParams[0], // duplicate
+      ]);
+
+    // Check emitted event
+    await expect(tx)
+      .to.emit(nftyFinance, "LendingDeskLoanConfigsSet")
+      .withArgs(lendingDeskId, anyValue);
+
+    // Get loan configs from event and check
+    const { events } = await tx.wait();
+    const event = events?.find(
+      (event) => event.event == "LendingDeskLoanConfigsSet"
+    )?.args;
+    expect(event?.loanConfigs.length).to.equal(2);
+
+    const eventLoanConfig = event?.loanConfigs[1];
+    const loanConfigInput = loanConfigParams[0];
+
+    // Make sure correct event is emitted
+    expect({
+      nftCollection: eventLoanConfig.nftCollection,
+      nftCollectionIsErc1155: eventLoanConfig.nftCollectionIsErc1155,
+      minAmount: eventLoanConfig.minAmount,
+      maxAmount: eventLoanConfig.maxAmount,
+      minDuration: eventLoanConfig.minDuration,
+      maxDuration: eventLoanConfig.maxDuration,
+      minInterest: eventLoanConfig.minInterest,
+      maxInterest: eventLoanConfig.maxInterest,
+    }).to.deep.equal(loanConfigInput);
+
+    // Check loan config in storage
+    const loanConfig = await nftyFinance.lendingDeskLoanConfigs(
+      lendingDeskId, // lending desk id
+      loanConfigInput.nftCollection // nft collection
+    );
+    expect({
+      nftCollection: loanConfig.nftCollection,
+      nftCollectionIsErc1155: loanConfig.nftCollectionIsErc1155,
+      minAmount: loanConfig.minAmount,
+      maxAmount: loanConfig.maxAmount,
+      minDuration: loanConfig.minDuration,
+      maxDuration: loanConfig.maxDuration,
+      minInterest: loanConfig.minInterest,
+      maxInterest: loanConfig.maxInterest,
+    }).to.deep.equal(loanConfigInput);
+  });
 });
