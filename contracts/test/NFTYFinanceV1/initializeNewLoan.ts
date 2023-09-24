@@ -201,9 +201,17 @@ describe("NFTY Finance: Initialize new loan", () => {
   });
 
   it("should create loan", async () => {
-    const { nftyFinance, lendingDeskId, borrower, erc721 } = await loadFixture(
-      setup
-    );
+    const {
+      nftyFinance,
+      lendingDeskId,
+      borrower,
+      erc721,
+      erc20,
+      platformWallet,
+    } = await loadFixture(setup);
+
+    // Check platform wallet balance
+    const initialPlatformWalletBalance = await erc20.balanceOf(platformWallet);
 
     const tx = nftyFinance
       .connect(borrower)
@@ -215,18 +223,41 @@ describe("NFTY Finance: Initialize new loan", () => {
         loanAmount
       );
 
-    await expect(tx)
-      .to.emit(nftyFinance, "NewLoanInitialized")
-      .withArgs(
-        lendingDeskId,
-        anyValue,
-        borrower.address,
-        erc721.address,
-        nftId,
-        loanAmount,
-        loanDuration,
-        anyValue,
-        anyValue
-      );
+    const platformFee = loanAmount.mul(2).div(100); // 2% of loan amount
+
+    // Check emitted event
+    await expect(tx).to.emit(nftyFinance, "NewLoanInitialized").withArgs(
+      lendingDeskId,
+      anyValue, // loanId
+      borrower.address,
+      erc721.address,
+      nftId,
+      loanAmount,
+      loanDuration,
+      anyValue, // interest
+      platformFee
+    );
+
+    // Check loan details in storage
+    const { events } = await (await tx).wait();
+    const event = events?.find(
+      (event) => event.event == "NewLoanInitialized"
+    )?.args;
+    const loanId = event?.loanId;
+
+    const loan = await nftyFinance.loans(loanId);
+    expect(loan.amount).to.equal(loanAmount);
+    expect(loan.duration).to.equal(loanDuration);
+    expect(loan.amountPaidBack).to.equal(0);
+    expect(loan.nftCollection).to.equal(erc721.address);
+    expect(loan.nftId).to.equal(nftId);
+    expect(loan.lendingDeskId).to.equal(lendingDeskId);
+    expect(loan.status).to.equal(0); // LoanStatus.Active
+
+    // Check platform wallet balance has increased
+    const platformWalletBalance = await erc20.balanceOf(platformWallet);
+    expect(platformWalletBalance.sub(initialPlatformWalletBalance)).to.equal(
+      platformFee
+    );
   });
 });

@@ -232,16 +232,12 @@ interface INFTYFinanceV1 {
     function setLoanOriginationFee(uint256 _loanOriginationFee) external;
 
     /**
-     * @notice This function can be called by an owner to withdraw collected platform funds.
-     * The funds consists of all platform fees generated at the time of loan creation,
-     * in addition to collected borrower fees for liquidated loans which were not paid back.
-     * @param _receiver the address that will receive the platform fees that can be withdrawn at the time
+     * @notice Allows the admin of the contract to set the platform wallet where platform fees will be sent to
      *
+     * @param _platformWallet Wallet where platform fees will be sent to
+     * @dev Emits an {PlatformWalletSet} event.
      */
-    function withdrawPlatformFees(
-        address _receiver,
-        address[] calldata _erc20s
-    ) external;
+    function setPlatformWallet(address _platformWallet) external;
 
     /**
      * @notice Allows the admin of the contract to pause the contract as an emergency response.

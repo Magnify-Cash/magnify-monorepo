@@ -73,9 +73,9 @@ contract NFTYFinanceV1 is
     uint256 public loanOriginationFee;
 
     /**
-     * @notice The amount of platform fees per token that can be withdrawn by an admin
+     * @notice The address of the platform wallet
      */
-    mapping(address => uint256) public platformFees;
+    address public platformWallet;
 
     /* *********** */
     /*  EVENTS     */
@@ -209,12 +209,11 @@ contract NFTYFinanceV1 is
     event LoanOriginationFeeSet(uint256 loanOriginationFee);
 
     /**
-     * @notice Event that will be emitted every time an admin withdraws platform fees
+     * @notice Event that will be emitted every time an admin updates the platform wallet
      *
-     * @param receiver the address that will receive the platform fees that can be withdrawn at the time
-     * @param erc20s array of erc20s the admin wants to withdraw fees for
+     * @param platformWallet The address of the platform wallet
      */
-    event PlatformFeesWithdrawn(address receiver, address[] erc20s);
+    event PlatformWalletSet(address platformWallet);
 
     /* *********** */
     /* CONSTRUCTOR */
@@ -223,7 +222,8 @@ contract NFTYFinanceV1 is
         address _promissoryNotes,
         address _obligationNotes,
         address _lendingKeys,
-        uint256 _loanOriginationFee
+        uint256 _loanOriginationFee,
+        address _platformWallet
     ) {
         // Check & set peripheral contract addresses, emit event
         require(_promissoryNotes != address(0), "promissory note is zero addr");
@@ -235,6 +235,8 @@ contract NFTYFinanceV1 is
 
         // Set loan origination fee
         setLoanOriginationFee(_loanOriginationFee);
+        // Set platform wallet
+        setPlatformWallet(_platformWallet);
 
         // Emit event
         emit ProtocolInitialized(
@@ -589,9 +591,8 @@ contract NFTYFinanceV1 is
                 ((loanConfig.maxAmount - loanConfig.minAmount) *
                     (loanConfig.maxDuration - loanConfig.minDuration)));
 
-        // Increase platformFees
+        // Calculate platform fees
         uint256 platformFee = (loanOriginationFee * _amount) / 10000;
-        platformFees[lendingDesk.erc20] += platformFee;
 
         // Set new desk in storage and update related storage, emit event
         loanIdCounter++;
@@ -649,11 +650,13 @@ contract NFTYFinanceV1 is
         }
 
         // Transfer amount minus fees to borrower
-        // Note: Fees are held in contract until withdrawPlatformFees()
         IERC20(lendingDesk.erc20).safeTransfer(
             msg.sender,
             _amount - platformFee
         );
+
+        // Transfer fees to platform wallet
+        IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
     }
 
     /**
@@ -830,43 +833,18 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice This function can be called by an owner to withdraw collected platform funds.
-     * The funds consists of all platform fees generated at the time of loan creation,
-     * in addition to collected borrower fees for liquidated loans which were not paid back.
-     * @param _receiver the address that will receive the platform fees that can be withdrawn at the time
-     * @param _erc20s array of erc20s the admin wants to withdraw fees for
+     * @notice Allows the admin of the contract to set the platform wallet where platform fees will be sent to
      *
+     * @param _platformWallet Wallet where platform fees will be sent to
+     * @dev Emits an {PlatformWalletSet} event.
      */
-    function withdrawPlatformFees(
-        address _receiver,
-        address[] calldata _erc20s
-    ) external onlyOwner {
-        // Check valid address
-        require(_receiver != address(0), "invalid receiver");
+    function setPlatformWallet(address _platformWallet) public onlyOwner {
+        // Check inputs
+        require(_platformWallet != address(0), "platform wallet is zero addr");
 
-        // Update and withdraw platformFees
-        // Note: Two loops to avoid re-entry
-
-        // 1. Update platformFees & emit event
-        uint256[] memory queuedPlatformFees = new uint[](_erc20s.length);
-        for (uint256 i = 0; i < _erc20s.length; i++) {
-            require(_erc20s[i] != address(0), "invalid erc20");
-
-            // check amount of erc20 requested
-            uint256 amount = platformFees[_erc20s[i]];
-            require(amount > 0, "collected platform fees = 0");
-
-            // update erc20 state
-            queuedPlatformFees[i] = platformFees[_erc20s[i]];
-            platformFees[_erc20s[i]] = 0;
-        }
-        emit PlatformFeesWithdrawn(_receiver, _erc20s);
-
-        // 2. Withdraw queuedPlatformFees (platformFees)
-        for (uint256 i = 0; i < _erc20s.length; i++) {
-            // transfer tokens
-            IERC20(_erc20s[i]).safeTransfer(_receiver, queuedPlatformFees[i]);
-        }
+        // Set platform wallet & emit event
+        platformWallet = _platformWallet;
+        emit PlatformWalletSet(_platformWallet);
     }
 
     /**

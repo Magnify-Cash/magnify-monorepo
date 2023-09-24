@@ -52,12 +52,15 @@ export const deployNftyFinance = async () => {
   )) as NFTYFinanceV1__factory;
 
   const loanOriginationFee = 200;
+  const [owner, alice] = await ethers.getSigners();
+  const platformWallet = ethers.Wallet.createRandom().address;
 
   const nftyFinance = (await NFTYFinance.deploy(
     promissoryNotes.address,
     obligationNotes.address,
     lendingKeys.address,
-    loanOriginationFee
+    loanOriginationFee,
+    platformWallet
   )) as NFTYFinanceV1;
   await nftyFinance.deployed();
 
@@ -65,8 +68,6 @@ export const deployNftyFinance = async () => {
   await promissoryNotes.setNftyFinance(nftyFinance.address);
   await obligationNotes.setNftyFinance(nftyFinance.address);
   await lendingKeys.setNftyFinance(nftyFinance.address);
-
-  const [owner, alice] = await ethers.getSigners();
 
   return {
     nftyFinance,
@@ -76,6 +77,7 @@ export const deployNftyFinance = async () => {
     loanOriginationFee,
     owner,
     alice,
+    platformWallet,
   };
 };
 
@@ -108,27 +110,12 @@ export const deployTestTokens = async () => {
 };
 
 export const deployNftyFinanceWithTestTokens = async () => {
-  const {
-    nftyFinance,
-    promissoryNotes,
-    obligationNotes,
-    lendingKeys,
-    loanOriginationFee,
-    alice,
-  } = await deployNftyFinance();
-
-  const { erc20, erc721, erc1155 } = await deployTestTokens();
+  const { ...items } = await deployNftyFinance();
+  const { ...testTokens } = await deployTestTokens();
 
   return {
-    nftyFinance,
-    promissoryNotes,
-    obligationNotes,
-    lendingKeys,
-    loanOriginationFee,
-    erc20,
-    erc721,
-    erc1155,
-    alice,
+    ...items,
+    ...testTokens,
   };
 };
 
@@ -141,6 +128,7 @@ export const initializeLendingDesk = async () => {
     erc721,
     erc1155,
     lendingKeys,
+    platformWallet,
   } = await deployNftyFinanceWithTestTokens();
 
   const [owner, lender, borrower, alice] = await ethers.getSigners();
@@ -179,6 +167,7 @@ export const initializeLendingDesk = async () => {
     lendingDeskId,
     lendingKeys,
     initialBalance,
+    platformWallet,
   };
 };
 
