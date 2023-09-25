@@ -55,8 +55,8 @@ dataSources:
           handler: handleLoanPaymentMade
         - event: DefaultedLoanLiquidated(uint256)
           handler: handleDefaultedLoanLiquidated
-        - event: PlatformFeesWithdrawn(address,address[])
-          handler: handlePlatformFeesWithdrawn
+        - event: PlatformWalletSet(address)
+          handler: handlePlatformWalletSet
       file: ./src/nfty-finance.ts
   - kind: ethereum/contract
     name: LendingKeys

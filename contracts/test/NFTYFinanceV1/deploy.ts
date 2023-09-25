@@ -122,7 +122,7 @@ describe("NFTY Finance: Deploy", () => {
       platformWallet
     )) as NFTYFinanceV1;
 
-    // Assert order of 3 emitted events
+    // Assert order of 4 emitted events
     const receipt = await nftyFinance.deployTransaction.wait();
     const eventNames = receipt.logs.map(
       (x) => nftyFinance.interface.parseLog(x).name

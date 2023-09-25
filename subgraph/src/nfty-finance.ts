@@ -14,7 +14,7 @@ import {
   LoanPaymentMade,
   LendingDeskDissolved,
   ProtocolInitialized,
-  PlatformFeesWithdrawn,
+  PlatformWalletSet,
 } from "../generated/NFTYFinance/NFTYFinance";
 import { ERC20 } from "../generated/NFTYFinance/ERC20";
 import {
@@ -40,7 +40,6 @@ export function handleNewLendingDeskInitialized(
     erc20.name = erc20Contract.name();
     erc20.symbol = erc20Contract.symbol();
     erc20.decimals = erc20Contract.decimals();
-    erc20.platformFees = BigInt.fromU32(0);
 
     erc20.save();
   }
@@ -161,13 +160,6 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
 
   // Save entity
   loan.save();
-
-  // Update ERC20's platform fees
-  const erc20 = Erc20.load(lendingDesk.erc20);
-  if (!erc20) return;
-
-  erc20.platformFees = erc20.platformFees.plus(event.params.platformFee);
-  erc20.save();
 }
 
 export function handleDefaultedLoanLiquidated(
@@ -235,11 +227,12 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     protocolParams.owner = event.params.newOwner;
     protocolParams.paused = false;
 
-    // Dummy values, will populate properly through ProtocolInitialized and LoanOriginationFeeSet
+    // Dummy values, will populate properly through ProtocolInitialized, LoanOriginationFeeSet and PlatformWalletSet events
     protocolParams.loanOriginationFee = BigInt.fromU32(0);
     protocolParams.promissoryNotes = Address.zero();
     protocolParams.obligationNotes = Address.zero();
     protocolParams.lendingKeys = Address.zero();
+    protocolParams.platformWallet = Address.zero();
 
     protocolParams.save();
   } else {
@@ -252,14 +245,10 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   }
 }
 
-export function handlePlatformFeesWithdrawn(
-  event: PlatformFeesWithdrawn
-): void {
-  event.params.erc20s.forEach((erc20Address) => {
-    const erc20 = Erc20.load(erc20Address.toHex());
-    if (!erc20) return;
+export function handlePlatformWalletSet(event: PlatformWalletSet): void {
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
 
-    erc20.platformFees = BigInt.fromU32(0);
-    erc20.save();
-  });
+  protocolParams.platformWallet = event.params.platformWallet;
+  protocolParams.save();
 }

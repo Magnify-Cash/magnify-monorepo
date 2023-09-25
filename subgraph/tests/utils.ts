@@ -14,7 +14,7 @@ import {
   NewLoanInitialized,
   OwnershipTransferred,
   Paused,
-  PlatformFeesWithdrawn,
+  PlatformWalletSet,
   ProtocolInitialized,
   Unpaused,
 } from "../generated/NFTYFinance/NFTYFinance";
@@ -29,6 +29,7 @@ import {
   handleNewLendingDeskInitialized,
   handleNewLoanInitialized,
   handleOwnershipTransferred,
+  handlePlatformWalletSet,
   handleProtocolInitialized,
 } from "../src/nfty-finance";
 import {
@@ -37,6 +38,7 @@ import {
   obligationNotes,
   promissoryNotes,
   protocolOwner,
+  platformWallet,
 } from "./consts";
 
 export const createOwnershipTransferredEvent = (
@@ -62,6 +64,16 @@ export const createLoanOriginationFeeSetEvent = (
     ),
   ]);
 
+export const createPlatformWalletSetEvent = (
+  platformWallet: Address
+): PlatformWalletSet =>
+  newTypedMockEventWithParams<PlatformWalletSet>([
+    new ethereum.EventParam(
+      "platformWallet",
+      ethereum.Value.fromAddress(platformWallet)
+    ),
+  ]);
+
 export const createProtocolInitializedEvent = (
   promissoryNotes: Address,
   obligationNotes: Address,
@@ -83,7 +95,7 @@ export const createProtocolInitializedEvent = (
   ]);
 
 export const initializeProtocol = (): void => {
-  // 3 events emitted on contract deployment
+  // 4 events emitted on contract deployment
   handleOwnershipTransferred(
     createOwnershipTransferredEvent(
       // this is contract initialization so previousOwner is zero address
@@ -94,6 +106,7 @@ export const initializeProtocol = (): void => {
   handleLoanOriginationFeeSet(
     createLoanOriginationFeeSetEvent(loanOriginationFee)
   );
+  handlePlatformWalletSet(createPlatformWalletSetEvent(platformWallet));
   handleProtocolInitialized(
     createProtocolInitializedEvent(
       promissoryNotes,
@@ -386,15 +399,6 @@ export const createDefaultedLoanLiquidatedEvent = (
       // @ts-ignore
       ethereum.Value.fromI32(<i32>loanId)
     ),
-  ]);
-
-export const createPlatformFeesWithdrawnEvent = (
-  erc20s: Address[],
-  receiver: Address
-): PlatformFeesWithdrawn =>
-  newTypedMockEventWithParams<PlatformFeesWithdrawn>([
-    new ethereum.EventParam("receiver", ethereum.Value.fromAddress(receiver)),
-    new ethereum.EventParam("erc20s", ethereum.Value.fromAddressArray(erc20s)),
   ]);
 
 export function createTransferEvent<T>(

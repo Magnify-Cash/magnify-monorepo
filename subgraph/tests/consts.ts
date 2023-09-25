@@ -15,6 +15,9 @@ export const lendingKeys = Address.fromString(
   "0x2546BcD3c84621e976D8185a91A922aE77ECEc30"
 );
 export const loanOriginationFee = 200;
+export const platformWallet = Address.fromString(
+  "0x3546BcD3c84621e976D8186a91A922aE77ECEc31"
+);
 
 // Lending Desk
 export const lendingDeskId = 12;

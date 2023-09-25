@@ -60,12 +60,4 @@ test("Should create Loan entity on NewLoanInitialized", () => {
   assert.bytesEquals(loan.lender, lendingDeskOwner);
   assert.bigIntEquals(loan.startTime, event.block.timestamp);
   assert.bigIntEquals(loan.amountPaidBack, BigInt.fromU32(0));
-
-  // Assert platformFees got updated
-  assert.fieldEquals(
-    "Erc20",
-    erc20Address.toHex(),
-    "platformFees",
-    event.params.platformFee.toString()
-  );
 });

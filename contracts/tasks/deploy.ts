@@ -2,6 +2,7 @@ import { task } from "hardhat/config";
 import { NFTYFinanceV1__factory } from "../../typechain-types";
 import { readFile, writeFile } from "fs/promises";
 import { Contract } from "ethers";
+import { ethers } from "hardhat";
 
 // Task to deploy NFTYLending contract with its dependencies
 task(
@@ -55,6 +56,8 @@ task(
     baseuri: "https://api.nfty.finance/metadata/KEYS/",
   });
 
+  const platformWallet = ethers.Wallet.createRandom().address;
+
   // Deploy NFTYFinance
   const NFTYFinanceV1 = (await hre.ethers.getContractFactory(
     "NFTYFinanceV1"
@@ -63,7 +66,8 @@ task(
     promissoryNotes.address,
     obligationNotes.address,
     lendingKeys.address,
-    200
+    200,
+    platformWallet
   );
   await nftyFinance.deployed();
 
@@ -128,4 +132,5 @@ task(
   );
 
   console.log("NFTYFinance deployed @", nftyFinance.address);
+  console.log("Platform wallet:", platformWallet);
 });
