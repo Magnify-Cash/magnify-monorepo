@@ -579,25 +579,15 @@ contract NFTYFinanceV1 is
         require(_duration >= loanConfig.minDuration, "duration < min duration");
         require(_duration <= loanConfig.maxDuration, "duration > max duration");
 
+
         /*
-        Calculation of the interest rate:
-        1. Determine the impact of the differences in loan amount and duration:
-           - Multiply the differences between the requested values and a reference value.
-           (amountDifference * interestRange * durationDifference)
-
-        2. Find the maximum potential impact of the loan amount and duration:
-           - Multiply the ranges of possible values for loan amount and duration.
-           (amountRange * durationRange)
-
-        3. Adjust the impact based on the proportionate differences:
-           - Divide the impact of the differences by the maximum potential impact.
-           ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
-
-        4. Add the adjusted impact to the minimum interest rate:
-           - Combine the adjusted impact with the minimum interest rate.
-           loanConfig.minInterest + ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
+        Interest rate calculation
+        Handles constant interest, constant duration, constant amount, and both variables.
+        When interest, amount, or duration is constant, it scales the interest accordingly.
+        Ensures valid interest rates within specified ranges.
         */
         uint256 interest;
+
         // Constant interest
         if (
             loanConfig.minInterest == loanConfig.maxInterest ||
@@ -605,22 +595,28 @@ contract NFTYFinanceV1 is
                 loanConfig.maxDuration == loanConfig.minDuration)
         ) {
             interest = loanConfig.minInterest;
-            // Duration is constant, scale interest based on amount
-        } else if (loanConfig.minDuration == loanConfig.maxDuration) {
+
+        }
+        // Constant duration, scale interest based on amount
+        else if (loanConfig.minDuration == loanConfig.maxDuration) {
             interest =
                 loanConfig.minInterest +
                 ((loanConfig.maxAmount - _amount) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxAmount - loanConfig.minAmount);
-            // Amount is constant, scale interest based on duration
-        } else if (loanConfig.minAmount == loanConfig.maxAmount) {
+
+        }
+        // Constant amount, scale interest based on duration
+        else if (loanConfig.minAmount == loanConfig.maxAmount) {
             interest =
                 loanConfig.minInterest +
                 ((loanConfig.maxDuration - _duration) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxDuration - loanConfig.minDuration);
-            // Both amount and duration are variable, scale interest based on both
-        } else {
+
+        }
+        // Both amount and duration are variable, scale interest based on both
+        else {
             interest =
                 loanConfig.minInterest +
                 ((loanConfig.maxAmount - _amount) *
