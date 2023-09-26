@@ -323,6 +323,18 @@ contract NFTYFinanceV1 is
                 _loanConfigs[i].maxDuration >= _loanConfigs[i].minDuration,
                 "max duration < min duration"
             );
+            // If both duration and amount are constant, interest must be constant, because interest is a function of both
+            // In other words, if amount and duration are constant, we can not scale and adjust interest
+            // In logical notation it's the following, => meaning "implies"
+            // minAmount = maxAmount && minDuration = maxDuration => minInterest = maxInterest
+            require(
+                !(_loanConfigs[i].minAmount == _loanConfigs[i].maxAmount &&
+                    _loanConfigs[i].minDuration ==
+                    _loanConfigs[i].maxDuration) ||
+                    (_loanConfigs[i].minInterest ==
+                        _loanConfigs[i].maxInterest),
+                "interest must be constant if amount and duration are constant"
+            );
 
             // Update loan config state, emit event
             lendingDeskLoanConfigs[_lendingDeskId][
@@ -585,12 +597,38 @@ contract NFTYFinanceV1 is
            - Combine the adjusted impact with the minimum interest rate.
            loanConfig.minInterest + ((amountDifference * interestRange * durationDifference) / (amountRange * durationRange))
         */
-        uint256 interest = loanConfig.minInterest +
-            (((_amount - loanConfig.minAmount) *
-                (loanConfig.maxInterest - loanConfig.minInterest) *
-                (_duration - loanConfig.minDuration)) /
+        uint256 interest;
+        // Constant interest
+        if (
+            loanConfig.minInterest == loanConfig.maxInterest ||
+            (loanConfig.maxAmount == loanConfig.minAmount &&
+                loanConfig.maxDuration == loanConfig.minDuration)
+        ) {
+            interest = loanConfig.minInterest;
+            // Duration is constant, scale interest based on amount
+        } else if (loanConfig.minDuration == loanConfig.maxDuration) {
+            interest =
+                loanConfig.minInterest +
+                ((loanConfig.maxAmount - _amount) *
+                    (loanConfig.maxInterest - loanConfig.minInterest)) /
+                (loanConfig.maxAmount - loanConfig.minAmount);
+            // Amount is constant, scale interest based on duration
+        } else if (loanConfig.minAmount == loanConfig.maxAmount) {
+            interest =
+                loanConfig.minInterest +
+                ((loanConfig.maxDuration - _duration) *
+                    (loanConfig.maxInterest - loanConfig.minInterest)) /
+                (loanConfig.maxDuration - loanConfig.minDuration);
+            // Both amount and duration are variable, scale interest based on both
+        } else {
+            interest =
+                loanConfig.minInterest +
+                ((loanConfig.maxAmount - _amount) *
+                    (loanConfig.maxInterest - loanConfig.minInterest) *
+                    (loanConfig.maxDuration - _duration)) /
                 ((loanConfig.maxAmount - loanConfig.minAmount) *
-                    (loanConfig.maxDuration - loanConfig.minDuration)));
+                    (loanConfig.maxDuration - loanConfig.minDuration));
+        }
 
         // Calculate platform fees
         uint256 platformFee = (loanOriginationFee * _amount) / 10000;
