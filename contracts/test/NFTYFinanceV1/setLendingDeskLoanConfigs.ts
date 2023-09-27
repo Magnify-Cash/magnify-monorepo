@@ -292,4 +292,23 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       maxInterest: loanConfig.maxInterest,
     }).to.deep.equal(loanConfigInput);
   });
+
+  it("should fail if duration and amount are constant but interest is not", async () => {
+    const { nftyFinance, lendingDeskId, lender, loanConfigParams } =
+      await loadFixture(setup);
+
+    await expect(
+      nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
+        {
+          ...loanConfigParams[0],
+          minDuration: BigNumber.from(24 * 10),
+          maxDuration: BigNumber.from(24 * 10),
+          minAmount: ethers.utils.parseUnits("100", 18),
+          maxAmount: ethers.utils.parseUnits("100", 18),
+        },
+      ])
+    ).to.be.revertedWith(
+      "interest must be constant if amount and duration are constant"
+    );
+  });
 });

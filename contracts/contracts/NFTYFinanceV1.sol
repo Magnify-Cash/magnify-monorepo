@@ -579,7 +579,6 @@ contract NFTYFinanceV1 is
         require(_duration >= loanConfig.minDuration, "duration < min duration");
         require(_duration <= loanConfig.maxDuration, "duration > max duration");
 
-
         /*
         Interest rate calculation
         Handles constant interest, constant duration, constant amount, and both variables.
@@ -595,7 +594,6 @@ contract NFTYFinanceV1 is
                 loanConfig.maxDuration == loanConfig.minDuration)
         ) {
             interest = loanConfig.minInterest;
-
         }
         // Constant duration, scale interest based on amount
         else if (loanConfig.minDuration == loanConfig.maxDuration) {
@@ -604,7 +602,6 @@ contract NFTYFinanceV1 is
                 ((loanConfig.maxAmount - _amount) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxAmount - loanConfig.minAmount);
-
         }
         // Constant amount, scale interest based on duration
         else if (loanConfig.minAmount == loanConfig.maxAmount) {
@@ -613,7 +610,6 @@ contract NFTYFinanceV1 is
                 ((loanConfig.maxDuration - _duration) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxDuration - loanConfig.minDuration);
-
         }
         // Both amount and duration are variable, scale interest based on both
         else {

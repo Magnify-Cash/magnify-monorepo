@@ -1,8 +1,13 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { initializeLendingDeskAndAddLoanConfig } from "../utils/fixtures";
+import {
+  initializeLendingDesk,
+  initializeLendingDeskAndAddLoanConfig,
+} from "../utils/fixtures";
 import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { ethers } from "hardhat";
+import { BigNumber } from "ethers";
+import { LoanConfig } from "../utils/consts";
 
 describe("NFTY Finance: Initialize new loan", () => {
   const loanDuration = 30;
@@ -259,5 +264,46 @@ describe("NFTY Finance: Initialize new loan", () => {
     expect(platformWalletBalance.sub(initialPlatformWalletBalance)).to.equal(
       platformFee
     );
+  });
+
+  it("should create loan if lending desk has constant params", async () => {
+    const { nftyFinance, lender, lendingDeskId, erc721, erc20, borrower } =
+      await loadFixture(initializeLendingDesk);
+
+    // Set loan config with constant values
+    const loanConfig: LoanConfig = {
+      nftCollection: erc721.address,
+      nftCollectionIsErc1155: false,
+      minAmount: ethers.utils.parseUnits("10", 18),
+      maxAmount: ethers.utils.parseUnits("10", 18),
+      minDuration: BigNumber.from(24),
+      maxDuration: BigNumber.from(24),
+      minInterest: BigNumber.from(200),
+      maxInterest: BigNumber.from(200),
+    };
+    await nftyFinance
+      .connect(lender)
+      .setLendingDeskLoanConfigs(lendingDeskId, [loanConfig]);
+
+    // Give borrower some ERC20 and NFTs
+    await erc20.connect(borrower).mint(10000);
+    await erc721.connect(borrower).mint(1);
+
+    // Approve NFTYLending to transfer tokens
+    await erc20.connect(borrower).approve(nftyFinance.address, 10000);
+    await erc721.connect(borrower).approve(nftyFinance.address, nftId);
+
+    // Create loan
+    const tx = await nftyFinance
+      .connect(borrower)
+      .initializeNewLoan(
+        lendingDeskId,
+        erc721.address,
+        nftId,
+        BigNumber.from(24),
+        ethers.utils.parseUnits("10", 18)
+      );
+    // Make sure it passes
+    await expect(tx).to.emit(nftyFinance, "NewLoanInitialized");
   });
 });
