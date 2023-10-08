@@ -1,17 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: yarn
-    directory: "/dapp"
+  # Python / Django Backend
+  - package-ecosystem: "npm"
+    directory: "/dapp-v1"
     schedule:
-      cron: 0 14 * * *
-    range: '>= {major}.{minor}, < {major+1}.0.0'
-  - package-ecosystem: yarn
-    directory: "/faucet"
-    schedule:
-      cron: 0 14 * * *
-    range: '>= {major}.{minor}, < {major+1}.0.0'
-  - package-ecosystem: yarn
+      interval: "weekly"
+      day: "saturday"
+  - package-ecosystem: "npm"
     directory: "/subgraph"
     schedule:
-      cron: 0 14 * * *
-    range: '>= {major}.{minor}, < {major+1}.0.0'
+      interval: "weekly"
+      day: "saturday"
+  - package-ecosystem: "npm"
+    directory: "/contracts"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
