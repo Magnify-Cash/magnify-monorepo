@@ -191,7 +191,7 @@ export const QuickLoan = (props: any) => {
                   <input type="radio" className="btn-check" autoComplete="off" name="desks" id={item.lendingDesk.id} onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} value={JSON.stringify(item)}/>
                   <label className="btn py-2 d-block w-100 border border-secondary border-opacity-25" htmlFor={item.lendingDesk.id}>
                     <div className="d-flex align-items-center justify-content-center mx-auto">
-                      <img src="images/placeholder/images/image-12.png" width="30" alt="Image" className="flex-shrink-0"/>
+                      <img src="/images/placeholder/images/image-12.png" width="30" alt="Image" className="flex-shrink-0"/>
                       <span className="ms-3">0x4323...43vfk32</span>
                     </div>
                     <div className="container-fluid g-0">
@@ -201,7 +201,7 @@ export const QuickLoan = (props: any) => {
                             <div className="text-success-emphasis h3 mb-3">
                               <i className="fa-light fa-hand-holding-dollar"></i>
                             </div>
-                            <div className="fw-bold">8000</div>
+                            <div className="fw-bold">{item.loanConfig.maxAmount}</div>
                             <small className="fw-normal">max offer</small>
                           </div>
                         </div>
@@ -210,7 +210,7 @@ export const QuickLoan = (props: any) => {
                             <div className="text-info-emphasis h3 mb-3">
                               <i className="fa-light fa-calendar-clock"></i>
                             </div>
-                            <div className="fw-bold">31 days</div>
+                            <div className="fw-bold">{item.loanConfig.maxDuration} days</div>
                             <small className="fw-normal">duration</small>
                           </div>
                         </div>
@@ -219,7 +219,7 @@ export const QuickLoan = (props: any) => {
                             <div className="text-primary-emphasis h3 mb-3">
                               <i className="fa-light fa-badge-percent"></i>
                             </div>
-                            <div className="fw-bold">15%</div>
+                            <div className="fw-bold">{item.loanConfig.maxInterest} %</div>
                             <small className="fw-normal">interest</small>
                           </div>
                         </div>
@@ -247,87 +247,131 @@ export const QuickLoan = (props: any) => {
             btnText="Get Loan"
             modalId="txModal"
             modalTitle="Get Loan"
+            modalFooter={
+              <div className="modal-footer">
+                  <button type="button" onClick={() => requestLoan()} className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1">Request Loan</button>
+              </div>
+            }
             modalContent={
               selectedLendingDesk && (
-              <form id="quickLoanForm">
-                <small>Lending Desk Details</small>
-                <div className="row g-4">
-                  <div className="col-6 bg-secondary">
-                    <h6>{selectedLendingDesk.loanConfig.nftCollection.id}</h6>
-                    <small>collection type</small>
-                  </div>
-                  <div className="col-6 bg-secondary">
-                    <h6>{selectedLendingDesk.loanConfig.minAmount} - {selectedLendingDesk.loanConfig.maxAmount} {selectedLendingDesk.lendingDesk.erc20.symbol}</h6>
-                    <small>min/max offer</small>
-                  </div>
-                  <div className="col-6 bg-secondary">
-                    <h6>{selectedLendingDesk.loanConfig.minDuration} days - {selectedLendingDesk.loanConfig.maxDuration} days</h6>
-                    <small>min/max duration</small>
-                  </div>
-                  <div className="col-6 bg-secondary">
-                    <h6>{selectedLendingDesk.loanConfig.minInterest} - {selectedLendingDesk.loanConfig.maxInterest} %</h6>
-                    <small>min/max interest</small>
+              <form id="quickLoanForm" className="modal-body">
+                <p className="text-body-secondary">
+                  Lending Desk Details
+                </p>
+                <div className="container-fluid g-0 mt-3">
+                  <div className="row g-3">
+                    <div className="col-12 col-sm-6">
+                      <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="d-flex align-items-center justify-content-center">
+                          <img src="/images/placeholder/images/image-5.png" alt="Image" className="d-block flex-shrink-0 me-2 rounded-circle" width="30"/>
+                          <div className="h5 fw-medium m-0">
+                            Pudgy Penguins
+                          </div>
+                        </div>
+                        <div className="text-body-secondary">
+                          Collection Type
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-12 col-sm-6">
+                      <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="d-flex align-items-center justify-content-center">
+                          <div className="h4 fw-medium">{selectedLendingDesk.loanConfig.minAmount}-{selectedLendingDesk.loanConfig.maxAmount}</div>
+                          <span className="text-body-secondary ms-2">{selectedLendingDesk.lendingDesk.erc20.symbol}</span>
+                        </div>
+                        <div className="text-body-secondary">
+                          Min/Max Offer
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-12 col-sm-6">
+                      <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="d-flex align-items-center justify-content-center">
+                          <div className="h4 fw-medium">{selectedLendingDesk.loanConfig.minDuration}-{selectedLendingDesk.loanConfig.maxDuration}</div>
+                          <span className="text-body-secondary ms-2">Days</span>
+                        </div>
+                        <div className="text-body-secondary">
+                          Min/Max Duration
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-12 col-sm-6">
+                      <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="d-flex align-items-center justify-content-center">
+                          <div className="h4 fw-medium">{selectedLendingDesk.loanConfig.minInterest} - {selectedLendingDesk.loanConfig.maxInterest}</div>
+                          <span className="text-body-secondary ms-2">%</span>
+                        </div>
+                        <div className="text-body-secondary">
+                          Min/Max Interest Rate
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <hr/>
-                <div className="">
-                  <label className="form-label">Select NFT</label>
-                  <select name="nftID" defaultValue="disabled" className="form-select" onChange={(e) => setNftId(e.target.value)}>
-                    <option disabled value="disabled"> -- select an option -- </option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
+                <div className="my-3 py-3 border-top border-bottom">
+                  <div className="mb-3">
+                      <label htmlFor="select-nft" className="form-label">Select NFT</label>
+                      <select className="form-select form-select-lg py-2" id="select-nft">
+                      <option selected>Select NFT</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="...">Pudgy Penguins #421</option>
+                      </select>
+                  </div>
+                  <div className="mb-3">
+                      <label htmlFor="set-duration" className="form-label">Set Duration</label>
+                      <div className="input-group">
+                        <input type="number" className="form-control form-control-lg py-2" id="set-duration" placeholder="Duration" step="1" min={selectedLendingDesk.loanConfig.minDuration} max={selectedLendingDesk.loanConfig.maxDuration} value={duration} onChange={e => setDuration(e.target.value)}/>
+                        <span className="input-group-text">Days</span>
+                      </div>
+                  </div>
+                  <div>
+                      <label htmlFor="set-amount" className="form-label">Set Amount</label>
+                      <div className="input-group">
+                        <input type="number" className="form-control form-control-lg py-2" id="set-amount" placeholder="Amount" step="1" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)}/>
+                        <span className="input-group-text">{selectedLendingDesk.lendingDesk.erc20.symbol}</span>
+                      </div>
+                  </div>
                 </div>
-                <div className="mt-3">
-                  <label className="form-label">Select Duration</label>
-                  <input name="duration" min={selectedLendingDesk.loanConfig.minDuration} max={selectedLendingDesk.loanConfig.maxDuration} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
+                <p className="text-body-secondary">
+                  Loan Overview
+                </p>
+                <div className="d-flex align-items-center mb-3">
+                  <img src="/images/placeholder/images/image-1.png" className="img-fluid flex-shrink-0 me-3" width="32" alt="Image"/>
+                  <h6 className="m-0">Pudgy Penguin #7338</h6>
                 </div>
-                <div className="mt-3">
-                  <label className="form-label">Select Amount</label>
-                  <input name="amount" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)} type="number" className="form-control"/>
+                <div className="my-2 d-flex align-items-center">
+                  <span className="text-body-secondary">Duration</span>
+                  <span className="fw-medium ms-auto">{duration} Days</span>
                 </div>
-                {selectedLendingDesk && nftId && duration && amount &&
-                <div className="mt-3">
-                  <hr/>
-                  <small>Loan Details</small>
-                  <p>{nftId}</p>
-                  <div className="d-flex justify-content-between">
-                    <p>Duration:</p>
-                    <p>{duration}</p>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <p>Interest Rate:</p>
-                    <p>[INTEREST RATE]</p>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <p>Requested Amount:</p>
-                    <p>{amount}</p>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <p>2% Loan Origination Fee:</p>
-                    <p>[LOF]</p>
-                  </div>
-                  <hr/>
-                  <div className="d-flex justify-content-between">
-                    <p>Gross Amount:</p>
-                    <h2 className="text-primary">[AMOUNT]</h2>
-                  </div>
-                  <button type="button" className="btn btn-primary" onClick={() => requestLoan()}>
-                  Get Loan
-                  </button>
+                <div className="my-2 d-flex align-items-center">
+                  <span className="text-body-secondary">Interest Rate <i className="fa-light fa-info-circle ms-1"></i></span>
+                  <span className="fw-medium ms-auto">3%</span>
                 </div>
-              }
+                <div className="my-2 d-flex align-items-center">
+                  <span className="text-body-secondary">Requested Amount</span>
+                  <span className="fw-medium ms-auto">{amount} {selectedLendingDesk.lendingDesk.erc20.symbol}</span>
+                </div>
+                <div className="my-2 d-flex align-items-center">
+                  <span className="text-body-secondary">2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1"></i></span>
+                  <span className="fw-medium ms-auto">-180 {selectedLendingDesk.lendingDesk.erc20.symbol}</span>
+                </div>
+                <div className="mt-3 pt-3 border-top d-flex align-items-center">
+                  <span className="text-body-secondary">Gross Amount</span>
+                  <span className="h3 ms-auto my-0 text-primary-emphasis">
+                    8820 <span className="fw-medium">{selectedLendingDesk.lendingDesk.erc20.symbol}</span>
+                  </span>
+                </div>
               </form>
-            )
-            }
+            )}
           />
         </div>
       </div>

@@ -10,6 +10,7 @@ interface PopupTransactionProps {
   modalId: string; // ID of the modal
   modalContent: React.ReactNode; // Modal content
   modalTitle: string; // Title of the modal
+  modalFooter:React.ReactNode; // Modal footer
 }
 
 export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
@@ -57,6 +58,7 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
 			<div className="modal-body">
 			  {props.modalContent}
 			</div>
+			{props.modalFooter}
 		  </div>
 		</div>
 	  </div>
