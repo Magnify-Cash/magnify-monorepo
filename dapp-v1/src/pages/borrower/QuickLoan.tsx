@@ -81,217 +81,133 @@ export const QuickLoan = (props: any) => {
   }
 
   return (
-    <div className="container-md px-3 px-sm-4 px-xl-5">
-      {/* Start Container */}
-      <div className="row g-5">
-        <div className="col-lg-4">
-          <div className="card border-0 bg-primary shadow rounded-4">
-            <div className="card-body">Choose NFT</div>
+    <div className="container-md px-3 px-sm-4 px-lg-5">
+      <div className="row g-4 justify-content-center mt-0">
+        {/* Column start */}
+        <div className="col-md-6 col-xl-4">
+          <div className="card rounded-3 bg-primary-subtle text-primary-emphasis border-primary-subtle text-center fs-5 mb-3">
+            <div className="card-body">
+              Choose NFT
+            </div>
           </div>
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card border-0 shadow rounded-4 overflow-hidden d-block">
             <div className="card-body">
               <div
-                className="form-select w-100 btn btn-secondary"
-                id="currency"
-                data-bs-toggle="modal"
-                data-bs-target="#nftModal"
+              className="form-select w-100 btn btn-secondary"
+              id="currency"
+              data-bs-toggle="modal"
+              data-bs-target="#nftModal"
               >
-                {nftCollection ? (
-                  <div className="d-flex align-items-center">
-                    <img
-                      src={nftCollection.nft.logoURI}
-                      alt={`${nftCollection.nft.name} Logo`}
-                      height="20"
-                      width="20"
-                    />
-                    <p className="m-0 ms-1">{nftCollection.nft.name}</p>
-                  </div>
-                ) : (
-                  "Choose NFT Collection..."
-                )}
+              {nftCollection ? (
+                <div className="d-flex align-items-center">
+                <img
+                  src={nftCollection.nft.logoURI}
+                  alt={`${nftCollection.nft.name} Logo`}
+                  height="20"
+                  width="20"
+                />
+                <p className="m-0 ms-1">{nftCollection.nft.name}</p>
+                </div>
+              ) : (
+                "Choose NFT Collection..."
+              )}
               </div>
               <PopupTokenList
-                nft
-                urls={[
-                  "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-                ]}
-                modalId="nftModal"
-                onClick={setNftCollection}
+              nft
+              urls={[
+                "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
+              ]}
+              modalId="nftModal"
+              onClick={setNftCollection}
               />
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
-          <div className="card border-0 bg-primary shadow rounded-4">
-            <div className="card-body">Choose Currency</div>
+        {/* Column end */}
+
+        {/* Column start */}
+        <div className="col-md-6 col-xl-4">
+          <div className="card rounded-3 bg-primary-subtle text-primary-emphasis border-primary-subtle text-center fs-5 mb-3">
+            <div className="card-body">
+              Choose Currency
+            </div>
           </div>
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card border-0 shadow rounded-4 overflow-hidden d-block">
             <div className="card-body">
               {nftCollection ? (
-                <div>
-                  <div
-                    className="form-select w-100 btn btn-secondary"
-                    id="currency"
-                    data-bs-toggle="modal"
-                    data-bs-target="#tokenModal"
-                  >
-                    {token ? (
-                      <div className="d-flex align-items-center">
-                        <img
-                          src={token.token.logoURI}
-                          alt={`${token.token.name} Logo`}
-                          height="20"
-                          width="20"
-                        />
-                        <p className="m-0 ms-1">{token.token.name}</p>
-                      </div>
-                    ) : (
-                      "Choose Currency..."
-                    )}
-                  </div>
-                  <PopupTokenList
-                    token
-                    urls={["https://tokens.coingecko.com/uniswap/all.json"]}
-                    modalId="tokenModal"
-                    onClick={setToken}
-                  />
-                </div>
-              ) : (
-                <div>
+              <div>
+                <div
+                className="form-select w-100 btn btn-secondary"
+                id="currency"
+                data-bs-toggle="modal"
+                data-bs-target="#tokenModal"
+                >
+                {token ? (
+                  <div className="d-flex align-items-center">
                   <img
-                    height="200"
-                    width="100%"
-                    src="/theme/images/thinking_guy.svg"
-                    alt="Thinking..."
+                    src={token.token.logoURI}
+                    alt={`${token.token.name} Logo`}
+                    height="20"
+                    width="20"
                   />
-                  <p className="text-center">
-                    Select an NFT collection to see currencies...
-                  </p>
+                  <p className="m-0 ms-1">{token.token.name}</p>
+                  </div>
+                ) : (
+                  "Choose Currency..."
+                )}
                 </div>
+                <PopupTokenList
+                token
+                urls={["https://tokens.coingecko.com/uniswap/all.json"]}
+                modalId="tokenModal"
+                onClick={setToken}
+                />
+              </div>
+              ) : (
+              <div className="card-body specific-h-400 overflow-y-auto pt-0">
+                 <img src="/images/placeholder/images/image-11.png" alt="Thinking" className="img-fluid mx-auto d-block my-3"/>
+                 <p className="text-center text-body-secondary fst-italic">
+                   Start customizing to see offers
+                 </p>
+               </div>
               )}
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
-          <div className="card border-0 bg-primary shadow rounded-4">
-            <div className="card-body">Select Offer</div>
+        {/* Column end */}
+
+        {/* Column start */}
+        <div className="col-md-6 col-xl-4">
+          <div className="card rounded-3 bg-primary-subtle text-primary-emphasis border-primary-subtle text-center fs-5 mb-3">
+            <div className="card-body">
+              Select Offer
+            </div>
           </div>
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card border-0 shadow rounded-4 overflow-hidden d-block">
             <div className="card-body">
               {flatResult.length > 0 ? (
-                flatResult.map((item) => {
-                  return (
-                  <label className="col-12" key={item.lendingDesk.id}>
-                    <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} className="border" value={JSON.stringify(item)}/>
-                      <p>{item.lendingDesk.owner}</p>
-                      <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
-                      <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
-                      <p>Interest: {item.loanConfig.minInterest}-{item.loanConfig.maxInterest}%</p>
-                  </label>
-                )})
+              flatResult.map((item) => {
+                return (
+                <label className="col-12" key={item.lendingDesk.id}>
+                <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} className="border" value={JSON.stringify(item)}/>
+                  <p>{item.lendingDesk.owner}</p>
+                  <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
+                  <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
+                  <p>Interest: {item.loanConfig.minInterest}-{item.loanConfig.maxInterest}%</p>
+                </label>
+              )})
               ) : (
-                <div>
-                  <img
-                    height="200"
-                    width="100%"
-                    src="/theme/images/thinking_guy.svg"
-                    alt="Thinking..."
-                  />
-                  <p className="text-center">Select currency & NFT to see offers...</p>
-                </div>
+              <div className="card-body specific-h-400 overflow-y-auto pt-0">
+                 <img src="/images/placeholder/images/image-11.png" alt="Thinking" className="img-fluid mx-auto d-block my-3"/>
+                 <p className="text-center text-body-secondary fst-italic">
+                   Start customizing to see offers
+                 </p>
+               </div>
               )}
             </div>
           </div>
         </div>
-        <PopupTransaction
-          divClass="col-12 d-flex"
-          btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
-          disabled={!token || !nftCollection || !selectedLendingDesk}
-          btnText="Get Loan"
-          modalId="txModal"
-          modalTitle="Request Loan"
-          modalContent={
-            selectedLendingDesk && (
-            <form id="quickLoanForm">
-              <small>Lending Desk Details</small>
-              <div className="row g-4">
-                <div className="col-6 bg-secondary">
-                  <h6>{selectedLendingDesk.loanConfig.nftCollection.id}</h6>
-                  <small>collection type</small>
-                </div>
-                <div className="col-6 bg-secondary">
-                  <h6>{selectedLendingDesk.loanConfig.minAmount} - {selectedLendingDesk.loanConfig.maxAmount} {selectedLendingDesk.lendingDesk.erc20.symbol}</h6>
-                  <small>min/max offer</small>
-                </div>
-                <div className="col-6 bg-secondary">
-                  <h6>{selectedLendingDesk.loanConfig.minDuration} days - {selectedLendingDesk.loanConfig.maxDuration} days</h6>
-                  <small>min/max duration</small>
-                </div>
-                <div className="col-6 bg-secondary">
-                  <h6>{selectedLendingDesk.loanConfig.minInterest} - {selectedLendingDesk.loanConfig.maxInterest} %</h6>
-                  <small>min/max interest</small>
-                </div>
-              </div>
-              <hr/>
-              <div className="">
-                <label className="form-label">Select NFT</label>
-                <select name="nftID" defaultValue="disabled" className="form-select" onChange={(e) => setNftId(e.target.value)}>
-                  <option disabled value="disabled"> -- select an option -- </option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                </select>
-              </div>
-              <div className="mt-3">
-                <label className="form-label">Select Duration</label>
-                <input name="duration" min={selectedLendingDesk.loanConfig.minDuration} max={selectedLendingDesk.loanConfig.maxDuration} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
-              </div>
-              <div className="mt-3">
-                <label className="form-label">Select Amount</label>
-                <input name="amount" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)} type="number" className="form-control"/>
-              </div>
-              {selectedLendingDesk && nftId && duration && amount &&
-              <div className="mt-3">
-                <hr/>
-                <small>Loan Details</small>
-                <p>{nftId}</p>
-                <div className="d-flex justify-content-between">
-                  <p>Duration:</p>
-                  <p>{duration}</p>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <p>Interest Rate:</p>
-                  <p>[INTEREST RATE]</p>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <p>Requested Amount:</p>
-                  <p>{amount}</p>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <p>2% Loan Origination Fee:</p>
-                  <p>[LOF]</p>
-                </div>
-                <hr/>
-                <div className="d-flex justify-content-between">
-                  <p>Gross Amount:</p>
-                  <h2 className="text-primary">[AMOUNT]</h2>
-                </div>
-                <button type="button" className="btn btn-primary" onClick={() => requestLoan()}>
-                Request Loan
-                </button>
-              </div>
-            }
-            </form>
-          )
-          }
-        />
+        {/* Column end */}
       </div>
       {/* End Container*/}
     </div>
