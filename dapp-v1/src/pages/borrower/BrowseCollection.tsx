@@ -24,75 +24,60 @@ export const BrowseCollection = (props) => {
   }, [title]);
 
   return (
-    <div className="container-md px-3 px-sm-4 px-xl-5">
-      <p>
-        <i className="fa-solid fa-arrow-left me-1"></i>
-        <NavLink to="/explore">Explore Collections</NavLink>
-      </p>
+    <div className="container-md px-3 px-sm-4 px-lg-5">
+      <div className="text-body-secondary position-relative mt-n3">
+        <NavLink to="/explore" className="text-reset text-decoration-none">
+          <i className="fa-light fa-angle-left me-1"></i>
+          Explore Collections
+        </NavLink>
+    </div>
 
       {/* Demo table */}
-      <div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
+      <div className="card border-0 shadow rounded-4 my-4 mb-xl-5 overflow-hidden">
         <div className="table-responsive">
           <table className="table m-0 text-nowrap">
             <thead>
               <tr>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">
-                  Collection
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Currency
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Offer
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Duration
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Interest
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
-                  &nbsp;
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis ps-3" colSpan={2}>Lender</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">Currency</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">Offer</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">Duration</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">Interest Rate</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
               </tr>
             </thead>
             <tbody>
               {result.data?.loanConfigs.map((loanConfigs) => {
-                return (
-                  <tr className="align-middle">
-                    <td className="py-3 ps-3">
-                      Lending Desk {loanConfigs.lendingDesk.id}
-                    </td>
-                    <td className="py-3 align-center">
-                      {loanConfigs.lendingDesk.erc20.symbol}
-                    </td>
-                    <td className="py-3 align-center">
-                      {loanConfigs.minAmount}-{loanConfigs.maxAmount}
-                    </td>
-                    <td className="py-3">
-                      {loanConfigs.minDuration}-{loanConfigs.maxDuration} days
-                    </td>
-                    <td className="py-3">
-                      {loanConfigs.minInterest}-{loanConfigs.maxInterest}%
-                    </td>
-                    <td className="py-3">
-                      <PopupTransaction
-                        btnClass="btn btn-primary"
-                        btnText="Request Loan"
-                        modalId="txModal"
-                        modalTitle="Request Loan"
-                        modalContent={
-                          <div>
-                            <button className="btn btn-primary" onClick={() => console.log(1)}>
-                            Request Loan
-                            </button>
-                          </div>
-                        }
-                      />
-                    </td>
-                  </tr>
+              return (
+                <tr className="align-middle">
+                  <td className="py-3 ps-3">
+                    <img src="/images/placeholder/images/image-12.png" width="30" className="d-block rounded-circle" alt="Image" />
+                  </td>
+                  <td className="py-3">0x34n3...4j32op2j</td>
+                  <td className="py-3 align-middle">
+                    <img src="/images/placeholder/images/image-8.svg" height="30" className="d-block rounded-circle" alt="Image" />
+                  </td>
+                  <td className="py-3">2,000 - 9,000</td>
+                  <td className="py-3">10-30 days</td>
+                  <td className="py-3">3-9%</td>
+                  <td className="py-3 pe-3">
+                    <PopupTransaction
+                      btnClass="btn btn-primary rounded-pill px-4"
+                      btnText="Get a Loan"
+                      modalId="txModal"
+                      modalTitle="Get a Loan"
+                      modalContent={
+                      <div>
+                        <button className="btn btn-primary rounded-pill px-4" onClick={() => console.log(1)}>
+                        Get a Loan
+                        </button>
+                      </div>
+                      }
+                    />
+                  </td>
+                </tr>
                 );
-              })}
+                })}
             </tbody>
           </table>
         </div>
