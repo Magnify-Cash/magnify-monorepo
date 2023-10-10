@@ -91,7 +91,7 @@ export const BrowseCollections = (props: any) => {
                  <td className="py-3">$60,000</td>
                  <td className="py-3">67%</td>
                  <td className="py-3 pe-3">
-                   <button className="btn btn-primary rounded-pill px-4">Find a Loan</button>
+                   <NavLink to={`/explore/${nftCollection.id}`} className="btn btn-primary rounded-pill px-4">Find a Loan</NavLink>
                  </td>
                </tr>
               );
