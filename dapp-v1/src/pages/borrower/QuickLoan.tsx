@@ -133,9 +133,8 @@ export const QuickLoan = (props: any) => {
             </div>
           </div>
           <div className="card border-0 shadow rounded-4 overflow-hidden d-block">
-            <div className="card-body">
               {nftCollection ? (
-              <div>
+              <div className="card-body">
                 <div
                 className="form-select w-100 btn btn-secondary"
                 id="currency"
@@ -171,7 +170,6 @@ export const QuickLoan = (props: any) => {
                  </p>
                </div>
               )}
-            </div>
           </div>
         </div>
         {/* Column end */}
@@ -184,17 +182,51 @@ export const QuickLoan = (props: any) => {
             </div>
           </div>
           <div className="card border-0 shadow rounded-4 overflow-hidden d-block">
-            <div className="card-body">
+            <div className="card-body specific-h-400 overflow-y-auto">
               {flatResult.length > 0 ? (
               flatResult.map((item) => {
+                console.log(item)
                 return (
-                <label className="col-12" key={item.lendingDesk.id}>
-                <input type="radio" name="shop" onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} className="border" value={JSON.stringify(item)}/>
-                  <p>{item.lendingDesk.owner}</p>
-                  <p>Offer: {item.loanConfig.minAmount}-{item.loanConfig.maxAmount} {item.lendingDesk.erc20.symbol}</p>
-                  <p>Duration: {item.loanConfig.minDuration}-{item.loanConfig.maxDuration} days</p>
-                  <p>Interest: {item.loanConfig.minInterest}-{item.loanConfig.maxInterest}%</p>
-                </label>
+                <div className="nfty-check" key={item.lendingDesk.id}>
+                  <input type="radio" className="btn-check" autoComplete="off" name="desks" id={item.lendingDesk.id} onClick={(e) => setSelectedLendingDesk((e.target as HTMLInputElement).value)} value={JSON.stringify(item)}/>
+                  <label className="btn py-2 d-block w-100 border border-secondary border-opacity-25" htmlFor={item.lendingDesk.id}>
+                    <div className="d-flex align-items-center justify-content-center mx-auto">
+                      <img src="images/placeholder/images/image-12.png" width="30" alt="Image" className="flex-shrink-0"/>
+                      <span className="ms-3">0x4323...43vfk32</span>
+                    </div>
+                    <div className="container-fluid g-0">
+                      <div className="row g-2 mt-2">
+                        <div className="col">
+                          <div className="p-2 rounded-3 bg-success-subtle text-center">
+                            <div className="text-success-emphasis h3 mb-3">
+                              <i className="fa-light fa-hand-holding-dollar"></i>
+                            </div>
+                            <div className="fw-bold">8000</div>
+                            <small className="fw-normal">max offer</small>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div className="p-2 rounded-3 bg-info-subtle text-center">
+                            <div className="text-info-emphasis h3 mb-3">
+                              <i className="fa-light fa-calendar-clock"></i>
+                            </div>
+                            <div className="fw-bold">31 days</div>
+                            <small className="fw-normal">duration</small>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div className="p-2 rounded-3 bg-primary bg-opacity-10 text-center">
+                            <div className="text-primary-emphasis h3 mb-3">
+                              <i className="fa-light fa-badge-percent"></i>
+                            </div>
+                            <div className="fw-bold">15%</div>
+                            <small className="fw-normal">interest</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
               )})
               ) : (
               <div className="card-body specific-h-400 overflow-y-auto pt-0">
@@ -208,6 +240,96 @@ export const QuickLoan = (props: any) => {
           </div>
         </div>
         {/* Column end */}
+        <div className="my-4 text-end">
+          <PopupTransaction
+            btnClass="btn btn-primary btn-lg py-3 px-5 rounded-pill"
+            disabled={!token || !nftCollection || !selectedLendingDesk}
+            btnText="Get Loan"
+            modalId="txModal"
+            modalTitle="Get Loan"
+            modalContent={
+              selectedLendingDesk && (
+              <form id="quickLoanForm">
+                <small>Lending Desk Details</small>
+                <div className="row g-4">
+                  <div className="col-6 bg-secondary">
+                    <h6>{selectedLendingDesk.loanConfig.nftCollection.id}</h6>
+                    <small>collection type</small>
+                  </div>
+                  <div className="col-6 bg-secondary">
+                    <h6>{selectedLendingDesk.loanConfig.minAmount} - {selectedLendingDesk.loanConfig.maxAmount} {selectedLendingDesk.lendingDesk.erc20.symbol}</h6>
+                    <small>min/max offer</small>
+                  </div>
+                  <div className="col-6 bg-secondary">
+                    <h6>{selectedLendingDesk.loanConfig.minDuration} days - {selectedLendingDesk.loanConfig.maxDuration} days</h6>
+                    <small>min/max duration</small>
+                  </div>
+                  <div className="col-6 bg-secondary">
+                    <h6>{selectedLendingDesk.loanConfig.minInterest} - {selectedLendingDesk.loanConfig.maxInterest} %</h6>
+                    <small>min/max interest</small>
+                  </div>
+                </div>
+                <hr/>
+                <div className="">
+                  <label className="form-label">Select NFT</label>
+                  <select name="nftID" defaultValue="disabled" className="form-select" onChange={(e) => setNftId(e.target.value)}>
+                    <option disabled value="disabled"> -- select an option -- </option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
+                <div className="mt-3">
+                  <label className="form-label">Select Duration</label>
+                  <input name="duration" min={selectedLendingDesk.loanConfig.minDuration} max={selectedLendingDesk.loanConfig.maxDuration} value={duration} onChange={e => setDuration(e.target.value)} type="number" className="form-control"/>
+                </div>
+                <div className="mt-3">
+                  <label className="form-label">Select Amount</label>
+                  <input name="amount" min={selectedLendingDesk.loanConfig.minAmount} max={selectedLendingDesk.loanConfig.maxAmount} value={amount} onChange={e => setAmount(e.target.value)} type="number" className="form-control"/>
+                </div>
+                {selectedLendingDesk && nftId && duration && amount &&
+                <div className="mt-3">
+                  <hr/>
+                  <small>Loan Details</small>
+                  <p>{nftId}</p>
+                  <div className="d-flex justify-content-between">
+                    <p>Duration:</p>
+                    <p>{duration}</p>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <p>Interest Rate:</p>
+                    <p>[INTEREST RATE]</p>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <p>Requested Amount:</p>
+                    <p>{amount}</p>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <p>2% Loan Origination Fee:</p>
+                    <p>[LOF]</p>
+                  </div>
+                  <hr/>
+                  <div className="d-flex justify-content-between">
+                    <p>Gross Amount:</p>
+                    <h2 className="text-primary">[AMOUNT]</h2>
+                  </div>
+                  <button type="button" className="btn btn-primary" onClick={() => requestLoan()}>
+                  Get Loan
+                  </button>
+                </div>
+              }
+              </form>
+            )
+            }
+          />
+        </div>
       </div>
       {/* End Container*/}
     </div>

@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYFinance
-      address: "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75"
-      startBlock: 109
+      address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
+      startBlock: 12
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -63,8 +63,8 @@ dataSources:
     network: mainnet
     source:
       abi: LendingKeys
-      address: "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8"
-      startBlock: 108
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+      startBlock: 11
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -83,8 +83,8 @@ dataSources:
     network: mainnet
     source:
       abi: PromissoryNotes
-      address: "0xD5ac451B0c50B9476107823Af206eD814a2e2580"
-      startBlock: 106
+      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+      startBlock: 9
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -103,8 +103,8 @@ dataSources:
     network: mainnet
     source:
       abi: ObligationNotes
-      address: "0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397"
-      startBlock: 107
+      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+      startBlock: 10
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
