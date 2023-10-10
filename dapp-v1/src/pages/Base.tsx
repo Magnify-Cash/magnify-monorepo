@@ -96,6 +96,15 @@ export const Base = () => {
               />
               <strong>nfty.finance</strong>
             </NavLink>
+            <button
+              type="button"
+              className="btn btn-secondary rounded-pill me-2"
+              aria-label="Toggle dark mode"
+              onClick={() => toggleDarkMode()}
+              style={{ width: "37px" }}
+            >
+              <i className="fa-solid fa-moon"></i>
+            </button>
           </div>
           <div className="offcanvas-body">
             <NavLink
@@ -282,19 +291,6 @@ export const Base = () => {
               >
                 <i className="fa-solid fa-bars"></i>
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary rounded-pill me-2"
-                aria-label="Toggle dark mode"
-                onClick={() => toggleDarkMode()}
-                style={{ width: "37px" }}
-              >
-                <i className="fa-solid fa-moon"></i>
-              </button>
-              {/*
-              <button type="button" className="btn btn-secondary rounded-pill me-2" aria-label="Notifications">
-                <i className="fa-solid fa-bell"></i>
-              </button>*/}
               <ConnectKitButton.Custom>
                 {({
                   isConnected,
