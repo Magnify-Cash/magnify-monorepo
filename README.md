@@ -26,7 +26,7 @@ To begin local development, carefully follow the steps outlined below:
 
 1. Install Docker v4.10.1 from [here](https://docs.docker.com/desktop/release-notes/#4100).
 
-2. Clone the [graph-node](https://github.com/graphprotocol/graph-node) repository alongside this repo in the same directory.
+2. Clone the [graph-node](https://github.com/graphprotocol/graph-node) repository into a shared parent directory with the current repository. Both repositories should be located in the same parent folder.
 
 3. Build graph-node images locally by following [these steps](https://github.com/graphprotocol/graph-node/tree/master/docker#running-graph-node-on-an-macbook-m1). **Note**: Before proceeding, you must increase Docker's memory allowance to 8GB from Preferences → Resources. After completion, you can revert it to the default 4GB.
 
@@ -40,7 +40,7 @@ To begin local development, carefully follow the steps outlined below:
 
 4. Deploy a fresh version of all contracts and the subgraph by running `yarn deploy:local`.
 
-The environment is now ready for development. You can launch the faucet service using `yarn faucet start` and/or start the dApp with `yarn dapp start`.
+The environment is now ready for development. You can launch the faucet service using `yarn faucet start` and/or start the dApp with `yarn dapp-v1 start`.
 
 **Notes:**
 
@@ -48,7 +48,7 @@ The environment is now ready for development. You can launch the faucet service 
 
 - If you close the hardhat chain process, ensure to restart the `graph-node` script as well.
 
-- For the scripts to work correctly, ensure that both this repo and the graph-node repo are present in the same directory.
+- For the scripts to work correctly, ensure that both this repo and the graph-node repo are present in the same parent directory.
 
 ### Running Tests
 
