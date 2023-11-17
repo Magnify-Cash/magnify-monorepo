@@ -88,315 +88,243 @@ export const CreateLendingDesk = (props: any) => {
   }
 
   return (
-    <div className="container-md px-3 px-sm-4 px-xl-5">
-      {/* Start Content */}
-      <div className="row g-3 g-xl-5">
+    <div className="container-md px-3 px-sm-4 px-lg-5">
+      <div className="row g-4 mt-n2 mb-4">
         <div className="col-xl-8">
-          <div className="row g-4 g-xl-5">
-            <div className="col-6">
-              <div className="card border-0 shadow rounded-4 h-100">
-                <div className="card-body">
-                  <div>
-                    <p className="text-primary fw-bold">Choose Currency</p>
-                    <div
-                      className="form-select w-100 btn btn-secondary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#tokenModal"
-                    >
-                      {token ? (
-                        <div className="d-flex align-items-center">
-                          <img
-                            src={token.token.logoURI}
-                            alt={`${token.token.name} Logo`}
-                            height="20"
-                            width="20"
-                          />
-                          <p className="m-0 ms-1">{token.token.name}</p>
-                        </div>
-                      ) : (
-                        "Choose Currency..."
-                      )}
-                    </div>
-                    <PopupTokenList
-                      token
-                      urls={["https://tokens.coingecko.com/uniswap/all.json"]}
-                      modalId="tokenModal"
-                      onClick={setToken}
+          <div className="container-gluid g-0">
+            <div className="row g-4">
+              <div className="col-xl-7">
+                <div className="card border-0 shadow rounded-4">
+                  <div className="card-body p-4">
+                    <h5 className="fw-medium text-primary-emphasis">
+                      Lending Desk Name
+                    </h5>
+                    <input
+                      type="text"
+                      className="form-control form-control-lg py-2 border-0 bg-transparent fs-5 fw-bold mt-4"
+                      id="name"
+                      placeholder="Lending Desk 1"
                     />
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="row g-4 g-xl-5 mt-1">
-            <div className="col-12">
-              <div className="card border-0 shadow rounded-4 h-100">
-                <div className="card-body">
-                  <form id="configForm">
-                    <div>
-                      <p className="text-primary fw-bold">
-                        Choose Collection(s) & Paramaters
-                      </p>
-                      <div
-                        className="form-select w-100 btn btn-secondary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#nftModal"
-                      >
-                        {nftCollection ? (
-                          <div className="d-flex align-items-center">
-                            <img
-                              src={nftCollection.nft.logoURI}
-                              alt={`${nftCollection.nft.name} Logo`}
-                              height="20"
-                              width="20"
+              <div className="col-xl-5">
+                <div className="card border-0 shadow rounded-4">
+                  <div className="card-body p-4">
+                    <h5 className="fw-medium text-primary-emphasis">
+                      Choose Currency
+                    </h5>
+                    <select
+                      className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4"
+                      id="select-currency"
+                    >
+                      <option value="ETH" selected>
+                        ETH
+                      </option>
+                      <option value="...">...</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="col-12">
+                <div className="card border-0 shadow rounded-4">
+                  <div className="card-body p-4">
+                    <h5 className="fw-medium text-primary-emphasis">
+                      Choose Collection(s) & Paramaters
+                    </h5>
+                    <select
+                      className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4 w-lg-75"
+                      id="select-collection"
+                    >
+                      <option value="Pudgy" selected>
+                        Pudgy Penguins
+                      </option>
+                      <option value="...">...</option>
+                    </select>
+                    <h6 className="fw-medium text-primary-emphasis mt-4">
+                      Min/Max Offer
+                    </h6>
+                    <div className="row g-4">
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="min-offer"
+                              placeholder="Min Offer"
+                              min="0"
+                              max="99999"
+                              step="1"
+                              value="0"
                             />
-                            <p className="m-0 ms-1">{nftCollection.nft.name}</p>
+                            <label htmlFor="min-offer">Min Offer</label>
                           </div>
-                        ) : (
-                          "Choose NFT Collection..."
-                        )}
-                      </div>
-                      <PopupTokenList
-                        nft
-                        urls={[
-                          "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-                        ]}
-                        modalId="nftModal"
-                        onClick={setNftCollection}
-                      />
-                    </div>
-                    <div className="row mt-4">
-                      <h6>Loan Value</h6>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Min Offer</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="minOffer"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Currency
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            USDT
+                          </span>
                         </div>
                       </div>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Max Offer</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="maxOffer"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Currency
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="max-offer"
+                              placeholder="Max Offer"
+                              min="0"
+                              max="99999"
+                              step="1"
+                              value="0"
+                            />
+                            <label htmlFor="max-offer">Max Offer</label>
+                          </div>
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            USDT
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <div className="row mt-4">
-                      <h6>Loan Duration</h6>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Min Duration</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="minDuration"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Days
-                        </div>
-                      </div>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Max Duration</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="maxDuration"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Days
+                    <h6 className="fw-medium text-primary-emphasis mt-4">
+                      Min/Max Duration
+                    </h6>
+                    <div className="row g-4">
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="min-duration"
+                              placeholder="Min Duration"
+                              min="0"
+                              max="99999"
+                              step="1"
+                              value="0"
+                            />
+                            <label htmlFor="min-duration">Min Duration</label>
+                          </div>
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            DAYS
+                          </span>
                         </div>
                       </div>
-                    </div>
-                    <div className="row mt-4">
-                      <h6>Loan Interest Rate</h6>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Min Interest Rate</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="minInterest"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Percent (%)
-                        </div>
-                      </div>
-                      <div className="col-6 border border-primary rounded">
-                        <p className="text-center">Max Interest Rate</p>
-                        <div className="d-flex justify-content-around align-items-center mb-2">
-                          <span className="btn btn-secondary">-</span>
-                          <input
-                            min="0"
-                            name="maxInterest"
-                            type="number"
-                            className="form-control w-50"
-                          />
-                          <span className="btn btn-secondary">+</span>
-                        </div>
-                        <div className="d-flex justify-content-center">
-                          Percent (%)
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="max-duration"
+                              placeholder="Max Durtion"
+                              min="0"
+                              max="99999"
+                              step="1"
+                              value="0"
+                            />
+                            <label htmlFor="max-duration">Max Duration</label>
+                          </div>
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            DAYS
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <div className="row">
+                    <h6 className="fw-medium text-primary-emphasis mt-4">
+                      Min/Max Interest Rate
+                    </h6>
+                    <div className="row g-4">
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="min-interest-rate"
+                              placeholder="Min Interest Rate"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value="0"
+                            />
+                            <label htmlFor="min-interest-rate">
+                              Min Interest Rate
+                            </label>
+                          </div>
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            %
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-lg-6">
+                        <div className="input-group">
+                          <div className="form-floating">
+                            <input
+                              type="number"
+                              className="form-control fs-5"
+                              id="max-interest-rate"
+                              placeholder="Max Durtion"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value="0"
+                            />
+                            <label htmlFor="max-interest-rate">
+                              Max Interest Rate
+                            </label>
+                          </div>
+                          <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                            %
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="my-4 text-end">
                       <button
+                        type="button"
+                        className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
                         disabled={!nftCollection}
-                        className="btn btn-primary ms-auto col-4"
                         onClick={(e) => handleConfigSubmit(e)}
+                        style={{ filter: "grayscale(1)" }}
                       >
                         Add to Desk
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className="col-xl-4">
-          <div className="card border-0 shadow rounded-4 h-100">
-            <div className="card-body">
-              <h6 className="mb-4">Lending Desk Details</h6>
-              {token ? (
-                <div>
-                  <p>Currency Type</p>
-                  <div className="d-flex align-items-center">
-                    <img
-                      src={token.token.logoURI}
-                      alt={`${token.token.name} Logo`}
-                      height="20"
-                      width="20"
-                    />
-                    <p className="m-0 ms-1">{token.token.name}</p>
-                  </div>
-                  <hr />
-                  {deskConfigs.map((config, index) => {
-                    return (
-                      <div key={index}>
-                        <p>Collection {index}</p>
-                        <div className="d-flex align-items-center">
-                          <img
-                            src={config.hiddenInputNft.nft?.logoURI}
-                            alt={`${config.hiddenInputNft.nft.name} Logo`}
-                            height="20"
-                            width="20"
-                          />
-                          <p className="m-0 ms-1">
-                            {config.hiddenInputNft.nft.name}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div>
-                  <img
-                    height="200"
-                    width="100%"
-                    src="/theme/images/thinking_guy.svg"
-                    alt="Thinking..."
-                  />
-                  <p className="text-center">
-                    Start customizing to see details...
-                  </p>
-                </div>
-              )}
+          <div className="card border-0 shadow rounded-4 mb-4">
+            <div className="card-body p-4">
+              <h5 className="fw-medium text-body-secondary">
+                Lending Desk Details
+              </h5>
+              <img
+                src="theme/images/image-11.png"
+                alt="Thinking"
+                className="img-fluid mx-auto d-block my-3"
+              />
+              <p className="text-center text-body-secondary fst-italic">
+                Start customizing to see details
+              </p>
             </div>
           </div>
-          <div className="d-flex mb-2 mt-2">
-            <PopupTransaction
-              btnClass="btn btn-primary btn-lg mt-2 mb-4 ms-auto"
-              btnText="Finalize Lending Desk"
-              modalId="txModal"
-              modalTitle="Confirm Lending Desk"
-              modalContent={
-                <div>
-                  <p>Loan Details</p>
-                  <div className="d-flex flex-column">
-                    <div className="mb-2">
-                      <small className="m-0">Currency Type</small>
-                      <div className="d-flex">
-                        <img
-                          src={token?.token.logoURI}
-                          alt={`${token?.token.name} Logo`}
-                          height="20"
-                          width="20"
-                        />
-                        <p className="m-0 ms-1">{token?.token.name}</p>
-                      </div>
-                    </div>
-                    {deskConfigs.map((config, index) => {
-                      return (
-                        <div key={index} className="col-12 my-2">
-                          <small className="m-0">Collection {index + 1}</small>
-                          <div className="d-flex align-items-center">
-                            <img
-                              src={config?.hiddenInputNft.nft?.logoURI}
-                              alt={`${config?.hiddenInputNft.nft.name} Logo`}
-                              height="20"
-                              width="20"
-                            />
-                            <p className="m-0 ms-1">
-                              {config?.hiddenInputNft.nft.name}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="input-group">
-                    <input
-                      value={deskFundingAmount}
-                      onChange={(e) => setDeskFundingAmount(e.target.value)}
-                      type="number"
-                      className="me-2"
-                    />
-                    <span>Funding Amount</span>
-                  </div>
-                  <button type="button" className="btn btn-primary" onClick={() => initLendingDesk()}>
-                    Create Lending Desk
-                  </button>
-                </div>
-              }
-            />
+          <div>
+            <button
+              type="button"
+              className="btn btn-primary btn-lg py-2 px-5 rounded-pill d-block w-100"
+              disabled
+              style={{ filter: "grayscale(1)" }}
+            >
+              Finalize Lending Desk
+            </button>
           </div>
         </div>
       </div>
-
-      {/* End Content */}
     </div>
   );
 };
