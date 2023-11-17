@@ -7,6 +7,7 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 import { useChainId } from "wagmi";
+import { LendingDeskDetails } from "@/components/LendingDeskDetails";
 
 interface IConfigForm {
   hiddenInputNft: INFTListItem;
@@ -298,27 +299,19 @@ export const CreateLendingDesk = (props: any) => {
           </div>
         </div>
         <div className="col-xl-4">
-          <div className="card border-0 shadow rounded-4 mb-4">
-            <div className="card-body p-4">
-              <h5 className="fw-medium text-body-secondary">
-                Lending Desk Details
-              </h5>
-              <img
-                src="theme/images/image-11.png"
-                alt="Thinking"
-                className="img-fluid mx-auto d-block my-3"
-              />
-              <p className="text-center text-body-secondary fst-italic">
-                Start customizing to see details
-              </p>
-            </div>
-          </div>
+          <LendingDeskDetails
+            name="Lending Desk 1"
+            currrencyType="USDC"
+            id="1"
+            collectionName="Doodles"
+            offer="8000-16000 ETH"
+            duration="4-30 Days"
+            interestRate="1-5"
+          />
           <div>
             <button
               type="button"
               className="btn btn-primary btn-lg py-2 px-5 rounded-pill d-block w-100"
-              disabled
-              style={{ filter: "grayscale(1)" }}
             >
               Finalize Lending Desk
             </button>
