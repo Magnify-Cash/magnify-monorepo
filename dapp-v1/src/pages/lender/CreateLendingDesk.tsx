@@ -157,7 +157,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="99999"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="min-offer">Min Offer</label>
                           </div>
@@ -177,7 +177,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="99999"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="max-offer">Max Offer</label>
                           </div>
@@ -202,7 +202,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="99999"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="min-duration">Min Duration</label>
                           </div>
@@ -222,7 +222,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="99999"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="max-duration">Max Duration</label>
                           </div>
@@ -247,7 +247,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="100"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="min-interest-rate">
                               Min Interest Rate
@@ -269,7 +269,7 @@ export const CreateLendingDesk = (props: any) => {
                               min="0"
                               max="100"
                               step="1"
-                              value="0"
+                              defaultValue="0"
                             />
                             <label htmlFor="max-interest-rate">
                               Max Interest Rate
