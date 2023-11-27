@@ -119,7 +119,7 @@ const LendingDeskRow = ({ desks, status }) => {
                 <h6 className="fw-medium text-body-secondary">Currency Type</h6>
                 <div className="d-flex align-items-center text-body-secondary">
                   <img
-                    src="/theme/images/image-13.png" //TODO display respective currency image
+                    src={"/theme/images/image-13.png"} //TODO display respective currency image
                     height="24"
                     className="d-block rounded-circle flex-shrink-0 me-2"
                     alt="Image"
@@ -129,25 +129,21 @@ const LendingDeskRow = ({ desks, status }) => {
                 <br />
                 <h6 className="fw-medium text-body-secondary">Collections</h6>
                 <div className="d-flex align-items-center text-body-secondary">
-                  <img
+                  {/* <img
                     src="/theme/images/image-4.png" //TODO display respective collections images
                     height="24"
                     className="d-block rounded-circle flex-shrink-0 me-2"
                     alt="Image"
-                  />
-                  <img
-                    src="/theme/images/image-5.png"
-                    height="24"
-                    className="d-block rounded-circle flex-shrink-0 me-2"
-                    alt="Image"
-                  />
+                  /> */}
                 </div>
+                <p className="m-0">{desk.loanConfigs.length}</p>
+
                 <br />
                 <h6 className="fw-medium text-body-secondary">
                   Available Liquidity
                 </h6>
                 {/* TODO display desk.balance in below format */}
-                <div className="text-body-secondary">2500/5000 ETH</div>
+                <div className="text-body-secondary">{desk.balance} ETH</div>
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
@@ -186,6 +182,7 @@ const LendingDeskRow = ({ desks, status }) => {
                 </div>
                 <hr className="d-xl-none" />
               </div>
+              {/* TODO replace hardcoded values */}
               <div className="col-xl-3">
                 <h6 className="fw-medium text-body-secondary">
                   Net Liquidity Issued
