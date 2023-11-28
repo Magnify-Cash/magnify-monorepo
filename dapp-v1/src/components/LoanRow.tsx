@@ -9,40 +9,51 @@ import {
   nftyFinanceV1Address,
   useErc20Approve,
 } from "@/wagmi-generated";
-import { calculateTimeInfo, formatTimeInfo } from "@/utils"
+import { calculateTimeInfo, formatTimeInfo } from "@/utils";
 import { Loan } from "../../.graphclient";
 
 // Interface
 interface ILoanRowProps {
   loans: Array<Loan> | any; // Loan array
-  status?: string // Status of the loan row
+  status?: string; // Status of the loan row
   payback?: boolean; // Whether or not loan card should have payback UI
-  liquidate?:boolean; // Whether or not loan card should have liquidate UI
+  liquidate?: boolean; // Whether or not loan card should have liquidate UI
 }
 
-export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
+export const LoanRow = ({
+  loans,
+  payback,
+  status,
+  liquidate,
+}: ILoanRowProps) => {
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
-  loans = loans.filter((loan:Loan) => {
-  if (status === "Pending Default"){
-    if (loan.status === "Active"){
-      return loan
+  loans = loans.filter((loan: Loan) => {
+    if (status === "Pending Default") {
+      if (loan.status === "Active") {
+        return loan;
+      }
     }
-  }
-  if (loan.status === status){
-    return loan
-  }
+    if (loan.status === status) {
+      return loan;
+    }
   });
   if (loans.length === 0) {
-  return (
-    <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-  )
+    return (
+      <img
+        height="200"
+        src="/theme/images/thinking_guy.svg"
+        alt="No items found"
+      />
+    );
   }
 
   // OK
-  return loans.map((loan:Loan) => {
+  return loans.map((loan: Loan) => {
     // Date/Time info
-    const [timeInfo, setTimeInfo] = useState(calculateTimeInfo(loan?.startTime, loan?.duration));
+    const [timeInfo, setTimeInfo] = useState(
+      calculateTimeInfo(loan?.startTime, loan?.duration)
+    );
     useEffect(() => {
       const intervalId = setInterval(() => {
         setTimeInfo(calculateTimeInfo(loan?.startTime, loan?.duration));
@@ -61,196 +72,223 @@ export const LoanRow = ({loans, payback, status, liquidate}: ILoanRowProps) => {
     });
     const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
       usePrepareNftyFinanceV1MakeLoanPayment({
-      enabled:false,
-      args: [
-        BigInt(loan?.id || 0), // loan ID
-        BigInt(payBackAmount), // amout
-      ],
-    });
-    const { writeAsync: makeLoanPaymentWrite } = useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig)
+        enabled: false,
+        args: [
+          BigInt(loan?.id || 0), // loan ID
+          BigInt(payBackAmount), // amout
+        ],
+      });
+    const { writeAsync: makeLoanPaymentWrite } =
+      useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig);
     async function makeLoanPayment(loanID: string) {
       console.log("loanID", loanID);
       console.log("payBackAmount", payBackAmount);
-      await approveErc20?.()
-      await makeLoanPaymentRefetch?.()
-      await makeLoanPaymentWrite?.()
+      await approveErc20?.();
+      await makeLoanPaymentRefetch?.();
+      await makeLoanPaymentWrite?.();
     }
 
     // Liquidate Overdue loan Hook
     const { config: liquidateConfig, refetch: liquidateRefetch } =
       usePrepareNftyFinanceV1LiquidateDefaultedLoan({
-      enabled: false,
-      args: [
-        BigInt(loan?.id || 0), // loan ID
-      ],
-    });
-    const { writeAsync: liquidateWrite } = useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig)
+        enabled: false,
+        args: [
+          BigInt(loan?.id || 0), // loan ID
+        ],
+      });
+    const { writeAsync: liquidateWrite } =
+      useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig);
     async function liquidateOverdueLoan(loanID: string) {
       console.log("loanID", loanID);
-      console.log('hi');
       await liquidateRefetch();
       await liquidateWrite?.();
     }
 
     return (
-    <div className="col-sm-6 col-xl-4" key={loan?.id}>
-      <style>
-      {`
-        .progress {margin-bottom:0;}
-        .start {float:left;}
-        .end {float:right; text-align:right;}
-      `}
-      </style>
-
-      <div className="card border-0 shadow rounded-4 h-100">
-      <div className="card-body">
-        <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle overflow-hidden">
-        <img
-          className="object-fit-cover"
-          src="/images/placeholder/pengu.png"
-          alt="test"
-          height="100%"
-        />
-        </div>
-        <div className="text-center mt-3">
-        <h5>{loan?.nftCollection.id} #{loan?.nftId}</h5>
-        <div className="row g-4">
-          <div className="col-6 bg-info">
-          <i className="fa-regular fa-hand-holding-dollar h1 me-1"></i>
-          <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
-          <small>borrowed</small>
+      <div className="col-md-6 col-xl-4" key={loan?.id}>
+        <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card-body p-4">
+            <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
+              <img
+                className="object-fit-cover"
+                src="theme/images/image-1.png"
+                alt="test"
+                height="100%"
+              />
+            </div>
+            <div className="h5 text-center mt-3">
+              {loan?.nftCollection.id} #{loan?.nftId}
+            </div>
+            <div className="container-fluid g-0 mt-4">
+              <div className="row g-3">
+                <div className="col-sm">
+                  <div className="p-2 rounded-3 bg-info-subtle text-center">
+                    <div className="text-info-emphasis h3 mb-3">
+                      <i className="fa-light fa-hand-holding-dollar"></i>
+                    </div>
+                    <div className="h6 mb-0">
+                      {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
+                    </div>
+                    <div>borrowed</div>
+                  </div>
+                </div>
+                <div className="col-sm">
+                  <div className="p-2 rounded-3 bg-success-subtle text-center">
+                    <div className="text-success-emphasis h3 mb-3">
+                      <i className="fa-light fa-calendar-lines"></i>
+                    </div>
+                    <div className="h6 mb-0">
+                      {loan?.amount - loan?.amountPaidBack}{" "}
+                      {loan?.lendingDesk?.erc20.symbol}
+                    </div>
+                    <div>payoff</div>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  {timeInfo.isTimeLeft ? (
+                    <div className="mt-2">
+                      <strong className="fs-3">{timeInfo.remainingTime}</strong>
+                      <span className="text-body-secondary">{` left`}</span>
+                    </div>
+                  ) : status !== "Defaulted" ? (
+                    <p className="text-danger text-start">
+                      Loan is overdue! <br /> Make payment or face liquidation.
+                    </p>
+                  ) : null}
+                  <div className="progress mt-3 shadow-none">
+                    <div
+                      className="progress-bar text-bg-success"
+                      role="progressbar"
+                      aria-valuenow={timeInfo.calculateProgress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      style={{ width: `${timeInfo.calculateProgress}%` }}
+                    />
+                  </div>
+                  <div className="d-flex align-items-center mt-3">
+                    <div className="text-body-secondary pe-2 lh-sm">
+                      {formatTimeInfo(timeInfo.startDate)}
+                      <br />
+                      <small>loan issued</small>
+                    </div>
+                    <div className="text-body-secondary pe-2 lh-sm">
+                      {formatTimeInfo(timeInfo.endDate)}
+                      <br />
+                      <small>due date</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {payback ? (
+                <PopupTransaction
+                  btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
+                  btnText="Pay Back"
+                  modalId={`paybackModal${loan?.id}`}
+                  modalTitle="Make Loan Payment"
+                  modalContent={
+                    <div>
+                      <small>Loan Details</small>
+                      <p>
+                        {loan?.nftCollection.id} #{loan?.nftId}
+                      </p>
+                      <div className="row g-4">
+                        <div className="col-6 bg-secondary">
+                          <h6>
+                            {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
+                          </h6>
+                          <small>original borrow</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>{loan?.interest} %</h6>
+                          <small>interest date</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>{timeInfo.elapsedTime}</h6>
+                          <small>loan duration</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                          <small>amount due on expiry date</small>
+                        </div>
+                        <div className="col-12 bg-success">
+                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                          <small>current payoff amount</small>
+                        </div>
+                      </div>
+                      <hr />
+                      <p className="text-start">Enter Amount</p>
+                      <div className="input-group">
+                        <input
+                          value={payBackAmount}
+                          onChange={(e) => setPayBackAmount(e.target.value)}
+                          type="number"
+                          className="me-2"
+                        />
+                        <span>{loan?.lendingDesk?.erc20.symbol}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => makeLoanPayment(loan?.id)}
+                      >
+                        Make Loan Payment
+                      </button>
+                    </div>
+                  }
+                />
+              ) : null}
+              {liquidate ? (
+                <PopupTransaction
+                  btnClass="btn btn-primary btn-lg mt-4"
+                  btnText="Liquidate Overdue Loan"
+                  modalId={`liquidateModal${loan?.id}`}
+                  modalTitle="Liquidate Overdue Loan"
+                  modalContent={
+                    <div>
+                      <small>Loan Details</small>
+                      <p>
+                        {loan?.nftCollection.id} #{loan?.nftId}
+                      </p>
+                      <div className="row g-4">
+                        <div className="col-6 bg-secondary">
+                          <h6>
+                            {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
+                          </h6>
+                          <small>original borrow</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>{loan?.interest} %</h6>
+                          <small>interest date</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>{timeInfo.elapsedTime}</h6>
+                          <small>loan duration</small>
+                        </div>
+                        <div className="col-6 bg-secondary">
+                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                          <small>amount due on expiry date</small>
+                        </div>
+                        <div className="col-12 bg-success">
+                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
+                          <small>current payoff amount</small>
+                        </div>
+                      </div>
+                      <hr />
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => liquidateOverdueLoan(loan?.id)}
+                      >
+                        Liquidate Overdue Loan
+                      </button>
+                    </div>
+                  }
+                />
+              ) : null}
+            </div>
           </div>
-          <div className="col-6 bg-success">
-          <i className="fa-regular fa-calendar h1 me-1"></i>
-          <h6>{loan?.amount - loan?.amountPaidBack} {loan?.lendingDesk?.erc20.symbol}</h6>
-          <small>payoff amount</small>
-          </div>
-          <div className="col-12">
-          {
-            timeInfo.isTimeLeft
-            ? <h5 className="text-start">{timeInfo.remainingTime}</h5>
-            : (
-              status !== "Defaulted"
-              ? <p className="text-danger text-start">
-              Loan is overdue! <br/> Make payment or face liquidation.
-              </p>
-              : null
-            )
-
-          }
-          <div className="progress my-2">
-            <div
-            className="progress-bar progress-bar-striped progress-bar-animated"
-            role="progressbar"
-            aria-valuenow={timeInfo.calculateProgress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            style={{ width: `${timeInfo.calculateProgress}%` }}
-            />
-          </div>
-          <div className="start">
-            <p className="text-start m-0">{formatTimeInfo(timeInfo.startDate)}</p>
-            <small>issued date</small>
-          </div>
-          <div className="end">
-            <p className="text-end m-0">{formatTimeInfo(timeInfo.endDate)}</p>
-            <small>due date</small>
-          </div>
-          </div>
-        </div>
-        {payback ?
-        <PopupTransaction
-          btnClass="btn btn-primary btn-lg mt-4"
-          btnText="Make Loan Payment"
-          modalId={`paybackModal${loan?.id}`}
-          modalTitle="Make Loan Payment"
-          modalContent={
-          <div>
-            <small>Loan Details</small>
-            <p>{loan?.nftCollection.id} #{loan?.nftId}</p>
-            <div className="row g-4">
-            <div className="col-6 bg-secondary">
-              <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>original borrow</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>{loan?.interest} %</h6>
-              <small>interest date</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>{timeInfo.elapsedTime}</h6>
-              <small>loan duration</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>amount due on expiry date</small>
-            </div>
-            <div className="col-12 bg-success">
-              <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>current payoff amount</small>
-            </div>
-            </div>
-            <hr />
-            <p className="text-start">Enter Amount</p>
-            <div className="input-group">
-            <input
-              value={payBackAmount}
-              onChange={(e) => setPayBackAmount(e.target.value)}
-              type="number"
-              className="me-2"
-            />
-            <span>{loan?.lendingDesk?.erc20.symbol}</span>
-            </div>
-            <button type="button" className="btn btn-primary" onClick={() => makeLoanPayment(loan?.id)}>
-            Make Loan Payment
-            </button>
-          </div>
-          }
-        />
-        : null}
-        {liquidate ?
-        <PopupTransaction
-          btnClass="btn btn-primary btn-lg mt-4"
-          btnText="Liquidate Overdue Loan"
-          modalId={`liquidateModal${loan?.id}`}
-          modalTitle="Liquidate Overdue Loan"
-          modalContent={
-          <div>
-            <small>Loan Details</small>
-            <p>{loan?.nftCollection.id} #{loan?.nftId}</p>
-            <div className="row g-4">
-            <div className="col-6 bg-secondary">
-              <h6>{loan?.amount} {loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>original borrow</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>{loan?.interest} %</h6>
-              <small>interest date</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>{timeInfo.elapsedTime}</h6>
-              <small>loan duration</small>
-            </div>
-            <div className="col-6 bg-secondary">
-              <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>amount due on expiry date</small>
-            </div>
-            <div className="col-12 bg-success">
-              <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-              <small>current payoff amount</small>
-            </div>
-            </div>
-            <hr />
-            <button type="button" className="btn btn-primary" onClick={() => liquidateOverdueLoan(loan?.id)}>
-            Liquidate Overdue Loan
-            </button>
-          </div>
-          }
-        />
-        : null}
         </div>
       </div>
-      </div>
-    </div>
-  )});
+    );
+  });
 };
