@@ -205,7 +205,7 @@ export const CreateLendingDesk = (props: any) => {
                               <label htmlFor="min-offer">Min Offer</label>
                             </div>
                             <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                              USDT
+                              {token?.token.symbol || "USDT"}
                             </span>
                           </div>
                         </div>
@@ -225,7 +225,7 @@ export const CreateLendingDesk = (props: any) => {
                               <label htmlFor="max-offer">Max Offer</label>
                             </div>
                             <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                              USDT
+                              {token?.token.symbol || "USDT"}
                             </span>
                           </div>
                         </div>
@@ -350,8 +350,8 @@ export const CreateLendingDesk = (props: any) => {
               </h6>
               <div className="pb-2 mb-2 border-bottom">
                 <div className="text-body-secondary">Name</div>
-                <div className="mt-1 fs-5">{"Lending desk 1"}</div>
                 {/* TODO replace hardcoded value */}
+                <div className="mt-1 fs-5">{"Lending desk 1"}</div>
               </div>
               {token ? (
                 <div>
@@ -413,8 +413,8 @@ export const CreateLendingDesk = (props: any) => {
                             <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
                           </span>
                           <div className="text-truncate">
-                            <strong>Offer:</strong> 8000-16000 ETH
-                            {/* TODO replace hardcoded data */}
+                            <strong>Offer:</strong> {config.minOffer}-
+                            {config.maxOffer} {token.token.symbol}
                           </div>
                         </div>
                         <div className="mt-1 d-flex align-items-center">
@@ -422,7 +422,8 @@ export const CreateLendingDesk = (props: any) => {
                             <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
                           </span>
                           <div className="text-truncate">
-                            <strong>Duration:</strong> 4-30 Days
+                            <strong>Duration:</strong> {config.minDuration}-
+                            {config.maxDuration} Days
                           </div>
                         </div>
                         <div className="mt-1 d-flex align-items-center">
@@ -430,7 +431,8 @@ export const CreateLendingDesk = (props: any) => {
                             <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                           </span>
                           <div className="text-truncate">
-                            <strong>Interest Rate:</strong> 1-5%
+                            <strong>Interest Rate:</strong> {config.minInterest}
+                            -{config.maxInterest}%
                           </div>
                         </div>
                       </div>
@@ -466,8 +468,8 @@ export const CreateLendingDesk = (props: any) => {
                     </h5>
                     <div className="pb-2 mb-2 border-bottom">
                       <div className="text-body-secondary">Name</div>
-                      <div className="mt-1 fs-5">{"Lending desk 1"}</div>
                       {/* TODO replace hardcoded value */}
+                      <div className="mt-1 fs-5">{"Lending desk 1"}</div>
                     </div>
                     {token ? (
                       <div>
@@ -536,8 +538,8 @@ export const CreateLendingDesk = (props: any) => {
                                   <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
                                 </span>
                                 <div className="text-truncate">
-                                  <strong>Offer:</strong> 8000-16000 ETH
-                                  {/* TODO replace hardcoded data */}
+                                  <strong>Offer:</strong> {config.minOffer}-
+                                  {config.maxOffer} {token.token.symbol}
                                 </div>
                               </div>
                               <div className="mt-1 d-flex align-items-center">
@@ -553,7 +555,8 @@ export const CreateLendingDesk = (props: any) => {
                                   <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                                 </span>
                                 <div className="text-truncate">
-                                  <strong>Interest Rate:</strong> 1-5%
+                                  <strong>Interest Rate:</strong>{" "}
+                                  {config.minInterest}-{config.maxInterest}%
                                 </div>
                               </div>
                             </div>
@@ -588,13 +591,24 @@ export const CreateLendingDesk = (props: any) => {
                           id="fund-lending-desk"
                         />
                         <div className="flex-shrink-0 fs-5 d-flex align-items-center ms-3">
-                          <img
-                            src="theme/images/image-13.png"
-                            height="24"
-                            className="d-block rounded-circle flex-shrink-0 me-2"
-                            alt="Image"
-                          />
-                          <div className="text-truncate">ETH</div>
+                          {token ? (
+                            <img
+                              src={token.token.logoURI}
+                              height="24"
+                              className="d-block rounded-circle flex-shrink-0 me-2"
+                              alt="Image"
+                            />
+                          ) : (
+                            <img
+                              src="theme/images/image-10.png"
+                              height="24"
+                              className="d-block rounded-circle flex-shrink-0 me-2"
+                              alt="Image"
+                            />
+                          )}
+                          <div className="text-truncate">
+                            {token?.token.symbol || "USDT"}
+                          </div>
                         </div>
                       </div>
                     </div>
