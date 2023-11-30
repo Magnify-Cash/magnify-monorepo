@@ -3,7 +3,6 @@ import { useAccount } from "wagmi";
 import { LoanRow } from "@/components";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
 
-
 export const Dashboard = (props: any) => {
   // GraphQL
   const { address } = useAccount();
@@ -15,12 +14,12 @@ export const Dashboard = (props: any) => {
   });
 
   return (
-    <div className="container-md px-3 px-sm-4 px-xl-5">
-      <div className="d-lg-flex align-items-center">
+    <div className="container-md px-3 px-sm-4 px-lg-5">
+      <div className="d-flex align-items-center">
         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
           <li className="nav-item" role="presentation">
             <button
-              className="nav-link active"
+              className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-active-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-active"
@@ -34,7 +33,7 @@ export const Dashboard = (props: any) => {
           </li>
           <li className="nav-item" role="presentation">
             <button
-              className="nav-link"
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-pending-default-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-pending-default"
@@ -48,7 +47,7 @@ export const Dashboard = (props: any) => {
           </li>
           <li className="nav-item" role="presentation">
             <button
-              className="nav-link"
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-completed-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-completed"
@@ -62,7 +61,7 @@ export const Dashboard = (props: any) => {
           </li>
           <li className="nav-item" role="presentation">
             <button
-              className="nav-link"
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-defaulted-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-defaulted"
@@ -83,9 +82,13 @@ export const Dashboard = (props: any) => {
           className="tab-pane fade show active"
           id="pills-active"
           role="tabpanel"
-          aria-labelledby="pills-active-tab">
-          <div className="row g-4 g-xl-5">
-              <LoanCardParent desks={result?.data?.lendingDesks || []} status="Active"/>
+          aria-labelledby="pills-active-tab"
+        >
+          <div className="row g-4 mt-n2 mb-4">
+            <LoanCardParent
+              desks={result?.data?.lendingDesks || []}
+              status="Active"
+            />
           </div>
         </div>
         {/* End Active Row */}
@@ -97,8 +100,12 @@ export const Dashboard = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-pending-default-tab"
         >
-          <div className="row g-4 g-xl-5">
-            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Pending Default" liquidate/>
+          <div className="row g-4 mt-n2 mb-4">
+            <LoanCardParent
+              desks={result?.data?.lendingDesks || []}
+              status="Pending Default"
+              liquidate
+            />
           </div>
         </div>
         {/* End Pending Default Row */}
@@ -110,8 +117,11 @@ export const Dashboard = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-defaulted-tab"
         >
-          <div className="row g-4 g-xl-5">
-            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Defaulted"/>
+          <div className="row g-4 mt-n2 mb-4">
+            <LoanCardParent
+              desks={result?.data?.lendingDesks || []}
+              status="Defaulted"
+            />
           </div>
         </div>
         {/* End Defaulted Row */}
@@ -123,8 +133,11 @@ export const Dashboard = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-completed-tab"
         >
-          <div className="row g-4 g-xl-5">
-            <LoanCardParent desks={result?.data?.lendingDesks || []} status="Completed"/>
+          <div className="row g-4 mt-n2 mb-4">
+            <LoanCardParent
+              desks={result?.data?.lendingDesks || []}
+              status="Completed"
+            />
           </div>
         </div>
         {/* End Completed Row */}
@@ -135,64 +148,123 @@ export const Dashboard = (props: any) => {
 
 const LoanCardParent = (props) => {
   // setup desks data
-  if (props.desks.length === 0){
+  if (props.desks.length === 0) {
     return (
-      <img height="200" src="/theme/images/thinking_guy.svg" alt="No items found" />
-    )
+      <img
+        height="200"
+        src="/theme/images/thinking_guy.svg"
+        alt="No items found"
+      />
+    );
   }
 
   // OK
-  return props.desks.map((desk:LendingDesk) => {
+  return props.desks.map((desk: LendingDesk) => {
     return (
       <div key={desk.id}>
-        <h5>Lending Desk {desk.id}</h5>
-        <div className="col-12">
-          <div className="card border-0 shadow rounded-4 h-100">
-            <div className="card-body">
-              <div className="d-lg-flex">
-                <div className="col-sm-6 col-xl-4">
+        <div className="col-xl-8">
+          <div className="d-flex align-items-center specific-h-25">
+            <h5 className="fw-medium text-body-secondary m-0">
+              Lending Desk {desk.id}
+            </h5>
+            <div
+              className="position-relative ms-3"
+              style={{ width: "48px", height: "24px" }}
+            >
+              <img
+                src="theme/images/image-1.png"
+                height="24"
+                className="d-block rounded-circle position-absolute top-0 start-0 z-3"
+                alt="Image"
+              />
+              <img
+                src="theme/images/image-4.png"
+                height="24"
+                className="d-block rounded-circle position-absolute top-0 start-0 z-2"
+                alt="Image"
+                style={{ marginLeft: "12px" }}
+              />
+              <img
+                src="theme/images/image-7.png"
+                height="24"
+                className="d-block rounded-circle position-absolute top-0 start-0 z-1"
+                alt="Image"
+                style={{ marginLeft: "24px" }}
+              />
+            </div>
+          </div>
+          <div className="card border-0 shadow rounded-4 mt-3">
+            <div className="card-body p-4">
+              <div className="row g-3 justify-content-center">
+                <div className="col-sm-6">
                   <div className="d-flex align-items-center">
                     <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                      <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
-                    </div>
-                    <div className="ps-3">
-                      <h3 className="m-0">{desk.loans.filter((loan) => loan.status === props.status).length}</h3>
-                      <p className="m-0 text-primary-emphasis">loans</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-sm-6 col-xl-4">
-                  <div className="d-flex align-items-center">
-                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                      <i className="fa-solid fa-square-dollar h2 m-0"></i>
-                    </div>
-                    <div className="ps-3">
-                      <h3 className="m-0">{desk.erc20.symbol}</h3>
-                      <p className="m-0 text-primary-emphasis">currency</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-sm-6 col-xl-4">
-                  <div className="d-flex align-items-center">
-                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                      <i className="fa-solid fa-sack-dollar h2 m-0"></i>
+                      <i className="fa-solid fa-user h4 m-0"></i>
                     </div>
                     <div className="ps-3">
                       <h3 className="m-0">
-                        {desk.balance} <small className="fw-normal">{desk.erc20.symbol}</small>
+                        {
+                          desk.loans.filter(
+                            (loan) => loan.status === props.status
+                          ).length
+                        }
                       </h3>
-                      <p className="m-0 text-primary-emphasis">balance</p>
+                      <p className="m-0 text-body-secondary">Loans</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-info-subtle text-info-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-coins h4 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">{desk.erc20.symbol}</h3>
+                      <p className="m-0 text-body-secondary">Currency</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-warning-subtle text-warning-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-circle-minus h4 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">
+                        {/* TODO update hardcoded value */}
+                        {"0 "}
+                        <small className="fw-normal">{"USDC"}</small>
+                      </h3>
+                      <p className="m-0 text-body-secondary">Borrowed</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <div className="d-flex align-items-center">
+                    <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-success-subtle text-success-emphasis rounded-circle flex-shrink-0">
+                      <i className="fa-solid fa-sack-dollar h4 m-0"></i>
+                    </div>
+                    <div className="ps-3">
+                      <h3 className="m-0">
+                        {desk.balance}{" "}
+                        <small className="fw-normal">{desk.erc20.symbol}</small>
+                      </h3>
+                      <p className="m-0 text-body-secondary">Total Balance</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="row g-4 g-xl-5">
-          <LoanRow loans={desk.loans} status={props.status} liquidate={props?.liquidate}/>
+          <div className="row g-4 justify-content-start mt-0">
+            <LoanRow
+              loans={desk.loans}
+              status={props.status}
+              liquidate={props?.liquidate}
+            />
+          </div>
         </div>
       </div>
-    )
-  })
+    );
+  });
 };
