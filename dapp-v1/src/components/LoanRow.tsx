@@ -115,6 +115,18 @@ export const LoanRow = ({
                 alt="test"
                 height="100%"
               />
+              {status === "Defaulted" ? (
+                <div
+                  className="position-absolute top-50 start-50 translate-middle z-1 w-100 h-100 d-flex align-items-center justify-content-center"
+                  style={{ backgroundColor: "hsla(var(--bs-black-hsl), 0.25)" }}
+                >
+                  <img
+                    src="theme/images/wasted.png"
+                    className="img-fluid mt-4"
+                    alt="Wasted"
+                  />
+                </div>
+              ) : null}
             </div>
             <div className="h5 text-center mt-3">
               {loan?.nftCollection.id} #{loan?.nftId}
@@ -122,7 +134,13 @@ export const LoanRow = ({
             <div className="container-fluid g-0 mt-4">
               <div className="row g-3">
                 <div className="col-sm">
-                  <div className="p-2 rounded-3 bg-info-subtle text-center">
+                  <div
+                    className={`p-2 rounded-3 ${
+                      status === "Defaulted"
+                        ? "bg-secondary-subtle"
+                        : "bg-info-subtle"
+                    } text-center`}
+                  >
                     <div className="text-info-emphasis h3 mb-3">
                       <i className="fa-light fa-hand-holding-dollar"></i>
                     </div>
@@ -133,7 +151,13 @@ export const LoanRow = ({
                   </div>
                 </div>
                 <div className="col-sm">
-                  <div className="p-2 rounded-3 bg-success-subtle text-center">
+                  <div
+                    className={`p-2 rounded-3 ${
+                      status === "Defaulted"
+                        ? "bg-secondary-subtle"
+                        : "bg-success-subtle"
+                    } text-center`}
+                  >
                     <div className="text-success-emphasis h3 mb-3">
                       <i className="fa-light fa-calendar-lines"></i>
                     </div>
@@ -145,25 +169,52 @@ export const LoanRow = ({
                   </div>
                 </div>
                 <div className="mt-2">
-                  {timeInfo.isTimeLeft ? (
+                  {status === "Active" ? (
                     <div className="mt-2">
-                      <strong className="fs-3">{timeInfo.remainingTime}</strong>
+                      <strong className="fs-4">{timeInfo.remainingTime}</strong>
                       <span className="text-body-secondary">{` left`}</span>
                     </div>
-                  ) : status !== "Defaulted" ? (
-                    <p className="text-danger text-start">
-                      Loan is overdue! <br /> Make payment or face liquidation.
-                    </p>
+                  ) : status === "Defaulted" ? (
+                    <div className="mt-2">
+                      <strong className="fs-4">{`0 days`}</strong>
+                      <span className="text-body-secondary">{` left`}</span>
+                    </div>
+                  ) : status === "Completed" ? (
+                    <div className="mt-2">
+                      <strong className="fs-5">{`Complete`}</strong>
+                    </div>
                   ) : null}
                   <div className="progress mt-3 shadow-none">
-                    <div
-                      className="progress-bar text-bg-success"
-                      role="progressbar"
-                      aria-valuenow={timeInfo.calculateProgress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      style={{ width: `${timeInfo.calculateProgress}%` }}
-                    />
+                    {status === "Active" ? (
+                      <div
+                        className="progress-bar text-bg-success"
+                        role="progressbar"
+                        aria-valuenow={timeInfo.calculateProgress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: `${timeInfo.calculateProgress}%` }}
+                      />
+                    ) : status === "Defaulted" ? (
+                      <div
+                        className="progress-bar text-bg-danger"
+                        role="progressbar"
+                        aria-label="Progress"
+                        aria-valuenow={100}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: "100%" }}
+                      ></div>
+                    ) : status === "Completed" ? (
+                      <div
+                        className="progress-bar text-bg-success"
+                        role="progressbar"
+                        aria-label="Progress"
+                        aria-valuenow={100}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: "100%" }}
+                      ></div>
+                    ) : null}
                   </div>
                   <div className="d-flex align-items-center mt-3">
                     <div className="text-body-secondary pe-2 lh-sm">
@@ -287,6 +338,11 @@ export const LoanRow = ({
               ) : null}
             </div>
           </div>
+          {status === "Defaulted" ? (
+            <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
+          ) : status === "Completed" ? (
+            <i className="fa-solid fa-check-circle text-success-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
+          ) : null}
         </div>
       </div>
     );

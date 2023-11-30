@@ -34,20 +34,6 @@ export const Dashboard = (props: any) => {
           <li className="nav-item" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
-              id="pills-completed-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#pills-completed"
-              type="button"
-              role="tab"
-              aria-controls="pills-completed"
-              aria-selected="false"
-            >
-              Completed Loans
-            </button>
-          </li>
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-defaulted-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-defaulted"
@@ -57,6 +43,20 @@ export const Dashboard = (props: any) => {
               aria-selected="false"
             >
               Defaulted Loans
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-completed-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-completed"
+              type="button"
+              role="tab"
+              aria-controls="pills-completed"
+              aria-selected="false"
+            >
+              Completed Loans
             </button>
           </li>
         </ul>
