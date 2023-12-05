@@ -1,5 +1,6 @@
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
+import { NavLink } from "react-router-dom";
 import { LoanRow } from "@/components";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
 
@@ -162,11 +163,18 @@ const LoanCardParent = (props) => {
   // setup desks data
   if (props.desks.length === 0) {
     return (
-      <img
-        height="200"
-        src="/theme/images/thinking_guy.svg"
-        alt="No items found"
-      />
+      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
+        <img
+          src="theme/images/Vector.png"
+          alt="Image"
+          className="img-fluid d-block mx-auto"
+        />
+        <h3 className="opacity-75 text-center mt-5">No active loans.</h3>
+        <p className="text-body-secondary text-center mt-4">
+          {`Don’t know where to start? `}
+          <NavLink to="/create-desk">Create a Lending Desk</NavLink>
+        </p>
+      </div>
     );
   }
 
