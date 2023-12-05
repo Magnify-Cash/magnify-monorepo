@@ -235,55 +235,123 @@ export const LoanRow = ({
                   btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                   btnText="Pay Back"
                   modalId={`paybackModal${loan?.id}`}
-                  modalTitle="Make Loan Payment"
+                  modalTitle="Pay Back Loan"
                   modalContent={
-                    <div>
-                      <small>Loan Details</small>
-                      <p>
-                        {loan?.nftCollection.id} #{loan?.nftId}
-                      </p>
-                      <div className="row g-4">
-                        <div className="col-6 bg-secondary">
-                          <h6>
-                            {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
-                          </h6>
-                          <small>original borrow</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>{loan?.interest} %</h6>
-                          <small>interest date</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>{timeInfo.elapsedTime}</h6>
-                          <small>loan duration</small>
-                        </div>
-                        <div className="col-6 bg-secondary">
-                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-                          <small>amount due on expiry date</small>
-                        </div>
-                        <div className="col-12 bg-success">
-                          <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-                          <small>current payoff amount</small>
-                        </div>
-                      </div>
-                      <hr />
-                      <p className="text-start">Enter Amount</p>
-                      <div className="input-group">
-                        <input
-                          value={payBackAmount}
-                          onChange={(e) => setPayBackAmount(e.target.value)}
-                          type="number"
-                          className="me-2"
+                    <div className="modal-body">
+                      <p className="text-body-secondary">Loan Details</p>
+                      <div className="d-flex align-items-center">
+                        {/* Replace fixed image with proper image */}
+                        <img
+                          src="theme/images/image-1.png"
+                          className="img-fluid flex-shrink-0 me-3"
+                          width="32"
+                          alt="Image"
                         />
-                        <span>{loan?.lendingDesk?.erc20.symbol}</span>
+                        <h6 className="m-0">
+                          {loan?.nftCollection.id} #{loan?.nftId}
+                        </h6>
                       </div>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => makeLoanPayment(loan?.id)}
-                      >
-                        Make Loan Payment
-                      </button>
+                      <div className="container-fluid g-0 mt-3">
+                        <div className="row g-3">
+                          <div className="col-12 col-sm-6">
+                            <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <div className="h3">{loan?.amount}</div>
+                                <span className="text-body-secondary ms-2">
+                                  {loan?.lendingDesk?.erc20.symbol}
+                                </span>
+                              </div>
+                              <div className="text-body-secondary">
+                                original borrow amount
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <div className="h3">{loan?.interest}</div>
+                                <span className="text-body-secondary ms-2">
+                                  %
+                                </span>
+                              </div>
+                              <div className="text-body-secondary">
+                                interest rate
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <div className="h5">{timeInfo.elapsedTime}</div>
+                                <span className="text-body-secondary ms-2">
+                                  {}
+                                </span>
+                              </div>
+                              <div className="text-body-secondary">
+                                loan duration
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <div className="h3">[x]</div>
+                                <span className="text-body-secondary ms-2">
+                                  {loan?.lendingDesk?.erc20.symbol}
+                                </span>
+                              </div>
+                              <div className="text-body-secondary">
+                                amount due on expiry date
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-12">
+                            <div className="h-100 rounded bg-success-subtle text-center p-2">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <div className="h3">[x]</div>
+                                <span className="text-body-secondary ms-2">
+                                  {loan?.lendingDesk?.erc20.symbol}
+                                </span>
+                              </div>
+                              <div className="text-body-secondary">
+                                current payoff amount
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-top">
+                        <label htmlFor="enter-amount" className="form-label">
+                          Enter Amount
+                        </label>
+                        <div className="d-flex align-items-center">
+                          <input
+                            type="number"
+                            className="form-control form-control-lg flex-grow-1"
+                            id="enter-amount"
+                            placeholder="Enter Amount"
+                            value={payBackAmount}
+                            onChange={(e) => setPayBackAmount(e.target.value)}
+                          />
+                          {/* Fix image for currency */}
+                          <div className="d-flex align-items-center flex-shrink-0 ms-3">
+                            <img
+                              src="theme/images/usdc.svg"
+                              className="img-fluid flex-shrink-0 me-2"
+                              width="32"
+                              alt="Image"
+                            />
+                            <span>{loan?.lendingDesk?.erc20.symbol}</span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-5 py-3 lh-1"
+                          onClick={() => makeLoanPayment(loan?.id)}
+                        >
+                          Pay Now
+                        </button>
+                      </div>
                     </div>
                   }
                 />
