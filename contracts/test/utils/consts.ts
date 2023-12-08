@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-
 export enum LendingDeskStatus {
   Active,
   Frozen,
@@ -15,10 +13,10 @@ export enum LoanStatus {
 export type LoanConfig = {
   nftCollection: string;
   nftCollectionIsErc1155: boolean;
-  minAmount: BigNumber;
-  maxAmount: BigNumber;
-  minDuration: BigNumber;
-  maxDuration: BigNumber;
-  minInterest: BigNumber;
-  maxInterest: BigNumber;
+  minAmount: bigint;
+  maxAmount: bigint;
+  minDuration: bigint;
+  maxDuration: bigint;
+  minInterest: bigint;
+  maxInterest: bigint;
 };

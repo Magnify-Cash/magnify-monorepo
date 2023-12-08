@@ -7,12 +7,12 @@ describe("NFTY Finance: Set paused", () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
     // try pausing and unpausing both
-    await expect(nftyFinance.connect(alice).setPaused(true)).to.be.revertedWith(
-      "Ownable: caller is not the owner"
-    );
-    await expect(
-      nftyFinance.connect(alice).setPaused(false)
-    ).to.be.revertedWith("Ownable: caller is not the owner");
+    await expect(nftyFinance.connect(alice).setPaused(true))
+      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
+      .withArgs(alice.address);
+    await expect(nftyFinance.connect(alice).setPaused(false))
+      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
+      .withArgs(alice.address);
   });
 
   it("should fail to pause when already paused", async () => {
@@ -20,14 +20,14 @@ describe("NFTY Finance: Set paused", () => {
     await nftyFinance.setPaused(true);
 
     const tx = nftyFinance.setPaused(true);
-    expect(tx).to.be.revertedWith("Pausable: paused");
+    expect(tx).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should fail to unpause when not paused", async () => {
     const { nftyFinance } = await loadFixture(deployNftyFinance);
 
     const tx = nftyFinance.setPaused(false);
-    expect(tx).to.be.revertedWith("Pausable: unpaused");
+    expect(tx).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should pause", async () => {

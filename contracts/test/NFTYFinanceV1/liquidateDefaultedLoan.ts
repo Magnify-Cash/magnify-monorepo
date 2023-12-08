@@ -48,7 +48,7 @@ describe("NFTY Finance: Liquidate defaulted loan", () => {
 
     await expect(
       nftyFinance.connect(lender).liquidateDefaultedLoan(loanId)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should liquidate defaulted loan", async () => {

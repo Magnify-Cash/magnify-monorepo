@@ -1,12 +1,8 @@
-import * as React from "react";
 import { useWaitForTransaction } from "wagmi";
-import {
-  usePrepareTestErc20Mint,
-  useTestErc20Mint,
-} from "../../../wagmi-generated";
+import { usePrepareTestErc20Mint, useTestErc20Mint } from "@/wagmi-generated";
 import { useForm } from "react-hook-form";
 import { config } from "../config";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 
 type MintTokensForm = {
   tokenAddress: string;
@@ -32,8 +28,8 @@ export const MintTokens = () => {
     address: watch("tokenAddress"),
     args: [
       selectedToken
-        ? ethers.utils.parseUnits(selectedToken.mintAmount.toString(), 18)
-        : BigNumber.from(0),
+        ? ethers.parseUnits(selectedToken.mintAmount.toString(), 18)
+        : 0n,
     ],
   });
 
@@ -56,7 +52,9 @@ export const MintTokens = () => {
       >
         <option value="">Select token to mint</option>
         {config.contracts?.tokens.map((x) => (
-          <option value={x.address}>{x?.name}</option>
+          <option value={x.address} key={x.address}>
+            {x?.name}
+          </option>
         ))}
       </select>
       <button

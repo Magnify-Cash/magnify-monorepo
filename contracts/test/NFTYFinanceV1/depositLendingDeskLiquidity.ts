@@ -12,7 +12,7 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
 
     // Mint ERC20 to lender and approve to NFTYLending
     await erc20.connect(lender).mint(liquidityAmount);
-    await erc20.connect(lender).approve(nftyFinance.address, liquidityAmount);
+    await erc20.connect(lender).approve(nftyFinance.target, liquidityAmount);
 
     return {
       nftyFinance,
@@ -66,14 +66,14 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
 
     await expect(
       nftyFinance.depositLendingDeskLiquidity(lendingDeskId, liquidityAmount)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should add liquidity to lending desk", async () => {
     const { nftyFinance, lender, lendingDeskId, lendingDesk, erc20 } =
       await loadFixture(createLendingDeskAndApproveErc20);
 
-    const nftyFinanceBalance = await erc20.balanceOf(nftyFinance.address);
+    const nftyFinanceBalance = await erc20.balanceOf(nftyFinance.target);
     const lenderBalance = await erc20.balanceOf(lender.address);
 
     await expect(
@@ -85,18 +85,18 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
       .withArgs(lendingDeskId, liquidityAmount);
 
     // Check balances
-    const newNftyFinanceBalance = await erc20.balanceOf(nftyFinance.address);
+    const newNftyFinanceBalance = await erc20.balanceOf(nftyFinance.target);
     expect(newNftyFinanceBalance).to.equal(
-      nftyFinanceBalance.add(liquidityAmount)
+      nftyFinanceBalance + liquidityAmount
     );
 
     const newLenderBalance = await erc20.balanceOf(lender.address);
-    expect(newLenderBalance).to.equal(lenderBalance.sub(liquidityAmount));
+    expect(newLenderBalance).to.equal(lenderBalance - liquidityAmount);
 
     // Check lending desk liquidity
     const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
     expect(newLendingDesk.balance).to.equal(
-      lendingDesk.balance.add(liquidityAmount)
+      lendingDesk.balance + liquidityAmount
     );
   });
 });

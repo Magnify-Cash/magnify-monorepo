@@ -9,7 +9,7 @@ import {
   initializeProtocol,
 } from "../utils";
 import { handleNewLendingDeskInitialized } from "../../src/nfty-finance";
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { Erc20, LendingDesk } from "../../generated/schema";
 import {
   erc20Address,
@@ -71,7 +71,9 @@ test("Should create LendingDesk and Erc20 entities on NewLendingDeskInitialized"
 
   // Assert derived fields
   assert.arrayEquals(
-    erc20.lendingDesks.map<ethereum.Value>((x) => ethereum.Value.fromString(x)),
+    erc20.lendingDesks
+      .load()
+      .map<ethereum.Value>((x) => ethereum.Value.fromString(x.id)),
     [ethereum.Value.fromString(lendingDesk.id)]
   );
 });

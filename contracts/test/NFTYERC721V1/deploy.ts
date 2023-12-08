@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { NFTYERC721V1__factory } from "../../../typechain-types";
 
 describe("NFTY ERC721: Deploy", function () {
   const name = "NFTY ERC721";
@@ -10,14 +9,17 @@ describe("NFTY ERC721: Deploy", function () {
   it("should deploy", async () => {
     const [owner] = await ethers.getSigners();
 
-    const NFTYERC721V1 = (await ethers.getContractFactory(
-      "NFTYERC721V1"
-    )) as NFTYERC721V1__factory;
-    const nftyErc721 = await NFTYERC721V1.deploy(name, symbol, baseUri);
-    await nftyErc721.deployed();
+    const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
+    const nftyErc721 = await NFTYERC721V1.deploy(
+      name,
+      symbol,
+      baseUri,
+      owner.address
+    );
+    await nftyErc721.waitForDeployment();
 
     // Check emitted event
-    expect(nftyErc721.deployTransaction)
+    expect(nftyErc721.deploymentTransaction)
       .to.emit(nftyErc721, "Deployed")
       .withArgs(name, symbol, baseUri);
 
@@ -30,29 +32,29 @@ describe("NFTY ERC721: Deploy", function () {
   });
 
   it("should fail to deploy with empty name", async () => {
-    const NFTYERC721V1 = (await ethers.getContractFactory(
-      "NFTYERC721V1"
-    )) as NFTYERC721V1__factory;
-    await expect(NFTYERC721V1.deploy("", symbol, baseUri)).to.be.revertedWith(
-      "name cannot be empty"
-    );
+    const [owner] = await ethers.getSigners();
+
+    const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
+    await expect(
+      NFTYERC721V1.deploy("", symbol, baseUri, owner.address)
+    ).to.be.revertedWith("name cannot be empty");
   });
 
   it("should fail to deploy with empty symbol", async () => {
-    const NFTYERC721V1 = (await ethers.getContractFactory(
-      "NFTYERC721V1"
-    )) as NFTYERC721V1__factory;
-    await expect(NFTYERC721V1.deploy(name, "", baseUri)).to.be.revertedWith(
-      "symbol cannot be empty"
-    );
+    const [owner] = await ethers.getSigners();
+
+    const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
+    await expect(
+      NFTYERC721V1.deploy(name, "", baseUri, owner.address)
+    ).to.be.revertedWith("symbol cannot be empty");
   });
 
   it("should fail to deploy with empty base URI", async () => {
-    const NFTYERC721V1 = (await ethers.getContractFactory(
-      "NFTYERC721V1"
-    )) as NFTYERC721V1__factory;
-    await expect(NFTYERC721V1.deploy(name, symbol, "")).to.be.revertedWith(
-      "base URI cannot be empty"
-    );
+    const [owner] = await ethers.getSigners();
+
+    const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
+    await expect(
+      NFTYERC721V1.deploy(name, symbol, "", owner.address)
+    ).to.be.revertedWith("base URI cannot be empty");
   });
 });

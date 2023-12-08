@@ -46,7 +46,7 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
     await expect(
       nftyFinance
         .connect(lender)
-        .removeLendingDeskLoanConfig(lendingDeskId, erc721.address)
+        .removeLendingDeskLoanConfig(lendingDeskId, erc721.target)
     ).to.be.revertedWith("lending desk does not support NFT collection");
   });
 
@@ -67,9 +67,7 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
       lendingDeskId,
       loanConfig.nftCollection
     );
-    expect(loanConfigInStorage.nftCollection).to.equal(
-      ethers.constants.AddressZero
-    );
+    expect(loanConfigInStorage.nftCollection).to.equal(ethers.ZeroAddress);
   });
 
   it("should fail if contract is paused", async () => {
@@ -81,6 +79,6 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
       nftyFinance
         .connect(lender)
         .removeLendingDeskLoanConfig(lendingDeskId, loanConfig.nftCollection)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 });

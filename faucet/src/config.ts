@@ -71,12 +71,6 @@ const allConfigs: { [key: string]: Config } = {
     contracts: {
       tokens: [
         {
-          name: "NFTY Token",
-          address: deployments.nftyToken.address,
-          symbol: "NFTY",
-          mintAmount: 100,
-        },
-        {
           name: "USD Coin",
           address: deployments.usdc.address,
           symbol: "USDC",
@@ -107,6 +101,4 @@ const allConfigs: { [key: string]: Config } = {
   },
 };
 
-export const config =
-  // @ts-ignore
-  allConfigs[import.meta.env.VITE_CHAIN_NAME];
+export const config = allConfigs[import.meta.env.VITE_CHAIN_NAME];

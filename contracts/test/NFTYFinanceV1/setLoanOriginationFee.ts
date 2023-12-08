@@ -26,8 +26,8 @@ describe("NFTY Finance: Set loan origination fee", function () {
   it("should fail when caller is not admin", async () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
-    await expect(
-      nftyFinance.connect(alice).setLoanOriginationFee(100)
-    ).to.be.revertedWith("Ownable: caller is not the owner");
+    await expect(nftyFinance.connect(alice).setLoanOriginationFee(100))
+      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
+      .withArgs(alice.address);
   });
 });

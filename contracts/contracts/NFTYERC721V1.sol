@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.22;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -40,8 +40,9 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
     constructor(
         string memory name,
         string memory symbol,
-        string memory _baseURI
-    ) ERC721(name, symbol) {
+        string memory _baseURI,
+        address initialOwner
+    ) Ownable(initialOwner) ERC721(name, symbol) {
         require(bytes(name).length > 0, "name cannot be empty");
         require(bytes(symbol).length > 0, "symbol cannot be empty");
         require(bytes(_baseURI).length > 0, "base URI cannot be empty");
@@ -80,7 +81,7 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      */
     function mint(address to, uint256 tokenId) external onlyNftyFinance {
         require(to != address(0), "to address cannot be zero");
-        require(!_exists(tokenId), "token already exists");
+        require(!(_ownerOf(tokenId) != address(0)), "token already exists");
         _safeMint(to, tokenId);
     }
 
@@ -88,7 +89,7 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      * @dev Call _safeMint but requires caller to be the NFTY Finance contract
      */
     function burn(uint256 tokenId) external onlyNftyFinance {
-        require(_exists(tokenId), "token does not exist");
+        require((_ownerOf(tokenId) != address(0)), "token does not exist");
         _burn(tokenId);
     }
 

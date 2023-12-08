@@ -1,22 +1,14 @@
-import { getDefaultClient } from "connectkit";
 import { hardhat, polygonMumbai } from "wagmi/chains";
-import { createClient, configureChains } from "wagmi";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { publicProvider } from "@wagmi/core/providers/public";
+import { createConfig } from "wagmi";
+import { getDefaultConfig } from "connectkit";
 
-const { chains, provider } = configureChains(
-  [polygonMumbai, hardhat],
-  [
-    alchemyProvider({ apiKey: "GF9pxL1Y-2UnYKvXFBhAiRyePbd98OQ7" }),
-    publicProvider(),
-  ]
-);
+const walletConnectProjectId = "6f26f99d86d880b561988f69808456d3";
 
-export const client = createClient(
-  getDefaultClient({
+export const config = createConfig(
+  getDefaultConfig({
     autoConnect: true,
-    appName: "NFTY Finance Testnet Faucet",
-    chains,
-    provider,
+    appName: "NFTY.Finance Testnet Faucet",
+    walletConnectProjectId,
+    chains: [polygonMumbai, hardhat],
   })
 );

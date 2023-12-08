@@ -57,9 +57,9 @@ test("Should create LoanConfig and NftCollection entities on LendingDeskLoanConf
 
     // Assert derived fields
     assert.arrayEquals(
-      nftCollection.loanConfigs.map<ethereum.Value>((x) =>
-        ethereum.Value.fromString(x)
-      ),
+      nftCollection.loanConfigs
+        .load()
+        .map<ethereum.Value>((x) => ethereum.Value.fromString(x.id)),
       [ethereum.Value.fromString(loanConfigId)]
     );
   });

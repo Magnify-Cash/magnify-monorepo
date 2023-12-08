@@ -98,6 +98,6 @@ describe("NFTY Finance: Set lending desk state", () => {
 
     await expect(
       nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 });

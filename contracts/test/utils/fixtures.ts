@@ -1,73 +1,63 @@
 import { ethers } from "hardhat";
-import {
-  NFTYERC721V1__factory,
-  NFTYFinanceV1,
-  NFTYFinanceV1__factory,
-  NFTYLendingKeysV1__factory,
-  NFTYObligationNotesV1__factory,
-  NFTYPromissoryNotesV1__factory,
-  TestERC1155__factory,
-  TestERC20__factory,
-  TestERC721__factory,
-} from "../../../typechain-types";
 import { LoanConfig } from "./consts";
-import { BigNumber } from "ethers";
+import { getEvent } from "./utils";
 
 export const deployNftyFinance = async () => {
+  const [owner, alice] = await ethers.getSigners();
+
   // Promissory Notes
-  const PromissoryNotes = (await ethers.getContractFactory(
+  const PromissoryNotes = await ethers.getContractFactory(
     "NFTYPromissoryNotesV1"
-  )) as NFTYPromissoryNotesV1__factory;
+  );
   const promissoryNotes = await PromissoryNotes.deploy(
     "NFTY Promissory Notes",
     "LEND",
-    "https://metadata.nfty.finance/LEND/"
+    "https://metadata.nfty.finance/LEND/",
+    owner.address
   );
-  await promissoryNotes.deployed();
+  await promissoryNotes.waitForDeployment();
 
   // Obligation Notes
-  const ObligationNotes = (await ethers.getContractFactory(
+  const ObligationNotes = await ethers.getContractFactory(
     "NFTYObligationNotesV1"
-  )) as NFTYObligationNotesV1__factory;
+  );
   const obligationNotes = await ObligationNotes.deploy(
     "NFTY Obligation Notes",
     "BORROW",
-    "https://metadata.nfty.finance/BORROW/"
+    "https://metadata.nfty.finance/BORROW/",
+    owner.address
   );
-  await obligationNotes.deployed();
+  await obligationNotes.waitForDeployment();
 
   // Lending Keys
-  const LendingKeys = (await ethers.getContractFactory(
-    "NFTYLendingKeysV1"
-  )) as NFTYLendingKeysV1__factory;
+  const LendingKeys = await ethers.getContractFactory("NFTYLendingKeysV1");
   const lendingKeys = await LendingKeys.deploy(
     "NFTY Lending Keys",
     "KEYS",
-    "https://metadata.nfty.finance/KEYS/"
+    "https://metadata.nfty.finance/KEYS/",
+    owner.address
   );
-  await lendingKeys.deployed();
+  await lendingKeys.waitForDeployment();
 
-  const NFTYFinance = (await ethers.getContractFactory(
-    "NFTYFinanceV1"
-  )) as NFTYFinanceV1__factory;
+  const NFTYFinance = await ethers.getContractFactory("NFTYFinanceV1");
 
-  const loanOriginationFee = 200;
-  const [owner, alice] = await ethers.getSigners();
+  const loanOriginationFee = 200n;
   const platformWallet = ethers.Wallet.createRandom().address;
 
-  const nftyFinance = (await NFTYFinance.deploy(
-    promissoryNotes.address,
-    obligationNotes.address,
-    lendingKeys.address,
+  const nftyFinance = await NFTYFinance.deploy(
+    promissoryNotes.target,
+    obligationNotes.target,
+    lendingKeys.target,
     loanOriginationFee,
-    platformWallet
-  )) as NFTYFinanceV1;
-  await nftyFinance.deployed();
+    platformWallet,
+    owner.address
+  );
+  await nftyFinance.waitForDeployment();
 
   // Configuration
-  await promissoryNotes.setNftyFinance(nftyFinance.address);
-  await obligationNotes.setNftyFinance(nftyFinance.address);
-  await lendingKeys.setNftyFinance(nftyFinance.address);
+  await promissoryNotes.setNftyFinance(nftyFinance.target);
+  await obligationNotes.setNftyFinance(nftyFinance.target);
+  await lendingKeys.setNftyFinance(nftyFinance.target);
 
   return {
     nftyFinance,
@@ -82,29 +72,23 @@ export const deployNftyFinance = async () => {
 };
 
 export const deployTestTokens = async () => {
-  const TestERC20 = (await ethers.getContractFactory(
-    "TestERC20"
-  )) as TestERC20__factory;
+  const TestERC20 = await ethers.getContractFactory("TestERC20");
   const erc20 = await TestERC20.deploy("USD Coin", "USDC");
-  await erc20.deployed();
+  await erc20.waitForDeployment();
 
-  const TestERC721 = (await ethers.getContractFactory(
-    "TestERC721"
-  )) as TestERC721__factory;
+  const TestERC721 = await ethers.getContractFactory("TestERC721");
   const erc721 = await TestERC721.deploy(
     "Doodles",
     "DOODLE",
     "ipfs://QmPMc4tcBsMqLRuCQtPmPe84bpSjrC3Ky7t3JWuHXYB4aS/"
   );
-  await erc721.deployed();
+  await erc721.waitForDeployment();
 
-  const TestERC1155 = (await ethers.getContractFactory(
-    "TestERC1155"
-  )) as TestERC1155__factory;
+  const TestERC1155 = await ethers.getContractFactory("TestERC1155");
   const erc1155 = await TestERC1155.deploy(
     "https://api.polygonpunks.io/metadata/"
   );
-  await erc1155.deployed();
+  await erc1155.waitForDeployment();
 
   return { erc20, erc721, erc1155 };
 };
@@ -137,18 +121,15 @@ export const initializeLendingDesk = async () => {
 
   // Get ERC20 and approve
   await erc20.connect(lender).mint(initialBalance);
-  await erc20.connect(lender).approve(nftyFinance.address, initialBalance);
+  await erc20.connect(lender).approve(nftyFinance.getAddress(), initialBalance);
 
   // Create liquidity shop
   const tx = await nftyFinance
     .connect(lender)
-    .initializeNewLendingDesk(erc20.address, initialBalance, []);
+    .initializeNewLendingDesk(erc20.getAddress(), initialBalance, []);
 
   // Get liquidity shop from event
-  const { events } = await tx.wait();
-  const event = events?.find(
-    (event) => event.event == "NewLendingDeskInitialized"
-  )?.args;
+  const event = await getEvent(tx, "NewLendingDeskInitialized");
   const lendingDeskId = event?.lendingDeskId;
   const lendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
 
@@ -176,14 +157,14 @@ export const initializeLendingDeskAndAddLoanConfig = async () => {
     await initializeLendingDesk();
 
   const loanConfig: LoanConfig = {
-    nftCollection: erc721.address,
+    nftCollection: await erc721.getAddress(),
     nftCollectionIsErc1155: false,
-    minAmount: ethers.utils.parseUnits("10", 18),
-    maxAmount: ethers.utils.parseUnits("100", 18),
-    minDuration: BigNumber.from(24),
-    maxDuration: BigNumber.from(240),
-    minInterest: BigNumber.from(200),
-    maxInterest: BigNumber.from(1500),
+    minAmount: ethers.parseUnits("10", 18),
+    maxAmount: ethers.parseUnits("100", 18),
+    minDuration: 24n,
+    maxDuration: 240n,
+    minInterest: 200n,
+    maxInterest: 1500n,
   };
 
   await nftyFinance
@@ -194,7 +175,7 @@ export const initializeLendingDeskAndAddLoanConfig = async () => {
 
 export const initializeLoan = async () => {
   const loanDuration = 30;
-  const loanAmount = ethers.utils.parseUnits("20", 18);
+  const loanAmount = ethers.parseUnits("20", 18);
   const nftId = 0;
 
   const { borrower, erc20, erc721, nftyFinance, lendingDeskId, ...rest } =
@@ -205,24 +186,21 @@ export const initializeLoan = async () => {
   await erc721.connect(borrower).mint(1);
 
   // Approve NFTYLending to transfer tokens
-  await erc20.connect(borrower).approve(nftyFinance.address, 10000);
-  await erc721.connect(borrower).approve(nftyFinance.address, nftId);
+  await erc20.connect(borrower).approve(nftyFinance.target, 10000);
+  await erc721.connect(borrower).approve(nftyFinance.target, nftId);
 
   const tx = await nftyFinance
     .connect(borrower)
     .initializeNewLoan(
       lendingDeskId,
-      erc721.address,
+      erc721.target,
       nftId,
       loanDuration,
       loanAmount
     );
 
   // Get details from event
-  const { events } = await tx.wait();
-  const event = events?.find(
-    (event) => event.event == "NewLoanInitialized"
-  )?.args;
+  const event = await getEvent(tx, "NewLoanInitialized");
   const loanId = event?.loanId;
   const interest = event?.interest;
   const platformFee = event?.platformFee;
@@ -249,20 +227,19 @@ export const initializeLoan = async () => {
 
 export const calculateRepaymentAmount = async (
   loanStartTime: number,
-  loanAmount: BigNumber,
+  loanAmount: bigint,
   interest: number
 ) => {
-  const secondsInYear = 31536000;
-  const secondsInHour = 3600;
-  const secondsSinceLoanStart = Math.floor(Date.now() / 1000) - loanStartTime;
-
-  const totalAmountDue = loanAmount.add(
-    loanAmount
-      .mul(interest)
-      .mul(secondsSinceLoanStart)
-      .div(secondsInYear * secondsInHour * 10000)
+  const secondsInYear = 31536000n;
+  const secondsInHour = 3600n;
+  const secondsSinceLoanStart = BigInt(
+    Math.floor(Date.now() / 1000) - loanStartTime
   );
 
+  const totalAmountDue =
+    loanAmount +
+    (loanAmount * BigInt(interest) * secondsSinceLoanStart) /
+      (secondsInYear * secondsInHour * 10000n);
   return totalAmountDue;
 };
 
@@ -273,11 +250,14 @@ export const deployNftyErc721 = async () => {
 
   const [owner, alice, nftyFinance] = await ethers.getSigners();
 
-  const NFTYERC721V1 = (await ethers.getContractFactory(
-    "NFTYERC721V1"
-  )) as NFTYERC721V1__factory;
-  const nftyErc721 = await NFTYERC721V1.deploy(name, symbol, baseUri);
-  await nftyErc721.deployed();
+  const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
+  const nftyErc721 = await NFTYERC721V1.deploy(
+    name,
+    symbol,
+    baseUri,
+    owner.address
+  );
+  await nftyErc721.waitForDeployment();
 
   return {
     name,

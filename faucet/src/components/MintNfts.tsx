@@ -1,12 +1,7 @@
-import * as React from "react";
 import { useWaitForTransaction } from "wagmi";
-import { config } from "../config";
+import { config } from "@/config";
 import { useForm } from "react-hook-form";
-import {
-  usePrepareTestErc721Mint,
-  useTestErc721Mint,
-} from "../../../wagmi-generated";
-import { BigNumber } from "ethers";
+import { usePrepareTestErc721Mint, useTestErc721Mint } from "@/wagmi-generated";
 
 type MintNftsForm = {
   nftAddress: string;
@@ -30,9 +25,9 @@ export const MintNfts = () => {
     chainId: config.chainId,
     // @ts-ignore
     address: watch("nftAddress"),
-    args: [BigNumber.from(selectedNft ? selectedNft.mintAmount : 0)],
+    args: [selectedNft ? BigInt(selectedNft.mintAmount) : 0n],
     overrides: {
-      gasLimit: BigNumber.from(3000000),
+      gasLimit: 3000000n,
     },
   });
 
@@ -55,7 +50,9 @@ export const MintNfts = () => {
       >
         <option value="">Select NFT collection to mint</option>
         {config.contracts?.nftCollections.map((x) => (
-          <option value={x.address}>{x?.name}</option>
+          <option value={x.address} key={x.address}>
+            {x?.name}
+          </option>
         ))}
       </select>
       <button

@@ -5,7 +5,7 @@ import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { LoanStatus } from "../utils/consts";
 
 describe("NFTY Finance: Make loan payment", () => {
-  const partialPaymentAmount = ethers.utils.parseUnits("3", 18);
+  const partialPaymentAmount = ethers.parseUnits("3", 18);
 
   const setup = async () => {
     const { nftyFinance, borrower, erc20, loanAmount, loanConfig, ...rest } =
@@ -15,10 +15,10 @@ describe("NFTY Finance: Make loan payment", () => {
     await erc20.connect(borrower).mint(loanAmount);
     await erc20
       .connect(borrower)
-      .approve(nftyFinance.address, ethers.constants.MaxUint256);
+      .approve(nftyFinance.target, ethers.MaxUint256);
 
     // pass time for loan duration
-    await time.increase(loanConfig.minDuration.mul(3600));
+    await time.increase(loanConfig.minDuration * 3600n);
 
     // return
     return { nftyFinance, borrower, erc20, loanAmount, loanConfig, ...rest };
@@ -64,7 +64,7 @@ describe("NFTY Finance: Make loan payment", () => {
 
     await expect(
       nftyFinance.connect(borrower).makeLoanPayment(loanId, 0)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should fail if payment amount > debt", async () => {
@@ -76,9 +76,8 @@ describe("NFTY Finance: Make loan payment", () => {
         .connect(borrower)
         .makeLoanPayment(
           loanId,
-          loanAmount.add(
-            loanAmount.mul(loanConfig.maxInterest.mul(loanConfig.maxDuration))
-          )
+          loanAmount +
+            loanAmount * loanConfig.maxInterest * loanConfig.maxDuration
         )
     ).to.be.revertedWith("payment amount > debt");
   });
@@ -97,7 +96,7 @@ describe("NFTY Finance: Make loan payment", () => {
 
     const newLoan = await nftyFinance.loans(loanId);
     expect(newLoan.amountPaidBack).to.equal(
-      loan.amountPaidBack.add(partialPaymentAmount)
+      loan.amountPaidBack + partialPaymentAmount
     );
     expect(newLoan.status).to.equal(LoanStatus.Active);
   });
@@ -126,11 +125,11 @@ describe("NFTY Finance: Make loan payment", () => {
     // NFTYNotes should be burned
     expect(tx)
       .to.emit(promissoryNotes, "Transfer")
-      .withArgs(loanId, borrower.address, ethers.constants.AddressZero);
+      .withArgs(loanId, borrower.address, ethers.ZeroAddress);
 
     expect(tx)
       .to.emit(obligationNotes, "Transfer")
-      .withArgs(loanId, lender.address, ethers.constants.AddressZero);
+      .withArgs(loanId, lender.address, ethers.ZeroAddress);
 
     const newLoan = await nftyFinance.loans(loanId);
     expect(newLoan.status).to.equal(LoanStatus.Resolved);

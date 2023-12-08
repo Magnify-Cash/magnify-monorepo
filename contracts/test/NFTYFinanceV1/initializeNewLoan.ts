@@ -6,12 +6,12 @@ import {
 import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { ethers } from "hardhat";
-import { BigNumber } from "ethers";
 import { LoanConfig } from "../utils/consts";
+import { getEvent } from "../utils/utils";
 
 describe("NFTY Finance: Initialize new loan", () => {
   const loanDuration = 30;
-  const loanAmount = ethers.utils.parseUnits("20", 18);
+  const loanAmount = ethers.parseUnits("20", 18);
   const nftId = 0;
 
   const setup = async () => {
@@ -23,8 +23,8 @@ describe("NFTY Finance: Initialize new loan", () => {
     await erc721.connect(borrower).mint(1);
 
     // Approve NFTYLending to transfer tokens
-    await erc20.connect(borrower).approve(nftyFinance.address, 10000);
-    await erc721.connect(borrower).approve(nftyFinance.address, nftId);
+    await erc20.connect(borrower).approve(nftyFinance.target, 10000);
+    await erc721.connect(borrower).approve(nftyFinance.target, nftId);
 
     return { borrower, erc20, erc721, nftyFinance, ...rest };
   };
@@ -42,7 +42,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         .connect(borrower)
         .initializeNewLoan(
           invalidLendingDeskId,
-          erc721.address,
+          erc721.target,
           nftId,
           loanDuration,
           loanAmount
@@ -58,7 +58,7 @@ describe("NFTY Finance: Initialize new loan", () => {
     await expect(
       nftyFinance.connect(borrower).initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
         10, // loan duration
         loanAmount
@@ -74,7 +74,7 @@ describe("NFTY Finance: Initialize new loan", () => {
     await expect(
       nftyFinance.connect(borrower).initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
         300, // loan duration
         loanAmount
@@ -90,10 +90,10 @@ describe("NFTY Finance: Initialize new loan", () => {
     await expect(
       nftyFinance.connect(borrower).initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
         loanDuration,
-        ethers.utils.parseUnits("5", 18) // loan amount
+        ethers.parseUnits("5", 18) // loan amount
       )
     ).to.be.revertedWith("amount < min amount");
   });
@@ -106,10 +106,10 @@ describe("NFTY Finance: Initialize new loan", () => {
     await expect(
       nftyFinance.connect(borrower).initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
         loanDuration,
-        ethers.utils.parseUnits("200", 18) // loan amount
+        ethers.parseUnits("200", 18) // loan amount
       )
     ).to.be.revertedWith("amount > max amount");
   });
@@ -125,12 +125,12 @@ describe("NFTY Finance: Initialize new loan", () => {
         .connect(borrower)
         .initializeNewLoan(
           lendingDeskId,
-          erc721.address,
+          erc721.target,
           nftId,
           loanDuration,
           loanAmount
         )
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should fail if lending desk does not support NFT collection", async () => {
@@ -140,12 +140,12 @@ describe("NFTY Finance: Initialize new loan", () => {
     // Remove support for ERC721
     await nftyFinance
       .connect(lender)
-      .removeLendingDeskLoanConfig(lendingDeskId, erc721.address);
+      .removeLendingDeskLoanConfig(lendingDeskId, erc721.target);
 
     await expect(
       nftyFinance.connect(borrower).initializeNewLoan(
         lendingDeskId,
-        erc721.address, // not supported
+        erc721.target, // not supported
         nftId,
         loanDuration,
         loanAmount
@@ -163,22 +163,20 @@ describe("NFTY Finance: Initialize new loan", () => {
       lender,
     } = await loadFixture(setup);
 
-    const withdrawAmount = ethers.utils.parseUnits("990", 18);
+    const withdrawAmount = ethers.parseUnits("990", 18);
     await nftyFinance
       .connect(lender)
       .withdrawLendingDeskLiquidity(lendingDeskId, withdrawAmount);
 
     // make sure balance is less than loan amount
-    expect(loanAmount).to.be.greaterThan(
-      lendingDesk.balance.sub(withdrawAmount)
-    );
+    expect(loanAmount).to.be.greaterThan(lendingDesk.balance - withdrawAmount);
 
     await expect(
       nftyFinance
         .connect(borrower)
         .initializeNewLoan(
           lendingDeskId,
-          erc721.address,
+          erc721.target,
           nftId,
           loanDuration,
           loanAmount
@@ -197,7 +195,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         .connect(borrower)
         .initializeNewLoan(
           lendingDeskId,
-          erc721.address,
+          erc721.target,
           nftId,
           loanDuration,
           loanAmount
@@ -218,24 +216,24 @@ describe("NFTY Finance: Initialize new loan", () => {
     // Check platform wallet balance
     const initialPlatformWalletBalance = await erc20.balanceOf(platformWallet);
 
-    const tx = nftyFinance
+    const tx = await nftyFinance
       .connect(borrower)
       .initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
         loanDuration,
         loanAmount
       );
 
-    const platformFee = loanAmount.mul(2).div(100); // 2% of loan amount
+    const platformFee = (loanAmount * 2n) / 100n; // 2% of loan amount
 
     // Check emitted event
     await expect(tx).to.emit(nftyFinance, "NewLoanInitialized").withArgs(
       lendingDeskId,
       anyValue, // loanId
       borrower.address,
-      erc721.address,
+      erc721.target,
       nftId,
       loanAmount,
       loanDuration,
@@ -244,24 +242,21 @@ describe("NFTY Finance: Initialize new loan", () => {
     );
 
     // Check loan details in storage
-    const { events } = await (await tx).wait();
-    const event = events?.find(
-      (event) => event.event == "NewLoanInitialized"
-    )?.args;
+    const event = await getEvent(tx, "NewLoanInitialized");
     const loanId = event?.loanId;
 
     const loan = await nftyFinance.loans(loanId);
     expect(loan.amount).to.equal(loanAmount);
     expect(loan.duration).to.equal(loanDuration);
     expect(loan.amountPaidBack).to.equal(0);
-    expect(loan.nftCollection).to.equal(erc721.address);
+    expect(loan.nftCollection).to.equal(erc721.target);
     expect(loan.nftId).to.equal(nftId);
     expect(loan.lendingDeskId).to.equal(lendingDeskId);
     expect(loan.status).to.equal(0); // LoanStatus.Active
 
     // Check platform wallet balance has increased
     const platformWalletBalance = await erc20.balanceOf(platformWallet);
-    expect(platformWalletBalance.sub(initialPlatformWalletBalance)).to.equal(
+    expect(platformWalletBalance - initialPlatformWalletBalance).to.equal(
       platformFee
     );
   });
@@ -272,14 +267,14 @@ describe("NFTY Finance: Initialize new loan", () => {
 
     // Set loan config with constant values
     const loanConfig: LoanConfig = {
-      nftCollection: erc721.address,
+      nftCollection: erc721.target as string,
       nftCollectionIsErc1155: false,
-      minAmount: ethers.utils.parseUnits("10", 18),
-      maxAmount: ethers.utils.parseUnits("10", 18),
-      minDuration: BigNumber.from(24),
-      maxDuration: BigNumber.from(24),
-      minInterest: BigNumber.from(200),
-      maxInterest: BigNumber.from(200),
+      minAmount: ethers.parseUnits("10", 18),
+      maxAmount: ethers.parseUnits("10", 18),
+      minDuration: BigInt(24),
+      maxDuration: BigInt(24),
+      minInterest: BigInt(200),
+      maxInterest: 200n,
     };
     await nftyFinance
       .connect(lender)
@@ -290,18 +285,18 @@ describe("NFTY Finance: Initialize new loan", () => {
     await erc721.connect(borrower).mint(1);
 
     // Approve NFTYLending to transfer tokens
-    await erc20.connect(borrower).approve(nftyFinance.address, 10000);
-    await erc721.connect(borrower).approve(nftyFinance.address, nftId);
+    await erc20.connect(borrower).approve(nftyFinance.target, 10000);
+    await erc721.connect(borrower).approve(nftyFinance.target, nftId);
 
     // Create loan
     const tx = await nftyFinance
       .connect(borrower)
       .initializeNewLoan(
         lendingDeskId,
-        erc721.address,
+        erc721.target,
         nftId,
-        BigNumber.from(24),
-        ethers.utils.parseUnits("10", 18)
+        24n,
+        ethers.parseUnits("10", 18)
       );
     // Make sure it passes
     await expect(tx).to.emit(nftyFinance, "NewLoanInitialized");

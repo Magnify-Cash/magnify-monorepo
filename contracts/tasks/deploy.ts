@@ -1,5 +1,4 @@
 import { task } from "hardhat/config";
-import { NFTYFinanceV1__factory } from "../../typechain-types";
 import { readFile, writeFile } from "fs/promises";
 import { Contract } from "ethers";
 
@@ -19,8 +18,8 @@ task(
   });
 
   // Mint 10,000 ERC20s to deployer
-  await usdc.mint(hre.ethers.utils.parseEther("10000"));
-  await dai.mint(hre.ethers.utils.parseEther("10000"));
+  await usdc.mint(hre.ethers.parseEther("10000"));
+  await dai.mint(hre.ethers.parseEther("10000"));
 
   // Deploy NFT Collections
   const doodles: Contract = await hre.run("deploy-nft-collection", {
@@ -58,56 +57,57 @@ task(
   const platformWallet = hre.ethers.Wallet.createRandom().address;
 
   // Deploy NFTYFinance
-  const NFTYFinanceV1 = (await hre.ethers.getContractFactory(
-    "NFTYFinanceV1"
-  )) as NFTYFinanceV1__factory;
+  const [owner] = await hre.ethers.getSigners();
+
+  const NFTYFinanceV1 = await hre.ethers.getContractFactory("NFTYFinanceV1");
   const nftyFinance = await NFTYFinanceV1.deploy(
-    promissoryNotes.address,
-    obligationNotes.address,
-    lendingKeys.address,
+    promissoryNotes.target,
+    obligationNotes.target,
+    lendingKeys.target,
     200,
-    platformWallet
+    platformWallet,
+    owner.address
   );
-  await nftyFinance.deployed();
+  await nftyFinance.waitForDeployment();
 
   // Set NFTYFinance address in NFTYERC721s
-  await promissoryNotes.setNftyFinance(nftyFinance.address);
-  await obligationNotes.setNftyFinance(nftyFinance.address);
-  await lendingKeys.setNftyFinance(nftyFinance.address);
+  await promissoryNotes.setNftyFinance(nftyFinance.target);
+  await obligationNotes.setNftyFinance(nftyFinance.target);
+  await lendingKeys.setNftyFinance(nftyFinance.target);
 
   // Write addresses to deployments.json
   const deployments = {
     nftyFinance: {
-      address: nftyFinance.address,
-      startBlock: nftyFinance.deployTransaction.blockNumber,
+      address: nftyFinance.target,
+      startBlock: nftyFinance.deploymentTransaction()?.blockNumber,
     },
     promissoryNotes: {
-      address: promissoryNotes.address,
-      startBlock: promissoryNotes.deployTransaction.blockNumber,
+      address: promissoryNotes.target,
+      startBlock: promissoryNotes.deploymentTransaction()?.blockNumber,
     },
     obligationNotes: {
-      address: obligationNotes.address,
-      startBlock: obligationNotes.deployTransaction.blockNumber,
+      address: obligationNotes.target,
+      startBlock: obligationNotes.deploymentTransaction()?.blockNumber,
     },
     lendingKeys: {
-      address: lendingKeys.address,
-      startBlock: lendingKeys.deployTransaction.blockNumber,
+      address: lendingKeys.target,
+      startBlock: lendingKeys.deploymentTransaction()?.blockNumber,
     },
     punks: {
-      address: punks.address,
-      startBlock: punks.deployTransaction.blockNumber,
+      address: punks.target,
+      startBlock: punks.deploymentTransaction()?.blockNumber,
     },
     doodles: {
-      address: doodles.address,
-      startBlock: doodles.deployTransaction.blockNumber,
+      address: doodles.target,
+      startBlock: doodles.deploymentTransaction()?.blockNumber,
     },
     usdc: {
-      address: usdc.address,
-      startBlock: usdc.deployTransaction.blockNumber,
+      address: usdc.target,
+      startBlock: usdc.deploymentTransaction()?.blockNumber,
     },
     dai: {
-      address: dai.address,
-      startBlock: dai.deployTransaction.blockNumber,
+      address: dai.target,
+      startBlock: dai.deploymentTransaction()?.blockNumber,
     },
   };
   await writeFile(
@@ -130,6 +130,6 @@ task(
     JSON.stringify(networks, undefined, 2)
   );
 
-  console.log("NFTYFinance deployed @", nftyFinance.address);
+  console.log("NFTYFinance deployed @", nftyFinance.target);
   console.log("Platform wallet:", platformWallet);
 });

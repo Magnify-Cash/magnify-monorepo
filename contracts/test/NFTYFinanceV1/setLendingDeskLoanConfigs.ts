@@ -1,9 +1,10 @@
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { initializeLendingDesk } from "../utils/fixtures";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { LoanConfig } from "../utils/consts";
+import { getEvent } from "../utils/utils";
 
 describe("NFTY Finance: Set lending desk loan configs", () => {
   const setup = async () => {
@@ -13,24 +14,24 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
 
     const loanConfigParams: LoanConfig[] = [
       {
-        nftCollection: erc721.address,
+        nftCollection: erc721.target as string,
         nftCollectionIsErc1155: false,
-        minAmount: ethers.utils.parseUnits("10", 18),
-        maxAmount: ethers.utils.parseUnits("100", 18),
-        minDuration: BigNumber.from(6),
-        maxDuration: BigNumber.from(48),
-        minInterest: BigNumber.from(10 * 100),
-        maxInterest: BigNumber.from(15 * 100),
+        minAmount: ethers.parseUnits("10", 18),
+        maxAmount: ethers.parseUnits("100", 18),
+        minDuration: 6n,
+        maxDuration: 48n,
+        minInterest: 10n * 100n,
+        maxInterest: 15n * 100n,
       },
       {
-        nftCollection: erc1155.address,
+        nftCollection: erc1155.target as string,
         nftCollectionIsErc1155: true,
-        minAmount: ethers.utils.parseUnits("80", 18),
-        maxAmount: ethers.utils.parseUnits("200", 18),
-        minDuration: BigNumber.from(24),
-        maxDuration: BigNumber.from(240),
-        minInterest: BigNumber.from(2 * 100),
-        maxInterest: BigNumber.from(15 * 100),
+        minAmount: ethers.parseUnits("80", 18),
+        maxAmount: ethers.parseUnits("200", 18),
+        minDuration: 24n,
+        maxDuration: 240n,
+        minInterest: 2n * 100n,
+        maxInterest: 15n * 100n,
       },
     ];
 
@@ -41,8 +42,8 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
     const { nftyFinance, lender, loanConfigParams, lendingDeskId } =
       await loadFixture(setup);
 
-    const invalidLendingDeskId = 10;
-    expect(invalidLendingDeskId).to.not.equal(lendingDeskId.toNumber());
+    const invalidLendingDeskId = 10n;
+    expect(invalidLendingDeskId).to.not.equal(lendingDeskId);
 
     await expect(
       nftyFinance
@@ -61,7 +62,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance
         .connect(lender)
         .setLendingDeskLoanConfigs(lendingDeskId, loanConfigParams)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -83,7 +84,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          nftCollection: ethers.constants.AddressZero,
+          nftCollection: ethers.ZeroAddress,
         },
       ])
     ).to.be.revertedWith("invalid nft collection");
@@ -97,7 +98,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          nftCollection: erc1155.address,
+          nftCollection: erc1155.target,
           nftCollectionIsErc1155: false,
         },
       ])
@@ -112,7 +113,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          nftCollection: erc721.address,
+          nftCollection: erc721.target,
           nftCollectionIsErc1155: true,
         },
       ])
@@ -128,7 +129,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          minAmount: BigNumber.from(0),
+          minAmount: 0n,
         },
       ])
     ).to.be.revertedWith("min amount = 0");
@@ -138,7 +139,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          maxAmount: ethers.utils.parseUnits("5", 18),
+          maxAmount: ethers.parseUnits("5", 18),
         },
       ])
     ).to.be.revertedWith("max amount < min amount");
@@ -148,7 +149,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          minInterest: BigNumber.from(0),
+          minInterest: 0n,
         },
       ])
     ).to.be.revertedWith("min interest = 0");
@@ -158,7 +159,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          maxInterest: BigNumber.from(5 * 100),
+          maxInterest: 5n * 100n,
         },
       ])
     ).to.be.revertedWith("max interest < min interest");
@@ -168,7 +169,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          minDuration: BigNumber.from(0),
+          minDuration: 0n,
         },
       ])
     ).to.be.revertedWith("min duration = 0");
@@ -178,7 +179,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          maxDuration: BigNumber.from(5),
+          maxDuration: 5n,
         },
       ])
     ).to.be.revertedWith("max duration < min duration");
@@ -198,10 +199,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       .withArgs(lendingDeskId, anyValue);
 
     // Get loan configs from event and check
-    const { events } = await tx.wait();
-    const event = events?.find(
-      (event) => event.event == "LendingDeskLoanConfigsSet"
-    )?.args;
+    const event = await getEvent(tx, "LendingDeskLoanConfigsSet");
     expect(event?.loanConfigs.length).to.equal(2);
 
     for (let i = 0; i < 2; i++) {
@@ -255,10 +253,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       .withArgs(lendingDeskId, anyValue);
 
     // Get loan configs from event and check
-    const { events } = await tx.wait();
-    const event = events?.find(
-      (event) => event.event == "LendingDeskLoanConfigsSet"
-    )?.args;
+    const event = await getEvent(tx, "LendingDeskLoanConfigsSet");
     expect(event?.loanConfigs.length).to.equal(2);
 
     const eventLoanConfig = event?.loanConfigs[1];
@@ -301,10 +296,10 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance.connect(lender).setLendingDeskLoanConfigs(lendingDeskId, [
         {
           ...loanConfigParams[0],
-          minDuration: BigNumber.from(24 * 10),
-          maxDuration: BigNumber.from(24 * 10),
-          minAmount: ethers.utils.parseUnits("100", 18),
-          maxAmount: ethers.utils.parseUnits("100", 18),
+          minDuration: 24n * 10n,
+          maxDuration: 24n * 10n,
+          minAmount: ethers.parseUnits("100", 18),
+          maxAmount: ethers.parseUnits("100", 18),
         },
       ])
     ).to.be.revertedWith(

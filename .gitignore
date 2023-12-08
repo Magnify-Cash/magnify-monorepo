@@ -1,5 +1,4 @@
 node_modules
-typechain-types
 artifacts
 cache
 .env
@@ -7,3 +6,4 @@ graph-node
 **.DS_Store
 .nova
 deployments.json
+typechain-types

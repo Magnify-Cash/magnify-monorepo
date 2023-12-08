@@ -21,9 +21,7 @@ describe("NFTY ERC721: Mint", () => {
     );
 
     await expect(
-      nftyErc721
-        .connect(nftyFinance)
-        .mint(ethers.constants.AddressZero, tokenId)
+      nftyErc721.connect(nftyFinance).mint(ethers.ZeroAddress, tokenId)
     ).to.be.revertedWith("to address cannot be zero");
   });
 
@@ -47,7 +45,7 @@ describe("NFTY ERC721: Mint", () => {
     // Check emitted event and storage
     expect(tx)
       .to.emit(nftyErc721, "Transfer")
-      .withArgs(ethers.constants.AddressZero, mintTo, tokenId);
+      .withArgs(ethers.ZeroAddress, mintTo, tokenId);
     expect(await nftyErc721.ownerOf(tokenId)).to.equal(mintTo);
   });
 });

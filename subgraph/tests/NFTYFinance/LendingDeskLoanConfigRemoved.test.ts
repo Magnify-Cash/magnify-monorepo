@@ -46,9 +46,9 @@ test("Should remove LoanConfig on LendingDeskLoanConfigRemoved", () => {
     if (!nftCollection) return;
 
     assert.arrayEquals(
-      nftCollection.loanConfigs.map<ethereum.Value>((x) =>
-        ethereum.Value.fromString(x)
-      ),
+      nftCollection.loanConfigs
+        .load()
+        .map<ethereum.Value>((x) => ethereum.Value.fromString(x.id)),
       []
     );
   });

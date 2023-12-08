@@ -8,7 +8,7 @@ import {
   useNftyLendingCreateLiquidityShop,
 } from "../../../../wagmi-generated";
 import { Web3Button } from "@/components";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useNetwork } from "wagmi";
@@ -51,7 +51,7 @@ export const CreateShopConfirm = () => {
       functionName: "approve",
       args: [
         getProtocolAddress(chain?.id),
-        ethers.utils.parseUnits(
+        ethers.parseUnits(
           state.form.shopAmount?.toString(),
           state.erc20.decimals
         ),
@@ -89,14 +89,11 @@ export const CreateShopConfirm = () => {
       // @ts-ignore
       state.form.nftCollection, // address _nftCollection,
       state.nftCollection.isErc1155,
-      ethers.utils.parseUnits(
-        state.form.shopAmount.toString(),
-        state.erc20.decimals
-      ), // uint256 _liquidityAmount,
+      ethers.parseUnits(state.form.shopAmount.toString(), state.erc20.decimals), // uint256 _liquidityAmount,
       BigNumber.from(state.form.interestA), // uint256 _interestA,
       BigNumber.from(state.form.interestB), // uint256 _interestB,
       BigNumber.from(state.form.interestC), // uint256 _interestC,
-      ethers.utils.parseUnits(
+      ethers.parseUnits(
         state.form.offerAmount.toString(),
         state.erc20.decimals
       ), // uint256 _maxOffer,

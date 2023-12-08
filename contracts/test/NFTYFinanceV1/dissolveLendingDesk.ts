@@ -52,7 +52,7 @@ describe("NFTY Finance: Dissolve lending desk", () => {
       .to.emit(nftyFinance, "LendingDeskDissolved")
       .withArgs(lendingDeskId)
       .to.emit(lendingKeys, "Transfer")
-      .withArgs(lender.address, ethers.constants.AddressZero, lendingDeskId);
+      .withArgs(lender.address, ethers.ZeroAddress, lendingDeskId);
 
     const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
     expect(newLendingDesk.status).to.equal(LendingDeskStatus.Dissolved);
@@ -66,6 +66,6 @@ describe("NFTY Finance: Dissolve lending desk", () => {
 
     await expect(
       nftyFinance.connect(lender).dissolveLendingDesk(lendingDeskId)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 });

@@ -2,28 +2,25 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { initializeLoan } from "../utils/fixtures";
 import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
-import { BigNumber } from "ethers";
 import { LoanConfig } from "../utils/consts";
 
 // Util function to calculate total due amount of loan locally
 const getTotalAmountDue = (
-  loanAmount: BigNumber,
+  loanAmount: bigint,
   loan,
   loanConfig: LoanConfig
 ) => {
   const hoursElapsed = loanConfig.minDuration;
-  const hoursInYear = ethers.BigNumber.from(8760);
-  const multiplier = ethers.BigNumber.from(10000);
-  const totalAmountDue = loanAmount.add(
-    loanAmount
-      .mul(loan.interest)
-      .div(hoursInYear.mul(multiplier).div(hoursElapsed))
-  );
+  const hoursInYear = 8760n;
+  const multiplier = 10000n;
+  const totalAmountDue =
+    loanAmount +
+    (loanAmount * loan.interest * hoursElapsed) / (hoursInYear * multiplier);
   return totalAmountDue;
 };
 
 describe("NFTY Finance: Remaining due amount of loan", () => {
-  const partialPaymentAmount = ethers.utils.parseUnits("3", 18);
+  const partialPaymentAmount = ethers.parseUnits("3", 18);
 
   const setup = async () => {
     const { loanConfig, borrower, loanAmount, erc20, nftyFinance, ...rest } =
@@ -33,10 +30,10 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     await erc20.connect(borrower).mint(loanAmount);
     await erc20
       .connect(borrower)
-      .approve(nftyFinance.address, ethers.constants.MaxUint256);
+      .approve(nftyFinance.target, ethers.MaxUint256);
 
     // pass time for loan duration
-    await time.increase(loanConfig.minDuration.mul(3600));
+    await time.increase(loanConfig.minDuration * 3600n);
 
     // return
     return { loanConfig, borrower, loanAmount, erc20, nftyFinance, ...rest };
@@ -98,6 +95,6 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     // Check remaining due amount
     const amountDue = await nftyFinance.getLoanAmountDue(loanId);
     const totalAmountDue = getTotalAmountDue(loanAmount, loan, loanConfig);
-    expect(amountDue).to.equal(totalAmountDue.sub(partialPaymentAmount));
+    expect(amountDue).to.equal(totalAmountDue - partialPaymentAmount);
   });
 });

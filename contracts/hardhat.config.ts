@@ -13,15 +13,15 @@ dotEnvConfig({ path: "../.env" });
 
 const config: HardhatUserConfig = {
   gasReporter: {
-    enabled: process.env.REPORT_GAS,
+    enabled: process.env.REPORT_GAS ? true : false,
     currency: "USD",
     coinmarketcap: process.env.CMC_KEY,
     showTimeSpent: true,
     excludeContracts: ["contracts/test"],
-    // onlyCalledMethods: false
+    onlyCalledMethods: false,
   },
   solidity: {
-    version: "0.8.18",
+    version: "0.8.22",
     settings: {
       optimizer: {
         enabled: true,
@@ -29,15 +29,12 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  // @ts-ignore
-  typechain: { outDir: "../typechain-types" },
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
     },
     testnet: {
       url: "https://matic-mumbai.chainstacklabs.com",
-      // @ts-ignore
       accounts: [process.env.PRIVATE_KEY],
     },
     goerli: {
@@ -45,7 +42,6 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: "https://matic-mumbai.chainstacklabs.com",
-      // @ts-ignore
       accounts: [process.env.PRIVATE_KEY],
     },
     mainnet: {

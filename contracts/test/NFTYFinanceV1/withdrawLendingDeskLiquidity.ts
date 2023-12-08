@@ -38,14 +38,14 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
 
     await expect(
       nftyFinance.withdrawLendingDeskLiquidity(lendingDeskId, amount)
-    ).to.be.revertedWith("Pausable: paused");
+    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
   it("should withdraw lending desk liquidity", async () => {
     const { nftyFinance, lendingDeskId, lender, erc20, lendingDesk } =
       await loadFixture(initializeLendingDesk);
 
-    const nftyFinanceBalance = await erc20.balanceOf(nftyFinance.address);
+    const nftyFinanceBalance = await erc20.balanceOf(nftyFinance.target);
     const lenderBalance = await erc20.balanceOf(lender.address);
     const lendingDeskBalance = lendingDesk.balance;
 
@@ -64,14 +64,14 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
       .withArgs(lendingDeskId, amount);
 
     // check balances
-    const newNftyFinanceBalance = await erc20.balanceOf(nftyFinance.address);
-    expect(newNftyFinanceBalance).to.equal(nftyFinanceBalance.sub(amount));
+    const newNftyFinanceBalance = await erc20.balanceOf(nftyFinance.target);
+    expect(newNftyFinanceBalance).to.equal(nftyFinanceBalance - amount);
     const newLenderBalance = await erc20.balanceOf(lender.address);
-    expect(newLenderBalance).to.equal(lenderBalance.add(amount));
+    expect(newLenderBalance).to.equal(lenderBalance + amount);
 
     // check storage
     const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
-    expect(newLendingDesk.balance).to.equal(lendingDeskBalance.sub(amount));
+    expect(newLendingDesk.balance).to.equal(lendingDeskBalance - amount);
   });
 
   it("should fail for insufficient balance", async () => {

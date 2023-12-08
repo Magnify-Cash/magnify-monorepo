@@ -2,34 +2,30 @@
   "name": "nftyfinance-faucet",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
+    "generate": "wagmi generate",
     "start": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "format": "rome format ./src",
-    "format:write": "rome format ./src --write",
-    "lint": "rome check ./src "
+    "preview": "vite preview"
   },
   "dependencies": {
     "buffer": "^6.0.3",
-    "connectkit": "^1.1.1",
-    "ethers": "^5.7.2",
+    "connectkit": "^1.5.3",
+    "ethers": "^6.9.0",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.9",
+    "react-hook-form": "^7.48.2",
     "util": "^0.12.5",
-    "wagmi": "^0.12.12"
+    "wagmi": "^1.4.8"
   },
   "devDependencies": {
-    "@types/node": "^18.16.2",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "dotenv": "^16.0.3",
-    "rome": "^12.0.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.3"
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@wagmi/cli": "^1.5.2",
+    "dotenv": "^16.3.1",
+    "vite": "^5.0.6"
   }
 }

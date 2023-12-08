@@ -1,10 +1,9 @@
-import * as React from "react";
 import { ConnectKitButton } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
-import logo from "./logo.svg";
-import { MintTokens } from "./components/MintTokens";
-import { MintNfts } from "./components/MintNfts";
-import { config } from "./config";
+import logo from "@/logo.svg";
+import { MintTokens } from "@/components/MintTokens";
+import { MintNfts } from "@/components/MintNfts";
+import { config } from "@/config";
 
 export function App() {
   const { address, isConnected } = useAccount();

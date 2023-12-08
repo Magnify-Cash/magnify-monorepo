@@ -42,6 +42,6 @@ describe("NFTY ERC721: Burn", () => {
     // Check emitted event
     expect(tx)
       .to.emit(nftyErc721, "Transfer")
-      .withArgs(alice.address, ethers.constants.AddressZero, tokenId);
+      .withArgs(alice.address, ethers.ZeroAddress, tokenId);
   });
 });

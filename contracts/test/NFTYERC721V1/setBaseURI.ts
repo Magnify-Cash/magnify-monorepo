@@ -5,9 +5,9 @@ import { deployNftyErc721 } from "../utils/fixtures";
 describe("NFTY ERC721: Set base URI", () => {
   it("should fail when caller is not admin", async () => {
     const { nftyErc721, alice } = await loadFixture(deployNftyErc721);
-    await expect(nftyErc721.connect(alice).setBaseURI("")).to.be.revertedWith(
-      "Ownable: caller is not the owner"
-    );
+    await expect(nftyErc721.connect(alice).setBaseURI(""))
+      .to.be.revertedWithCustomError(nftyErc721, "OwnableUnauthorizedAccount")
+      .withArgs(alice.address);
   });
 
   it("should fail when base URI is empty", async () => {
