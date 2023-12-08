@@ -6,7 +6,8 @@
     "build": "yarn hardhat clean && yarn hardhat compile",
     "start": "yarn hardhat node",
     "test": "yarn hardhat test",
-    "deploy:local": "yarn hardhat clean && yarn hardhat compile && yarn hardhat deploy --network localhost",
+    "deploy:local": "yarn build && yarn hardhat deploy --network localhost",
+    "deploy:testnet": "yarn build && yarn hardhat deploy --network sepolia",
     "mythril": "myth analyze contracts/contracts/NFTYFinanceV1.sol  --solc-json ./solc.json",
     "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings"
   },

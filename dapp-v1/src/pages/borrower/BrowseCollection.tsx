@@ -234,6 +234,7 @@ export const BrowseCollection = (props) => {
                                     max={loanConfig?.maxDuration}
                                     value={duration}
                                     onChange={(e) =>
+                                      // @ts-ignore
                                       setDuration(e.target.value)
                                     }
                                   />
@@ -257,6 +258,7 @@ export const BrowseCollection = (props) => {
                                     min={loanConfig?.minAmount}
                                     max={loanConfig?.maxAmount}
                                     value={amount}
+                                    // @ts-ignore
                                     onChange={(e) => setAmount(e.target.value)}
                                   />
                                   <span className="input-group-text">

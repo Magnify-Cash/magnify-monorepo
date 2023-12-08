@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: NFTYFinance
-    network: mainnet
+    network: sepolia
     source:
       abi: NFTYFinance
-      address: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0"
-      startBlock: 57
+      address: "0x58b9F441b5c4681e1Ab74ecdE2A01698831BF2c4"
+      startBlock: 4846805
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -60,11 +60,11 @@ dataSources:
       file: ./src/nfty-finance.ts
   - kind: ethereum/contract
     name: LendingKeys
-    network: mainnet
+    network: sepolia
     source:
       abi: LendingKeys
-      address: "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"
-      startBlock: 56
+      address: "0xaD12bBd88ee51CEA5Ed1d2256d8bc36701c0bD04"
+      startBlock: 4846804
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -80,11 +80,11 @@ dataSources:
       file: ./src/lending-keys.ts
   - kind: ethereum/contract
     name: PromissoryNotes
-    network: mainnet
+    network: sepolia
     source:
       abi: PromissoryNotes
-      address: "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90"
-      startBlock: 54
+      address: "0x11C1564576ceBb61a92C3093cFe54529FC2907c6"
+      startBlock: 4846802
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -100,11 +100,11 @@ dataSources:
       file: ./src/promissory-notes.ts
   - kind: ethereum/contract
     name: ObligationNotes
-    network: mainnet
+    network: sepolia
     source:
       abi: ObligationNotes
-      address: "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1"
-      startBlock: 55
+      address: "0x06e117Bef6E05D818fB0dc971B7bF1560B54b3AC"
+      startBlock: 4846803
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

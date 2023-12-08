@@ -139,8 +139,8 @@ export const ManageLendingDesk = (props: any) => {
                             <div className="input-group ">
                               <input
                                 value={depositAmount}
-                                // @ts-ignore
                                 onChange={(e) =>
+                                  // @ts-ignore
                                   setDepositAmount(e.target.value)
                                 }
                                 type="number"

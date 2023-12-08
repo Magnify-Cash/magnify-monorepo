@@ -6,7 +6,7 @@
   "scripts": {
     "generate": "wagmi generate",
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "yarn generate && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

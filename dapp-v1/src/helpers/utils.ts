@@ -28,7 +28,7 @@ export const getWalletNfts = async ({
       });
       return response.ownedNfts.map((x) => ({
         tokenId: x.tokenId,
-        name: x.title,
+        name: x.name!,
       }));
     }
 

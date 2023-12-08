@@ -2,7 +2,7 @@ sources:
   - name: nftyFinance
     handler:
       graphql:
-        endpoint: http://localhost:8000/subgraphs/name/nftyfinance-local
+        endpoint: ${VITE_GRAPHQL_ENDPOINT}
 
 documents:
   - queries.graphql

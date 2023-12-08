@@ -33,8 +33,7 @@ const config = async (): Promise<Config> => {
         project: "../contracts",
         deployments: {
           NFTYFinanceV1: {
-            5: "0xF4F1C3db0205d055f5A081482e0A84Ff71c42102", // Goerli
-            80001: "0x348db0CDC8031901d126878bF0DF663FbB5afc1e", // Mumbai
+            11155111: "0x58b9F441b5c4681e1Ab74ecdE2A01698831BF2c4", // Sepolia
           },
         },
       }),

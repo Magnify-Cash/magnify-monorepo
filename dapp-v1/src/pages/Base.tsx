@@ -68,7 +68,7 @@ export const Base = () => {
 
   // graphQL
   const client = new Client({
-    url: "http://localhost:8000/subgraphs/name/nftyfinance-local",
+    url: import.meta.env.VITE_GRAPHQL_ENDPOINT,
     exchanges: [cacheExchange, fetchExchange],
   });
 

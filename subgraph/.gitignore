@@ -2,3 +2,4 @@ generated
 build
 tests/.bin
 tests/.latest.json
+networks.json

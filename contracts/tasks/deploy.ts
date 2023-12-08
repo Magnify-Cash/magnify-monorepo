@@ -75,39 +75,53 @@ task(
   await obligationNotes.setNftyFinance(nftyFinance.target);
   await lendingKeys.setNftyFinance(nftyFinance.target);
 
+  // Wait for transactions to be mined so that we can get the block numbers
+  const nftyFinanceTx = await nftyFinance.deploymentTransaction()?.wait();
+  const promissoryNotesTx = await promissoryNotes
+    .deploymentTransaction()
+    ?.wait();
+  const obligationNotesTx = await obligationNotes
+    .deploymentTransaction()
+    ?.wait();
+  const lendingKeysTx = await lendingKeys.deploymentTransaction()?.wait();
+  const doodlesTx = await doodles.deploymentTransaction()?.wait();
+  const punksTx = await punks.deploymentTransaction()?.wait();
+  const usdcTx = await usdc.deploymentTransaction()?.wait();
+  const daiTx = await dai.deploymentTransaction()?.wait();
+
   // Write addresses to deployments.json
   const deployments = {
     nftyFinance: {
       address: nftyFinance.target,
-      startBlock: nftyFinance.deploymentTransaction()?.blockNumber,
+      startBlock: nftyFinanceTx?.blockNumber,
     },
     promissoryNotes: {
       address: promissoryNotes.target,
-      startBlock: promissoryNotes.deploymentTransaction()?.blockNumber,
+      startBlock: promissoryNotesTx?.blockNumber,
     },
     obligationNotes: {
       address: obligationNotes.target,
-      startBlock: obligationNotes.deploymentTransaction()?.blockNumber,
+      startBlock: obligationNotesTx?.blockNumber,
     },
     lendingKeys: {
       address: lendingKeys.target,
-      startBlock: lendingKeys.deploymentTransaction()?.blockNumber,
+      startBlock: lendingKeysTx?.blockNumber,
     },
     punks: {
       address: punks.target,
-      startBlock: punks.deploymentTransaction()?.blockNumber,
+      startBlock: punksTx?.blockNumber,
     },
     doodles: {
       address: doodles.target,
-      startBlock: doodles.deploymentTransaction()?.blockNumber,
+      startBlock: doodlesTx?.blockNumber,
     },
     usdc: {
       address: usdc.target,
-      startBlock: usdc.deploymentTransaction()?.blockNumber,
+      startBlock: usdcTx?.blockNumber,
     },
     dai: {
       address: dai.target,
-      startBlock: dai.deploymentTransaction()?.blockNumber,
+      startBlock: daiTx?.blockNumber,
     },
   };
   await writeFile(
