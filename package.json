@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": "true",
   "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "contracts": "yarn workspace nftyfinance-contracts",
     "faucet": "yarn workspace nftyfinance-faucet",
