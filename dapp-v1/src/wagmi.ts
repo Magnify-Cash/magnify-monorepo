@@ -1,6 +1,6 @@
 import { getDefaultConfig } from "connectkit";
 import { createConfig } from "wagmi";
-import { mainnet, polygon, hardhat } from "wagmi/chains";
+import { sepolia, hardhat } from "wagmi/chains";
 
 const walletConnectProjectId = "6f26f99d86d880b561988f69808456d3";
 
@@ -9,6 +9,6 @@ export const config = createConfig(
     autoConnect: true,
     appName: "NFTY.Finance",
     walletConnectProjectId,
-    chains: [mainnet, polygon, hardhat],
+    chains: [sepolia, hardhat],
   })
 );

@@ -1,4 +1,4 @@
-import { hardhat, polygonMumbai } from "wagmi/chains";
+import { hardhat, sepolia } from "wagmi/chains";
 import { createConfig } from "wagmi";
 import { getDefaultConfig } from "connectkit";
 
@@ -9,6 +9,6 @@ export const config = createConfig(
     autoConnect: true,
     appName: "NFTY.Finance Testnet Faucet",
     walletConnectProjectId,
-    chains: [polygonMumbai, hardhat],
+    chains: [sepolia, hardhat],
   })
 );

@@ -21,28 +21,22 @@ type Config = {
 };
 
 const allConfigs: { [key: string]: Config } = {
-  mumbai: {
-    ethName: "Mumbai MATIC",
-    chainId: 80001,
-    ethFaucetUrl: "https://faucet.polygon.technology",
-    blockscanUrl: "https://mumbai.polygonscan.com",
+  sepolia: {
+    ethName: "Sepolia Ether",
+    chainId: 11155111,
+    ethFaucetUrl: "https://sepoliafaucet.com",
+    blockscanUrl: "https://sepolia.etherscan.io",
     contracts: {
       tokens: [
         {
-          name: "NFTY Token",
-          address: "0xe04a61312b0b3b2C9B7Fba376D144d0238Ca6b02",
-          symbol: "NFTY",
-          mintAmount: 100,
-        },
-        {
           name: "USD Coin",
-          address: "0x7d1216A946af1f30efF7fF16744363CCfAdBFAc3",
+          address: "0x4ddAAC5Fe361d47D90cB8A44C62a23534D50277C",
           symbol: "USDC",
           mintAmount: 100,
         },
         {
           name: "Dai Stablecoin",
-          address: "0x939e2b90538D8cBC344221F597976c91b39145Cd",
+          address: "0xB9db76EC97a0dE506fb588D539394db06b2c974B",
           symbol: "DAI",
           mintAmount: 100,
         },
@@ -50,13 +44,13 @@ const allConfigs: { [key: string]: Config } = {
       nftCollections: [
         {
           name: "Doodles",
-          address: "0x5C4967dB6be9dB2cB5672488FaE1634a19636E70",
+          address: "0x627021E82e6a1737659D37516637E4fbf9a27f19",
           symbol: "DOODLE",
           mintAmount: 10,
         },
         {
           name: "PolygonPunks",
-          address: "0x709d7e16a75abF20c16655Fd553E4959B34636Ba",
+          address: "0xC040eBCc5aEC07338c469F8C5367a561Ba34aD89",
           symbol: "ρ",
           mintAmount: 10,
         },

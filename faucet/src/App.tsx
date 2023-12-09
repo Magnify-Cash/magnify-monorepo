@@ -16,10 +16,10 @@ export function App() {
     >
       {/* testnet banner start */}
       <div className="alert alert-info-outline fade show" role="alert">
-        <span className="alert-text">Claim Mumbai testnet tokens here: </span>
+        <span className="alert-text">Claim Seplolia testnet ETH here: </span>
         <div className="row">
           <div className="col">
-            <a target="_blank" href="https://faucet.polygon.technology/">
+            <a target="_blank" href="https://sepoliafaucet.com">
               Testnet Faucet
             </a>
           </div>
