@@ -284,7 +284,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title text-center">
+              <h5 className="modal-title text-center fs-4 fw-medium">
                 {props.token && "Select Token"}
                 {props.nft && "Select NFT Collection"}
               </h5>
@@ -299,7 +299,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
               {/* Search bar */}
               <input
                 type="text"
-                className="form-control"
+                className="form-control form-control-lg py-2 flex-grow-1"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -315,10 +315,10 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
               >
                 {/* The large inner element to hold all of the items */}
                 <div
+                  className="d-flex position-relative mt-2 "
                   style={{
                     height: `${rowVirtualizer.getTotalSize()}px`,
                     width: "100%",
-                    position: "relative",
                   }}
                 >
                   {/* Only the visible items in the virtualizer, manually positioned to be in view */}
@@ -333,7 +333,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         value={JSON.stringify(
                           filteredTokens[virtualItem.index]
                         )}
-                        className="btn"
+                        className="btn d-flex align-items-center justify-content-start"
                         style={{
                           position: "absolute",
                           top: 0,
@@ -344,6 +344,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         }}
                       >
                         <img
+                          className="pe-2"
                           src={filteredTokens[virtualItem.index].token.logoURI}
                           alt={`${
                             filteredTokens[virtualItem.index].token.name
@@ -362,7 +363,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         }
                         onClick={(e) => onClickCallback(e)}
                         value={JSON.stringify(filteredNfts[virtualItem.index])}
-                        className="btn"
+                        className="btn d-flex align-items-center justify-content-start"
                         type="button"
                         style={{
                           position: "absolute",
@@ -374,6 +375,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         }}
                       >
                         <img
+                          className="pe-2"
                           src={filteredNfts[virtualItem.index].nft.logoURI}
                           alt={`${
                             filteredNfts[virtualItem.index].nft.name
