@@ -117,7 +117,7 @@ export const Base = () => {
             <NavLink
               to="/"
               onClick={() => closeSidebar()}
-              className="btn btn-link d-block w-100 text-start bg-primary-subtle"
+              className="btn btn-link d-block w-100 text-start bg-primary-subtle text-primary-emphasis"
             >
               <i className="fa-light fa-home me-1"></i>
               Home

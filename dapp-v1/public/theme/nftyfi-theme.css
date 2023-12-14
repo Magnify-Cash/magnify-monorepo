@@ -163,7 +163,7 @@
 [data-bs-theme=dark] {
 	/* NFTY Finance purple */
 
-	--nfty-purple-text-emphasis-hsl: var(--nfty-purple-400-hsl);
+	--nfty-purple-text-emphasis-hsl: var(--nfty-purple-300-hsl);
 	--nfty-purple-text-emphasis: hsl(var(--nfty-purple-text-emphasis-hsl));
 	--nfty-purple-bg-subtle: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/3), 15%);
 	--nfty-purple-border-subtle: var(--nfty-purple-600);
@@ -261,7 +261,7 @@ body {
 }
 
 [data-bs-theme=dark] body {
-	background-color: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/5), 12.5%);
+	background-color: hsl(var(--nfty-purple-hue), calc(var(--nfty-purple-saturation)/5), 10%);
 }
 
 /**
@@ -285,12 +285,12 @@ body {
 }
 
 .btn-secondary {
-	--bs-btn-color: var(--bs-primary);
-	--bs-btn-hover-color: var(--bs-primary);
-	--bs-btn-active-color: var(--bs-primary);
-	--bs-btn-border-color: var(--bs-primary);
-	--bs-btn-hover-border-color: var(--bs-primary);
-	--bs-btn-active-border-color: var(--bs-primary);
+	--bs-btn-color: var(--bs-primary-text-emphasis);
+	--bs-btn-hover-color: var(--bs-primary-text-emphasis);
+	--bs-btn-active-color: var(--bs-primary-text-emphasis);
+	--bs-btn-border-color: var(--bs-primary-border-subtle);
+	--bs-btn-hover-border-color: var(--bs-primary-border-subtle);
+	--bs-btn-active-border-color: var(--bs-primary-border-subtle);
 }
 
 /**
