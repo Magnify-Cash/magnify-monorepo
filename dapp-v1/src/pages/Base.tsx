@@ -328,18 +328,11 @@ export const Base = () => {
                     <>
                       <button
                         onClick={show}
-                        className="btn btn-md btn-primary d-none d-lg-block"
+                        className="btn btn-md btn-primary"
                       >
                         {isConnected && <small>{truncatedAddress}</small>}
                         {!isConnected && <small>Connect</small>}
                         <i className="fa-solid fa-wallet ms-2"></i>
-                      </button>
-                      <button
-                        onClick={show}
-                        className="btn btn-primary d-lg-none"
-                        aria-label="Wallet connect"
-                      >
-                        <i className="fa-solid fa-wallet"></i>
                       </button>
                     </>
                   );
