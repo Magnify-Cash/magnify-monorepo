@@ -163,9 +163,9 @@ export const QuickLoan = (props: any) => {
             ) : (
               <div className="card-body specific-h-400 overflow-y-auto pt-0">
                 <img
-                  src="/images/placeholder/images/image-11.png"
+                  src="/theme/images/ThinkingMeme.svg"
                   alt="Thinking"
-                  className="img-fluid mx-auto d-block my-3"
+                  className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
                 />
                 <p className="text-center text-body-secondary fst-italic">
                   Start customizing to see offers
@@ -258,9 +258,9 @@ export const QuickLoan = (props: any) => {
               ) : (
                 <div className="card-body specific-h-400 overflow-y-auto pt-0">
                   <img
-                    src="/images/placeholder/images/image-11.png"
+                    src="/theme/images/ThinkingMeme.svg"
                     alt="Thinking"
-                    className="img-fluid mx-auto d-block my-3"
+                    className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
                   />
                   <p className="text-center text-body-secondary fst-italic">
                     Start customizing to see offers

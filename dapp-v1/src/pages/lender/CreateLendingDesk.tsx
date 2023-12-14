@@ -442,10 +442,9 @@ export const CreateLendingDesk = (props: any) => {
               ) : (
                 <div>
                   <img
-                    height="200"
-                    width="100%"
-                    src="/theme/images/thinking_guy.svg"
-                    alt="Thinking..."
+                    src="/theme/images/ThinkingMeme.svg"
+                    alt="Thinking"
+                    className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
                   />
                   <p className="text-center">
                     Start customizing to see details...
@@ -566,10 +565,9 @@ export const CreateLendingDesk = (props: any) => {
                     ) : (
                       <div>
                         <img
-                          height="200"
-                          width="100%"
-                          src="/theme/images/thinking_guy.svg"
-                          alt="Thinking..."
+                          src="/theme/images/ThinkingMeme.svg"
+                          alt="Thinking"
+                          className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
                         />
                         <p className="text-center">
                           Start customizing to see details...

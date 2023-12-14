@@ -167,7 +167,7 @@ const LoanCardParent = (props) => {
         <img
           src="theme/images/Vector.png"
           alt="Image"
-          className="img-fluid d-block mx-auto"
+          className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
         <h3 className="opacity-75 text-center mt-5">No active loans.</h3>
         <p className="text-body-secondary text-center mt-4">

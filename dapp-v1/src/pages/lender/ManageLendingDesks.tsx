@@ -97,11 +97,16 @@ const LendingDeskRow = ({ desks, status }) => {
   desks = desks.filter((desk) => desk.status === status);
   if (desks.length === 0) {
     return (
-      <img
-        height="200"
-        src="/theme/images/thinking_guy.svg"
-        alt="No items found"
-      />
+      <>
+        <img
+          src="theme/images/Vector.png"
+          alt="Image"
+          className="img-fluid d-block mx-auto specific-w-150 mw-100"
+        />
+        <p className="text-body-secondary text-center mt-4">
+          Nothing found
+        </p>
+      </>
     );
   }
 
