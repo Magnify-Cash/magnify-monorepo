@@ -98,13 +98,20 @@ export const Base = () => {
             </NavLink>
             <button
               type="button"
-              className="btn btn-secondary rounded-pill me-2"
+              className="btn btn-secondary rounded-pill me-2 d-none d-lg-inline-block"
               aria-label="Toggle dark mode"
               onClick={() => toggleDarkMode()}
-              style={{ width: "37px" }}
+              style={{ width: "30px" }}
             >
               <i className="fa-solid fa-moon"></i>
             </button>
+            <button
+              type="button"
+              class="btn-close d-lg-none"
+              data-bs-dismiss="offcanvas"
+              data-bs-target="#sidebar"
+              aria-label="Close"
+            ></button>
           </div>
           <div className="offcanvas-body">
             <NavLink
@@ -276,21 +283,37 @@ export const Base = () => {
         {/* Sidebar end */}
 
         {/* Navbar start */}
-        <div className="border-bottom py-3">
-          <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-md-flex align-items-center">
-            <h3 id="base-title" className="m-0 text-center text-md-start">
-              {title}
-            </h3>
-            <div className="ps-md-3 ms-auto mt-3 mt-md-0 text-center d-md-flex">
-              <button
-                type="button"
-                className="btn btn-secondary rounded-pill me-2 d-lg-none"
-                aria-label="Toggle sidebar"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#sidebar"
-              >
-                <i className="fa-solid fa-bars"></i>
-              </button>
+        <div className="border-bottom py-2 py-lg-3">
+          <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
+            <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
+              <div className="btn-group me-3 d-lg-none">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  aria-label="Toggle sidebar"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#sidebar"
+                >
+                  <i className="fa-solid fa-bars"></i>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  aria-label="Toggle dark mode"
+                  onClick={() => toggleDarkMode()}
+                  style={{ width: "30px" }}
+                >
+                  <i className="fa-solid fa-moon"></i>
+                </button>
+              </div>
+              <NavLink to="/" href="#" className="d-lg-none me-auto">
+                <img
+                  src="/theme/icon.svg"
+                  alt="Logo"
+                  width="28"
+                  height="28"
+                />
+              </NavLink>
               <ConnectKitButton.Custom>
                 {({
                   isConnected,
@@ -305,23 +328,27 @@ export const Base = () => {
                     <>
                       <button
                         onClick={show}
-                        className="btn btn-md btn-primary d-none d-md-block"
+                        className="btn btn-md btn-primary d-none d-lg-block"
                       >
                         {isConnected && <small>{truncatedAddress}</small>}
                         {!isConnected && <small>Connect</small>}
-                        <i className="fa-solid fa-wallet mx-2"></i>
+                        <i className="fa-solid fa-wallet ms-2"></i>
                       </button>
                       <button
                         onClick={show}
-                        className="btn btn-sm btn-primary d-md-none"
+                        className="btn btn-primary d-lg-none"
+                        aria-label="Wallet connect"
                       >
-                        <i className="fa-solid fa-wallet mx-2"></i>
+                        <i className="fa-solid fa-wallet"></i>
                       </button>
                     </>
                   );
                 }}
               </ConnectKitButton.Custom>
             </div>
+            <h3 id="base-title" className="m-0 text-center text-lg-start order-lg-first">
+              {title}
+            </h3>
           </div>
         </div>
         {/* Navbar end */}
