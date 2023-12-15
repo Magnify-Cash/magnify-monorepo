@@ -1,4 +1,11 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NFTInfo } from "@nftylabs/nft-lists";
 import { TokenInfo } from "@uniswap/token-lists";
@@ -22,6 +29,12 @@ export interface TokenListProps extends BaseListProps {
   token: boolean;
 }
 type PopupTokenListProps = NFTListProps | TokenListProps;
+
+interface CustomSelectButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+  data?: any;
+  children?: ReactNode;
+  clickFunction?: Function;
+}
 
 /*
 TokenList Props
@@ -176,33 +189,6 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
     if (import.meta.env.DEV) {
       fetchLocalTokens();
     }
-
-    props.token &&
-      setTokenLists([
-        {
-          parent: {
-            keywords: ["nftylabs", "nftylabs"],
-            logoURI:
-              "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-            name: "NFTY Labs",
-            timestamp: 1627987200,
-            version: {
-              major: 1,
-              minor: 0,
-              patch: 0,
-            },
-          },
-          token: {
-            address: "0x0d4c98901563ca730332e841edb7f8d5c2e9c6d2",
-            chainId: 1,
-            decimals: 18,
-            logoURI:
-              "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-            name: "NFTY",
-            symbol: "NFTY",
-          },
-        },
-      ]);
   }, []);
 
   /*
@@ -245,26 +231,16 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
   /*
 	On Click Callback
 	*/
-  function onClickCallback(e) {
-    props.onClick && props.onClick(e.target.value);
+  function onClickCallback(data) {
+    console.log("clicked");
+    console.log(props.onClick, data);
+    props.onClick && props.onClick(data);
 
     // hide modal
     var el = document.getElementById(props.modalId);
     if (el) {
       var modal = window.bootstrap.Modal.getInstance(el);
       modal && modal.hide();
-    }
-
-    // set hidden input
-    if (props.nft) {
-      let inpt = document.getElementById("hiddenInputNft") as HTMLInputElement;
-      inpt.value = e.target.value;
-    }
-    if (props.token) {
-      let inpt = document.getElementById(
-        "hiddenInputToken"
-      ) as HTMLInputElement;
-      inpt.value = e.target.value;
     }
   }
 
@@ -324,15 +300,13 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                   {/* Only the visible items in the virtualizer, manually positioned to be in view */}
                   {props.token &&
                     rowVirtualizer.getVirtualItems().map((virtualItem) => (
-                      <button
+                      <SelectButton
                         key={
                           virtualItem.index +
                           filteredTokens[virtualItem.index].token.address
                         }
-                        onClick={(e) => onClickCallback(e)}
-                        value={JSON.stringify(
-                          filteredTokens[virtualItem.index]
-                        )}
+                        clickFunction={onClickCallback}
+                        data={filteredTokens[virtualItem.index]}
                         className="btn d-flex align-items-center justify-content-start"
                         style={{
                           position: "absolute",
@@ -352,17 +326,17 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                           height="100%"
                         />
                         {filteredTokens[virtualItem.index].token.name}
-                      </button>
+                      </SelectButton>
                     ))}
                   {props.nft &&
                     rowVirtualizer.getVirtualItems().map((virtualItem) => (
-                      <button
+                      <SelectButton
                         key={
                           virtualItem.index +
                           filteredNfts[virtualItem.index].nft.address
                         }
-                        onClick={(e) => onClickCallback(e)}
-                        value={JSON.stringify(filteredNfts[virtualItem.index])}
+                        clickFunction={onClickCallback}
+                        data={filteredNfts[virtualItem.index]}
                         className="btn d-flex align-items-center justify-content-start"
                         type="button"
                         style={{
@@ -383,7 +357,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                           height="100%"
                         />
                         {filteredNfts[virtualItem.index].nft.name}
-                      </button>
+                      </SelectButton>
                     ))}
                 </div>
               </div>
@@ -393,14 +367,23 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         </div>
       </div>
       {/* End NFT modal */}
-
-      {/* Hidden form inputs */}
-      {props.token && (
-        <input id="hiddenInputToken" name="hiddenInputToken" type="hidden" />
-      )}
-      {props.nft && (
-        <input id="hiddenInputNft" name="hiddenInputNft" type="hidden" />
-      )}
     </>
+  );
+};
+
+//SelectButton is used for selecting a token or an nft from a dropdown list of tokens and nfts.
+//It returns a button whose onClick function is set as clickFunction(data).
+//ClickFunction and data are props for SelectButton component which can be supplied as needed.
+
+const SelectButton: React.FC<CustomSelectButton> = ({
+  data,
+  children,
+  clickFunction,
+  ...buttonProps
+}) => {
+  return (
+    <button onClick={() => clickFunction?.(data)} {...buttonProps}>
+      {children}
+    </button>
   );
 };

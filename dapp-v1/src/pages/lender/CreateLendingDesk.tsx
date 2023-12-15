@@ -20,10 +20,8 @@ interface IConfigForm {
 
 export const CreateLendingDesk = (props: any) => {
   // tokenlist state management
-  const [token, _setToken] = useState<ITokenListItem | null>();
-  const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
-  const setToken = (e: string) => _setToken(JSON.parse(e));
-  const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
+  const [token, setToken] = useState<ITokenListItem | null>();
+  const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
   const [deskFundingAmount, setDeskFundingAmount] = useState("");
 
@@ -40,16 +38,16 @@ export const CreateLendingDesk = (props: any) => {
     const formData = new FormData(form);
 
     const formJson: IConfigForm = {} as IConfigForm;
-    formData.forEach((value, key) => {
-      if (key === "nftCollection" || key === "hiddenInputNft") {
-        try {
-          formJson[key] = JSON.parse(value as string);
-        } catch (error) {
-          console.error(`Error parsing JSON htmlFor key '${key}':`, error);
-        }
-      } else {
-        formJson[key] = value;
+    //Getting the value of selected nft("hiddenInputNft") directly from nftCollection state variable
+    if (nftCollection) {
+      try {
+        formJson["hiddenInputNft"] = nftCollection;
+      } catch (error) {
+        console.error(`Nft collection is not selected`);
       }
+    }
+    formData.forEach((value, key) => {
+      formJson[key] = value;
     });
     setDeskConfigs([...deskConfigs, formJson]);
   }
