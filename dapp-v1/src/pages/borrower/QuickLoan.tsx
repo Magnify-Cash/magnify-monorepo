@@ -17,10 +17,8 @@ export const QuickLoan = (props: any) => {
   const chainId = useChainId();
 
   // tokenlist / nftlist state management
-  const [token, _setToken] = useState<ITokenListItem | null>();
-  const [nftCollection, _setNftCollection] = useState<INFTListItem | null>();
-  const setToken = (e: string) => _setToken(JSON.parse(e));
-  const setNftCollection = (e: string) => _setNftCollection(JSON.parse(e));
+  const [token, setToken] = useState<ITokenListItem | null>();
+  const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
 
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
