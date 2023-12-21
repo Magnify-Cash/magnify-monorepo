@@ -33,7 +33,9 @@ const fetchTokenDetails = async (addresses: string[]) => {
 
   jsonData.tokens.forEach((token) => TokenMap.set(token.address, token));
 
-  const result = addresses.map((address) => TokenMap.get(address));
+  const result = addresses.map(
+    (address) => TokenMap.get(address) || ({} as IToken) // Return empty object if token not found
+  );
 
   return result;
 };

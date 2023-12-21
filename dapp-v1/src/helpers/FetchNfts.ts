@@ -34,7 +34,9 @@ const fetchNFTDetails = async (addresses: string[]) => {
 
   jsonData.nfts.forEach((nft) => NFTMap.set(nft.address, nft));
 
-  const result = addresses.map((address) => NFTMap.get(address));
+  const result = addresses.map(
+    (address) => NFTMap.get(address) || ({} as INft) // Return empty object if nft not found
+  );
 
   return result;
 };
