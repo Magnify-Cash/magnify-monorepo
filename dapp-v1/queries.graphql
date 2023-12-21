@@ -4,6 +4,7 @@ query Home {
     loanConfigs {
       lendingDesk {
         erc20 {
+          id
           symbol
         }
       }
@@ -23,6 +24,7 @@ query ManageLendingDesks($walletAddress: Bytes!) {
     balance
     status
     erc20 {
+      id
       symbol
       decimals
     }
@@ -67,6 +69,7 @@ query BrowseCollections {
     loanConfigs {
       lendingDesk {
         erc20 {
+          id
           symbol
           decimals
         }
@@ -94,6 +97,7 @@ query BrowseCollection($nftCollectionId: String) {
       balance
       status
       erc20 {
+        id
         symbol
         decimals
       }
@@ -107,6 +111,7 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
     balance
     status
     erc20 {
+      id
       symbol
       decimals
     }
