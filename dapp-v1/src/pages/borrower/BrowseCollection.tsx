@@ -3,6 +3,7 @@ import { useParams, NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { PopupTransaction } from "@/components";
 import { BrowseCollectionDocument } from "../../../.graphclient";
+import { fromWei } from "@/helpers/utils";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -88,13 +89,23 @@ export const BrowseCollection = (props) => {
                       />
                     </td>
                     <td className="py-3">
-                      {loanConfig.minAmount} - {loanConfig.maxAmount}
+                      {fromWei(
+                        loanConfig.minAmount,
+                        loanConfig.lendingDesk?.erc20?.decimals
+                      )}{" "}
+                      -{" "}
+                      {fromWei(
+                        loanConfig.maxAmount,
+                        loanConfig.lendingDesk?.erc20?.decimals
+                      )}
                     </td>
                     <td className="py-3">
-                      {loanConfig.minDuration}-{loanConfig.maxDuration} days
+                      {loanConfig.minDuration / 24}-
+                      {loanConfig.maxDuration / 24} days
                     </td>
                     <td className="py-3">
-                      {loanConfig.minInterest}-{loanConfig.maxInterest}%
+                      {loanConfig.minInterest / 100}-
+                      {loanConfig.maxInterest / 100}%
                     </td>
                     <td className="py-3 pe-3">
                       <PopupTransaction
@@ -142,8 +153,17 @@ export const BrowseCollection = (props) => {
                                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                                     <div className="d-flex align-items-center justify-content-center">
                                       <div className="h4 fw-medium">
-                                        {loanConfig?.minAmount}-
-                                        {loanConfig?.maxAmount}
+                                        {fromWei(
+                                          loanConfig?.minAmount,
+                                          loanConfig.lendingDesk?.erc20
+                                            ?.decimals
+                                        )}
+                                        -
+                                        {fromWei(
+                                          loanConfig?.maxAmount,
+                                          loanConfig.lendingDesk?.erc20
+                                            ?.decimals
+                                        )}
                                       </div>
                                       <span className="text-body-secondary ms-2">
                                         {loanConfig?.lendingDesk.erc20.symbol}
@@ -158,8 +178,8 @@ export const BrowseCollection = (props) => {
                                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                                     <div className="d-flex align-items-center justify-content-center">
                                       <div className="h4 fw-medium">
-                                        {loanConfig?.minDuration}-
-                                        {loanConfig?.maxDuration}
+                                        {loanConfig?.minDuration / 24}-
+                                        {loanConfig?.maxDuration / 24}
                                       </div>
                                       <span className="text-body-secondary ms-2">
                                         Days
@@ -174,8 +194,8 @@ export const BrowseCollection = (props) => {
                                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                                     <div className="d-flex align-items-center justify-content-center">
                                       <div className="h4 fw-medium">
-                                        {loanConfig?.minInterest} -{" "}
-                                        {loanConfig?.maxInterest}
+                                        {loanConfig?.minInterest / 100} -{" "}
+                                        {loanConfig?.maxInterest / 100}
                                       </div>
                                       <span className="text-body-secondary ms-2">
                                         %
@@ -230,8 +250,8 @@ export const BrowseCollection = (props) => {
                                     id="set-duration"
                                     placeholder="Duration"
                                     step="1"
-                                    min={loanConfig?.minDuration}
-                                    max={loanConfig?.maxDuration}
+                                    min={loanConfig?.minDuration / 24}
+                                    max={loanConfig?.maxDuration / 24}
                                     value={duration}
                                     onChange={(e) =>
                                       // @ts-ignore
@@ -255,8 +275,14 @@ export const BrowseCollection = (props) => {
                                     id="set-amount"
                                     placeholder="Amount"
                                     step="1"
-                                    min={loanConfig?.minAmount}
-                                    max={loanConfig?.maxAmount}
+                                    min={fromWei(
+                                      loanConfig?.minAmount,
+                                      loanConfig.lendingDesk?.erc20?.decimals
+                                    )}
+                                    max={fromWei(
+                                      loanConfig?.maxAmount,
+                                      loanConfig.lendingDesk?.erc20?.decimals
+                                    )}
                                     value={amount}
                                     // @ts-ignore
                                     onChange={(e) => setAmount(e.target.value)}

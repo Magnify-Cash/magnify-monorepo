@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
+import { fromWei } from "@/helpers/utils";
 
 export const ManageLendingDesks = (props: any) => {
   // GraphQL
@@ -103,9 +104,7 @@ const LendingDeskRow = ({ desks, status }) => {
           alt="Image"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
-        <p className="text-body-secondary text-center mt-4">
-          Nothing found
-        </p>
+        <p className="text-body-secondary text-center mt-4">Nothing found</p>
       </>
     );
   }
@@ -148,7 +147,10 @@ const LendingDeskRow = ({ desks, status }) => {
                   Available Liquidity
                 </h6>
                 {/* TODO display desk.balance in below format */}
-                <div className="text-body-secondary">{desk.balance} ETH</div>
+                <div className="text-body-secondary">
+                  {fromWei(desk.balance, desk?.erc20?.decimals)}{" "}
+                  {desk?.erc20?.symbol}
+                </div>
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">

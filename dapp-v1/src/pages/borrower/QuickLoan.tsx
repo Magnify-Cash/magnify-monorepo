@@ -11,6 +11,7 @@ import {
   nftyFinanceV1Address,
 } from "@/wagmi-generated";
 import { QuickLoanDocument } from "../../../.graphclient";
+import { fromWei, toWei } from "@/helpers/utils";
 
 export const QuickLoan = (props: any) => {
   // constants
@@ -53,8 +54,9 @@ export const QuickLoan = (props: any) => {
       BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
       BigInt(nftId || 0),
-      BigInt(duration || 0),
-      BigInt(amount || 0),
+      BigInt((duration || 0) * 24),
+      //TODO supply decimals value
+      toWei(amount ? amount.toString() : "0", token?.token.decimals),
     ],
   });
   const { writeAsync: newLoanWrite } =
@@ -220,7 +222,10 @@ export const QuickLoan = (props: any) => {
                                   <i className="fa-light fa-hand-holding-dollar"></i>
                                 </div>
                                 <div className="fw-bold">
-                                  {item.loanConfig.maxAmount}
+                                  {fromWei(
+                                    item.loanConfig.maxAmount,
+                                    token?.token.decimals
+                                  )}
                                 </div>
                                 <small className="fw-normal">max offer</small>
                               </div>
@@ -231,7 +236,7 @@ export const QuickLoan = (props: any) => {
                                   <i className="fa-light fa-calendar-clock"></i>
                                 </div>
                                 <div className="fw-bold">
-                                  {item.loanConfig.maxDuration} days
+                                  {item.loanConfig.maxDuration / 24} days
                                 </div>
                                 <small className="fw-normal">duration</small>
                               </div>
@@ -242,7 +247,7 @@ export const QuickLoan = (props: any) => {
                                   <i className="fa-light fa-badge-percent"></i>
                                 </div>
                                 <div className="fw-bold">
-                                  {item.loanConfig.maxInterest} %
+                                  {item.loanConfig.maxInterest / 100} %
                                 </div>
                                 <small className="fw-normal">interest</small>
                               </div>
@@ -315,8 +320,15 @@ export const QuickLoan = (props: any) => {
                         <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                           <div className="d-flex align-items-center justify-content-center">
                             <div className="h4 fw-medium">
-                              {selectedLendingDesk.loanConfig.minAmount}-
-                              {selectedLendingDesk.loanConfig.maxAmount}
+                              {fromWei(
+                                selectedLendingDesk.loanConfig.minAmount,
+                                token?.token?.decimals
+                              )}
+                              -
+                              {fromWei(
+                                selectedLendingDesk.loanConfig.maxAmount,
+                                token?.token?.decimals
+                              )}
                             </div>
                             <span className="text-body-secondary ms-2">
                               {selectedLendingDesk.lendingDesk.erc20.symbol}
@@ -331,8 +343,8 @@ export const QuickLoan = (props: any) => {
                         <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                           <div className="d-flex align-items-center justify-content-center">
                             <div className="h4 fw-medium">
-                              {selectedLendingDesk.loanConfig.minDuration}-
-                              {selectedLendingDesk.loanConfig.maxDuration}
+                              {selectedLendingDesk.loanConfig.minDuration / 24}-
+                              {selectedLendingDesk.loanConfig.maxDuration / 24}
                             </div>
                             <span className="text-body-secondary ms-2">
                               Days
@@ -347,8 +359,9 @@ export const QuickLoan = (props: any) => {
                         <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                           <div className="d-flex align-items-center justify-content-center">
                             <div className="h4 fw-medium">
-                              {selectedLendingDesk.loanConfig.minInterest} -{" "}
-                              {selectedLendingDesk.loanConfig.maxInterest}
+                              {selectedLendingDesk.loanConfig.minInterest / 100}{" "}
+                              -{" "}
+                              {selectedLendingDesk.loanConfig.maxInterest / 100}
                             </div>
                             <span className="text-body-secondary ms-2">%</span>
                           </div>
@@ -393,8 +406,8 @@ export const QuickLoan = (props: any) => {
                           id="set-duration"
                           placeholder="Duration"
                           step="1"
-                          min={selectedLendingDesk.loanConfig.minDuration}
-                          max={selectedLendingDesk.loanConfig.maxDuration}
+                          min={selectedLendingDesk.loanConfig.minDuration / 24}
+                          max={selectedLendingDesk.loanConfig.maxDuration / 24}
                           value={duration}
                           // @ts-ignore
                           onChange={(e) => setDuration(e.target.value)}
@@ -413,8 +426,14 @@ export const QuickLoan = (props: any) => {
                           id="set-amount"
                           placeholder="Amount"
                           step="1"
-                          min={selectedLendingDesk.loanConfig.minAmount}
-                          max={selectedLendingDesk.loanConfig.maxAmount}
+                          min={fromWei(
+                            selectedLendingDesk.loanConfig.minAmount,
+                            token?.token?.decimals
+                          )}
+                          max={fromWei(
+                            selectedLendingDesk.loanConfig.maxAmount,
+                            token?.token?.decimals
+                          )}
                           value={amount}
                           // @ts-ignore
                           onChange={(e) => setAmount(e.target.value)}

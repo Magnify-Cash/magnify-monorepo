@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { NavLink } from "react-router-dom";
 import { LoanRow } from "@/components";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
+import { fromWei } from "@/helpers/utils";
 
 export const Dashboard = (props: any) => {
   // GraphQL
@@ -265,7 +266,7 @@ const LoanCardParent = (props) => {
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">
-                      {desk.balance}{" "}
+                      {fromWei(desk.balance, desk.erc20.decimals)}{" "}
                       <small className="fw-normal">{desk.erc20.symbol}</small>
                     </h3>
                     <p className="m-0 text-body-secondary">Total Balance</p>

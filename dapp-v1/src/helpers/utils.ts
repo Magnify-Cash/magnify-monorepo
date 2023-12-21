@@ -1,4 +1,5 @@
 import { Network, Alchemy } from "alchemy-sdk";
+import { formatUnits, parseUnits } from 'viem';
 
 export const truncateAddress = (addr: string) =>
   addr.slice(0, 6) + "..." + addr.slice(-4);
@@ -44,3 +45,16 @@ export const getWalletNfts = async ({
 
   return [];
 };
+
+// Human readable to wei
+// https://viem.sh/docs/utilities/parseUnits.html: Multiplies a string representation of a number by a given exponent of base 10 (10exponent).
+export const toWei = (value: string, decimals: number):bigint => {
+  return parseUnits(value, decimals)
+}
+
+
+// Wei to human readable
+// https://viem.sh/docs/utilities/formatUnits.html: Divides a number by a given exponent of base 10 (10exponent), and formats it into a string representation of the number.
+export const fromWei = (value: bigint, decimals: number):string => {
+  return formatUnits(value, decimals)
+}

@@ -13,8 +13,9 @@ import {
   nftyFinanceV1Address,
   useErc20Approve,
 } from "@/wagmi-generated";
-import { ManageLendingDeskDocument } from "../../../.graphclient";
 import { useChainId } from "wagmi";
+import { ManageLendingDeskDocument } from "../../../.graphclient";
+import { fromWei, toWei } from "@/helpers/utils";
 
 export const ManageLendingDesk = (props: any) => {
   // constants
@@ -54,11 +55,24 @@ export const ManageLendingDesk = (props: any) => {
   const [depositAmount, setDepositAmount] = useState(0);
   const { writeAsync: approveErc20 } = useErc20Approve({
     address: result.data?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(depositAmount)],
+    // TODO: Add currency decimal details if available
+    args: [
+      nftyFinanceV1Address[chainId],
+      toWei(
+        depositAmount.toString(),
+        result.data?.lendingDesk?.erc20?.decimals
+      ),
+    ],
   });
   const { config: depositConfig } =
     usePrepareNftyFinanceV1DepositLendingDeskLiquidity({
-      args: [BigInt(result.data?.lendingDesk?.id || 0), BigInt(depositAmount)],
+      args: [
+        BigInt(result.data?.lendingDesk?.id || 0),
+        toWei(
+          depositAmount.toString(),
+          result.data?.lendingDesk?.erc20?.decimals
+        ),
+      ],
     });
   const { writeAsync: depositWrite } =
     useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
@@ -71,7 +85,13 @@ export const ManageLendingDesk = (props: any) => {
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const { config: withdrawConfig } =
     usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
-      args: [BigInt(result.data?.lendingDesk?.id || 0), BigInt(withdrawAmount)],
+      args: [
+        BigInt(result.data?.lendingDesk?.id || 0),
+        toWei(
+          withdrawAmount.toString(),
+          result.data?.lendingDesk?.erc20?.decimals
+        ),
+      ],
     });
   const { writeAsync: withdrawWrite } =
     useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
@@ -119,7 +139,11 @@ export const ManageLendingDesk = (props: any) => {
                     </h6>
                     <div className="mt-1 fs-4 text-body-secondary">
                       <strong className="text-primary-emphasis">
-                        {result.data?.lendingDesk?.balance}&nbsp;
+                        {fromWei(
+                          result.data?.lendingDesk?.balance,
+                          result.data?.lendingDesk?.erc20?.decimals
+                        )}
+                        &nbsp;
                       </strong>
                       {result.data?.lendingDesk?.erc20.symbol}
                     </div>
@@ -223,8 +247,17 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Offer:</strong> {config.minAmount}-
-                        {config.maxAmount}{" "}
+                        {/* TODO: Add currency decimal details if available */}
+                        <strong>Offer:</strong>{" "}
+                        {fromWei(
+                          config.minAmount,
+                          result.data?.lendingDesk?.erc20?.decimals
+                        )}
+                        -
+                        {fromWei(
+                          config.maxAmount,
+                          result.data?.lendingDesk?.erc20?.decimals
+                        )}{" "}
                         {result.data?.lendingDesk?.erc20.symbol}
                       </div>
                     </div>
@@ -233,8 +266,8 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Duration:</strong> {config.minDuration}-
-                        {config.maxDuration} Days
+                        <strong>Duration:</strong> {config.minDuration / 24}-
+                        {config.maxDuration / 24} Days
                       </div>
                     </div>
                     <div className="mt-1 d-flex align-items-center">
@@ -242,8 +275,8 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Interest Rate:</strong> {config.minInterest}-
-                        {config.maxInterest}%
+                        <strong>Interest Rate:</strong>{" "}
+                        {config.minInterest / 100}-{config.maxInterest / 100}%
                       </div>
                     </div>
                   </div>

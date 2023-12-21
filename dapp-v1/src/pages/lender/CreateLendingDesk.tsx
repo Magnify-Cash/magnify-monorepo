@@ -7,6 +7,7 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 import { useChainId } from "wagmi";
+import { toWei } from "@/helpers/utils";
 
 interface IConfigForm {
   hiddenInputNft: INFTListItem;
@@ -23,7 +24,9 @@ export const CreateLendingDesk = (props: any) => {
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
-  const [deskFundingAmount, setDeskFundingAmount] = useState("");
+  const [deskFundingAmount, setDeskFundingAmount] = useState("0");
+
+  console.log(deskConfigs);
 
   // lending desk config submit
   function handleConfigSubmit(e: React.MouseEvent<HTMLButtonElement>) {
@@ -56,22 +59,27 @@ export const CreateLendingDesk = (props: any) => {
   const chainId = useChainId();
   const { writeAsync: approveErc20 } = useErc20Approve({
     address: token?.token?.address as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(deskFundingAmount)],
+    args: [
+      nftyFinanceV1Address[chainId],
+      toWei(deskFundingAmount, token?.token?.decimals),
+    ],
   });
   const { writeAsync: initializeNewLendingDesk } =
     useNftyFinanceV1InitializeNewLendingDesk({
       args: [
         token?.token?.address as `0x${string}`,
-        BigInt(deskFundingAmount),
+        toWei(deskFundingAmount, token?.token?.decimals),
         deskConfigs.map((config) => ({
           nftCollection: config.hiddenInputNft.nft.address as `0x${string}`,
           nftCollectionIsErc1155: false,
-          minAmount: BigInt(config.minOffer),
-          maxAmount: BigInt(config.maxOffer),
-          minDuration: BigInt(config.minDuration),
-          maxDuration: BigInt(config.maxDuration),
-          minInterest: BigInt(config.minInterest),
-          maxInterest: BigInt(config.maxInterest),
+          minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
+          maxAmount: toWei(config.maxOffer, token?.token?.decimals),
+          // To account for days
+          minDuration: BigInt(parseInt(config.minDuration) * 24),
+          maxDuration: BigInt(parseInt(config.maxDuration) * 24),
+          // To account for basis points
+          minInterest: BigInt(parseInt(config.minInterest) * 100),
+          maxInterest: BigInt(parseInt(config.maxInterest) * 100),
         })),
       ],
     });

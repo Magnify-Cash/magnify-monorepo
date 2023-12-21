@@ -11,6 +11,7 @@ import {
 } from "@/wagmi-generated";
 import { calculateTimeInfo, formatTimeInfo } from "@/utils";
 import { Loan } from "../../.graphclient";
+import { fromWei, toWei } from "@/helpers/utils";
 
 // Interface
 interface ILoanRowProps {
@@ -46,9 +47,7 @@ export const LoanRow = ({
           alt="Image"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
-        <p className="text-body-secondary text-center">
-          Nothing found
-        </p>
+        <p className="text-body-secondary text-center">Nothing found</p>
       </>
     );
   }
@@ -73,14 +72,17 @@ export const LoanRow = ({
     const chainId = useChainId();
     const { writeAsync: approveErc20 } = useErc20Approve({
       address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-      args: [nftyFinanceV1Address[chainId], BigInt(payBackAmount)],
+      args: [
+        nftyFinanceV1Address[chainId],
+        toWei(payBackAmount, loan?.lendingDesk?.erc20.decimals),
+      ],
     });
     const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
       usePrepareNftyFinanceV1MakeLoanPayment({
         enabled: false,
         args: [
           BigInt(loan?.id || 0), // loan ID
-          BigInt(payBackAmount), // amout
+          toWei(payBackAmount, loan?.lendingDesk?.erc20.decimals), // amout
         ],
       });
     const { writeAsync: makeLoanPaymentWrite } =
@@ -150,7 +152,8 @@ export const LoanRow = ({
                       <i className="fa-light fa-hand-holding-dollar"></i>
                     </div>
                     <div className="h6 mb-0">
-                      {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
+                      {fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)}{" "}
+                      {loan?.lendingDesk?.erc20.symbol}
                     </div>
                     <div>borrowed</div>
                   </div>
@@ -167,7 +170,14 @@ export const LoanRow = ({
                       <i className="fa-light fa-calendar-lines"></i>
                     </div>
                     <div className="h6 mb-0">
-                      {loan?.amount - loan?.amountPaidBack}{" "}
+                      {fromWei(
+                        loan?.amount,
+                        loan?.lendingDesk?.erc20.decimals
+                      ) -
+                        fromWei(
+                          loan?.amountPaidBack,
+                          loan?.lendingDesk?.erc20.decimals
+                        )}{" "}
                       {loan?.lendingDesk?.erc20.symbol}
                     </div>
                     <div>payoff</div>
@@ -261,7 +271,12 @@ export const LoanRow = ({
                           <div className="col-12 col-sm-6">
                             <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                               <div className="d-flex align-items-center justify-content-center">
-                                <div className="h3">{loan?.amount}</div>
+                                <div className="h3">
+                                  {fromWei(
+                                    loan?.amount,
+                                    loan?.lendingDesk?.erc20.decimals
+                                  )}
+                                </div>
                                 <span className="text-body-secondary ms-2">
                                   {loan?.lendingDesk?.erc20.symbol}
                                 </span>
@@ -274,7 +289,7 @@ export const LoanRow = ({
                           <div className="col-12 col-sm-6">
                             <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                               <div className="d-flex align-items-center justify-content-center">
-                                <div className="h3">{loan?.interest}</div>
+                                <div className="h3">{loan?.interest / 100}</div>
                                 <span className="text-body-secondary ms-2">
                                   %
                                 </span>
