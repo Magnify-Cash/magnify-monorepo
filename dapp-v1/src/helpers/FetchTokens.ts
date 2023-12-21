@@ -41,3 +41,16 @@ const fetchTokenDetails = async (addresses: string[]) => {
 };
 
 export default fetchTokenDetails;
+
+// Function to fetch tokens for a given collection
+export const fetchTokensForCollection = async (nftCollection) => {
+  const tokenIdArr = nftCollection.loanConfigs.map(
+    (loanConfig) => loanConfig.lendingDesk.erc20.id
+  );
+
+  if (tokenIdArr?.length) {
+    return await fetchTokenDetails(tokenIdArr);
+  }
+
+  return [];
+};
