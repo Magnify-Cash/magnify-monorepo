@@ -9,9 +9,8 @@ import {
   nftyFinanceV1Address,
   useErc20Approve,
 } from "@/wagmi-generated";
-import { calculateTimeInfo, formatTimeInfo } from "@/utils";
 import { Loan } from "../../.graphclient";
-import { fromWei, toWei } from "@/helpers/utils";
+import { fromWei, toWei, calculateTimeInfo, formatTimeInfo } from "@/helpers/utils";
 
 // Interface
 interface ILoanRowProps {
@@ -170,14 +169,14 @@ export const LoanRow = ({
                       <i className="fa-light fa-calendar-lines"></i>
                     </div>
                     <div className="h6 mb-0">
-                      {fromWei(
+                      {parseInt(fromWei(
                         loan?.amount,
                         loan?.lendingDesk?.erc20.decimals
-                      ) -
-                        fromWei(
+                      )) -
+                        parseInt(fromWei(
                           loan?.amountPaidBack,
                           loan?.lendingDesk?.erc20.decimals
-                        )}{" "}
+                        ))}{" "}
                       {loan?.lendingDesk?.erc20.symbol}
                     </div>
                     <div>payoff</div>
