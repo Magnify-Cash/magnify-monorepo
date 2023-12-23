@@ -134,13 +134,19 @@ export const getWalletNfts = async ({
 
 // Human readable to wei
 // https://viem.sh/docs/utilities/parseUnits.html: Multiplies a string representation of a number by a given exponent of base 10 (10exponent).
-export const toWei = (value: string, decimals: number):bigint => {
-  return parseUnits(value, decimals)
+export const toWei = (value: string, decimals: number|undefined):bigint => {
+  if (decimals !== undefined) {
+    return parseUnits(value, decimals)
+  }
+  else return BigInt(0)
 }
 
 
 // Wei to human readable
 // https://viem.sh/docs/utilities/formatUnits.html: Divides a number by a given exponent of base 10 (10exponent), and formats it into a string representation of the number.
-export const fromWei = (value: bigint, decimals: number):string => {
-  return formatUnits(value, decimals)
+export const fromWei = (value: bigint, decimals: number|undefined):string => {
+  if (decimals !== undefined) {
+    return formatUnits(value, decimals)
+  }
+  else return "0"
 }
