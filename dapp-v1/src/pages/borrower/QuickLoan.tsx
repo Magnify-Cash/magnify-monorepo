@@ -12,6 +12,7 @@ import {
 } from "@/wagmi-generated";
 import { QuickLoanDocument } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
+import { formatAddress } from "@/helpers/formatAddress";
 
 export const QuickLoan = (props: any) => {
   // constants
@@ -212,7 +213,9 @@ export const QuickLoan = (props: any) => {
                             alt="Image"
                             className="flex-shrink-0"
                           />
-                          <span className="ms-3">0x4323...43vfk32</span>
+                          <span className="ms-3">
+                            {formatAddress(item.loanConfig?.nftCollection?.id)}
+                          </span>
                         </div>
                         <div className="container-fluid g-0">
                           <div className="row g-2 mt-2">
@@ -307,9 +310,7 @@ export const QuickLoan = (props: any) => {
                               className="d-block flex-shrink-0 me-2 rounded-circle"
                               width="30"
                             />
-                            <div className="h5 fw-medium m-0">
-                              Pudgy Penguins
-                            </div>
+                            <div className="h5 fw-medium m-0">{`fetch`}</div>
                           </div>
                           <div className="text-body-secondary">
                             Collection Type

@@ -5,6 +5,7 @@ import { PopupTransaction } from "@/components";
 import { BrowseCollectionDocument } from "../../../.graphclient";
 import { fromWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import { formatAddress } from "@/helpers/formatAddress";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -37,10 +38,6 @@ export const BrowseCollection = (props) => {
   const [nftId, setNftId] = useState<number>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
-
-  const formatLender = (address: `0x${string}`) => {
-    return `${address.slice(0, 6)}...${address.slice(-8)}`;
-  };
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -94,7 +91,7 @@ export const BrowseCollection = (props) => {
                     </td>
 
                     <td className="py-3">
-                      {formatLender(loanConfig.lendingDesk.owner)}
+                      {formatAddress(loanConfig.lendingDesk.owner)}
                     </td>
                     <td className="py-3 align-middle">
                       <img
