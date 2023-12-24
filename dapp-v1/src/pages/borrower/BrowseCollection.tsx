@@ -4,6 +4,7 @@ import { useQuery } from "urql";
 import { PopupTransaction } from "@/components";
 import { BrowseCollectionDocument } from "../../../.graphclient";
 import { fromWei } from "@/helpers/utils";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -14,15 +15,23 @@ export const BrowseCollection = (props) => {
       nftCollectionId: collection_address,
     },
   });
-  console.log(result);
+  const { data, fetching, error } = result;
 
-  // Title
   var title = document.getElementById("base-title");
   useEffect(() => {
-    if (title) {
-      title.innerHTML = `$x Liquidity Desks`;
-    }
-  }, [title]);
+    // This function will be executed whenever the query data changes
+    const getTitle = async () => {
+      if (!fetching && collection_address) {
+        const fetchedNftArr: INft[] = await fetchNFTDetails([
+          collection_address,
+        ]);
+        if (title) {
+          title.innerHTML = `${fetchedNftArr[0].name} Liquidity Desks`;
+        }
+      }
+    };
+    getTitle();
+  }, [data]);
 
   // loan params selection
   const [nftId, setNftId] = useState<number>();
@@ -79,7 +88,13 @@ export const BrowseCollection = (props) => {
                         alt="Image"
                       />
                     </td>
-                    <td className="py-3">0x34n3...4j32op2j</td>
+
+                    <td className="py-3">
+                      {`${loanConfig.lendingDesk.owner.slice(
+                        0,
+                        6
+                      )}...${loanConfig.lendingDesk.owner.slice(-8)}`}
+                    </td>
                     <td className="py-3 align-middle">
                       <img
                         src="/images/placeholder/images/image-8.svg"

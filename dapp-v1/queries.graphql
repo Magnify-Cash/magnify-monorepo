@@ -96,6 +96,7 @@ query BrowseCollection($nftCollectionId: String) {
       id
       balance
       status
+      owner
       erc20 {
         id
         symbol
