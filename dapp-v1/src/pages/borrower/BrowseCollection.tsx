@@ -38,6 +38,10 @@ export const BrowseCollection = (props) => {
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
 
+  const formatLender = (address: `0x${string}`) => {
+    return `${address.slice(0, 6)}...${address.slice(-8)}`;
+  };
+
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="text-body-secondary position-relative mt-n3">
@@ -79,7 +83,7 @@ export const BrowseCollection = (props) => {
             <tbody>
               {result.data?.loanConfigs.map((loanConfig, index) => {
                 return (
-                  <tr className="align-middle">
+                  <tr className="align-middle" key={index}>
                     <td className="py-3 ps-3">
                       <img
                         src="/images/placeholder/images/image-12.png"
@@ -90,10 +94,7 @@ export const BrowseCollection = (props) => {
                     </td>
 
                     <td className="py-3">
-                      {`${loanConfig.lendingDesk.owner.slice(
-                        0,
-                        6
-                      )}...${loanConfig.lendingDesk.owner.slice(-8)}`}
+                      {formatLender(loanConfig.lendingDesk.owner)}
                     </td>
                     <td className="py-3 align-middle">
                       <img
@@ -234,8 +235,9 @@ export const BrowseCollection = (props) => {
                                 <select
                                   className="form-select form-select-lg py-2"
                                   id="select-nft"
+                                  defaultValue={"Select NFT"}
                                 >
-                                  <option selected>Select NFT</option>
+                                  <option value="Select NFT">Select NFT</option>
                                   <option value="1">1</option>
                                   <option value="2">2</option>
                                   <option value="3">3</option>

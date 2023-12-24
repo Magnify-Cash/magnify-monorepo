@@ -107,7 +107,7 @@ export const Base = () => {
             </button>
             <button
               type="button"
-              class="btn-close d-lg-none"
+              className="btn-close d-lg-none"
               data-bs-dismiss="offcanvas"
               data-bs-target="#sidebar"
               aria-label="Close"
@@ -307,12 +307,7 @@ export const Base = () => {
                 </button>
               </div>
               <NavLink to="/" href="#" className="d-lg-none me-auto">
-                <img
-                  src="/theme/icon.svg"
-                  alt="Logo"
-                  width="28"
-                  height="28"
-                />
+                <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
               </NavLink>
               <ConnectKitButton.Custom>
                 {({
@@ -326,10 +321,7 @@ export const Base = () => {
                 }) => {
                   return (
                     <>
-                      <button
-                        onClick={show}
-                        className="btn btn-md btn-primary"
-                      >
+                      <button onClick={show} className="btn btn-md btn-primary">
                         {isConnected && <small>{truncatedAddress}</small>}
                         {!isConnected && <small>Connect</small>}
                         <i className="fa-solid fa-wallet ms-2"></i>
@@ -339,7 +331,10 @@ export const Base = () => {
                 }}
               </ConnectKitButton.Custom>
             </div>
-            <h3 id="base-title" className="m-0 text-center text-lg-start order-lg-first">
+            <h3
+              id="base-title"
+              className="m-0 text-center text-lg-start order-lg-first"
+            >
               {title}
             </h3>
           </div>
