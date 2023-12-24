@@ -1,3 +1,5 @@
+import { fetchLocalTokens } from "./LocalData";
+
 interface IJsonData {
   tokens: IToken[];
 }
@@ -14,27 +16,33 @@ export interface IToken {
 const fetchTokenDetails = async (addresses: string[]) => {
   const url = "https://tokens.coingecko.com/uniswap/all.json";
   let jsonData: IJsonData = { tokens: [] };
-  try {
-    const response = await fetch(url);
+  if (import.meta.env.DEV) {
+    jsonData = await fetchLocalTokens();
+  } else {
+    try {
+      const response = await fetch(url);
 
-    // Check if the request was successful
-    if (!response.ok) {
-      throw new Error(
-        `Network response was not ok, status: ${response.status}`
-      );
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error(
+          `Network response was not ok, status: ${response.status}`
+        );
+      }
+      jsonData = await response.json();
+    } catch (error: any) {
+      console.log("Error fetching and parsing JSON:", error.message);
     }
-    jsonData = await response.json();
-  } catch (error: any) {
-    console.log("Error fetching and parsing JSON:", error.message);
   }
 
   //Creating a Map for fast lookup. Here key = address of a token; value = a token object
   const TokenMap: Map<string, IToken> = new Map();
 
-  jsonData.tokens.forEach((token) => TokenMap.set(token.address, token));
+  jsonData.tokens.forEach((token) =>
+    TokenMap.set(token.address.toLowerCase(), token)
+  );
 
   const result = addresses.map(
-    (address) => TokenMap.get(address) || ({} as IToken) // Return empty object if token not found
+    (address) => TokenMap.get(address.toLowerCase()) || ({} as IToken) // Return empty object if token not found
   );
 
   return result;
