@@ -37,6 +37,14 @@ query ManageLendingDesks($walletAddress: Bytes!) {
   }
 }
 
+query CreateLendingDesk($walletAddress: Bytes!) {
+  lendingDesks(where: { owner: $walletAddress }) {
+    id
+    balance
+    status
+  }
+}
+
 query ManageLendingDesk($deskId: ID!) {
   lendingDesk(id: $deskId) {
     id

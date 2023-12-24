@@ -6,8 +6,10 @@ import {
   nftyFinanceV1Address,
   useErc20Approve,
 } from "@/wagmi-generated";
-import { useChainId } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { toWei } from "@/helpers/utils";
+import { useQuery } from "urql";
+import { CreateLendingDeskDocument } from "../../../.graphclient";
 
 interface IConfigForm {
   hiddenInputNft: INFTListItem;
@@ -25,6 +27,14 @@ export const CreateLendingDesk = (props: any) => {
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
   const [deskFundingAmount, setDeskFundingAmount] = useState("0");
+
+  const { address } = useAccount();
+  const [result] = useQuery({
+    query: CreateLendingDeskDocument,
+    variables: {
+      walletAddress: address,
+    },
+  });
 
   console.log(deskConfigs);
 
@@ -101,24 +111,9 @@ export const CreateLendingDesk = (props: any) => {
         <div className="col-xl-8">
           <div className="container-gluid g-0">
             <div className="row g-4">
-              <div className="col-xl-7">
+              <div className="col-xl-12">
                 <div className="card border-0 shadow rounded-4">
-                  <div className="card-body p-4">
-                    <h5 className="fw-medium text-primary-emphasis">
-                      Lending Desk Name
-                    </h5>
-                    <input
-                      type="text"
-                      className="form-control form-control-lg py-2 border-0 bg-transparent fs-5 fw-bold mt-4"
-                      id="name"
-                      placeholder="Lending Desk 1"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="col-xl-5">
-                <div className="card border-0 shadow rounded-4">
-                  <div className="card-body p-4">
+                  <div className="card-body p-4 w-lg-75">
                     <div>
                       <h5 className="fw-medium text-primary-emphasis">
                         Choose Currency
@@ -356,8 +351,11 @@ export const CreateLendingDesk = (props: any) => {
               </h6>
               <div className="pb-2 mb-2 border-bottom">
                 <div className="text-body-secondary">Name</div>
-                {/* TODO replace hardcoded value */}
-                <div className="mt-1 fs-5">{"Lending desk 1"}</div>
+                <div className="mt-1 fs-5">{`Lending desk ${
+                  result.data?.lendingDesks.length
+                    ? result.data?.lendingDesks.length + 1
+                    : null
+                }`}</div>
               </div>
               {token ? (
                 <div>
@@ -473,8 +471,11 @@ export const CreateLendingDesk = (props: any) => {
                     </h5>
                     <div className="pb-2 mb-2 border-bottom">
                       <div className="text-body-secondary">Name</div>
-                      {/* TODO replace hardcoded value */}
-                      <div className="mt-1 fs-5">{"Lending desk 1"}</div>
+                      <div className="mt-1 fs-5">{`Lending desk ${
+                        result.data?.lendingDesks.length
+                          ? result.data?.lendingDesks.length + 1
+                          : null
+                      }`}</div>
                     </div>
                     {token ? (
                       <div>
