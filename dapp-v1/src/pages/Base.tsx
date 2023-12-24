@@ -234,7 +234,7 @@ export const Base = () => {
                   Support
                 </h6>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <NavLink
                   to="help"
                   onClick={() => closeSidebar()}
@@ -247,10 +247,12 @@ export const Base = () => {
                   </span>
                   Help
                 </NavLink>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <NavLink
-                  to="docs"
+                  to="https://docs.nfty.finance/"
+                  target="_blank" // Opens the link in a new tab
+                  rel="noopener noreferrer" // Recommended for security
                   onClick={() => closeSidebar()}
                   className={({ isActive }) =>
                     isActive ? activeClass : inactiveClass
@@ -264,7 +266,9 @@ export const Base = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="community"
+                  to="https://discord.gg/nfty-finance"
+                  target="_blank" // Opens the link in a new tab
+                  rel="noopener noreferrer" // Recommended for security
                   onClick={() => closeSidebar()}
                   className={({ isActive }) =>
                     isActive ? activeClass : inactiveClass
