@@ -461,14 +461,6 @@ export const CreateLendingDesk = (props: any) => {
                     <h5 className="fw-medium text-body-secondary mb-4">
                       Lending Desk Details
                     </h5>
-                    <div className="pb-2 mb-2 border-bottom">
-                      <div className="text-body-secondary">Name</div>
-                      <div className="mt-1 fs-5">{`Lending desk ${
-                        result.data?.lendingDesks.length
-                          ? result.data?.lendingDesks.length + 1
-                          : null
-                      }`}</div>
-                    </div>
                     {token ? (
                       <div>
                         <div className="pb-2 mb-2 border-bottom">
