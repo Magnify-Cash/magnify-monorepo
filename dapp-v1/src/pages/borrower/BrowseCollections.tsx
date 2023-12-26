@@ -154,7 +154,6 @@ export const BrowseCollections = (props: any) => {
                             );
                           })}
                         </div>
-                        <span className="ms-1">...</span>
                       </div>
                     </td>
                     <td className="py-3">
