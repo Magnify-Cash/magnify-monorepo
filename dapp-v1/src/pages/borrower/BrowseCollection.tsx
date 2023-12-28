@@ -37,17 +37,26 @@ export const BrowseCollection = (props) => {
 
   useEffect(() => {
     // This function will be executed whenever the query data changes
-    if (!fetching) getTokenDetails();
+    if (!fetching) {
+      getTokenDetails();
+      getNFTdetails();
+    }
   }, [data]);
 
   // loan params selection
+  const [nft, setNFT] = useState<INft>();
   const [tokens, setTokens] = useState<IToken[]>([]);
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
 
   const getTokenDetails = async () => {
-    const tokens = await fetchTokensForCollection(result.data);
-    setTokens(tokens);
+    const fetchedTokens = await fetchTokensForCollection(result.data);
+    setTokens(fetchedTokens);
+  };
+
+  const getNFTdetails = async () => {
+    const fetchedNfts = await fetchNFTDetails([collection_address!]);
+    setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
 
   return (
@@ -158,13 +167,13 @@ export const BrowseCollection = (props) => {
                                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                                     <div className="d-flex align-items-center justify-content-center">
                                       <img
-                                        src="/images/placeholder/images/image-5.png"
+                                        src={nft?.logoURI}
                                         alt="Image"
                                         className="d-block flex-shrink-0 me-2 rounded-circle"
                                         width="30"
                                       />
                                       <div className="h5 fw-medium m-0">
-                                        Pudgy Penguins
+                                        {nft?.name}
                                       </div>
                                     </div>
                                     <div className="text-body-secondary">
