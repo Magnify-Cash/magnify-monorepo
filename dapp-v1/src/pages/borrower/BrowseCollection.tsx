@@ -6,6 +6,7 @@ import { BrowseCollectionDocument } from "../../../.graphclient";
 import { fromWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
+import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -34,10 +35,20 @@ export const BrowseCollection = (props) => {
     getTitle();
   }, [data]);
 
+  useEffect(() => {
+    // This function will be executed whenever the query data changes
+    if (!fetching) getTokenDetails();
+  }, [data]);
+
   // loan params selection
-  const [nftId, setNftId] = useState<number>();
+  const [tokens, setTokens] = useState<IToken[]>([]);
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
+
+  const getTokenDetails = async () => {
+    const tokens = await fetchTokensForCollection(result.data);
+    setTokens(tokens);
+  };
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -89,13 +100,12 @@ export const BrowseCollection = (props) => {
                         alt="Image"
                       />
                     </td>
-
                     <td className="py-3">
                       {formatAddress(loanConfig.lendingDesk.owner)}
                     </td>
                     <td className="py-3 align-middle">
                       <img
-                        src="/images/placeholder/images/image-8.svg"
+                        src={tokens?.[index]?.logoURI}
                         height="30"
                         className="d-block rounded-circle"
                         alt="Image"
