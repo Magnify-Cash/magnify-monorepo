@@ -16,6 +16,7 @@ import {
 import { useChainId } from "wagmi";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 
 export const ManageLendingDesk = (props: any) => {
   // constants
@@ -31,6 +32,25 @@ export const ManageLendingDesk = (props: any) => {
     },
   });
 
+  const { data, fetching, error } = result;
+
+  const [nftArr, setNftArr] = useState<INft[]>([]);
+
+  useEffect(() => {
+    // This function will be executed whenever the query data changes
+    if (!fetching) getNFTs();
+  }, [data]);
+
+  //This is used to lookup a list of nfts off chain
+  const getNFTs = async () => {
+    const nftIds: string[] | undefined = data?.lendingDesk?.loanConfigs.map(
+      (loan) => loan.nftCollection.id
+    );
+    if (nftIds?.length) {
+      const resultArr = await fetchNFTDetails(nftIds);
+      setNftArr(resultArr);
+    }
+  };
   // Title
   var title = document.getElementById("base-title");
   useEffect(() => {
@@ -234,12 +254,12 @@ export const ManageLendingDesk = (props: any) => {
                     {/* TODO replace hardcoded values */}
                     <div className="d-flex align-items-center">
                       <img
-                        src="/theme/images/image-5.png"
+                        src={nftArr[index]?.logoURI}
                         height="24"
                         className="d-block rounded-circle flex-shrink-0 me-2"
                       />
                       <div className="text-truncate fw-medium">
-                        {`Pudgy Penguins`}
+                        {nftArr[index]?.name}
                       </div>
                     </div>
                     <div className="mt-2 d-flex align-items-center">
