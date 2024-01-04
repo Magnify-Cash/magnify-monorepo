@@ -6,13 +6,16 @@ updates:
     schedule:
       interval: "weekly"
       day: "saturday"
+    labels: []
   - package-ecosystem: "npm"
     directory: "/subgraph"
     schedule:
       interval: "weekly"
       day: "saturday"
+    labels: []
   - package-ecosystem: "npm"
     directory: "/contracts"
     schedule:
       interval: "weekly"
       day: "saturday"
+    labels: []
