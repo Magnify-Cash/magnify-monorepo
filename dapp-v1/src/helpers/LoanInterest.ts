@@ -15,9 +15,6 @@ const calculateLoanInterest = (
 
   const amount = amountInput ? toWei(amountInput, decimals) : minAmount;
   const duration = BigInt(durationInput ? durationInput * 24 : minDuration);
-
-  const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
-  const durationFactor = (duration - minDuration) / (maxDuration - minDuration);
   const interestRange = maxInterest - minInterest;
 
   let interest = minInterest;
@@ -29,14 +26,20 @@ const calculateLoanInterest = (
     return Number(interest) / 100;
   }
   if (minDuration === maxDuration) {
+    const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
     interest = minInterest + amountFactor * interestRange;
   } else if (minAmount === maxAmount) {
+    const durationFactor =
+      (duration - minDuration) / (maxDuration - minDuration);
     interest = minInterest + durationFactor * interestRange;
   } else {
     //Taking average of amountFactor and durationFactor giving both equal weightage
     //Diving by BigInt(2) after multiplying by interestRange because of integer division
     //Otherwise (amountFactor + durationFactor)/2 will produce 0
   }
+  const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
+  const durationFactor = (duration - minDuration) / (maxDuration - minDuration);
+
   interest =
     minInterest + ((amountFactor + durationFactor) * interestRange) / BigInt(2);
 
