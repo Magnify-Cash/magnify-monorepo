@@ -49,7 +49,7 @@ test("Should create Loan entity on NewLoanInitialized", () => {
   // Assert contents of Loan
   assert.stringEquals(loan.lendingDesk, lendingDeskId.toString());
   assert.stringEquals(loan.id, loanId.toString());
-  assert.bytesEquals(loan.borrower, borrower);
+  assert.stringEquals(loan.borrower, borrower.toHex());
   assert.stringEquals(loan.nftCollection, nftCollection.toHex());
   // @ts-ignore
   assert.bigIntEquals(loan.nftId, BigInt.fromU32(<u32>nftId));
@@ -57,7 +57,7 @@ test("Should create Loan entity on NewLoanInitialized", () => {
   assert.bigIntEquals(loan.duration, duration);
   assert.bigIntEquals(loan.interest, interest);
   assert.stringEquals(loan.status, "Active");
-  assert.bytesEquals(loan.lender, lendingDeskOwner);
+  assert.stringEquals(loan.lender, lendingDeskOwner.toHex());
   assert.bigIntEquals(loan.startTime, event.block.timestamp);
   assert.bigIntEquals(loan.amountPaidBack, BigInt.fromU32(0));
 });

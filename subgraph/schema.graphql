@@ -24,10 +24,16 @@ type LoanConfig @entity {
 
 type LendingDesk @entity {
   id: ID!
-  owner: Bytes!
+  owner: User!
   erc20: Erc20!
   balance: BigInt!
   status: LendingDeskStatus!
+  loansCount: BigInt!
+  loansDefaultedCount: BigInt!
+  loansResolvedCount: BigInt!
+  amountBorrowed: BigInt!
+  netLiquidityIssued: BigInt!
+  netProfit: BigInt!
   loanConfigs: [LoanConfig!]! @derivedFrom(field: "lendingDesk")
   loans: [Loan!]! @derivedFrom(field: "lendingDesk")
 }
@@ -41,6 +47,8 @@ type ProtocolParams @entity {
   obligationNotes: Bytes!
   lendingKeys: Bytes!
   platformWallet: Bytes!
+  lendingDesksCount: BigInt!
+  loansCount: BigInt!
 }
 
 type Erc20 @entity {
@@ -68,6 +76,19 @@ type Loan @entity {
   nftId: BigInt!
   interest: BigInt!
   status: LoanStatus!
-  lender: Bytes!
-  borrower: Bytes!
+  lender: User!
+  borrower: User!
+}
+
+type User @entity {
+  id: ID!
+  loansIssuedCount: BigInt!
+  loansIssuedResolvedCount: BigInt!
+  loansIssuedDefaultedCount: BigInt!
+  loansTakenCount: BigInt!
+  loansTakenResolvedCount: BigInt!
+  loansTakenDefaultedCount: BigInt!
+  loansIssued: [Loan!]! @derivedFrom(field: "lender")
+  loansTaken: [Loan!]! @derivedFrom(field: "borrower")
+  lendingDesks: [LendingDesk!]! @derivedFrom(field: "owner")
 }

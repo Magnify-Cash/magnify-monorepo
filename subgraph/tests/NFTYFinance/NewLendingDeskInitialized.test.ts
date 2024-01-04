@@ -52,9 +52,9 @@ test("Should create LendingDesk and Erc20 entities on NewLendingDeskInitialized"
 
   // Assert contents of LendingDesk
   assert.stringEquals(lendingDesk.id, lendingDeskId.toString());
-  assert.bytesEquals(lendingDesk.owner, lendingDeskOwner);
+  assert.stringEquals(lendingDesk.owner, lendingDeskOwner.toHex());
   assert.stringEquals(lendingDesk.erc20, erc20Address.toHex());
-  assert.bigIntEquals(lendingDesk.balance, new BigInt(0));
+  assert.bigIntEquals(lendingDesk.balance, BigInt.fromI32(0));
   assert.stringEquals(lendingDesk.status, "Active");
 
   // Assert Erc20 got created

@@ -24,6 +24,7 @@ import {
   LoanConfig,
   NftCollection,
   ProtocolParams,
+  User,
 } from "../generated/schema";
 import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 
@@ -32,6 +33,9 @@ import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 export function handleNewLendingDeskInitialized(
   event: NewLendingDeskInitialized
 ): void {
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
+
   // Create ERC20 instance if doesn't exist
   if (!Erc20.load(event.params.erc20.toHex())) {
     const erc20 = new Erc20(event.params.erc20.toHex());
@@ -44,15 +48,41 @@ export function handleNewLendingDeskInitialized(
     erc20.save();
   }
 
+  // Create User instance if doesn't exist
+  if (!User.load(event.params.owner.toHex())) {
+    const user = new User(event.params.owner.toHex());
+
+    user.loansIssuedCount = BigInt.fromI32(0);
+    user.loansIssuedResolvedCount = BigInt.fromI32(0);
+    user.loansIssuedDefaultedCount = BigInt.fromI32(0);
+    user.loansTakenCount = BigInt.fromI32(0);
+    user.loansTakenResolvedCount = BigInt.fromI32(0);
+    user.loansTakenDefaultedCount = BigInt.fromI32(0);
+
+    user.save();
+  }
+
   // Create LiquidityShop instance
   const lendingDesk = new LendingDesk(event.params.lendingDeskId.toString());
 
   lendingDesk.erc20 = event.params.erc20.toHex();
-  lendingDesk.owner = event.params.owner;
+  lendingDesk.owner = event.params.owner.toHex();
   lendingDesk.status = "Active";
-  lendingDesk.balance = new BigInt(0);
+  lendingDesk.balance = BigInt.fromI32(0);
+  lendingDesk.loansCount = BigInt.fromI32(0);
+  lendingDesk.loansDefaultedCount = BigInt.fromI32(0);
+  lendingDesk.loansResolvedCount = BigInt.fromI32(0);
+  lendingDesk.netLiquidityIssued = BigInt.fromI32(0);
+  lendingDesk.netProfit = BigInt.fromI32(0);
+  lendingDesk.amountBorrowed = BigInt.fromI32(0);
 
   lendingDesk.save();
+
+  // Increment LendingDesk count
+  protocolParams.lendingDesksCount = protocolParams.lendingDesksCount.plus(
+    BigInt.fromI32(1)
+  );
+  protocolParams.save();
 }
 
 export function handleLendingDeskLoanConfigsSet(
@@ -129,16 +159,47 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
 }
 
 export function handleLendingDeskDissolved(event: LendingDeskDissolved): void {
+  // Load entities
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
 
   lendingDesk.status = "Dissolved";
   lendingDesk.save();
+
+  // Decrement LendingDesk count
+  protocolParams.lendingDesksCount = protocolParams.lendingDesksCount.minus(
+    BigInt.fromI32(1)
+  );
+  protocolParams.save();
 }
 
 // Loan related events
 
 export function handleNewLoanInitialized(event: NewLoanInitialized): void {
+  // Load entities
+  const protocolParams = ProtocolParams.load("0");
+  if (!protocolParams) return;
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+  const lender = User.load(lendingDesk.owner);
+  if (!lender) return;
+
+  // Create borrower User instance if doesn't exist
+  if (!User.load(event.params.borrower.toHex())) {
+    const borrower = new User(event.params.borrower.toHex());
+
+    borrower.loansIssuedCount = BigInt.fromI32(0);
+    borrower.loansIssuedResolvedCount = BigInt.fromI32(0);
+    borrower.loansIssuedDefaultedCount = BigInt.fromI32(0);
+    borrower.loansTakenCount = BigInt.fromI32(1);
+    borrower.loansTakenResolvedCount = BigInt.fromI32(0);
+    borrower.loansTakenDefaultedCount = BigInt.fromI32(0);
+
+    borrower.save();
+  }
+
   const loan = new Loan(event.params.loanId.toString());
 
   // Enter loan details
@@ -148,37 +209,103 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   loan.duration = event.params.duration;
   loan.startTime = event.block.timestamp;
   loan.status = "Active";
-  loan.borrower = event.params.borrower;
+  loan.borrower = event.params.borrower.toHex();
   loan.nftCollection = event.params.nftCollection.toHex();
   loan.nftId = event.params.nftId;
   loan.interest = event.params.interest;
-
-  // Fetch lending desk and set lender to lending desk owner
-  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
-  if (!lendingDesk) return;
   loan.lender = lendingDesk.owner;
 
   // Save entity
   loan.save();
+
+  // Update lender stats
+  lender.loansIssuedCount = lender.loansIssuedCount.plus(BigInt.fromI32(1));
+  lender.save();
+
+  // Increment Loan count
+  protocolParams.loansCount = protocolParams.loansCount.plus(BigInt.fromI32(1));
+  protocolParams.save();
+
+  // Update lending desk stats
+  lendingDesk.loansCount = lendingDesk.loansCount.plus(BigInt.fromI32(1));
+  lendingDesk.netLiquidityIssued = lendingDesk.netLiquidityIssued.plus(
+    event.params.amount
+  );
+  lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.plus(
+    event.params.amount
+  );
+  lendingDesk.save();
 }
 
 export function handleDefaultedLoanLiquidated(
   event: DefaultedLoanLiquidated
 ): void {
+  // Load entities
   const loan = Loan.load(event.params.loanId.toString());
   if (!loan) return;
+  const lender = User.load(loan.lender);
+  if (!lender) return;
+  const borrower = User.load(loan.borrower);
+  if (!borrower) return;
+  const lendingDesk = LendingDesk.load(loan.lendingDesk);
+  if (!lendingDesk) return;
 
   loan.status = "Defaulted";
   loan.save();
+
+  // Update users' stats
+  lender.loansIssuedDefaultedCount = lender.loansIssuedDefaultedCount.plus(
+    BigInt.fromI32(1)
+  );
+  lender.save();
+  borrower.loansTakenDefaultedCount = borrower.loansTakenDefaultedCount.plus(
+    BigInt.fromI32(1)
+  );
+  borrower.save();
+
+  // Update lending desk stats
+  lendingDesk.loansDefaultedCount = lendingDesk.loansDefaultedCount.plus(
+    BigInt.fromI32(1)
+  );
+  lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.minus(
+    loan.amount.minus(loan.amountPaidBack)
+  );
+  lendingDesk.save();
 }
 
 export function handleLoanPaymentMade(event: LoanPaymentMade): void {
+  // Load entities
   const loan = Loan.load(event.params.loanId.toString());
   if (!loan) return;
+  const lender = User.load(loan.lender);
+  if (!lender) return;
+  const borrower = User.load(loan.borrower);
+  if (!borrower) return;
+  const lendingDesk = LendingDesk.load(loan.lendingDesk);
+  if (!lendingDesk) return;
 
   loan.amountPaidBack = loan.amountPaidBack.plus(event.params.amountPaid);
   if (event.params.resolved) loan.status = "Resolved";
   loan.save();
+
+  // Update lender stats
+  lender.loansIssuedResolvedCount = lender.loansIssuedResolvedCount.plus(
+    BigInt.fromI32(1)
+  );
+  lender.save();
+  borrower.loansTakenResolvedCount = borrower.loansTakenResolvedCount.plus(
+    BigInt.fromI32(1)
+  );
+  borrower.save();
+
+  // Update lending desk stats
+  lendingDesk.loansResolvedCount = lendingDesk.loansResolvedCount.plus(
+    BigInt.fromI32(1)
+  );
+  lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.minus(
+    event.params.amountPaid
+  );
+  lendingDesk.save();
 }
 
 // Protocol level parameters related events
@@ -233,6 +360,9 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     protocolParams.obligationNotes = Address.zero();
     protocolParams.lendingKeys = Address.zero();
     protocolParams.platformWallet = Address.zero();
+    // Initialize counts to 0
+    protocolParams.lendingDesksCount = BigInt.fromU32(0);
+    protocolParams.loansCount = BigInt.fromU32(0);
 
     protocolParams.save();
   } else {
