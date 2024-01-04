@@ -3,10 +3,11 @@ import { useParams, NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { PopupTransaction } from "@/components";
 import { BrowseCollectionDocument } from "../../../.graphclient";
-import { fromWei } from "@/helpers/utils";
+import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
+import calculateLoanInterest from "@/helpers/LoanInterest";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -349,7 +350,17 @@ export const BrowseCollection = (props) => {
                                 Interest Rate{" "}
                                 <i className="fa-light fa-info-circle ms-1"></i>
                               </span>
-                              <span className="fw-medium ms-auto">3%</span>
+                              <span className="fw-medium ms-auto">
+                                {loanConfig
+                                  ? calculateLoanInterest(
+                                      loanConfig,
+                                      amount,
+                                      duration,
+                                      loanConfig?.lendingDesk.erc20?.decimals
+                                    )
+                                  : null}
+                                %
+                              </span>
                             </div>
                             <div className="my-2 d-flex align-items-center">
                               <span className="text-body-secondary">
