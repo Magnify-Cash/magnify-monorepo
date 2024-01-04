@@ -10,7 +10,12 @@ import {
   useErc20Approve,
 } from "@/wagmi-generated";
 import { Loan } from "../../.graphclient";
-import { fromWei, toWei, calculateTimeInfo, formatTimeInfo } from "@/helpers/utils";
+import {
+  fromWei,
+  toWei,
+  calculateTimeInfo,
+  formatTimeInfo,
+} from "@/helpers/utils";
 
 // Interface
 interface ILoanRowProps {
@@ -111,7 +116,7 @@ export const LoanRow = ({
     }
 
     return (
-      <div className="col-md-6 col-xl-4" key={loan?.id}>
+      <div className="col-md-6 col-xl-4 mb-4" key={loan?.id}>
         <div className="card border-0 shadow rounded-4 h-100">
           <div className="card-body p-4">
             <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
@@ -169,14 +174,15 @@ export const LoanRow = ({
                       <i className="fa-light fa-calendar-lines"></i>
                     </div>
                     <div className="h6 mb-0">
-                      {parseInt(fromWei(
-                        loan?.amount,
-                        loan?.lendingDesk?.erc20.decimals
-                      )) -
-                        parseInt(fromWei(
-                          loan?.amountPaidBack,
-                          loan?.lendingDesk?.erc20.decimals
-                        ))}{" "}
+                      {parseInt(
+                        fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)
+                      ) -
+                        parseInt(
+                          fromWei(
+                            loan?.amountPaidBack,
+                            loan?.lendingDesk?.erc20.decimals
+                          )
+                        )}{" "}
                       {loan?.lendingDesk?.erc20.symbol}
                     </div>
                     <div>payoff</div>
