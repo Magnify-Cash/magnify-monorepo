@@ -4,6 +4,8 @@ import { NavLink } from "react-router-dom";
 import { LoanRow } from "@/components";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
 import { fromWei } from "@/helpers/utils";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import { useEffect, useState } from "react";
 
 export const Dashboard = (props: any) => {
   // GraphQL
@@ -14,6 +16,42 @@ export const Dashboard = (props: any) => {
       walletAddress: address,
     },
   });
+
+  const { data, fetching, error } = result;
+
+  //This state variable, 'nftTwoDimArr', holds a two dimensional array representing NFTs.
+  //The outer array corresponds to different lending desks,
+  //while the inner arrays contain NFT IDs associated with each respective desk.
+  const [nftTwoDimArr, setNftTwoDimArr] = useState<INft[][]>([]);
+
+  useEffect(() => {
+    // This function will be executed whenever the query data changes
+    if (!fetching) getNFTs();
+  }, [data]);
+
+  //This is used to lookup a list of nfts off chain
+  const getNFTs = async () => {
+    //A two dimensional array of nft ids
+    const nftIdArr = data?.lendingDesks.map((desk) =>
+      desk.loanConfigs.map((loan) => loan.nftCollection.id)
+    );
+
+    if (nftIdArr?.length) {
+      const fetchedNftArrPromise = Promise.all(
+        nftIdArr.map((arr) => fetchNFTDetails(arr))
+      );
+
+      fetchedNftArrPromise
+        .then((result) => {
+          // Assuming 'result' is an array of fetched NFT details
+          setNftTwoDimArr(result);
+        })
+        .catch((error) => {
+          // Handle error if any of the promises fail
+          console.error("Error fetching NFT details:", error);
+        });
+    }
+  };
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -90,6 +128,7 @@ export const Dashboard = (props: any) => {
             <div className="col-xl-8">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
+                nfts={nftTwoDimArr}
                 status="Active"
               />
             </div>
@@ -109,6 +148,7 @@ export const Dashboard = (props: any) => {
             <div className="col-xl-8">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
+                nfts={nftTwoDimArr}
                 status="Pending Default"
                 liquidate
               />
@@ -129,6 +169,7 @@ export const Dashboard = (props: any) => {
             <div className="col-xl-8">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
+                nfts={nftTwoDimArr}
                 status="Defaulted"
               />
             </div>
@@ -148,6 +189,7 @@ export const Dashboard = (props: any) => {
             <div className="col-xl-8">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
+                nfts={nftTwoDimArr}
                 status="Completed"
               />
             </div>
@@ -180,7 +222,7 @@ const LoanCardParent = (props) => {
   }
 
   // OK
-  return props.desks.map((desk: LendingDesk) => {
+  return props.desks.map((desk: LendingDesk, i) => {
     return (
       <div key={desk.id}>
         <div className="d-flex align-items-center specific-h-25">
@@ -191,26 +233,18 @@ const LoanCardParent = (props) => {
             className="position-relative ms-3"
             style={{ width: "48px", height: "24px" }}
           >
-            <img
-              src="theme/images/image-1.png"
-              height="24"
-              className="d-block rounded-circle position-absolute top-0 start-0 z-3"
-              alt="Image"
-            />
-            <img
-              src="theme/images/image-4.png"
-              height="24"
-              className="d-block rounded-circle position-absolute top-0 start-0 z-2"
-              alt="Image"
-              style={{ marginLeft: "12px" }}
-            />
-            <img
-              src="theme/images/image-7.png"
-              height="24"
-              className="d-block rounded-circle position-absolute top-0 start-0 z-1"
-              alt="Image"
-              style={{ marginLeft: "24px" }}
-            />
+            {desk.loanConfigs?.map((config, j) => (
+              <img
+                key={j}
+                src={props.nfts?.[i]?.[j]?.logoURI}
+                height="24"
+                className={`d-block rounded-circle position-absolute top-0 start-0 z-${
+                  desk.loanConfigs?.length - j
+                }`}
+                alt="Image"
+                style={{ marginLeft: `${12 * j}px` }}
+              />
+            ))}
           </div>
         </div>
         <div className="card border-0 shadow rounded-4 mt-3">
