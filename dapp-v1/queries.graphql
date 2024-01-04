@@ -166,13 +166,18 @@ query BorrowerDashboard($walletAddress: Bytes!) {
 }
 
 query LenderDashboard($walletAddress: Bytes!) {
-  lendingDesks {
+  lendingDesks(where: { owner: $walletAddress }) {
     id
     balance
     erc20 {
       id
       symbol
       decimals
+    }
+    loanConfigs {
+      nftCollection {
+        id
+      }
     }
     loans(where: { lender: $walletAddress }) {
       id
