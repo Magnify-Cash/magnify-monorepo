@@ -600,7 +600,7 @@ contract NFTYFinanceV1 is
         else if (loanConfig.minDuration == loanConfig.maxDuration) {
             interest =
                 loanConfig.minInterest +
-                ((loanConfig.maxAmount - _amount) *
+                ((_amount - loanConfig.minAmount) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxAmount - loanConfig.minAmount);
         }
@@ -608,7 +608,7 @@ contract NFTYFinanceV1 is
         else if (loanConfig.minAmount == loanConfig.maxAmount) {
             interest =
                 loanConfig.minInterest +
-                ((loanConfig.maxDuration - _duration) *
+                ((_duration - loanConfig.minDuration) *
                     (loanConfig.maxInterest - loanConfig.minInterest)) /
                 (loanConfig.maxDuration - loanConfig.minDuration);
         }
@@ -616,11 +616,87 @@ contract NFTYFinanceV1 is
         else {
             interest =
                 loanConfig.minInterest +
-                ((loanConfig.maxAmount - _amount) *
-                    (loanConfig.maxInterest - loanConfig.minInterest) *
-                    (loanConfig.maxDuration - _duration)) /
-                ((loanConfig.maxAmount - loanConfig.minAmount) *
-                    (loanConfig.maxDuration - loanConfig.minDuration));
+                (((loanConfig.maxInterest - loanConfig.minInterest) *
+                    // Take average of amount and duration factors
+                    (((_amount - loanConfig.minAmount) /
+                        (loanConfig.maxAmount - loanConfig.minAmount)) +
+                        ((_duration - loanConfig.minDuration) /
+                            (loanConfig.maxDuration -
+                                loanConfig.minDuration)))) / 2);
+        }
+
+        // Calculate platform fees
+        uint256 platformFee = (loanOriginationFee * _amount) / 10000;
+
+        // Set new desk in storage and update related storage, emit event
+        loanIdCounter++;
+        Loan memory loan = Loan({
+            amount: _amount,
+            amountPaidBack: 0,
+            duration: _duration,
+            startTime: block.timestamp,
+            nftId: _nftId,
+            status: LoanStatus.Active,
+            lendingDeskId: _lendingDeskId,
+            interest: interest,
+            nftCollection: _nftCollection
+        });
+        loans[loanIdCounter] = loan;
+        lendingDesk.balance = lendingDesk.balance - _amount;
+        emit NewLoanInitialized(
+            _lendingDeskId,
+            loanIdCounter,
+            msg.sender,
+            _nftCollection,
+            _nftId,
+            _amount,
+            _duration,
+            interest,
+            platformFee
+        );
+
+        // Mint promissory and obligation notes
+        // Note: Promissory note is minted to the owner of the desk key
+        INFTYERC721V1(promissoryNotes).mint(
+            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId),
+            loanIdCounter
+        );
+        INFTYERC721V1(obligationNotes).mint(msg.sender, loanIdCounter);
+
+        // Transfer NFT to escrow
+        // 1155
+        if (loanConfig.nftCollectionIsErc1155) {
+            IERC1155(_nftCollection).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _nftId,
+                1,
+                ""
+            );
+        }
+        // 721
+        else {
+            IERC721(_nftCollection).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _nftId
+            );
+        }
+
+        // Transfer amount minus fees to borrower
+        IERC20(lendingDesk.erc20).safeTransfer(
+            msg.sender,
+            _amount - platformFee
+        );
+
+        // Transfer fees to platform wallet
+        IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
+    }
+
+    /**
+     * @notice This function can be called
+)
+                )
         }
 
         // Calculate platform fees
