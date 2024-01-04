@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useChainId } from "wagmi";
 import { PopupTokenList, PopupTransaction } from "@/components";
@@ -13,6 +13,12 @@ import {
 import { QuickLoanDocument } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
 import { formatAddress } from "@/helpers/formatAddress";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import {
+  calculateGrossAmount,
+  calculateLoanInterest,
+  calculateLoanOriginationFee,
+} from "@/helpers/LoanInterest";
 
 export const QuickLoan = (props: any) => {
   // constants
@@ -25,10 +31,19 @@ export const QuickLoan = (props: any) => {
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
   const [nftId, setNftId] = useState<number>();
+  const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
   const setSelectedLendingDesk = (e: string) =>
     _setSelectedLendingDesk(JSON.parse(e));
+
+  const getNFTdetails = async () => {
+    console.log("hi", selectedLendingDesk?.loanConfig?.nftCollection?.id);
+    const fetchedNfts = await fetchNFTDetails([
+      selectedLendingDesk?.loanConfig?.nftCollection?.id,
+    ]);
+    setNft(fetchedNfts[0]); //There is only one nft in the array
+  };
 
   // GraphQL query
   const flatResult: any[] = [];
@@ -39,6 +54,15 @@ export const QuickLoan = (props: any) => {
       erc20Id: token?.token?.address?.toLowerCase(),
     },
   });
+  const { data, fetching, error } = result;
+
+  useEffect(() => {
+    // This function will be executed whenever the selectedLendingDesk data changes
+    if (!fetching) {
+      getNFTdetails();
+    }
+  }, [selectedLendingDesk]);
+
   for (const lendingDesk of result.data?.lendingDesks ?? []) {
     for (const loanConfig of lendingDesk.loanConfigs) {
       flatResult.push({ lendingDesk, loanConfig });
@@ -186,7 +210,6 @@ export const QuickLoan = (props: any) => {
             <div className="card-body specific-h-400 overflow-y-auto">
               {flatResult.length > 0 ? (
                 flatResult.map((item) => {
-                  console.log(item);
                   return (
                     <div className="nfty-check" key={item.lendingDesk.id}>
                       <input
@@ -208,7 +231,7 @@ export const QuickLoan = (props: any) => {
                       >
                         <div className="d-flex align-items-center justify-content-center mx-auto">
                           <img
-                            src="/images/placeholder/images/image-12.png"
+                            src={nft?.logoURI}
                             width="30"
                             alt="Image"
                             className="flex-shrink-0"
@@ -297,7 +320,7 @@ export const QuickLoan = (props: any) => {
             }
             modalContent={
               selectedLendingDesk && (
-                <form id="quickLoanForm" className="modal-body">
+                <form id="quickLoanForm" className="modal-body text-start">
                   <p className="text-body-secondary">Lending Desk Details</p>
                   <div className="container-fluid g-0 mt-3">
                     <div className="row g-3">
@@ -305,12 +328,12 @@ export const QuickLoan = (props: any) => {
                         <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                           <div className="d-flex align-items-center justify-content-center">
                             <img
-                              src="/images/placeholder/images/image-5.png"
+                              src={nft?.logoURI}
                               alt="Image"
                               className="d-block flex-shrink-0 me-2 rounded-circle"
                               width="30"
                             />
-                            <div className="h5 fw-medium m-0">{`fetch`}</div>
+                            <div className="h5 fw-medium m-0">{nft?.name}</div>
                           </div>
                           <div className="text-body-secondary">
                             Collection Type
@@ -464,14 +487,24 @@ export const QuickLoan = (props: any) => {
                       Interest Rate{" "}
                       <i className="fa-light fa-info-circle ms-1"></i>
                     </span>
-                    <span className="fw-medium ms-auto">3%</span>
+                    <span className="fw-medium ms-auto">
+                      {selectedLendingDesk
+                        ? calculateLoanInterest(
+                            selectedLendingDesk.loanConfig,
+                            amount,
+                            duration,
+                            selectedLendingDesk?.lendingDesk.erc20?.decimals
+                          )
+                        : null}
+                      %
+                    </span>
                   </div>
                   <div className="my-2 d-flex align-items-center">
                     <span className="text-body-secondary">
                       Requested Amount
                     </span>
                     <span className="fw-medium ms-auto">
-                      {amount} {selectedLendingDesk.lendingDesk.erc20.symbol}
+                      {amount} {selectedLendingDesk?.lendingDesk.erc20.symbol}
                     </span>
                   </div>
                   <div className="my-2 d-flex align-items-center">
@@ -480,15 +513,17 @@ export const QuickLoan = (props: any) => {
                       <i className="fa-light fa-info-circle ms-1"></i>
                     </span>
                     <span className="fw-medium ms-auto">
-                      -180 {selectedLendingDesk.lendingDesk.erc20.symbol}
+                      {`- `}
+                      {amount ? calculateLoanOriginationFee(amount) : "0"}{" "}
+                      {selectedLendingDesk?.lendingDesk.erc20.symbol}
                     </span>
                   </div>
                   <div className="mt-3 pt-3 border-top d-flex align-items-center">
                     <span className="text-body-secondary">Gross Amount</span>
                     <span className="h3 ms-auto my-0 text-primary-emphasis">
-                      8820{" "}
+                      {amount ? calculateGrossAmount(amount) : null}{" "}
                       <span className="fw-medium">
-                        {selectedLendingDesk.lendingDesk.erc20.symbol}
+                        {selectedLendingDesk?.lendingDesk.erc20.symbol}
                       </span>
                     </span>
                   </div>
