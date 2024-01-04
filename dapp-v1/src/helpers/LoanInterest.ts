@@ -1,6 +1,6 @@
 import { toWei } from "./utils";
 
-const calculateLoanInterest = (
+export const calculateLoanInterest = (
   loanConfig,
   amountInput,
   durationInput,
@@ -46,4 +46,14 @@ const calculateLoanInterest = (
   return Number(interest) / 100;
 };
 
-export default calculateLoanInterest;
+export const calculateLoanOriginationFee = (amount) => {
+  const feePercentage = 2; //fee is 2%
+  const result = (amount * feePercentage) / 100;
+  return Number(result.toFixed(2));
+};
+
+export const calculateGrossAmount = (amount) => {
+  const fee = calculateLoanOriginationFee(amount);
+  const result = amount - fee;
+  return Number(result.toFixed(2));
+};

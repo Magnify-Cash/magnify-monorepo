@@ -7,7 +7,11 @@ import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
-import calculateLoanInterest from "@/helpers/LoanInterest";
+import {
+  calculateLoanInterest,
+  calculateGrossAmount,
+  calculateLoanOriginationFee,
+} from "@/helpers/LoanInterest";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -376,7 +380,11 @@ export const BrowseCollection = (props) => {
                                 <i className="fa-light fa-info-circle ms-1"></i>
                               </span>
                               <span className="fw-medium ms-auto">
-                                -180 {loanConfig?.lendingDesk.erc20.symbol}
+                                {`- `}
+                                {amount
+                                  ? calculateLoanOriginationFee(amount)
+                                  : "0"}{" "}
+                                {loanConfig?.lendingDesk.erc20.symbol}
                               </span>
                             </div>
                             <div className="mt-3 pt-3 border-top d-flex align-items-center">
@@ -384,7 +392,7 @@ export const BrowseCollection = (props) => {
                                 Gross Amount
                               </span>
                               <span className="h3 ms-auto my-0 text-primary-emphasis">
-                                8820{" "}
+                                {calculateGrossAmount(amount)}{" "}
                                 <span className="fw-medium">
                                   {loanConfig?.lendingDesk.erc20.symbol}
                                 </span>
