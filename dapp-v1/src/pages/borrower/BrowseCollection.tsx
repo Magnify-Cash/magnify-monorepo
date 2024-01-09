@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { PopupTransaction } from "@/components";
-import { BrowseCollectionDocument } from "../../../.graphclient";
+import { useChainId } from "wagmi";
+import { BrowseCollectionDocument, LendingDesk } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
@@ -12,10 +13,17 @@ import {
   calculateGrossAmount,
   calculateLoanOriginationFee,
 } from "@/helpers/LoanInterest";
+import {
+  nftyFinanceV1Address,
+  useErc721Approve,
+  useNftyFinanceV1InitializeNewLoan,
+  usePrepareNftyFinanceV1InitializeNewLoan,
+} from "@/wagmi-generated";
 
 export const BrowseCollection = (props) => {
   // GraphQL
   const { collection_address } = useParams();
+  const chainId = useChainId();
   const [result] = useQuery({
     query: BrowseCollectionDocument,
     variables: {
@@ -50,7 +58,9 @@ export const BrowseCollection = (props) => {
 
   // loan params selection
   const [nft, setNFT] = useState<INft>();
+  const [nftId, setNftId] = useState<number>();
   const [tokens, setTokens] = useState<IToken[]>([]);
+  const [selectedLendingDesk, setSelectedLendingDesk] = useState<any>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
 
@@ -63,6 +73,38 @@ export const BrowseCollection = (props) => {
     const fetchedNfts = await fetchNFTDetails([collection_address!]);
     setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
+
+  // Initialize New Loan Hook
+  const { writeAsync: approveErc721 } = useErc721Approve({
+    address: nft?.address as `0x${string}`,
+    args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+  });
+  const { config: newLoanConfig } = usePrepareNftyFinanceV1InitializeNewLoan({
+    args: [
+      BigInt(selectedLendingDesk?.id ?? 0),
+      nft?.address as `0x${string}`,
+      BigInt(nftId || 0),
+      BigInt((duration || 0) * 24),
+      toWei(
+        amount ? amount.toString() : "0",
+        selectedLendingDesk?.erc20.decimals
+      ),
+    ],
+  });
+  const { writeAsync: newLoanWrite } =
+    useNftyFinanceV1InitializeNewLoan(newLoanConfig);
+
+  // Modal submit
+  async function requestLoan() {
+    const form = document.getElementById("quickLoanForm") as HTMLFormElement;
+    const isValid = form.checkValidity();
+    if (!isValid) {
+      form.reportValidity();
+      return;
+    }
+    await approveErc721();
+    await newLoanWrite?.();
+  }
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -154,7 +196,10 @@ export const BrowseCollection = (props) => {
                           <div className="modal-footer">
                             <button
                               type="button"
-                              onClick={() => console.log()}
+                              onClick={() => {
+                                setSelectedLendingDesk(loanConfig.lendingDesk);
+                                requestLoan();
+                              }}
                               className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
                             >
                               Request Loan
