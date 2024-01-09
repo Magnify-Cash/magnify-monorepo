@@ -1,4 +1,4 @@
-import { fetchLocalNfts } from "./LocalData";
+import { fetchLocalNfts } from "./Localdata";
 
 interface IJsonData {
   nfts: INft[];
