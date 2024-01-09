@@ -18,7 +18,7 @@ query Home {
   }
 }
 
-query ManageLendingDesks($walletAddress: Bytes!) {
+query ManageLendingDesks($walletAddress: String!) {
   lendingDesks(where: { owner: $walletAddress }) {
     id
     balance
@@ -37,7 +37,7 @@ query ManageLendingDesks($walletAddress: Bytes!) {
   }
 }
 
-query CreateLendingDesk($walletAddress: Bytes!) {
+query CreateLendingDesk($walletAddress: String!) {
   lendingDesks(where: { owner: $walletAddress }) {
     id
     balance
@@ -48,8 +48,9 @@ query CreateLendingDesk($walletAddress: Bytes!) {
 query ManageLendingDesk($deskId: ID!) {
   lendingDesk(id: $deskId) {
     id
-    owner
-
+    owner {
+      id
+    }
     erc20 {
       id
       symbol
@@ -108,7 +109,9 @@ query BrowseCollection($nftCollectionId: String) {
       id
       balance
       status
-      owner
+      owner {
+        id
+      }
       erc20 {
         id
         symbol
@@ -142,7 +145,7 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
   }
 }
 
-query BorrowerDashboard($walletAddress: Bytes!) {
+query BorrowerDashboard($walletAddress: String!) {
   loans(where: { borrower: $walletAddress }) {
     id
     amount
@@ -161,11 +164,13 @@ query BorrowerDashboard($walletAddress: Bytes!) {
     nftId
     interest
     status
-    lender
+    lender {
+      id
+    }
   }
 }
 
-query LenderDashboard($walletAddress: Bytes!) {
+query LenderDashboard($walletAddress: String!) {
   lendingDesks(where: { owner: $walletAddress }) {
     id
     balance
@@ -191,8 +196,12 @@ query LenderDashboard($walletAddress: Bytes!) {
       nftId
       interest
       status
-      lender
-      borrower
+      lender {
+        id
+      }
+      borrower {
+        id
+      }
     }
   }
 }

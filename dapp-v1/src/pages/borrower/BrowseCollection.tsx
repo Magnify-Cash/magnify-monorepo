@@ -115,7 +115,10 @@ export const BrowseCollection = (props) => {
                       />
                     </td>
                     <td className="py-3">
-                      {formatAddress(loanConfig.lendingDesk.owner)}
+                      {formatAddress(
+                        // @ts-ignore
+                        loanConfig.lendingDesk.owner.id
+                      )}
                     </td>
                     <td className="py-3 align-middle">
                       <img
