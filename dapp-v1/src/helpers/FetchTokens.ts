@@ -1,4 +1,4 @@
-import { fetchLocalTokens } from "./LocalData";
+import { fetchLocalTokens } from "./Localdata";
 
 interface IJsonData {
   tokens: IToken[];
