@@ -32,7 +32,7 @@ export const CreateLendingDesk = (props: any) => {
   const [result] = useQuery({
     query: CreateLendingDeskDocument,
     variables: {
-      walletAddress: address,
+      walletAddress: address?.toLowerCase(),
     },
   });
 

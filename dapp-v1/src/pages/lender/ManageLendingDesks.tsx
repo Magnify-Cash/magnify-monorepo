@@ -10,7 +10,7 @@ export const ManageLendingDesks = (props: any) => {
   const [result] = useQuery({
     query: ManageLendingDesksDocument,
     variables: {
-      walletAddress: address,
+      walletAddress: address?.toLowerCase(),
     },
   });
 

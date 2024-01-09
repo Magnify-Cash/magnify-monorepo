@@ -13,7 +13,7 @@ export const Dashboard = (props: any) => {
   const [result] = useQuery({
     query: LenderDashboardDocument,
     variables: {
-      walletAddress: address,
+      walletAddress: address?.toLowerCase(),
     },
   });
 
