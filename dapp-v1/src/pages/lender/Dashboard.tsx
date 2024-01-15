@@ -132,7 +132,6 @@ export const Dashboard = (props: any) => {
                 status="Active"
               />
             </div>
-            <LoanOverview desks={result?.data?.lendingDesks || []} />
           </div>
         </div>
         {/* End Active Row */}
@@ -149,11 +148,10 @@ export const Dashboard = (props: any) => {
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
-                status="Pending Default"
+                status="PendingDefault"
                 liquidate
               />
             </div>
-            <LoanOverview desks={result?.data?.lendingDesks || []} />
           </div>
         </div>
         {/* End Pending Default Row */}
@@ -173,7 +171,6 @@ export const Dashboard = (props: any) => {
                 status="Defaulted"
               />
             </div>
-            <LoanOverview desks={result?.data?.lendingDesks || []} />
           </div>
         </div>
         {/* End Defaulted Row */}
@@ -193,7 +190,6 @@ export const Dashboard = (props: any) => {
                 status="Completed"
               />
             </div>
-            <LoanOverview desks={result?.data?.lendingDesks || []} />
           </div>
         </div>
         {/* End Completed Row */}
@@ -285,9 +281,8 @@ const LoanCardParent = (props) => {
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">
-                      {/* TODO update hardcoded value */}
                       {"0 "}
-                      <small className="fw-normal">{"USDC"}</small>
+                      <small className="fw-normal">{desk.erc20.symbol}</small>
                     </h3>
                     <p className="m-0 text-body-secondary">Borrowed</p>
                   </div>
@@ -322,7 +317,7 @@ const LoanCardParent = (props) => {
   });
 };
 
-//TODO replace hardcoded values
+/*
 const LoanOverview = (props) => {
   // checking if there are any lending desks
   if (props.desks.length === 0) {
@@ -467,3 +462,4 @@ const LoanOverview = (props) => {
     </div>
   );
 };
+*/

@@ -75,7 +75,6 @@ export const ManageLendingDesk = (props: any) => {
   const [depositAmount, setDepositAmount] = useState(0);
   const { writeAsync: approveErc20 } = useErc20Approve({
     address: result.data?.lendingDesk?.erc20.id as `0x${string}`,
-    // TODO: Add currency decimal details if available
     args: [
       nftyFinanceV1Address[chainId],
       toWei(
@@ -142,12 +141,6 @@ export const ManageLendingDesk = (props: any) => {
                       Currency Type
                     </h6>
                     <div className="mt-1 fs-4 d-flex align-items-center">
-                      <img
-                        src="/theme/images/image-13.png" //TODO replace with respective currency image
-                        height="30"
-                        className="d-block rounded-circle flex-shrink-0 me-2"
-                        alt="Image"
-                      />
                       <div className="text-truncate">
                         {result.data?.lendingDesk?.erc20.symbol}
                       </div>
@@ -251,7 +244,6 @@ export const ManageLendingDesk = (props: any) => {
                         </span>
                       </div>
                     </div>
-                    {/* TODO replace hardcoded values */}
                     <div className="d-flex align-items-center">
                       <img
                         src={nftArr[index]?.logoURI}
@@ -267,7 +259,6 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        {/* TODO: Add currency decimal details if available */}
                         <strong>Offer:</strong>{" "}
                         {fromWei(
                           config.minAmount,

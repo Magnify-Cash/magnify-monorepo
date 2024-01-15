@@ -80,7 +80,6 @@ export const QuickLoan = (props: any) => {
       nftCollection?.nft.address as `0x${string}`,
       BigInt(nftId || 0),
       BigInt((duration || 0) * 24),
-      //TODO supply decimals value
       toWei(amount ? amount.toString() : "0", token?.token.decimals),
     ],
   });

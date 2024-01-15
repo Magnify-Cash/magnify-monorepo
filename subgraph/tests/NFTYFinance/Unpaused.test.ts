@@ -5,25 +5,25 @@ import {
   initializeProtocol,
 } from "../utils";
 import { handlePaused, handleUnpaused } from "../../src/nfty-finance";
-import { ProtocolParams } from "../../generated/schema";
+import { ProtocolInfo } from "../../generated/schema";
 
 beforeAll(() => {
   initializeProtocol();
   handlePaused(createPausedEvent());
 });
 
-test("Updates ProtocolParams on Unpaused", () => {
-  // Assert ProtocolParams' initial state
-  let protocolParams = ProtocolParams.load("0");
-  assert.assertNotNull(protocolParams);
-  if (!protocolParams) return;
-  assert.booleanEquals(protocolParams.paused, true);
+test("Updates ProtocolInfo on Unpaused", () => {
+  // Assert ProtocolInfo' initial state
+  let protocolInfo = ProtocolInfo.load("0");
+  assert.assertNotNull(protocolInfo);
+  if (!protocolInfo) return;
+  assert.booleanEquals(protocolInfo.paused, true);
 
   handleUnpaused(createUnpausedEvent());
 
-  // ProtocolParams got updated
-  protocolParams = ProtocolParams.load("0");
-  assert.assertNotNull(protocolParams);
-  if (!protocolParams) return;
-  assert.booleanEquals(protocolParams.paused, false);
+  // ProtocolInfo got updated
+  protocolInfo = ProtocolInfo.load("0");
+  assert.assertNotNull(protocolInfo);
+  if (!protocolInfo) return;
+  assert.booleanEquals(protocolInfo.paused, false);
 });

@@ -8,10 +8,10 @@ beforeAll(() => {
   initializeProtocol();
 });
 
-test("Should update ProtocolParams on PlatformWalletSet", () => {
-  // Assert ProtocolParams' initial state
+test("Should update ProtocolInfo on PlatformWalletSet", () => {
+  // Assert ProtocolInfo' initial state
   assert.fieldEquals(
-    "ProtocolParams",
+    "ProtocolInfo",
     "0",
     "platformWallet",
     platformWallet.toHexString()
@@ -23,9 +23,9 @@ test("Should update ProtocolParams on PlatformWalletSet", () => {
   );
   handlePlatformWalletSet(createPlatformWalletSetEvent(newPlatformWallet));
 
-  // Assert ProtocolParams got updated
+  // Assert ProtocolInfo got updated
   assert.fieldEquals(
-    "ProtocolParams",
+    "ProtocolInfo",
     "0",
     "platformWallet",
     newPlatformWallet.toHexString()

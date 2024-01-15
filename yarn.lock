@@ -2200,10 +2200,10 @@
     "@motionone/dom" "^10.16.4"
     tslib "^2.3.1"
 
-"@nftylabs/nft-lists@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@nftylabs/nft-lists/-/nft-lists-0.0.2.tgz#311a14c3b85d450702c008d0ac8536793c5a8dbd"
-  integrity sha512-bNCZJotuVIWQxKlnMrBNLQcontO8Rnn8UAz1d34ROgYX2QkbzG4Eiipx0LQUR6e8j65TiFp4GXJaP7uorx8wHA==
+"@nftylabs/nft-lists@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@nftylabs/nft-lists/-/nft-lists-0.0.3.tgz#ba8f6a1b29b7d2df24373ad23e6eb548076fa275"
+  integrity sha512-qRjMi56fq0EiG8ByeN5Y/kZHqldjlaJ3eIOfgyACJJIlq4e8p2Rb36HR/cMCM2iCVMhJCZi+wFajWIJTpfUiRg==
 
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"

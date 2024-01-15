@@ -1,5 +1,3 @@
-//@ts-nocheck
-//TODO: Figure out 'mode' typing for ConnectKitProvider
 import { useState } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";

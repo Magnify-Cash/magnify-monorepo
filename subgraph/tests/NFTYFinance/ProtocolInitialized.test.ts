@@ -16,10 +16,10 @@ import {
   promissoryNotes,
   protocolOwner,
 } from "../consts";
-import { ProtocolParams } from "../../generated/schema";
+import { ProtocolInfo } from "../../generated/schema";
 import { assert, test } from "matchstick-as";
 
-test("Should create a new ProtocolParams entity on contract initialization", () => {
+test("Should create a new ProtocolInfo entity on contract initialization", () => {
   // 3 events emitted on contract deployment
   handleOwnershipTransferred(
     createOwnershipTransferredEvent(
@@ -40,17 +40,17 @@ test("Should create a new ProtocolParams entity on contract initialization", () 
   );
 
   // Assert correct entity is created
-  const protocolParams = ProtocolParams.load("0");
-  assert.assertNotNull(protocolParams);
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  assert.assertNotNull(protocolInfo);
+  if (!protocolInfo) return;
 
-  assert.bytesEquals(protocolParams.owner, protocolOwner);
-  assert.bytesEquals(protocolParams.promissoryNotes, promissoryNotes);
-  assert.bytesEquals(protocolParams.obligationNotes, obligationNotes);
-  assert.bytesEquals(protocolParams.lendingKeys, lendingKeys);
-  assert.booleanEquals(protocolParams.paused, false);
+  assert.bytesEquals(protocolInfo.owner, protocolOwner);
+  assert.bytesEquals(protocolInfo.promissoryNotes, promissoryNotes);
+  assert.bytesEquals(protocolInfo.obligationNotes, obligationNotes);
+  assert.bytesEquals(protocolInfo.lendingKeys, lendingKeys);
+  assert.booleanEquals(protocolInfo.paused, false);
   assert.bigIntEquals(
-    protocolParams.loanOriginationFee,
+    protocolInfo.loanOriginationFee,
     BigInt.fromI32(loanOriginationFee)
   );
 });

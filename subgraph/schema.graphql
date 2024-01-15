@@ -38,7 +38,7 @@ type LendingDesk @entity {
   loans: [Loan!]! @derivedFrom(field: "lendingDesk")
 }
 
-type ProtocolParams @entity {
+type ProtocolInfo @entity {
   id: ID!
   owner: Bytes!
   paused: Boolean!

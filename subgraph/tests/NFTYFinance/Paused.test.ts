@@ -1,24 +1,24 @@
 import { assert, beforeAll, test } from "matchstick-as";
 import { createPausedEvent, initializeProtocol } from "../utils";
 import { handlePaused } from "../../src/nfty-finance";
-import { ProtocolParams } from "../../generated/schema";
+import { ProtocolInfo } from "../../generated/schema";
 
 beforeAll(() => {
   initializeProtocol();
 });
 
-test("Updates ProtocolParams on Paused", () => {
-  // Assert ProtocolParams' initial state
-  let protocolParams = ProtocolParams.load("0");
-  assert.assertNotNull(protocolParams);
-  if (!protocolParams) return;
-  assert.booleanEquals(protocolParams.paused, false);
+test("Updates ProtocolInfo on Paused", () => {
+  // Assert ProtocolInfo' initial state
+  let protocolInfo = ProtocolInfo.load("0");
+  assert.assertNotNull(protocolInfo);
+  if (!protocolInfo) return;
+  assert.booleanEquals(protocolInfo.paused, false);
 
   handlePaused(createPausedEvent());
 
-  // ProtocolParams got updated
-  protocolParams = ProtocolParams.load("0");
-  assert.assertNotNull(protocolParams);
-  if (!protocolParams) return;
-  assert.booleanEquals(protocolParams.paused, true);
+  // ProtocolInfo got updated
+  protocolInfo = ProtocolInfo.load("0");
+  assert.assertNotNull(protocolInfo);
+  if (!protocolInfo) return;
+  assert.booleanEquals(protocolInfo.paused, true);
 });

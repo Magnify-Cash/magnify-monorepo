@@ -23,7 +23,7 @@ import {
   Loan,
   LoanConfig,
   NftCollection,
-  ProtocolParams,
+  ProtocolInfo,
   User,
 } from "../generated/schema";
 import { Address, BigInt, store } from "@graphprotocol/graph-ts";
@@ -33,8 +33,8 @@ import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 export function handleNewLendingDeskInitialized(
   event: NewLendingDeskInitialized
 ): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
   // Create ERC20 instance if doesn't exist
   if (!Erc20.load(event.params.erc20.toHex())) {
@@ -79,10 +79,10 @@ export function handleNewLendingDeskInitialized(
   lendingDesk.save();
 
   // Increment LendingDesk count
-  protocolParams.lendingDesksCount = protocolParams.lendingDesksCount.plus(
+  protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
     BigInt.fromI32(1)
   );
-  protocolParams.save();
+  protocolInfo.save();
 }
 
 export function handleLendingDeskLoanConfigsSet(
@@ -160,8 +160,8 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
 
 export function handleLendingDeskDissolved(event: LendingDeskDissolved): void {
   // Load entities
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
 
@@ -169,18 +169,18 @@ export function handleLendingDeskDissolved(event: LendingDeskDissolved): void {
   lendingDesk.save();
 
   // Decrement LendingDesk count
-  protocolParams.lendingDesksCount = protocolParams.lendingDesksCount.minus(
+  protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.minus(
     BigInt.fromI32(1)
   );
-  protocolParams.save();
+  protocolInfo.save();
 }
 
 // Loan related events
 
 export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   // Load entities
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
   const lender = User.load(lendingDesk.owner);
@@ -223,8 +223,8 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   lender.save();
 
   // Increment Loan count
-  protocolParams.loansCount = protocolParams.loansCount.plus(BigInt.fromI32(1));
-  protocolParams.save();
+  protocolInfo.loansCount = protocolInfo.loansCount.plus(BigInt.fromI32(1));
+  protocolInfo.save();
 
   // Update lending desk stats
   lendingDesk.loansCount = lendingDesk.loansCount.plus(BigInt.fromI32(1));
@@ -313,72 +313,72 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
 export function handleLoanOriginationFeeSet(
   event: LoanOriginationFeeSet
 ): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
-  protocolParams.loanOriginationFee = event.params.loanOriginationFee;
-  protocolParams.save();
+  protocolInfo.loanOriginationFee = event.params.loanOriginationFee;
+  protocolInfo.save();
 }
 
 export function handlePaused(event: Paused): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
-  protocolParams.paused = true;
-  protocolParams.save();
+  protocolInfo.paused = true;
+  protocolInfo.save();
 }
 
 export function handleUnpaused(event: Unpaused): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
-  protocolParams.paused = false;
-  protocolParams.save();
+  protocolInfo.paused = false;
+  protocolInfo.save();
 }
 
 export function handleProtocolInitialized(event: ProtocolInitialized): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
-  protocolParams.promissoryNotes = event.params.promissoryNotes;
-  protocolParams.obligationNotes = event.params.obligationNotes;
-  protocolParams.lendingKeys = event.params.lendingKeys;
+  protocolInfo.promissoryNotes = event.params.promissoryNotes;
+  protocolInfo.obligationNotes = event.params.obligationNotes;
+  protocolInfo.lendingKeys = event.params.lendingKeys;
 
-  protocolParams.save();
+  protocolInfo.save();
 }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  // Contract deployment, create ProtocolParams entity
+  // Contract deployment, create ProtocolInfo entity
   if (event.params.previousOwner == Address.zero()) {
-    const protocolParams = new ProtocolParams("0");
-    protocolParams.owner = event.params.newOwner;
-    protocolParams.paused = false;
+    const protocolInfo = new ProtocolInfo("0");
+    protocolInfo.owner = event.params.newOwner;
+    protocolInfo.paused = false;
 
     // Dummy values, will populate properly through ProtocolInitialized, LoanOriginationFeeSet and PlatformWalletSet events
-    protocolParams.loanOriginationFee = BigInt.fromU32(0);
-    protocolParams.promissoryNotes = Address.zero();
-    protocolParams.obligationNotes = Address.zero();
-    protocolParams.lendingKeys = Address.zero();
-    protocolParams.platformWallet = Address.zero();
+    protocolInfo.loanOriginationFee = BigInt.fromU32(0);
+    protocolInfo.promissoryNotes = Address.zero();
+    protocolInfo.obligationNotes = Address.zero();
+    protocolInfo.lendingKeys = Address.zero();
+    protocolInfo.platformWallet = Address.zero();
     // Initialize counts to 0
-    protocolParams.lendingDesksCount = BigInt.fromU32(0);
-    protocolParams.loansCount = BigInt.fromU32(0);
+    protocolInfo.lendingDesksCount = BigInt.fromU32(0);
+    protocolInfo.loansCount = BigInt.fromU32(0);
 
-    protocolParams.save();
+    protocolInfo.save();
   } else {
     // Ownership transfer, update owner
-    const protocolParams = ProtocolParams.load("0");
-    if (!protocolParams) return;
+    const protocolInfo = ProtocolInfo.load("0");
+    if (!protocolInfo) return;
 
-    protocolParams.owner = event.params.newOwner;
-    protocolParams.save();
+    protocolInfo.owner = event.params.newOwner;
+    protocolInfo.save();
   }
 }
 
 export function handlePlatformWalletSet(event: PlatformWalletSet): void {
-  const protocolParams = ProtocolParams.load("0");
-  if (!protocolParams) return;
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
 
-  protocolParams.platformWallet = event.params.platformWallet;
-  protocolParams.save();
+  protocolInfo.platformWallet = event.params.platformWallet;
+  protocolInfo.save();
 }

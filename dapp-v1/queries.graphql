@@ -1,20 +1,15 @@
 query Home {
-  nftCollections {
+  protocolInfo(id: "0") {
     id
-    loanConfigs {
-      lendingDesk {
-        erc20 {
-          id
-          symbol
-        }
-      }
-    }
-  }
-  loans {
-    id
-  }
-  lendingDesks {
-    id
+    lendingDesksCount
+    lendingKeys
+    loanOriginationFee
+    loansCount
+    obligationNotes
+    owner
+    paused
+    platformWallet
+    promissoryNotes
   }
 }
 
@@ -23,6 +18,12 @@ query ManageLendingDesks($walletAddress: String!) {
     id
     balance
     status
+    loansCount
+    loansDefaultedCount
+    loansResolvedCount
+    amountBorrowed
+    netLiquidityIssued
+    netProfit
     erc20 {
       id
       symbol
@@ -30,9 +31,6 @@ query ManageLendingDesks($walletAddress: String!) {
     }
     loanConfigs {
       id
-    }
-    loans {
-      status
     }
   }
 }

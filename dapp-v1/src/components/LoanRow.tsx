@@ -34,9 +34,10 @@ export const LoanRow = ({
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan: Loan) => {
-    if (status === "Pending Default") {
-      if (loan.status === "Active") {
-        return loan;
+    if ((loan.status === "Active") && (status === "PendingDefault")) {
+      const {isTimeLeft} = calculateTimeInfo(loan.startTime, loan.duration);
+      if (!isTimeLeft){
+        return loan
       }
     }
     if (loan.status === status) {

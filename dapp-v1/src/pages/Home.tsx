@@ -8,6 +8,8 @@ export const Home = (props) => {
     query: HomeDocument,
   });
 
+  console.log(result.data)
+
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="row g-4 g-xl-5 justify-content-center">
@@ -69,7 +71,7 @@ export const Home = (props) => {
                   <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.nftCollections.length}</h3>
+                  <h3 className="m-0">TODO</h3>
                   <p className="m-0 text-primary-emphasis">
                     collections supported
                   </p>
@@ -82,7 +84,7 @@ export const Home = (props) => {
                   <i className="fa-solid fa-paper-plane h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.loans.length}</h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.loansCount}</h3>
                   <p className="m-0 text-primary-emphasis">loans issued</p>
                 </div>
               </div>
@@ -93,54 +95,12 @@ export const Home = (props) => {
                   <i className="fa-solid fa-sack-dollar h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.lendingDesks.length}</h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.lendingDesksCount}</h3>
                   <p className="m-0 text-primary-emphasis">lending desks</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
-        <div className="table-responsive">
-          <table className="table m-0 text-nowrap">
-            <thead>
-              <tr>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis ps-3">
-                  Collection
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Currencies
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Desks
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.data?.nftCollections.map((nftCollection) => {
-                const currencies: string[] = nftCollection.loanConfigs.map(
-                  (x) => x.lendingDesk.erc20.symbol
-                );
-                return (
-                  <tr className="align-middle" key={nftCollection.id}>
-                    <td className="py-3 ps-3">{nftCollection.id}</td>
-                    <td className="py-3">{currencies.join(", ")}</td>
-                    <td className="py-3">{nftCollection.loanConfigs.length}</td>
-                    <td className="py-3 pe-3">
-                      <NavLink
-                        to={`/explore/${nftCollection.id}`}
-                        className="btn btn-primary rounded-pill"
-                      >
-                        Find a Loan
-                      </NavLink>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

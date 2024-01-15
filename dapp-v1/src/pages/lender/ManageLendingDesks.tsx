@@ -10,43 +10,41 @@ export const ManageLendingDesks = (props: any) => {
   const [result] = useQuery({
     query: ManageLendingDesksDocument,
     variables: {
-      walletAddress: address?.toLowerCase(),
+      walletAddress: address?.toLowerCase() || '',
     },
   });
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="d-flex align-items-center">
-        <ul className="nav nav-pills" id="pills-tab" role="tablist">
+        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
           <li className="nav-item" role="presentation">
-            <a
-              className="btn btn-secondary bg-primary-subtle border-0 px-4 py-2 me-2 active"
-              id="pills-home-tab"
+            <button
+              className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-active-tab"
               data-bs-toggle="pill"
-              data-bs-target="#pills-home"
+              data-bs-target="#pills-active"
               type="button"
               role="tab"
-              aria-controls="pills-home"
+              aria-controls="pills-active"
               aria-selected="true"
             >
               Active Desks
-            </a>
+            </button>
           </li>
           <li className="nav-item" role="presentation">
-            <a
-              className=" btn focus-ring px-4 py-2 me-2"
-              id="pills-profile-tab"
+            <button
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-inactive-tab"
               data-bs-toggle="pill"
-              data-bs-target="#pills-profile"
+              data-bs-target="#pills-inactive"
               type="button"
               role="tab"
-              aria-controls="pills-profile"
+              aria-controls="pills-inactive"
               aria-selected="false"
             >
-              <span className="fw-normal text-body-secondary">
-                Inactive Desks
-              </span>
-            </a>
+              Inactive Desks
+            </button>
           </li>
         </ul>
         <NavLink
@@ -61,12 +59,13 @@ export const ManageLendingDesks = (props: any) => {
       </div>
 
       <div className="tab-content" id="pills-tabContent">
+
         {/* Active Row */}
         <div
-          className=" tab-pane fade show active"
-          id="pills-home"
+          className="tab-pane fade show active"
+          id="pills-active"
           role="tabpanel"
-          aria-labelledby="pills-home-tab"
+          aria-labelledby="pills-active-tab"
         >
           <LendingDeskRow
             desks={result.data?.lendingDesks || []}
@@ -77,10 +76,10 @@ export const ManageLendingDesks = (props: any) => {
 
         {/* Inactive Row */}
         <div
-          className="col-md-8 tab-pane fade"
-          id="pills-profile"
+          className="tab-pane fade"
+          id="pills-inactive"
           role="tabpanel"
-          aria-labelledby="pills-profile-tab"
+          aria-labelledby="pills-inactive-tab"
         >
           <LendingDeskRow
             desks={result.data?.lendingDesks || []}
@@ -88,6 +87,7 @@ export const ManageLendingDesks = (props: any) => {
           />
         </div>
         {/* End Inactive Row */}
+
       </div>
     </div>
   );
@@ -111,6 +111,7 @@ const LendingDeskRow = ({ desks, status }) => {
 
   // OK
   return desks.map((desk) => {
+    console.log(desk)
     return (
       <div className="card border-0 shadow rounded-4 my-4" key={desk.id}>
         <div className="card-body p-4">
@@ -122,31 +123,15 @@ const LendingDeskRow = ({ desks, status }) => {
               <div className="col-xl-3">
                 <h6 className="fw-medium text-body-secondary">Currency Type</h6>
                 <div className="d-flex align-items-center text-body-secondary">
-                  <img
-                    src={"/theme/images/image-13.png"} //TODO display respective currency image
-                    height="24"
-                    className="d-block rounded-circle flex-shrink-0 me-2"
-                    alt="Image"
-                  />
                   <div className="text-truncate">{desk.erc20.symbol}</div>
                 </div>
                 <br />
                 <h6 className="fw-medium text-body-secondary">Collections</h6>
-                <div className="d-flex align-items-center text-body-secondary">
-                  {/* <img
-                    src="/theme/images/image-4.png" //TODO display respective collections images
-                    height="24"
-                    className="d-block rounded-circle flex-shrink-0 me-2"
-                    alt="Image"
-                  /> */}
-                </div>
                 <p className="m-0">{desk.loanConfigs.length}</p>
-
                 <br />
                 <h6 className="fw-medium text-body-secondary">
                   Available Liquidity
                 </h6>
-                {/* TODO display desk.balance in below format */}
                 <div className="text-body-secondary">
                   {fromWei(desk.balance, desk?.erc20?.decimals)}{" "}
                   {desk?.erc20?.symbol}
@@ -154,13 +139,10 @@ const LendingDeskRow = ({ desks, status }) => {
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
-                <h6 className="fw-medium text-body-secondary">Active Loans</h6>
+                <h6 className="fw-medium text-body-secondary">Total Loans</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>
-                    {
-                      desk.loans.filter((loan) => loan.status == "Active")
-                        .length
-                    }
+                  {desk.loansCount}
                   </strong>
                 </div>
                 <br />
@@ -169,10 +151,7 @@ const LendingDeskRow = ({ desks, status }) => {
                 </h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>
-                    {
-                      desk.loans.filter((loan) => loan.status == "Defaulted")
-                        .length
-                    }
+                    {desk.loansDefaultedCount}
                   </strong>
                 </div>
                 <br />
@@ -181,38 +160,31 @@ const LendingDeskRow = ({ desks, status }) => {
                 </h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>
-                    {
-                      desk.loans.filter((loan) => loan.status == "Resolved")
-                        .length
-                    }
+                    {desk.loansResolvedCount}
                   </strong>
                 </div>
                 <hr className="d-xl-none" />
               </div>
-              {/* TODO replace hardcoded values */}
               <div className="col-xl-3">
                 <h6 className="fw-medium text-body-secondary">
                   Net Liquidity Issued
                 </h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>2500</strong> ETH
+                  <strong>
+                    {fromWei(desk.netLiquidityIssued, desk?.erc20?.decimals)}{" "}
+                  </strong>
+                  {desk.erc20.symbol}
                 </div>
                 <br />
                 <h6 className="fw-medium text-body-secondary">
                   Net Profit/Revenue
                 </h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>500</strong> ETH
+                  <strong>
+                    {fromWei(desk.netProfit, desk?.erc20?.decimals)}{" "}
+                    </strong> {desk.erc20.symbol}
                 </div>
                 <br />
-                <h6 className="fw-medium text-body-secondary">Desk Score</h6>
-                <div className="text-body-secondary lh-sm d-flex align-items-start">
-                  <i
-                    className="fa-solid fa-info-circle me-2"
-                    style={{ color: "orange" }}
-                  ></i>
-                  <small>One or more of your parameters is out of range</small>
-                </div>
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3 d-flex flex-column ps-xl-4 ps-xxl-5">

@@ -7,10 +7,10 @@ beforeAll(() => {
   initializeProtocol();
 });
 
-test("Should update ProtocolParams on LoanOriginationFeeSet", () => {
-  // Assert ProtocolParams' initial state
+test("Should update ProtocolInfo on LoanOriginationFeeSet", () => {
+  // Assert ProtocolInfo' initial state
   assert.fieldEquals(
-    "ProtocolParams",
+    "ProtocolInfo",
     "0",
     "loanOriginationFee",
     // 200 bps
@@ -20,9 +20,9 @@ test("Should update ProtocolParams on LoanOriginationFeeSet", () => {
   // Handle event
   handleLoanOriginationFeeSet(createLoanOriginationFeeSetEvent(100));
 
-  // Assert ProtocolParams got updated
+  // Assert ProtocolInfo got updated
   assert.fieldEquals(
-    "ProtocolParams",
+    "ProtocolInfo",
     "0",
     "loanOriginationFee",
     // 100 bps
