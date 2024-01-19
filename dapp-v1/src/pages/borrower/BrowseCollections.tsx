@@ -105,7 +105,7 @@ export const BrowseCollections = (props: any) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Desks
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3 text-end">
                   {" "}
                 </th>
               </tr>
@@ -159,7 +159,7 @@ export const BrowseCollections = (props: any) => {
                     <td className="py-3">
                       {nftCollection?.loanConfigs?.length}
                     </td>
-                    <td className="py-3 pe-3">
+                    <td className="py-3 pe-3 text-end">
                       <NavLink
                         to={`/explore/${nftCollection.id}`}
                         className="btn btn-primary rounded-pill px-4"

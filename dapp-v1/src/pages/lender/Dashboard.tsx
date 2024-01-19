@@ -125,7 +125,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-active-tab"
         >
           <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-8">
+            <div className="col-xl-12">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
@@ -144,7 +144,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-pending-default-tab"
         >
           <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-8">
+            <div className="col-xl-12">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
@@ -164,7 +164,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-defaulted-tab"
         >
           <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-8">
+            <div className="col-xl-12">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
@@ -183,7 +183,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-8">
+            <div className="col-xl-12">
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
@@ -202,14 +202,14 @@ const LoanCardParent = (props) => {
   // setup desks data
   if (props.desks.length === 0) {
     return (
-      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
+      <div className="specific-w-400 mw-100 mx-auto mt-5">
         <img
           src="theme/images/Vector.png"
           alt="Image"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
-        <h3 className="opacity-75 text-center mt-5">No active loans.</h3>
-        <p className="text-body-secondary text-center mt-4">
+        <div className="h3 text-center mt-5">Nothing found</div>
+        <p className="text-body-secondary text-center mt-3">
           {`Don’t know where to start? `}
           <NavLink to="/create-desk">Create a Lending Desk</NavLink>
         </p>

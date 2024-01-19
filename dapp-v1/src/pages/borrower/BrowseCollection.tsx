@@ -134,7 +134,7 @@ export const BrowseCollection = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Interest Rate
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3 text-end">
                   {" "}
                 </th>
               </tr>
@@ -181,7 +181,7 @@ export const BrowseCollection = (props) => {
                       {loanConfig.minInterest / 100}-
                       {loanConfig.maxInterest / 100}%
                     </td>
-                    <td className="py-3 pe-3">
+                    <td className="py-3 pe-3 text end">
                       <GetLoanModal
                         {...{
                           btnClass: "btn btn-primary rounded-pill px-4",

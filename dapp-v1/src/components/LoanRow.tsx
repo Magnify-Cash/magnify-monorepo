@@ -16,6 +16,7 @@ import {
   calculateTimeInfo,
   formatTimeInfo,
 } from "@/helpers/utils";
+import { NavLink } from "react-router-dom";
 
 // Interface
 interface ILoanRowProps {
@@ -46,14 +47,18 @@ export const LoanRow = ({
   });
   if (loans.length === 0) {
     return (
-      <>
+      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
           src="theme/images/Vector.png"
           alt="Image"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
-        <p className="text-body-secondary text-center">Nothing found</p>
-      </>
+        <div className="h3 text-center mt-5">Nothing found</div>
+        <p className="text-body-secondary text-center mt-3">
+          {`Don’t know where to start? `}
+          <NavLink to="/quick-loan">Get Quick Loan</NavLink>
+        </p>
+      </div>
     );
   }
 
