@@ -290,13 +290,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                 }}
               >
                 {/* The large inner element to hold all of the items */}
-                <div
-                  className="d-flex position-relative mt-2 "
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    width: "100%",
-                  }}
-                >
+                <div className="mt-2">
                   {/* Only the visible items in the virtualizer, manually positioned to be in view */}
                   {props.token &&
                     rowVirtualizer.getVirtualItems().map((virtualItem) => (
@@ -307,25 +301,24 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         }
                         clickFunction={onClickCallback}
                         data={filteredTokens[virtualItem.index]}
-                        className="btn d-flex align-items-center justify-content-start"
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${virtualItem.size}px`,
-                          transform: `translateY(${virtualItem.start}px)`,
-                        }}
+                        className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                       >
                         <img
-                          className="pe-2"
+                          className="d-block w-auto me-2 rounded"
                           src={filteredTokens[virtualItem.index].token.logoURI}
                           alt={`${
                             filteredTokens[virtualItem.index].token.name
                           } Logo`}
-                          height="100%"
+                          height="48px"
                         />
-                        {filteredTokens[virtualItem.index].token.name}
+                        <div className="text-start">
+                          <div>
+                            {filteredTokens[virtualItem.index].token.name}
+                          </div>
+                          <div className="text-body-secondary fw-normal">
+                            <small>{filteredTokens[virtualItem.index].token.symbol}</small>
+                          </div>
+                        </div>
                       </SelectButton>
                     ))}
                   {props.nft &&
@@ -337,26 +330,25 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         }
                         clickFunction={onClickCallback}
                         data={filteredNfts[virtualItem.index]}
-                        className="btn d-flex align-items-center justify-content-start"
+                        className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                         type="button"
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${virtualItem.size}px`,
-                          transform: `translateY(${virtualItem.start}px)`,
-                        }}
                       >
                         <img
-                          className="pe-2"
+                          className="d-block w-auto me-2 rounded"
                           src={filteredNfts[virtualItem.index].nft.logoURI}
                           alt={`${
                             filteredNfts[virtualItem.index].nft.name
                           } Logo`}
-                          height="100%"
+                          height="48px"
                         />
-                        {filteredNfts[virtualItem.index].nft.name}
+                        <div className="text-start">
+                          <div>
+                            {filteredNfts[virtualItem.index].nft.name}
+                          </div>
+                          <div className="text-body-secondary fw-normal">
+                            <small>{filteredNfts[virtualItem.index].nft.symbol}</small>
+                          </div>
+                        </div>
                       </SelectButton>
                     ))}
                 </div>
