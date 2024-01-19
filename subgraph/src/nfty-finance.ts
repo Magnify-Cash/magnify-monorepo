@@ -68,7 +68,7 @@ export function handleNewLendingDeskInitialized(
   lendingDesk.erc20 = event.params.erc20.toHex();
   lendingDesk.owner = event.params.owner.toHex();
   lendingDesk.status = "Active";
-  lendingDesk.balance = BigInt.fromI32(0);
+  lendingDesk.balance = event.params.initialBalance;
   lendingDesk.loansCount = BigInt.fromI32(0);
   lendingDesk.loansDefaultedCount = BigInt.fromI32(0);
   lendingDesk.loansResolvedCount = BigInt.fromI32(0);

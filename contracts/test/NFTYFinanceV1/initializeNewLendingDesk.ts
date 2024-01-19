@@ -60,7 +60,7 @@ describe("NFTY Finance: Initialize new lending desk", () => {
     // Check emitted events
     await expect(tx)
       .emit(nftyFinance, "NewLendingDeskInitialized")
-      .withArgs(lendingDeskId, lender.address, erc20.target);
+      .withArgs(lendingDeskId, lender.address, erc20.target, initialBalance);
 
     await expect(tx)
       .emit(nftyFinance, "LendingDeskLoanConfigsSet")

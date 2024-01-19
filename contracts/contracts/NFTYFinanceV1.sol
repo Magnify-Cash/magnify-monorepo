@@ -90,7 +90,8 @@ contract NFTYFinanceV1 is
     event NewLendingDeskInitialized(
         uint256 lendingDeskId,
         address owner,
-        address erc20
+        address erc20,
+        uint256 initialBalance
     );
 
     /**
@@ -283,7 +284,8 @@ contract NFTYFinanceV1 is
         emit NewLendingDeskInitialized(
             lendingDeskIdCounter,
             msg.sender,
-            lendingDesk.erc20
+            lendingDesk.erc20,
+            _depositAmount
         );
     }
 

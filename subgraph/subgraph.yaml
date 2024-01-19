@@ -31,7 +31,7 @@ dataSources:
           handler: handleLoanOriginationFeeSet
         - event: ProtocolInitialized(address,address,address)
           handler: handleProtocolInitialized
-        - event: NewLendingDeskInitialized(uint256,address,address)
+        - event: NewLendingDeskInitialized(uint256,address,address,uint256)
           handler: handleNewLendingDeskInitialized
         - event: LendingDeskLiquidityDeposited(uint256,uint256)
           handler: handleLendingDeskLiquidityDeposited
