@@ -348,6 +348,13 @@ export const Base = () => {
           <Outlet />
         </main>
         {/* Content end */}
+
+        {/* Toasts start */}
+        <div 
+          id="toast-container"
+          className="toast-container position-fixed top-0 end-0 p-3"
+        ></div>
+        {/* Toasts end */}
       </Provider>
     </ConnectKitProvider>
   );
