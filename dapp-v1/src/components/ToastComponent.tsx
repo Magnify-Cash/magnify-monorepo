@@ -21,6 +21,7 @@ const ToastComponent: React.FC<ToastProps> = ({ title, content, variant }) => {
   //Shows or hides the toast depending on the value
   const [show, setShow] = useState(true);
 
+  //This hook is used to hide the toast after a certain amount of time
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(false);
@@ -37,6 +38,7 @@ const ToastComponent: React.FC<ToastProps> = ({ title, content, variant }) => {
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
+      data-bs-autohide="false" //Auto hide is achieved using the useEffect hook
       style={{ width: "400px", backgroundColor: "var(--bs-content-bg)" }}
     >
       <div className="toast-body p-3">
