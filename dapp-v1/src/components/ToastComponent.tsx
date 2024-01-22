@@ -1,3 +1,4 @@
+import { useToastContext } from "@/helpers/CreateToast";
 import React, { useState, useEffect } from "react";
 
 type ToastVariant = "success" | "error" | "loading";
@@ -6,9 +7,15 @@ export interface ToastProps {
   title: string;
   content: string;
   variant: ToastVariant;
+  index: number;
 }
 
-const ToastComponent: React.FC<ToastProps> = ({ title, content, variant }) => {
+const ToastComponent: React.FC<ToastProps> = ({
+  title,
+  content,
+  variant,
+  index,
+}) => {
   let toastContext = "success";
   let toastIcon = "fa-check-circle";
   if (variant === "error") {
@@ -40,6 +47,7 @@ const ToastComponent: React.FC<ToastProps> = ({ title, content, variant }) => {
       aria-atomic="true"
       data-bs-autohide="false" //Auto hide is achieved using the useEffect hook
       style={{ width: "400px", backgroundColor: "var(--bs-content-bg)" }}
+      key={index}
     >
       <div className="toast-body p-3">
         <div className="d-flex align-items-center">
@@ -61,8 +69,10 @@ const ToastComponent: React.FC<ToastProps> = ({ title, content, variant }) => {
           <button
             type="button"
             className="btn-close ms-auto"
-            data-bs-dismiss="toast"
             aria-label="Close"
+            onClick={() => {
+              setShow(false);
+            }}
           ></button>
         </div>
       </div>
