@@ -1,4 +1,6 @@
 import ToastComponent, { ToastProps } from "@/components/ToastComponent";
+import { useContext } from "react";
+import { ToastContext } from "@/pages/Base";
 
 const CreateToast = (
   title: string,
@@ -16,4 +18,14 @@ const CreateToast = (
   );
 };
 
-export { CreateToast };
+//Custom hook to use ToastContext
+const useToastContext = () => {
+  const context = useContext(ToastContext);
+
+  if (!context) {
+    throw new Error("useToastContext must be used within a ToastProvider");
+  }
+
+  return context;
+};
+export { CreateToast, useToastContext };
