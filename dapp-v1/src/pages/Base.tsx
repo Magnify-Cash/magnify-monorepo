@@ -6,6 +6,13 @@ import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import { CreateToast } from "@/helpers/CreateToast";
 import { ToastProps } from "@/components/ToastComponent";
 
+type ToastContextType = {
+  addToast: (
+    title: string,
+    message: string,
+    type: ToastProps["variant"]
+  ) => void;
+};
 function findTitleProps(obj: any): string {
   if (obj.props && obj.props.title) {
     return obj.props.title;
@@ -46,7 +53,7 @@ function closeSidebar() {
 }
 
 //Creating Toast Context to be used by all components to send toast messages
-export const ToastContext = createContext<any>(null);
+export const ToastContext = createContext<ToastContextType | null>(null);
 
 export const Base = () => {
   // title
@@ -57,11 +64,7 @@ export const Base = () => {
   const [toasts, setToasts] = useState<React.ReactNode[]>([]);
 
   // Function to add a new toast
-  const addToast = (
-    title: string,
-    message: string,
-    type: ToastProps["variant"]
-  ) => {
+  const addToast: ToastContextType["addToast"] = (title, message, type) => {
     const newToast = CreateToast(title, message, type, toasts.length + 1);
     setToasts((prevToasts) => [...prevToasts, newToast]);
   };
