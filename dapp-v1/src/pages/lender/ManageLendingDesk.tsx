@@ -12,11 +12,13 @@ import {
   usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity,
   nftyFinanceV1Address,
   useErc20Approve,
+  useErc20Allowance,
 } from "@/wagmi-generated";
-import { useChainId } from "wagmi";
+import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import ManageFunds from "./ManageFunds";
 
 export const ManageLendingDesk = (props: any) => {
   /*
@@ -48,9 +50,10 @@ export const ManageLendingDesk = (props: any) => {
   */
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
-      (loan) => loan.nftCollection.id
-    );
+    const nftIds: string[] | undefined =
+      result.data?.lendingDesk?.loanConfigs.map(
+        (loan) => loan.nftCollection.id
+      );
     if (nftIds?.length) {
       const resultArr = await fetchNFTDetails(nftIds);
       setNftArr(resultArr);
@@ -62,14 +65,15 @@ export const ManageLendingDesk = (props: any) => {
     }
   }, [result.data]);
 
-
   /*
   Freeze/Unfreeze lending desk
   Calls `setLendingDeskState` with relevant boolean status
   */
   const boolStatus =
     result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk"
+  const boolString = boolStatus
+    ? "Freeze Lending Desk"
+    : "Un-Freeze Lending Desk";
   const { config: freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
     args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
   });
@@ -77,61 +81,6 @@ export const ManageLendingDesk = (props: any) => {
     useNftyFinanceV1SetLendingDeskState(freezeConfig);
   const freezeUnfreeze = async () => {
     await freezeWrite?.();
-  };
-
-  /*
-  Deposit Liquidity
-  Calls `depositLendingDeskLiquidity`
-  Note: Requires token approval
-  */
-  const chainId = useChainId();
-  const [depositAmount, setDepositAmount] = useState(0);
-  const { writeAsync: approveErc20 } = useErc20Approve({
-    address: result.data?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [
-      nftyFinanceV1Address[chainId],
-      toWei(
-        depositAmount.toString(),
-        result.data?.lendingDesk?.erc20?.decimals
-      ),
-    ],
-  });
-  const { config: depositConfig } =
-    usePrepareNftyFinanceV1DepositLendingDeskLiquidity({
-      args: [
-        BigInt(result.data?.lendingDesk?.id || 0),
-        toWei(
-          depositAmount.toString(),
-          result.data?.lendingDesk?.erc20?.decimals
-        ),
-      ],
-    });
-  const { writeAsync: depositWrite } =
-    useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
-  const depositLiquidity = async () => {
-    await approveErc20();
-    await depositWrite?.();
-  };
-
-  /*
-  Withdraw Liquidity
-  Calls `withdrawLendingDeskLiquidity`
-  */
-  const [withdrawAmount, setWithdrawAmount] = useState(0);
-  const { config: withdrawConfig } =
-    usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
-      args: [
-        BigInt(result.data?.lendingDesk?.id || 0),
-        toWei(
-          withdrawAmount.toString(),
-          result.data?.lendingDesk?.erc20?.decimals
-        ),
-      ],
-    });
-  const { writeAsync: withdrawWrite } =
-    useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
-  const withdrawLiquidity = async () => {
-    await withdrawWrite?.();
   };
 
   /*
@@ -179,85 +128,27 @@ export const ManageLendingDesk = (props: any) => {
                       {result.data?.lendingDesk?.erc20.symbol}
                     </div>
                   </div>
-                  <div className="col-lg-4 text-lg-end">
-                    <PopupTransaction
-                      btnClass="btn btn-primary py-2 w-100 rounded-pill"
-                      btnText="Add Funds"
-                      modalId="depositModal"
-                      modalTitle="Add Funds"
-                      modalContent={
-                        <div className="text-lg-start mb-2 mt-2">
-                          <div className="card-body">
-                            <h5 className="fw-medium text-body-secondary mb-4">
-                              Deposit Liquidity
-                            </h5>
-                            <div className="input-group ">
-                              <input
-                                value={depositAmount}
-                                onChange={(e) =>
-                                  // @ts-ignore
-                                  setDepositAmount(e.target.value)
-                                }
-                                type="number"
-                                className="form-control form-control-lg py-2 mb-4 flex-grow-1"
-                              />
-                              <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                                <div className="text-truncate ">
-                                  {result.data?.lendingDesk?.erc20.symbol}
-                                </div>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
-                              onClick={() => depositLiquidity()}
-                            >
-                              Deposit Liquidity
-                            </button>
-                          </div>
-                        </div>
-                      }
+                  <div className="col-lg-4 text-lg-end ">
+                    <ManageFunds
+                      lendingDesk={result?.data?.lendingDesk}
+                      action="deposit"
                     />
-                    <PopupTransaction
-                      btnClass="btn btn-primary py-2 mt-2 w-100 rounded-pill"
-                      btnText="Withdraw Funds"
-                      modalId="withdrawModal"
-                      modalTitle="Withdraw Funds"
-                      modalContent={
-                        <div className="text-lg-start mb-2 mt-2">
-                          <div className="card-body">
-                            <h5 className="fw-medium text-body-secondary mb-4">
-                              Withdraw Liquidity
-                            </h5>
-                            <div className="input-group ">
-                              <input
-                                value={withdrawAmount}
-                                onChange={(e) =>
-                                  // @ts-ignore
-                                  setWithdrawAmount(e.target.value)
-                                }
-                                type="number"
-                                className="form-control form-control-lg py-2 mb-4 flex-grow-1"
-                              />
-                              <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                                <div className="text-truncate ">
-                                  {result.data?.lendingDesk?.erc20.symbol}
-                                </div>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
-                              onClick={() => withdrawLiquidity()}
-                            >
-                              Withdraw Liquidity
-                            </button>
-                          </div>
-                        </div>
-                      }
+                    <ManageFunds
+                      lendingDesk={result?.data?.lendingDesk}
+                      action="withdraw"
                     />
-                    <input type="checkbox" className="btn-check" id="btn-check" autoComplete="off" checked={!boolStatus}/>
-                    <label className="btn btn-primary py-2 mt-2 w-100 rounded-pill" htmlFor="btn-check" onClick={() => freezeUnfreeze()}>
+                    <input
+                      type="checkbox"
+                      className="btn-check"
+                      id="btn-check"
+                      autoComplete="off"
+                      checked={!boolStatus}
+                    />
+                    <label
+                      className="btn btn-primary py-2 w-100 rounded-pill"
+                      htmlFor="btn-check"
+                      onClick={() => freezeUnfreeze()}
+                    >
                       {boolString}
                     </label>
                   </div>
@@ -288,7 +179,7 @@ export const ManageLendingDesk = (props: any) => {
                           <a
                             href="#"
                             className="text-reset text-decoration-none"
-                            aria-lable="Edit"
+                            aria-label="Edit"
                           >
                             <i className="fa-regular fa-edit"></i>
                           </a>
@@ -297,7 +188,7 @@ export const ManageLendingDesk = (props: any) => {
                           <a
                             href="#"
                             className="text-reset text-decoration-none"
-                            aria-lable="Delete"
+                            aria-label="Delete"
                           >
                             <i className="fa-regular fa-trash-can"></i>
                           </a>

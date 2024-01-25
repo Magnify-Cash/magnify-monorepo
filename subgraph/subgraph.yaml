@@ -4,18 +4,18 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: NFTYFinance
-    network: sepolia
+    network: mainnet
     source:
       abi: NFTYFinance
-      address: "0x58b9F441b5c4681e1Ab74ecdE2A01698831BF2c4"
-      startBlock: 4846805
+      address: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933"
+      startBlock: 30
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - LendingDesk
-        - ProtocolInfo
+        - ProtocolParams
         - Erc20
         - NftCollection
         - Loan
@@ -31,7 +31,7 @@ dataSources:
           handler: handleLoanOriginationFeeSet
         - event: ProtocolInitialized(address,address,address)
           handler: handleProtocolInitialized
-        - event: NewLendingDeskInitialized(uint256,address,address,uint256)
+        - event: NewLendingDeskInitialized(uint256,address,address)
           handler: handleNewLendingDeskInitialized
         - event: LendingDeskLiquidityDeposited(uint256,uint256)
           handler: handleLendingDeskLiquidityDeposited
@@ -60,11 +60,11 @@ dataSources:
       file: ./src/nfty-finance.ts
   - kind: ethereum/contract
     name: LendingKeys
-    network: sepolia
+    network: mainnet
     source:
       abi: LendingKeys
-      address: "0xaD12bBd88ee51CEA5Ed1d2256d8bc36701c0bD04"
-      startBlock: 4846804
+      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d"
+      startBlock: 29
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -80,11 +80,11 @@ dataSources:
       file: ./src/lending-keys.ts
   - kind: ethereum/contract
     name: PromissoryNotes
-    network: sepolia
+    network: mainnet
     source:
       abi: PromissoryNotes
-      address: "0x11C1564576ceBb61a92C3093cFe54529FC2907c6"
-      startBlock: 4846802
+      address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F"
+      startBlock: 27
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -100,11 +100,11 @@ dataSources:
       file: ./src/promissory-notes.ts
   - kind: ethereum/contract
     name: ObligationNotes
-    network: sepolia
+    network: mainnet
     source:
       abi: ObligationNotes
-      address: "0x06e117Bef6E05D818fB0dc971B7bF1560B54b3AC"
-      startBlock: 4846803
+      address: "0x09635F643e140090A9A8Dcd712eD6285858ceBef"
+      startBlock: 28
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

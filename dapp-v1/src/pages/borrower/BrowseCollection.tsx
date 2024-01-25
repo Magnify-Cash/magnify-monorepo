@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { useQuery } from "urql";
-import { useChainId } from "wagmi";
-import { BrowseCollectionDocument } from "../../../.graphclient";
+import { PopupTransaction } from "@/components";
+import { useChainId, useWaitForTransaction } from "wagmi";
+import { BrowseCollectionDocument, LendingDesk } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
+
 import {
   nftyFinanceV1Address,
   useErc721Approve,
+  useErc721GetApproved,
   useNftyFinanceV1InitializeNewLoan,
   usePrepareNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
@@ -58,6 +61,7 @@ export const BrowseCollection = (props) => {
   const [selectedLendingDesk, setSelectedLendingDesk] = useState<any>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
+  const [checked, setChecked] = useState(false);
 
   const getTokenDetails = async () => {
     const fetchedTokens = await fetchTokensForCollection(result.data);
@@ -69,26 +73,78 @@ export const BrowseCollection = (props) => {
     setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
 
+  //Initialize Approve Erc721 Hook
+  const { data: approveErc721TransactionData, writeAsync: approveErc721 } =
+    useErc721Approve({
+      address: nft?.address as `0x${string}`,
+      args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+    });
+
+  //Fetch Approval Data for the NFT
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc721GetApproved({
+      address: nft?.address as `0x${string}`,
+      args: [BigInt(nftId || 0)],
+    });
+
+  //On successful transaction of approveErc721 hook, refetch the approval data
+  //Also refetch newLoanConfig to update the newLoanWrite function
+  useWaitForTransaction({
+    hash: approveErc721TransactionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+      refetchNewLoanConfig();
+    },
+  });
+
+  useEffect(() => {
+    if (!approvalData) {
+      setChecked(false);
+      return;
+    }
+    if (
+      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
+    ) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+  }, [nftId, approvalData]);
+
   // Initialize New Loan Hook
-  const { writeAsync: approveErc721 } = useErc721Approve({
-    address: nft?.address as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
-  });
-  const { config: newLoanConfig } = usePrepareNftyFinanceV1InitializeNewLoan({
-    args: [
-      BigInt(selectedLendingDesk?.id ?? 0),
-      nft?.address as `0x${string}`,
-      BigInt(nftId || 0),
-      BigInt((duration || 0) * 24),
-      toWei(
-        amount ? amount.toString() : "0",
-        selectedLendingDesk?.erc20.decimals
-      ),
-    ],
-  });
-  const { writeAsync: newLoanWrite } =
+  const { config: newLoanConfig, refetch: refetchNewLoanConfig } =
+    usePrepareNftyFinanceV1InitializeNewLoan({
+      args: [
+        BigInt(selectedLendingDesk?.id ? selectedLendingDesk.id : 0),
+        nft?.address as `0x${string}`,
+        BigInt(nftId || 0),
+        BigInt((duration || 0) * 24),
+        toWei(
+          amount ? amount.toString() : "0",
+          selectedLendingDesk?.erc20.decimals
+        ),
+      ],
+    });
+  const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
     useNftyFinanceV1InitializeNewLoan(newLoanConfig);
 
+  //On successful transaction of newLoanWrite hook, refetch the approval data
+  //This is done to update the checkbox after a successful loan request
+  useWaitForTransaction({
+    hash: newLoanWriteTransactionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+    },
+  });
+
+  // Checkbox click function
+  async function approveERC721TokenTransfer() {
+    if (checked) {
+      console.log("already approved");
+      return;
+    }
+    await approveErc721();
+  }
   // Modal submit
   async function requestLoan() {
     const form = document.getElementById("quickLoanForm") as HTMLFormElement;
@@ -97,7 +153,6 @@ export const BrowseCollection = (props) => {
       form.reportValidity();
       return;
     }
-    await approveErc721();
     await newLoanWrite?.();
   }
 
@@ -134,7 +189,7 @@ export const BrowseCollection = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Interest Rate
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3 text-end">
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   {" "}
                 </th>
               </tr>
@@ -181,22 +236,24 @@ export const BrowseCollection = (props) => {
                       {loanConfig.minInterest / 100}-
                       {loanConfig.maxInterest / 100}%
                     </td>
-                    <td className="py-3 pe-3 text end">
+                    <td className="py-3 pe-3">
                       <GetLoanModal
                         {...{
                           btnClass: "btn btn-primary rounded-pill px-4",
                           disabled: false,
-                          onSubmit: () => {
-                            setSelectedLendingDesk(loanConfig.lendingDesk);
-                            requestLoan();
+                          btnOnClick: () => {
+                            setSelectedLendingDesk(loanConfig?.lendingDesk);
                           },
+                          onSubmit: requestLoan,
+                          checked,
+                          onCheck: approveERC721TokenTransfer,
                           nft,
                           duration,
                           setDuration,
                           amount,
                           setAmount,
-                          loanConfig: loanConfig,
-                          lendingDesk: loanConfig?.lendingDesk,
+                          loanConfig: loanConfig as any, // disabled type checking
+                          lendingDesk: selectedLendingDesk,
                           nftId,
                           setNftId,
                           nftCollectionAddress: collection_address,

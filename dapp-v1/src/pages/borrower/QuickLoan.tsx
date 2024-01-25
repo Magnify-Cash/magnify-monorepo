@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "urql";
-import { useChainId } from "wagmi";
-import { PopupTokenList } from "@/components";
+import { useChainId, useWaitForTransaction } from "wagmi";
+import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 import {
@@ -9,6 +9,7 @@ import {
   useNftyFinanceV1InitializeNewLoan,
   usePrepareNftyFinanceV1InitializeNewLoan,
   nftyFinanceV1Address,
+  useErc721GetApproved,
 } from "@/wagmi-generated";
 import { QuickLoanDocument } from "../../../.graphclient";
 import { fromWei, toWei } from "@/helpers/utils";
@@ -27,14 +28,16 @@ export const QuickLoan = (props: any) => {
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
   const [nftId, setNftId] = useState<number>();
+  //
   const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
+  const [checked, setChecked] = useState(false);
+
   const setSelectedLendingDesk = (e: string) =>
     _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
-    console.log("hi", selectedLendingDesk?.loanConfig?.nftCollection?.id);
     const fetchedNfts = await fetchNFTDetails([
       selectedLendingDesk?.loanConfig?.nftCollection?.id,
     ]);
@@ -65,22 +68,76 @@ export const QuickLoan = (props: any) => {
     }
   }
 
-  // Initialize New Loan Hook
-  const { writeAsync: approveErc721 } = useErc721Approve({
-    address: nftCollection?.nft.address as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+  //Initialize Approve Erc721 Hook
+  const { data: approveErc721TransactionData, writeAsync: approveErc721 } =
+    useErc721Approve({
+      address: nftCollection?.nft.address as `0x${string}`,
+      args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+    });
+
+  //Fetch Approval Data for the NFT
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc721GetApproved({
+      address: nftCollection?.nft.address as `0x${string}`,
+      args: [BigInt(nftId || 0)],
+    });
+
+  //On successful transaction of approveErc721 hook, refetch the approval data
+  //Also refetch newLoanConfig to update the newLoanWrite function
+
+  useWaitForTransaction({
+    hash: approveErc721TransactionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+      refetchNewLoanConfig();
+    },
   });
-  const { config: newLoanConfig } = usePrepareNftyFinanceV1InitializeNewLoan({
-    args: [
-      BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
-      nftCollection?.nft.address as `0x${string}`,
-      BigInt(nftId || 0),
-      BigInt((duration || 0) * 24),
-      toWei(amount ? amount.toString() : "0", token?.token.decimals),
-    ],
-  });
-  const { writeAsync: newLoanWrite } =
+
+  useEffect(() => {
+    if (!approvalData) {
+      setChecked(false);
+      return;
+    }
+    if (
+      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
+    ) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+  }, [nftId, approvalData]);
+
+  const { config: newLoanConfig, refetch: refetchNewLoanConfig } =
+    usePrepareNftyFinanceV1InitializeNewLoan({
+      args: [
+        BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
+        nftCollection?.nft.address as `0x${string}`,
+        BigInt(nftId || 0),
+        BigInt((duration || 0) * 24),
+        //TODO supply decimals value
+        toWei(amount ? amount.toString() : "0", token?.token.decimals),
+      ],
+    });
+  const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
     useNftyFinanceV1InitializeNewLoan(newLoanConfig);
+
+  //On successful transaction of newLoanWrite hook, refetch the approval data
+  //This is done to update the checkbox after a successful loan request
+  useWaitForTransaction({
+    hash: newLoanWriteTransactionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+    },
+  });
+
+  // Checkbox click function
+  async function approveERC721TokenTransfer() {
+    if (checked) {
+      console.log("already approved");
+      return;
+    }
+    await approveErc721();
+  }
 
   // Modal submit
   async function requestLoan() {
@@ -98,7 +155,6 @@ export const QuickLoan = (props: any) => {
     console.log("amount", amount);
     console.log("form is valid, wagmi functions with above data.....");
     console.log(newLoanConfig);
-    await approveErc721();
     await newLoanWrite?.();
   }
 
@@ -300,6 +356,8 @@ export const QuickLoan = (props: any) => {
             {...{
               btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill",
               disabled: !token || !nftCollection || !selectedLendingDesk,
+              checked,
+              onCheck: approveERC721TokenTransfer,
               onSubmit: requestLoan,
               nft,
               duration,
