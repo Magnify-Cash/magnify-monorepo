@@ -7,15 +7,15 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYFinance
-      address: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933"
-      startBlock: 30
+      address: "0x4826533B4897376654Bb4d4AD88B7faFD0C98528"
+      startBlock: 42
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - LendingDesk
-        - ProtocolParams
+        - ProtocolInfo
         - Erc20
         - NftCollection
         - Loan
@@ -31,7 +31,7 @@ dataSources:
           handler: handleLoanOriginationFeeSet
         - event: ProtocolInitialized(address,address,address)
           handler: handleProtocolInitialized
-        - event: NewLendingDeskInitialized(uint256,address,address)
+        - event: NewLendingDeskInitialized(uint256,address,address,uint256)
           handler: handleNewLendingDeskInitialized
         - event: LendingDeskLiquidityDeposited(uint256,uint256)
           handler: handleLendingDeskLiquidityDeposited
@@ -63,8 +63,8 @@ dataSources:
     network: mainnet
     source:
       abi: LendingKeys
-      address: "0xc5a5C42992dECbae36851359345FE25997F5C42d"
-      startBlock: 29
+      address: "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49"
+      startBlock: 41
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -83,8 +83,8 @@ dataSources:
     network: mainnet
     source:
       abi: PromissoryNotes
-      address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F"
-      startBlock: 27
+      address: "0x95401dc811bb5740090279Ba06cfA8fcF6113778"
+      startBlock: 39
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -103,8 +103,8 @@ dataSources:
     network: mainnet
     source:
       abi: ObligationNotes
-      address: "0x09635F643e140090A9A8Dcd712eD6285858ceBef"
-      startBlock: 28
+      address: "0x998abeb3E57409262aE5b751f60747921B33613E"
+      startBlock: 40
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
