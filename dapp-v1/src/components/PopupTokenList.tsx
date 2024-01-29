@@ -1,14 +1,16 @@
+import { NFTInfo } from "@nftylabs/nft-lists";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { TokenInfo } from "@uniswap/token-lists";
 import {
-  useState,
+  ButtonHTMLAttributes,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
   useEffect,
   useMemo,
   useRef,
-  ButtonHTMLAttributes,
-  ReactNode,
+  useState,
 } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { NFTInfo } from "@nftylabs/nft-lists";
-import { TokenInfo } from "@uniswap/token-lists";
 
 /*
 Component Props
@@ -18,22 +20,23 @@ export interface BaseListProps {
   token?: boolean;
   modalId: string;
   urls: Array<string>;
-  onClick?: Function;
 }
 export interface NFTListProps extends BaseListProps {
   nft: boolean;
   token?: never;
+  onClick?: Dispatch<SetStateAction<INFTListItem | null | undefined>>;
 }
 export interface TokenListProps extends BaseListProps {
   nft?: never;
   token: boolean;
+  onClick?: Dispatch<SetStateAction<ITokenListItem | null | undefined>>;
 }
 type PopupTokenListProps = NFTListProps | TokenListProps;
 
 interface CustomSelectButton extends ButtonHTMLAttributes<HTMLButtonElement> {
   data?: any;
   children?: ReactNode;
-  clickFunction?: Function;
+  clickFunction?: (data: any) => void;
 }
 
 /*
@@ -67,16 +70,15 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
   async function fetchListData() {
     try {
       // get list data
-      let combinedLists;
       const responses = await Promise.all(
         props.urls.map(async (url) => {
           const response = await fetch(url);
           return response.json();
-        })
+        }),
       );
       const jsonData = responses.map((response) => response);
       if (props.nft) {
-        combinedLists = jsonData.flatMap((parentObj) => {
+        const combinedLists = jsonData.flatMap((parentObj) => {
           return parentObj.nfts.map((nft: NFTInfo) => ({
             provider: {
               keywords: parentObj.keywords,
@@ -91,9 +93,10 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         combinedLists.sort((a: INFTListItem, b: INFTListItem) => {
           return a.nft.name.localeCompare(b.nft.name);
         });
+        setNftLists(combinedLists);
       }
       if (props.token) {
-        combinedLists = jsonData.flatMap((parentObj) => {
+        const combinedLists = jsonData.flatMap((parentObj) => {
           return parentObj.tokens.map((token: TokenInfo) => ({
             provider: {
               keywords: parentObj.keywords,
@@ -108,11 +111,8 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         combinedLists.sort((a: ITokenListItem, b: ITokenListItem) => {
           return a.token.name.localeCompare(b.token.name);
         });
+        setTokenLists(combinedLists);
       }
-
-      // Sort & update list data state
-      props.token && setTokenLists(combinedLists);
-      props.nft && setNftLists(combinedLists);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -200,7 +200,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: ITokenListItem) =>
           item.token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.token.address.includes(searchQuery.toLowerCase())
+          item.token.address.includes(searchQuery.toLowerCase()),
       );
     }
     return [];
@@ -212,7 +212,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: INFTListItem) =>
           item.nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.nft.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.nft.address.includes(searchQuery.toLowerCase())
+          item.nft.address.includes(searchQuery.toLowerCase()),
       );
     }
     return [];
@@ -232,15 +232,12 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 	On Click Callback
 	*/
   function onClickCallback(data) {
-    console.log("clicked");
-    console.log(props.onClick, data);
-    props.onClick && props.onClick(data);
+    props.onClick?.(data);
 
     // hide modal
-    var el = document.getElementById(props.modalId);
+    const el = document.getElementById(props.modalId);
     if (el) {
-      var modal = window.bootstrap.Modal.getInstance(el);
-      modal && modal.hide();
+      window.bootstrap.Modal.getInstance(el)?.hide();
     }
   }
 
@@ -306,17 +303,15 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredTokens[virtualItem.index].token.logoURI}
-                          alt={`${
-                            filteredTokens[virtualItem.index].token.name
-                          } Logo`}
+                          alt={`${filteredTokens[virtualItem.index].token.name} Logo`}
                           height="48px"
                         />
                         <div className="text-start">
-                          <div>
-                            {filteredTokens[virtualItem.index].token.name}
-                          </div>
+                          <div>{filteredTokens[virtualItem.index].token.name}</div>
                           <div className="text-body-secondary fw-normal">
-                            <small>{filteredTokens[virtualItem.index].token.symbol}</small>
+                            <small>
+                              {filteredTokens[virtualItem.index].token.symbol}
+                            </small>
                           </div>
                         </div>
                       </SelectButton>
@@ -336,15 +331,11 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredNfts[virtualItem.index].nft.logoURI}
-                          alt={`${
-                            filteredNfts[virtualItem.index].nft.name
-                          } Logo`}
+                          alt={`${filteredNfts[virtualItem.index].nft.name} Logo`}
                           height="48px"
                         />
                         <div className="text-start">
-                          <div>
-                            {filteredNfts[virtualItem.index].nft.name}
-                          </div>
+                          <div>{filteredNfts[virtualItem.index].nft.name}</div>
                           <div className="text-body-secondary fw-normal">
                             <small>{filteredNfts[virtualItem.index].nft.symbol}</small>
                           </div>

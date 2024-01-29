@@ -9,12 +9,7 @@ export interface ToastProps {
   index: number;
 }
 
-const ToastComponent: React.FC<ToastProps> = ({
-  title,
-  content,
-  variant,
-  index,
-}) => {
+const ToastComponent: React.FC<ToastProps> = ({ title, content, variant, index }) => {
   let toastContext = "success";
   let toastIcon = "fa-check-circle";
   if (variant === "error") {
@@ -58,10 +53,7 @@ const ToastComponent: React.FC<ToastProps> = ({
           </div>
           <div className="mx-3">
             <div className="h5 mb-1">{title}</div>
-            <p
-              className="text-body-secondary mb-0"
-              style={{ fontSize: "12px" }}
-            >
+            <p className="text-body-secondary mb-0" style={{ fontSize: "12px" }}>
               {content}
             </p>
           </div>

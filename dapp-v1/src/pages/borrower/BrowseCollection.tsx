@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams, NavLink } from "react-router-dom";
-import { useQuery } from "urql";
-import { PopupTransaction } from "@/components";
-import { useChainId, useWaitForTransaction } from "wagmi";
-import { BrowseCollectionDocument, LendingDesk } from "../../../.graphclient";
-import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
-import { formatAddress } from "@/helpers/formatAddress";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
+import { formatAddress } from "@/helpers/formatAddress";
+import { fromWei, toWei } from "@/helpers/utils";
+import { useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
+import { useQuery } from "urql";
+import { useChainId, useWaitForTransaction } from "wagmi";
+import { BrowseCollectionDocument } from "../../../.graphclient";
 
+import GetLoanModal from "@/components/GetLoanModal";
 import {
   nftyFinanceV1Address,
   useErc721Approve,
@@ -16,7 +16,6 @@ import {
   useNftyFinanceV1InitializeNewLoan,
   usePrepareNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
-import GetLoanModal from "@/components/GetLoanModal";
 
 export const BrowseCollection = (props) => {
   // GraphQL
@@ -30,14 +29,12 @@ export const BrowseCollection = (props) => {
   });
   const { data, fetching, error } = result;
 
-  var title = document.getElementById("base-title");
+  const title = document.getElementById("base-title");
   useEffect(() => {
     // This function will be executed whenever the query data changes
     const getTitle = async () => {
       if (!fetching && collection_address) {
-        const fetchedNftArr: INft[] = await fetchNFTDetails([
-          collection_address,
-        ]);
+        const fetchedNftArr: INft[] = await fetchNFTDetails([collection_address]);
         if (title) {
           title.innerHTML = `${fetchedNftArr[0].name} Liquidity Desks`;
         }
@@ -81,11 +78,10 @@ export const BrowseCollection = (props) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useErc721GetApproved({
-      address: nft?.address as `0x${string}`,
-      args: [BigInt(nftId || 0)],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
+    address: nft?.address as `0x${string}`,
+    args: [BigInt(nftId || 0)],
+  });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -102,9 +98,7 @@ export const BrowseCollection = (props) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -119,10 +113,7 @@ export const BrowseCollection = (props) => {
         nft?.address as `0x${string}`,
         BigInt(nftId || 0),
         BigInt((duration || 0) * 24),
-        toWei(
-          amount ? amount.toString() : "0",
-          selectedLendingDesk?.erc20.decimals
-        ),
+        toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
@@ -180,30 +171,26 @@ export const BrowseCollection = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Currency
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Offer
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">Offer</th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Duration
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Interest Rate
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
-                  {" "}
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
               </tr>
             </thead>
             <tbody>
               {result.data?.loanConfigs.map((loanConfig, index) => {
                 return (
-                  <tr className="align-middle" key={index}>
+                  <tr className="align-middle" key={loanConfig.nftCollection.id}>
                     <td className="py-3 ps-3">
                       <img
                         src="/images/placeholder/images/image-12.png"
                         width="30"
                         className="d-block rounded-circle"
-                        alt="Image"
+                        alt="Placeholder"
                       />
                     </td>
                     <td className="py-3">
@@ -214,27 +201,25 @@ export const BrowseCollection = (props) => {
                         src={tokens?.[index]?.logoURI}
                         height="30"
                         className="d-block rounded-circle"
-                        alt="Image"
+                        alt={tokens?.[index].symbol}
                       />
                     </td>
                     <td className="py-3">
                       {fromWei(
                         loanConfig.minAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals
+                        loanConfig.lendingDesk?.erc20?.decimals,
                       )}{" "}
                       -{" "}
                       {fromWei(
                         loanConfig.maxAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals
+                        loanConfig.lendingDesk?.erc20?.decimals,
                       )}
                     </td>
                     <td className="py-3">
-                      {loanConfig.minDuration / 24}-
-                      {loanConfig.maxDuration / 24} days
+                      {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
                     </td>
                     <td className="py-3">
-                      {loanConfig.minInterest / 100}-
-                      {loanConfig.maxInterest / 100}%
+                      {loanConfig.minInterest / 100}-{loanConfig.maxInterest / 100}%
                     </td>
                     <td className="py-3 pe-3">
                       <GetLoanModal

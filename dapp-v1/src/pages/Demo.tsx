@@ -33,9 +33,7 @@ export const Demo = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">30</h3>
-                  <p className="m-0 text-primary-emphasis">
-                    number of collections
-                  </p>
+                  <p className="m-0 text-primary-emphasis">number of collections</p>
                 </div>
               </div>
             </div>
@@ -48,9 +46,7 @@ export const Demo = (props: any) => {
                   <h3 className="m-0">
                     20K <small className="fw-normal">USD</small>
                   </h3>
-                  <p className="m-0 text-primary-emphasis">
-                    total value locked (TVL)
-                  </p>
+                  <p className="m-0 text-primary-emphasis">total value locked (TVL)</p>
                 </div>
               </div>
             </div>
@@ -86,9 +82,7 @@ export const Demo = (props: any) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Currency
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Desks
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   TAL (USD)
                 </th>
@@ -108,9 +102,7 @@ export const Demo = (props: any) => {
                 <td className="py-3">$60,000</td>
                 <td className="py-3">67%</td>
                 <td className="py-3 pe-3">
-                  <button className="btn btn-primary rounded-pill">
-                    Find a Loan
-                  </button>
+                  <button className="btn btn-primary rounded-pill">Find a Loan</button>
                 </td>
               </tr>
               <tr className="align-middle">
@@ -120,9 +112,7 @@ export const Demo = (props: any) => {
                 <td className="py-3">$60,000</td>
                 <td className="py-3">67%</td>
                 <td className="py-3 pe-3">
-                  <button className="btn btn-primary rounded-pill">
-                    Find a Loan
-                  </button>
+                  <button className="btn btn-primary rounded-pill">Find a Loan</button>
                 </td>
               </tr>
               <tr className="align-middle">
@@ -132,9 +122,7 @@ export const Demo = (props: any) => {
                 <td className="py-3">$60,000</td>
                 <td className="py-3">67%</td>
                 <td className="py-3 pe-3">
-                  <button className="btn btn-primary rounded-pill">
-                    Find a Loan
-                  </button>
+                  <button className="btn btn-primary rounded-pill">Find a Loan</button>
                 </td>
               </tr>
               <tr className="align-middle">
@@ -144,9 +132,7 @@ export const Demo = (props: any) => {
                 <td className="py-3">$60,000</td>
                 <td className="py-3">67%</td>
                 <td className="py-3 pe-3">
-                  <button className="btn btn-primary rounded-pill">
-                    Find a Loan
-                  </button>
+                  <button className="btn btn-primary rounded-pill">Find a Loan</button>
                 </td>
               </tr>
               <tr className="align-middle">
@@ -156,9 +142,7 @@ export const Demo = (props: any) => {
                 <td className="py-3">$60,000</td>
                 <td className="py-3">67%</td>
                 <td className="py-3 pe-3">
-                  <button className="btn btn-primary rounded-pill">
-                    Find a Loan
-                  </button>
+                  <button className="btn btn-primary rounded-pill">Find a Loan</button>
                 </td>
               </tr>
             </tbody>

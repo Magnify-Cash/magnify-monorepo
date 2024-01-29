@@ -13,16 +13,6 @@ jobs:
     - name: Install node_modules
       working-directory: ./
       run: yarn dapp install
-    - name: Run ESlint checks
+    - name: Run Biome + TSC checks
       working-directory: ./
-      run: yarn dapp format:write;
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install node_modules
-      working-directory: ./
-      run: yarn dapp install
-    - name: Run TypeScript type checks
-      working-directory: ./
-      run: yarn dapp tsc;
+      run: yarn dapp format; yarn dapp lint; yarn dapp tsc;

@@ -1,24 +1,15 @@
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useQuery } from "urql";
-import { useParams } from "react-router-dom";
-import { PopupTransaction } from "@/components";
+import { ManageFunds } from "@/components";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import { fromWei } from "@/helpers/utils";
 import {
   useNftyFinanceV1SetLendingDeskState,
-  useNftyFinanceV1DepositLendingDeskLiquidity,
-  useNftyFinanceV1WithdrawLendingDeskLiquidity,
   usePrepareNftyFinanceV1SetLendingDeskState,
-  usePrepareNftyFinanceV1DepositLendingDeskLiquidity,
-  usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity,
-  nftyFinanceV1Address,
-  useErc20Approve,
-  useErc20Allowance,
 } from "@/wagmi-generated";
-import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQuery } from "urql";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
-import { fromWei, toWei } from "@/helpers/utils";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
-import ManageFunds from "./ManageFunds";
 
 export const ManageLendingDesk = (props: any) => {
   /*
@@ -37,7 +28,7 @@ export const ManageLendingDesk = (props: any) => {
   Dynamic Title
   This hook gets / sets the page title based on lending desk ID
   */
-  var title = document.getElementById("base-title");
+  const title = document.getElementById("base-title");
   useEffect(() => {
     if (title && result.data?.lendingDesk) {
       title.innerHTML = `Manage Lending Desk ${result.data?.lendingDesk?.id}`;
@@ -50,10 +41,9 @@ export const ManageLendingDesk = (props: any) => {
   */
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined =
-      result.data?.lendingDesk?.loanConfigs.map(
-        (loan) => loan.nftCollection.id
-      );
+    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
+      (loan) => loan.nftCollection.id,
+    );
     if (nftIds?.length) {
       const resultArr = await fetchNFTDetails(nftIds);
       setNftArr(resultArr);
@@ -69,16 +59,12 @@ export const ManageLendingDesk = (props: any) => {
   Freeze/Unfreeze lending desk
   Calls `setLendingDeskState` with relevant boolean status
   */
-  const boolStatus =
-    result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolString = boolStatus
-    ? "Freeze Lending Desk"
-    : "Un-Freeze Lending Desk";
+  const boolStatus = result.data?.lendingDesk?.status === "Frozen" ? false : true;
+  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk";
   const { config: freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
     args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
   });
-  const { writeAsync: freezeWrite } =
-    useNftyFinanceV1SetLendingDeskState(freezeConfig);
+  const { writeAsync: freezeWrite } = useNftyFinanceV1SetLendingDeskState(freezeConfig);
   const freezeUnfreeze = async () => {
     await freezeWrite?.();
   };
@@ -104,9 +90,7 @@ export const ManageLendingDesk = (props: any) => {
               <div className="container-fluid g-0 mt-4">
                 <div className="row g-4">
                   <div className="col-lg-4">
-                    <h6 className="fw-medium text-body-secondary">
-                      Currency Type
-                    </h6>
+                    <h6 className="fw-medium text-body-secondary">Currency Type</h6>
                     <div className="mt-1 fs-4 d-flex align-items-center">
                       <div className="text-truncate">
                         {result.data?.lendingDesk?.erc20.symbol}
@@ -121,7 +105,7 @@ export const ManageLendingDesk = (props: any) => {
                       <strong className="text-primary-emphasis">
                         {fromWei(
                           result.data?.lendingDesk?.balance,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}
                         &nbsp;
                       </strong>
@@ -148,6 +132,7 @@ export const ManageLendingDesk = (props: any) => {
                       className="btn btn-primary py-2 w-100 rounded-pill"
                       htmlFor="btn-check"
                       onClick={() => freezeUnfreeze()}
+                      onKeyDown={() => freezeUnfreeze()}
                     >
                       {boolString}
                     </label>
@@ -169,7 +154,7 @@ export const ManageLendingDesk = (props: any) => {
             <div className="card-body p-4 pt-0 specific-h-xxl-450 overflow-y-auto">
               {result.data?.lendingDesk?.loanConfigs.map((config, index) => {
                 return (
-                  <div key={index} className="pb-2 mb-2 border-bottom">
+                  <div key={config.id} className="pb-2 mb-2 border-bottom">
                     <div className="d-flex align-items-center">
                       <div className="text-body-secondary text-truncate">
                         Collection {index + 1}
@@ -198,6 +183,7 @@ export const ManageLendingDesk = (props: any) => {
                     <div className="d-flex align-items-center">
                       <img
                         src={nftArr[index]?.logoURI}
+                        alt={nftArr[index]?.symbol}
                         height="24"
                         className="d-block rounded-circle flex-shrink-0 me-2"
                       />
@@ -213,12 +199,12 @@ export const ManageLendingDesk = (props: any) => {
                         <strong>Offer:</strong>{" "}
                         {fromWei(
                           config.minAmount,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}
                         -
                         {fromWei(
                           config.maxAmount,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}{" "}
                         {result.data?.lendingDesk?.erc20.symbol}
                       </div>
@@ -237,8 +223,8 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Interest Rate:</strong>{" "}
-                        {config.minInterest / 100}-{config.maxInterest / 100}%
+                        <strong>Interest Rate:</strong> {config.minInterest / 100}-
+                        {config.maxInterest / 100}%
                       </div>
                     </div>
                   </div>
@@ -250,9 +236,7 @@ export const ManageLendingDesk = (props: any) => {
         <div className="col-xxl-6">
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body p-4">
-              <h5 className="fw-medium text-primary-emphasis">
-                Collection Paramaters
-              </h5>
+              <h5 className="fw-medium text-primary-emphasis">Collection Paramaters</h5>
             </div>
           </div>
         </div>

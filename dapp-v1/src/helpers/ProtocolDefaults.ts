@@ -10,8 +10,7 @@ import { nftyLendingAddress } from "../../../wagmi-generated";
 export const getProtocolAddress = (chainId: any) =>
   nftyLendingAddress[chainId ?? NFTY_FINANCE_DEFAULT_CHAIN];
 
-export const getProtocolChain = (chainId: any) =>
-  chainId || NFTY_FINANCE_DEFAULT_CHAIN;
+export const getProtocolChain = (chainId: any) => chainId || NFTY_FINANCE_DEFAULT_CHAIN;
 
 export const getProtocolGraphUrl = (chainId: any) => {
   switch (chainId) {

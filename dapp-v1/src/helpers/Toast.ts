@@ -1,11 +1,11 @@
 export function toast(opts: any): void {
   // Set the variables from options
-  let title = "title" in opts ? opts.title : "";
+  const title = "title" in opts ? opts.title : "";
   let content = "content" in opts ? opts.content : "";
-  let alertType = "alertType" in opts ? opts.alertType : "";
-  let fillType = "fillType" in opts ? opts.fillType : "";
-  let dismissible = "dismissible" in opts ? opts.dismissible : true;
-  let timer = "timer" in opts ? opts.timer : 5000;
+  const alertType = "alertType" in opts ? opts.alertType : "";
+  const fillType = "fillType" in opts ? opts.fillType : "";
+  const dismissible = "dismissible" in opts ? opts.dismissible : true;
+  const timer = "timer" in opts ? opts.timer : 5000;
 
   // Create the toast element
   const toast = document.createElement("div");
@@ -25,12 +25,10 @@ export function toast(opts: any): void {
 
   // Set the content inside the toast
   if (title) {
-    content = "<h4 class='alert-heading'>" + title + "</h4>" + content;
+    content = `<h4 class='alert-heading'>${title}</h4>${content}`;
   }
   if (dismissible !== "false") {
-    content =
-      "<button class='close' type='button' data-hm-dismiss='alert' aria-label='Close'>&times;</button>" +
-      content;
+    content = `<button class='close' type='button' data-hm-dismiss='alert' aria-label='Close'>&times;</button>${content}`;
   }
   toast.innerHTML = content;
 
@@ -41,16 +39,16 @@ export function toast(opts: any): void {
   // Change alert display and start animation
   // The tiny timeout is needed for the transition to work
   toast.classList.add("set-d-block");
-  setTimeout(function () {
+  setTimeout(() => {
     toast.classList.add("show");
   }, 50);
 
   // Wait for the timer to hit 0 before closing
   if (timer !== "false") {
-    setTimeout(function () {
+    setTimeout(() => {
       // Start fade out and dismiss after animation
       toast.classList.add("fade-out");
-      setTimeout(function () {
+      setTimeout(() => {
         toast.classList.add("set-d-none");
         toast.classList.remove("set-d-block");
         toast.classList.remove("show");

@@ -5,7 +5,7 @@ export function resetSidebar(): void {
   pageWrapper.removeAttribute("data-hm-sidebar-hidden");
 
   // Reset body scrolling (x-axis after transition completes)
-  setTimeout(function () {
+  setTimeout(() => {
     document.body.classList.remove("sidebar-open-adjust-x");
   }, 2000);
   document.body.classList.remove("sidebar-open-adjust-y");
@@ -19,7 +19,7 @@ export function closeSidebar(): void {
     pageWrapper.setAttribute("data-hm-sidebar-hidden", "true");
 
     // Reset body scrolling (x-axis after transition completes)
-    setTimeout(function () {
+    setTimeout(() => {
       document.body.classList.remove("sidebar-open-adjust-x");
     }, 2000);
     document.body.classList.remove("sidebar-open-adjust-y");
@@ -61,11 +61,11 @@ export function toggleSidebar(): void {
   const pageWrapper = document.getElementsByClassName("page-wrapper")[0];
   const sidebar = document.getElementsByClassName("sidebar")[0];
   const sidebarType = sidebar.getAttribute("data-hm-sidebar-type");
+  const sidebarHidden = pageWrapper.getAttribute("data-hm-sidebar-hidden");
 
   // If the page wrapper has the "data-hm-sidebar-hidden" attribute,
   // its value is flipped
   if (pageWrapper.hasAttribute("data-hm-sidebar-hidden")) {
-    var sidebarHidden = pageWrapper.getAttribute("data-hm-sidebar-hidden");
     if (sidebarHidden === "true") {
       openSidebar();
     } else if (sidebarHidden === "false") {

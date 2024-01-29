@@ -51,12 +51,7 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
   return (
     <div className={props.divClass}>
       {snippet}
-      <div
-        className="modal fade"
-        id={props.modalId}
-        tabIndex={-1}
-        aria-hidden="true"
-      >
+      <div className="modal fade" id={props.modalId} tabIndex={-1} aria-hidden="true">
         <div
           className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
           style={customStyles as React.CSSProperties}

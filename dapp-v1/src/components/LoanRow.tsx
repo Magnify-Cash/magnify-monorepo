@@ -1,23 +1,18 @@
-import { useEffect, useState } from "react";
-import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { PopupTransaction } from "@/components";
+import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
-  usePrepareNftyFinanceV1MakeLoanPayment,
+  nftyFinanceV1Address,
+  useErc20Allowance,
+  useErc20Approve,
+  useNftyFinanceV1LiquidateDefaultedLoan,
   useNftyFinanceV1MakeLoanPayment,
   usePrepareNftyFinanceV1LiquidateDefaultedLoan,
-  useNftyFinanceV1LiquidateDefaultedLoan,
-  nftyFinanceV1Address,
-  useErc20Approve,
-  useErc20Allowance,
+  usePrepareNftyFinanceV1MakeLoanPayment,
 } from "@/wagmi-generated";
-import { Loan } from "../../.graphclient";
-import {
-  fromWei,
-  toWei,
-  calculateTimeInfo,
-  formatTimeInfo,
-} from "@/helpers/utils";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { Loan } from "../../.graphclient";
 
 // Interface
 interface ILoanRowProps {
@@ -27,19 +22,14 @@ interface ILoanRowProps {
   liquidate?: boolean; // Whether or not loan card should have liquidate UI
 }
 
-export const LoanRow = ({
-  loans,
-  payback,
-  status,
-  liquidate,
-}: ILoanRowProps) => {
+export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) => {
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan: Loan) => {
-    if ((loan.status === "Active") && (status === "PendingDefault")) {
-      const {isTimeLeft} = calculateTimeInfo(loan.startTime, loan.duration);
-      if (!isTimeLeft){
-        return loan
+    if (loan.status === "Active" && status === "PendingDefault") {
+      const { isTimeLeft } = calculateTimeInfo(loan.startTime, loan.duration);
+      if (!isTimeLeft) {
+        return loan;
       }
     }
     if (loan.status === status) {
@@ -51,7 +41,7 @@ export const LoanRow = ({
       <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
           src="theme/images/Vector.png"
-          alt="Image"
+          alt="Not Found Robot"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
         <div className="h3 text-center mt-5">Nothing found</div>
@@ -67,7 +57,7 @@ export const LoanRow = ({
   return loans.map((loan: Loan) => {
     // Date/Time info
     const [timeInfo, setTimeInfo] = useState(
-      calculateTimeInfo(loan?.startTime, loan?.duration)
+      calculateTimeInfo(loan?.startTime, loan?.duration),
     );
     useEffect(() => {
       const intervalId = setInterval(() => {
@@ -93,11 +83,10 @@ export const LoanRow = ({
         ],
       });
 
-    const { data: approvalData, refetch: refetchApprovalData } =
-      useErc20Allowance({
-        address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-        args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-      });
+    const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
     //On successful transaction of approveErc20 hook, refetch the approval data
     //Also refetch makeLoanPaymentConfig to update makeLoanPaymentWrite hook
@@ -207,9 +196,7 @@ export const LoanRow = ({
                 <div className="col-sm">
                   <div
                     className={`p-2 rounded-3 ${
-                      status === "Defaulted"
-                        ? "bg-secondary-subtle"
-                        : "bg-info-subtle"
+                      status === "Defaulted" ? "bg-secondary-subtle" : "bg-info-subtle"
                     } text-center`}
                   >
                     <div className="text-info-emphasis h3 mb-3">
@@ -235,13 +222,13 @@ export const LoanRow = ({
                     </div>
                     <div className="h6 mb-0">
                       {parseInt(
-                        fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)
+                        fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
                       ) -
                         parseInt(
                           fromWei(
                             loan?.amountPaidBack,
-                            loan?.lendingDesk?.erc20.decimals
-                          )
+                            loan?.lendingDesk?.erc20.decimals,
+                          ),
                         )}{" "}
                       {loan?.lendingDesk?.erc20.symbol}
                     </div>
@@ -325,7 +312,7 @@ export const LoanRow = ({
                           src="theme/images/image-1.png"
                           className="img-fluid flex-shrink-0 me-3"
                           width="32"
-                          alt="Image"
+                          alt={`${loan?.nftCollection.id} ${loan?.nftId}`}
                         />
                         <h6 className="m-0">
                           {loan?.nftCollection.id} #{loan?.nftId}
@@ -339,7 +326,7 @@ export const LoanRow = ({
                                 <div className="h3">
                                   {fromWei(
                                     loan?.amount,
-                                    loan?.lendingDesk?.erc20.decimals
+                                    loan?.lendingDesk?.erc20.decimals,
                                   )}
                                 </div>
                                 <span className="text-body-secondary ms-2">
@@ -355,26 +342,18 @@ export const LoanRow = ({
                             <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                               <div className="d-flex align-items-center justify-content-center">
                                 <div className="h3">{loan?.interest / 100}</div>
-                                <span className="text-body-secondary ms-2">
-                                  %
-                                </span>
+                                <span className="text-body-secondary ms-2">%</span>
                               </div>
-                              <div className="text-body-secondary">
-                                interest rate
-                              </div>
+                              <div className="text-body-secondary">interest rate</div>
                             </div>
                           </div>
                           <div className="col-12 col-sm-6">
                             <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                               <div className="d-flex align-items-center justify-content-center">
                                 <div className="h5">{timeInfo.elapsedTime}</div>
-                                <span className="text-body-secondary ms-2">
-                                  {}
-                                </span>
+                                <span className="text-body-secondary ms-2">{}</span>
                               </div>
-                              <div className="text-body-secondary">
-                                loan duration
-                              </div>
+                              <div className="text-body-secondary">loan duration</div>
                             </div>
                           </div>
                           <div className="col-12 col-sm-6">
@@ -424,7 +403,7 @@ export const LoanRow = ({
                               src="theme/images/usdc.svg"
                               className="img-fluid flex-shrink-0 me-2"
                               width="32"
-                              alt="Image"
+                              alt={loan?.lendingDesk?.erc20.symbol}
                             />
                             <span>{loan?.lendingDesk?.erc20.symbol}</span>
                           </div>

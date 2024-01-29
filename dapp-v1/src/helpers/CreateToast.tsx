@@ -1,20 +1,15 @@
 import ToastComponent, { ToastProps } from "@/components/ToastComponent";
-import { useContext } from "react";
 import { ToastContext } from "@/pages/Base";
+import { useContext } from "react";
 
 const CreateToast = (
   title: string,
   content: string,
   variant: ToastProps["variant"],
-  index: number
+  index: number,
 ) => {
   return (
-    <ToastComponent
-      title={title}
-      content={content}
-      variant={variant}
-      index={index}
-    />
+    <ToastComponent title={title} content={content} variant={variant} index={index} />
   );
 };
 

@@ -4,7 +4,7 @@ export const calculateLoanInterest = (
   loanConfig,
   amountInput,
   durationInput,
-  decimals?
+  decimals?,
 ) => {
   const minAmount = BigInt(loanConfig.minAmount);
   const maxAmount = BigInt(loanConfig.maxAmount);
@@ -29,8 +29,7 @@ export const calculateLoanInterest = (
     const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
     interest = minInterest + amountFactor * interestRange;
   } else if (minAmount === maxAmount) {
-    const durationFactor =
-      (duration - minDuration) / (maxDuration - minDuration);
+    const durationFactor = (duration - minDuration) / (maxDuration - minDuration);
     interest = minInterest + durationFactor * interestRange;
   } else {
     //Taking average of amountFactor and durationFactor giving both equal weightage

@@ -1,7 +1,7 @@
+import { LoanRow } from "@/components";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
-import { LoanRow } from "@/components";
 
 export const Dashboard = (props: any) => {
   // GraphQL
@@ -9,7 +9,7 @@ export const Dashboard = (props: any) => {
   const [result] = useQuery({
     query: BorrowerDashboardDocument,
     variables: {
-      walletAddress: address?.toLowerCase(),
+      walletAddress: address?.toLowerCase() || "",
     },
   });
 
@@ -71,11 +71,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-active-tab"
         >
           <div className="row g-4 justify-content-start mt-0">
-            <LoanRow
-              payback
-              loans={result?.data?.loans || []}
-              status="Active"
-            />
+            <LoanRow payback loans={result?.data?.loans || []} status="Active" />
           </div>
         </div>
         {/* End Active Row */}

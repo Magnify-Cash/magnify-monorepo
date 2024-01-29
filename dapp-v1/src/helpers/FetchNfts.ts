@@ -26,9 +26,7 @@ const fetchNFTDetails = async (addresses: string[]) => {
 
       // Check if the request was successful
       if (!response.ok) {
-        throw new Error(
-          `Network response was not ok, status: ${response.status}`
-        );
+        throw new Error(`Network response was not ok, status: ${response.status}`);
       }
       jsonData = await response.json();
     } catch (error: any) {
@@ -38,11 +36,11 @@ const fetchNFTDetails = async (addresses: string[]) => {
 
   //Creating a Map for fast lookup. Here key = address of an nft; value = an nft object
   const NFTMap: Map<string, INft> = new Map();
-
-  jsonData.nfts.forEach((nft) => NFTMap.set(nft.address.toLowerCase(), nft));
-
+  for (const nft of jsonData.nfts) {
+    NFTMap.set(nft.address.toLowerCase(), nft);
+  }
   const result = addresses.map(
-    (address) => NFTMap.get(address.toLowerCase()) || ({} as INft) // Return empty object if nft not found
+    (address) => NFTMap.get(address.toLowerCase()) || ({} as INft), // Return empty object if nft not found
   );
 
   return result;

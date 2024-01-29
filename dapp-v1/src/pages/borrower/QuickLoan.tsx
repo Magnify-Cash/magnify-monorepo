@@ -1,21 +1,21 @@
+import { PopupTokenList } from "@/components";
+import GetLoanModal from "@/components/GetLoanModal";
+import { ITokenListItem } from "@/components/PopupTokenList";
+import { INFTListItem } from "@/components/PopupTokenList";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import { formatAddress } from "@/helpers/formatAddress";
+import { fromWei, toWei } from "@/helpers/utils";
+import {
+  nftyFinanceV1Address,
+  useErc721Approve,
+  useErc721GetApproved,
+  useNftyFinanceV1InitializeNewLoan,
+  usePrepareNftyFinanceV1InitializeNewLoan,
+} from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransaction } from "wagmi";
-import { PopupTokenList, PopupTransaction } from "@/components";
-import { ITokenListItem } from "@/components/PopupTokenList";
-import { INFTListItem } from "@/components/PopupTokenList";
-import {
-  useErc721Approve,
-  useNftyFinanceV1InitializeNewLoan,
-  usePrepareNftyFinanceV1InitializeNewLoan,
-  nftyFinanceV1Address,
-  useErc721GetApproved,
-} from "@/wagmi-generated";
 import { QuickLoanDocument } from "../../../.graphclient";
-import { fromWei, toWei } from "@/helpers/utils";
-import { formatAddress } from "@/helpers/formatAddress";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
-import GetLoanModal from "@/components/GetLoanModal";
 
 export const QuickLoan = (props: any) => {
   // constants
@@ -34,8 +34,7 @@ export const QuickLoan = (props: any) => {
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
 
-  const setSelectedLendingDesk = (e: string) =>
-    _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails([
@@ -76,11 +75,10 @@ export const QuickLoan = (props: any) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useErc721GetApproved({
-      address: nftCollection?.nft.address as `0x${string}`,
-      args: [BigInt(nftId || 0)],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
+    address: nftCollection?.nft.address as `0x${string}`,
+    args: [BigInt(nftId || 0)],
+  });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -98,9 +96,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -270,9 +266,7 @@ export const QuickLoan = (props: any) => {
                         name="desks"
                         id={item.lendingDesk.id}
                         onClick={(e) =>
-                          setSelectedLendingDesk(
-                            (e.target as HTMLInputElement).value
-                          )
+                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
                         }
                         value={JSON.stringify(item)}
                       />
@@ -284,7 +278,7 @@ export const QuickLoan = (props: any) => {
                           <img
                             src={nft?.logoURI}
                             width="30"
-                            alt="Image"
+                            alt={nft?.address}
                             className="flex-shrink-0"
                           />
                           <span className="ms-3">
@@ -301,7 +295,7 @@ export const QuickLoan = (props: any) => {
                                 <div className="fw-bold">
                                   {fromWei(
                                     item.loanConfig.maxAmount,
-                                    token?.token.decimals
+                                    token?.token.decimals,
                                   )}
                                 </div>
                                 <small className="fw-normal">max offer</small>

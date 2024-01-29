@@ -24,9 +24,7 @@ const fetchTokenDetails = async (addresses: string[]) => {
 
       // Check if the request was successful
       if (!response.ok) {
-        throw new Error(
-          `Network response was not ok, status: ${response.status}`
-        );
+        throw new Error(`Network response was not ok, status: ${response.status}`);
       }
       jsonData = await response.json();
     } catch (error: any) {
@@ -36,13 +34,11 @@ const fetchTokenDetails = async (addresses: string[]) => {
 
   //Creating a Map for fast lookup. Here key = address of a token; value = a token object
   const TokenMap: Map<string, IToken> = new Map();
-
-  jsonData.tokens.forEach((token) =>
-    TokenMap.set(token.address.toLowerCase(), token)
-  );
-
+  for (const token of jsonData.tokens) {
+    TokenMap.set(token.address.toLowerCase(), token);
+  }
   const result = addresses.map(
-    (address) => TokenMap.get(address.toLowerCase()) || ({} as IToken) // Return empty object if token not found
+    (address) => TokenMap.get(address.toLowerCase()) || ({} as IToken), // Return empty object if token not found
   );
 
   return result;
@@ -53,7 +49,7 @@ export default fetchTokenDetails;
 // Function to fetch tokens for a given collection
 export const fetchTokensForCollection = async (nftCollection) => {
   const tokenIdArr = nftCollection.loanConfigs.map(
-    (loanConfig) => loanConfig.lendingDesk.erc20.id
+    (loanConfig) => loanConfig.lendingDesk.erc20.id,
   );
 
   if (tokenIdArr?.length) {

@@ -6,7 +6,11 @@
     "generate": "graphclient build && wagmi generate",
     "start": "vite",
     "build": "yarn generate && tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "yarn biome format ./src",
+    "format:apply": "yarn biome format --write ./src",
+    "lint": "yarn biome check ./src",
+    "lint:apply": "yarn biome check --apply ./src"
   },
   "dependencies": {
     "@graphprotocol/client-cli": "^3.0.0",
@@ -28,6 +32,7 @@
     "wagmi": "^1.4.8"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.2",
     "@types/bootstrap": "^5.2.10",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",

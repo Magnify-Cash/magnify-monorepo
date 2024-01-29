@@ -13,16 +13,6 @@ jobs:
     - name: Install node_modules
       working-directory: ./
       run: yarn faucet install
-    - name: Run ESlint checks
+    - name: Run Biome + TSC checks
       working-directory: ./
-      run: yarn faucet format:write;
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install node_modules
-      working-directory: ./
-      run: yarn faucet install
-    - name: Run TypeScript type checks
-      working-directory: ./
-      run: yarn faucet tsc;
+      run: yarn faucet format; yarn faucet lint; yarn faucet tsc;

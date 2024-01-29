@@ -1,14 +1,14 @@
 import { INft } from "@/helpers/FetchNfts";
-import PopupTransaction from "./PopupTransaction";
-import { WalletNft, fromWei, getWalletNfts } from "@/helpers/utils";
-import { LendingDesk, LoanConfig } from "dapp-v1/.graphclient";
 import {
   calculateGrossAmount,
   calculateLoanInterest,
   calculateLoanOriginationFee,
 } from "@/helpers/LoanInterest";
-import { useAccount, useNetwork } from "wagmi";
+import { WalletNft, fromWei, getWalletNfts } from "@/helpers/utils";
+import { LendingDesk, LoanConfig } from "dapp-v1/.graphclient";
 import { useEffect, useState } from "react";
+import { useAccount, useNetwork } from "wagmi";
+import PopupTransaction from "./PopupTransaction";
 
 type GetLoanModalProps = {
   onCheck: () => void;
@@ -26,7 +26,7 @@ type GetLoanModalProps = {
   nftCollectionAddress?: string;
   disabled: boolean;
   btnClass: string;
-  btnOnClick: () => void;
+  btnOnClick?: () => void;
 };
 
 export default function GetLoanModal({
@@ -54,7 +54,7 @@ export default function GetLoanModal({
 
   const selectedNft = walletNfts.find((x) => x.tokenId === nftId?.toString());
   const selectedNftName =
-    nftId != undefined ? selectedNft?.name || `${nft?.name} #${nftId}` : null;
+    nftId !== undefined ? selectedNft?.name || `${nft?.name} #${nftId}` : null;
 
   // Get the available NFTs from the wallet
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function GetLoanModal({
                     <div className="d-flex align-items-center justify-content-center">
                       <img
                         src={nft?.logoURI}
-                        alt="Image"
+                        alt={nft?.name}
                         className="d-block flex-shrink-0 me-2 rounded-circle"
                         width="30"
                       />
@@ -132,15 +132,8 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {fromWei(
-                          loanConfig?.minAmount,
-                          lendingDesk?.erc20?.decimals
-                        )}
-                        -
-                        {fromWei(
-                          loanConfig?.maxAmount,
-                          lendingDesk?.erc20?.decimals
-                        )}
+                        {fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}-
+                        {fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
                       </div>
                       <span className="text-body-secondary ms-2">
                         {lendingDesk.erc20.symbol}
@@ -153,8 +146,7 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {loanConfig?.minDuration / 24}-
-                        {loanConfig?.maxDuration / 24}
+                        {loanConfig?.minDuration / 24}-{loanConfig?.maxDuration / 24}
                       </div>
                       <span className="text-body-secondary ms-2">Days</span>
                     </div>
@@ -170,9 +162,7 @@ export default function GetLoanModal({
                       </div>
                       <span className="text-body-secondary ms-2">%</span>
                     </div>
-                    <div className="text-body-secondary">
-                      Min/Max Interest Rate
-                    </div>
+                    <div className="text-body-secondary">Min/Max Interest Rate</div>
                   </div>
                 </div>
               </div>
@@ -188,7 +178,7 @@ export default function GetLoanModal({
                   onChange={(e) =>
                     setNftId(
                       // @ts-ignore
-                      e.target.value ? parseInt(e.target.value) : undefined
+                      e.target.value ? parseInt(e.target.value) : undefined,
                     )
                   }
                 >
@@ -235,21 +225,13 @@ export default function GetLoanModal({
                     id="set-amount"
                     placeholder="Amount"
                     step="1"
-                    min={fromWei(
-                      loanConfig?.minAmount,
-                      lendingDesk?.erc20?.decimals
-                    )}
-                    max={fromWei(
-                      loanConfig?.maxAmount,
-                      lendingDesk?.erc20?.decimals
-                    )}
+                    min={fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}
+                    max={fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
                     value={amount}
                     // @ts-ignore
                     onChange={(e) => setAmount(e.target.value)}
                   />
-                  <span className="input-group-text">
-                    {lendingDesk.erc20.symbol}
-                  </span>
+                  <span className="input-group-text">{lendingDesk.erc20.symbol}</span>
                 </div>
               </div>
             </div>
@@ -259,7 +241,7 @@ export default function GetLoanModal({
                 src="/images/placeholder/images/image-1.png"
                 className="img-fluid flex-shrink-0 me-3"
                 width="32"
-                alt="Image"
+                alt={selectedNftName!}
               />
               <h6 className="m-0">{selectedNftName}</h6>
             </div>
@@ -277,7 +259,7 @@ export default function GetLoanModal({
                       loanConfig,
                       amount,
                       duration,
-                      lendingDesk.erc20?.decimals
+                      lendingDesk.erc20?.decimals,
                     )
                   : null}
                 %
@@ -291,8 +273,7 @@ export default function GetLoanModal({
             </div>
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">
-                2% Loan Origination Fee{" "}
-                <i className="fa-light fa-info-circle ms-1"></i>
+                2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1"></i>
               </span>
               <span className="fw-medium ms-auto">
                 {`- `}

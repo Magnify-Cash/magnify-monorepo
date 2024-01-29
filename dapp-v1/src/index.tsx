@@ -1,8 +1,8 @@
+import * as Pages from "@/pages";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { WagmiConfig } from "wagmi";
-import * as Pages from "@/pages";
 import { config } from "./wagmi";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -22,10 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               path="borrower-dashboard"
               element={<Pages.BorrowerDashboard title="Borrower Dashboard" />}
             />
-            <Route
-              path="quick-loan"
-              element={<Pages.QuickLoan title="Quick Loan" />}
-            />
+            <Route path="quick-loan" element={<Pages.QuickLoan title="Quick Loan" />} />
             <Route
               path="explore"
               element={<Pages.BrowseCollections title="Explore Collections" />}
@@ -46,22 +43,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             />
             <Route
               path="manage-desks"
-              element={
-                <Pages.ManageLendingDesks title="Manage Lending Desks" />
-              }
+              element={<Pages.ManageLendingDesks title="Manage Lending Desks" />}
             />
-            <Route
-              path="manage-desks/:id"
-              element={<Pages.ManageLendingDesk />}
-            />
+            <Route path="manage-desks/:id" element={<Pages.ManageLendingDesk />} />
 
             {/* Support */}
             <Route path="help" element={<Pages.Demo title="Help" />} />
             <Route path="docs" element={<Pages.Demo title="Docs" />} />
-            <Route
-              path="community"
-              element={<Pages.Demo title="Community" />}
-            />
+            <Route path="community" element={<Pages.Demo title="Community" />} />
 
             {/* Token */}
             <Route path="token" element={<Pages.Demo title="NFTY Token" />} />
@@ -73,5 +62,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </Routes>
       </BrowserRouter>
     </WagmiConfig>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -1,24 +1,21 @@
-import { useState, useContext, createContext, useRef } from "react";
-import { useOutlet, Outlet } from "react-router-dom";
-import { ConnectKitProvider, ConnectKitButton } from "connectkit";
+import { ToastProps } from "@/components/ToastComponent";
+import { CreateToast } from "@/helpers/CreateToast";
+import { ConnectKitButton, ConnectKitProvider } from "connectkit";
+import { createContext, useState } from "react";
+import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
-import { CreateToast } from "@/helpers/CreateToast";
-import { ToastProps } from "@/components/ToastComponent";
+declare let bootstrap: any;
 
 type ToastContextType = {
-  addToast: (
-    title: string,
-    message: string,
-    type: ToastProps["variant"]
-  ) => void;
+  addToast: (title: string, message: string, type: ToastProps["variant"]) => void;
 };
 function findTitleProps(obj: any): string {
-  if (obj.props && obj.props.title) {
+  if (obj.props?.title) {
     return obj.props.title;
   }
 
-  if (obj.props && obj.props.children) {
+  if (obj.props?.children) {
     if (Array.isArray(obj.props.children)) {
       for (const child of obj.props.children) {
         return findTitleProps(child);
@@ -32,15 +29,15 @@ function findTitleProps(obj: any): string {
 }
 
 function getCookie(cname: string) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(";");
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(";");
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) == " ") {
+    while (c.charAt(0) === " ") {
       c = c.substring(1);
     }
-    if (c.indexOf(name) == 0) {
+    if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
     }
   }
@@ -49,7 +46,7 @@ function getCookie(cname: string) {
 
 function closeSidebar() {
   const offcanvas = bootstrap.Offcanvas.getInstance("#sidebar");
-  offcanvas && offcanvas.hide();
+  offcanvas?.hide();
 }
 
 //Creating Toast Context to be used by all components to send toast messages
@@ -78,7 +75,7 @@ export const Base = () => {
   function toggleDarkMode() {
     window.toggleDarkMode();
     const cookie = getCookie("colorMode");
-    if (cookie == "light") {
+    if (cookie === "light") {
       setMode("light");
     } else {
       setMode("dark");
@@ -93,7 +90,7 @@ export const Base = () => {
 
   return (
     <ToastContext.Provider value={{ addToast }}>
-      <ConnectKitProvider mode={mode}>
+      <ConnectKitProvider mode={mode as any}>
         <Provider value={client}>
           {/* Sidebar start */}
           <nav
@@ -105,7 +102,6 @@ export const Base = () => {
               <NavLink
                 to="/"
                 className="sidebar-brand d-flex align-items-center me-auto"
-                href="#"
               >
                 <img
                   src="/theme/icon.svg"
@@ -330,13 +326,8 @@ export const Base = () => {
                     <i className="fa-solid fa-moon"></i>
                   </button>
                 </div>
-                <NavLink to="/" href="#" className="d-lg-none me-auto">
-                  <img
-                    src="/theme/icon.svg"
-                    alt="Logo"
-                    width="28"
-                    height="28"
-                  />
+                <NavLink to="/" className="d-lg-none me-auto">
+                  <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
                 </NavLink>
                 <ConnectKitButton.Custom>
                   {({
@@ -350,10 +341,7 @@ export const Base = () => {
                   }) => {
                     return (
                       <>
-                        <button
-                          onClick={show}
-                          className="btn btn-md btn-primary"
-                        >
+                        <button onClick={show} className="btn btn-md btn-primary">
                           {isConnected && <small>{truncatedAddress}</small>}
                           {!isConnected && <small>Connect</small>}
                           <i className="fa-solid fa-wallet ms-2"></i>

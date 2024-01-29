@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { HomeDocument } from "../../.graphclient";
 import { useQuery } from "urql";
+import { HomeDocument } from "../../.graphclient";
 
 export const Home = (props) => {
   // GraphQL
@@ -8,7 +8,7 @@ export const Home = (props) => {
     query: HomeDocument,
   });
 
-  console.log(result.data)
+  console.log(result.data);
 
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
@@ -53,9 +53,7 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
-                <p className="text-body-secondary">
-                  Stake NFTY and participate
-                </p>
+                <p className="text-body-secondary">Stake NFTY and participate</p>
                 <NavLink to="/stake">Start Staking &rarr;</NavLink>
               </div>
             </div>
@@ -72,9 +70,7 @@ export const Home = (props) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">TODO</h3>
-                  <p className="m-0 text-primary-emphasis">
-                    collections supported
-                  </p>
+                  <p className="m-0 text-primary-emphasis">collections supported</p>
                 </div>
               </div>
             </div>
@@ -95,7 +91,9 @@ export const Home = (props) => {
                   <i className="fa-solid fa-sack-dollar h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.protocolInfo?.lendingDesksCount}</h3>
+                  <h3 className="m-0">
+                    {result.data?.protocolInfo?.lendingDesksCount}
+                  </h3>
                   <p className="m-0 text-primary-emphasis">lending desks</p>
                 </div>
               </div>

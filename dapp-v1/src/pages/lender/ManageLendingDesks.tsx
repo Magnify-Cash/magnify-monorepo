@@ -1,8 +1,8 @@
+import { fromWei } from "@/helpers/utils";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
-import { fromWei } from "@/helpers/utils";
 
 export const ManageLendingDesks = (props: any) => {
   // GraphQL
@@ -10,7 +10,7 @@ export const ManageLendingDesks = (props: any) => {
   const [result] = useQuery({
     query: ManageLendingDesksDocument,
     variables: {
-      walletAddress: address?.toLowerCase() || '',
+      walletAddress: address?.toLowerCase() || "",
     },
   });
 
@@ -59,7 +59,6 @@ export const ManageLendingDesks = (props: any) => {
       </div>
 
       <div className="tab-content" id="pills-tabContent">
-
         {/* Active Row */}
         <div
           className="tab-pane fade show active"
@@ -67,10 +66,7 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-active-tab"
         >
-          <LendingDeskRow
-            desks={result.data?.lendingDesks || []}
-            status="Active"
-          />
+          <LendingDeskRow desks={result.data?.lendingDesks || []} status="Active" />
         </div>
         {/* End Active Row */}
 
@@ -81,13 +77,9 @@ export const ManageLendingDesks = (props: any) => {
           role="tabpanel"
           aria-labelledby="pills-inactive-tab"
         >
-          <LendingDeskRow
-            desks={result.data?.lendingDesks || []}
-            status="Frozen"
-          />
+          <LendingDeskRow desks={result.data?.lendingDesks || []} status="Frozen" />
         </div>
         {/* End Inactive Row */}
-
       </div>
     </div>
   );
@@ -101,7 +93,7 @@ const LendingDeskRow = ({ desks, status }) => {
       <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
           src="theme/images/Vector.png"
-          alt="Image"
+          alt="Not Found Robot"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
         <div className="h3 text-center mt-5">Nothing found</div>
@@ -115,13 +107,11 @@ const LendingDeskRow = ({ desks, status }) => {
 
   // OK
   return desks.map((desk) => {
-    console.log(desk)
+    console.log(desk);
     return (
       <div className="card border-0 shadow rounded-4 my-4" key={desk.id}>
         <div className="card-body p-4">
-          <h5 className="fw-medium text-primary-emphasis">
-            Lending Desk {desk.id}
-          </h5>
+          <h5 className="fw-medium text-primary-emphasis">Lending Desk {desk.id}</h5>
           <div className="container-fluid g-0 mt-4">
             <div className="row g-4">
               <div className="col-xl-3">
@@ -133,46 +123,31 @@ const LendingDeskRow = ({ desks, status }) => {
                 <h6 className="fw-medium text-body-secondary">Collections</h6>
                 <p className="m-0">{desk.loanConfigs.length}</p>
                 <br />
-                <h6 className="fw-medium text-body-secondary">
-                  Available Liquidity
-                </h6>
+                <h6 className="fw-medium text-body-secondary">Available Liquidity</h6>
                 <div className="text-body-secondary">
-                  {fromWei(desk.balance, desk?.erc20?.decimals)}{" "}
-                  {desk?.erc20?.symbol}
+                  {fromWei(desk.balance, desk?.erc20?.decimals)} {desk?.erc20?.symbol}
                 </div>
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
                 <h6 className="fw-medium text-body-secondary">Total Loans</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>
-                  {desk.loansCount}
-                  </strong>
+                  <strong>{desk.loansCount}</strong>
                 </div>
                 <br />
-                <h6 className="fw-medium text-body-secondary">
-                  Defaulted Loans
-                </h6>
+                <h6 className="fw-medium text-body-secondary">Defaulted Loans</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>
-                    {desk.loansDefaultedCount}
-                  </strong>
+                  <strong>{desk.loansDefaultedCount}</strong>
                 </div>
                 <br />
-                <h6 className="fw-medium text-body-secondary">
-                  Completed Loans
-                </h6>
+                <h6 className="fw-medium text-body-secondary">Completed Loans</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>
-                    {desk.loansResolvedCount}
-                  </strong>
+                  <strong>{desk.loansResolvedCount}</strong>
                 </div>
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
-                <h6 className="fw-medium text-body-secondary">
-                  Net Liquidity Issued
-                </h6>
+                <h6 className="fw-medium text-body-secondary">Net Liquidity Issued</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>
                     {fromWei(desk.netLiquidityIssued, desk?.erc20?.decimals)}{" "}
@@ -180,13 +155,10 @@ const LendingDeskRow = ({ desks, status }) => {
                   {desk.erc20.symbol}
                 </div>
                 <br />
-                <h6 className="fw-medium text-body-secondary">
-                  Net Profit/Revenue
-                </h6>
+                <h6 className="fw-medium text-body-secondary">Net Profit/Revenue</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
-                  <strong>
-                    {fromWei(desk.netProfit, desk?.erc20?.decimals)}{" "}
-                    </strong> {desk.erc20.symbol}
+                  <strong>{fromWei(desk.netProfit, desk?.erc20?.decimals)} </strong>{" "}
+                  {desk.erc20.symbol}
                 </div>
                 <br />
                 <hr className="d-xl-none" />

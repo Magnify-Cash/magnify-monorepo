@@ -1,11 +1,11 @@
+import { LoanRow } from "@/components";
+import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import { fromWei } from "@/helpers/utils";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
-import { NavLink } from "react-router-dom";
-import { LoanRow } from "@/components";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
-import { fromWei } from "@/helpers/utils";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
-import { useEffect, useState } from "react";
 
 export const Dashboard = (props: any) => {
   // GraphQL
@@ -13,7 +13,7 @@ export const Dashboard = (props: any) => {
   const [result] = useQuery({
     query: LenderDashboardDocument,
     variables: {
-      walletAddress: address?.toLowerCase(),
+      walletAddress: address?.toLowerCase() || "",
     },
   });
 
@@ -33,12 +33,12 @@ export const Dashboard = (props: any) => {
   const getNFTs = async () => {
     //A two dimensional array of nft ids
     const nftIdArr = data?.lendingDesks.map((desk) =>
-      desk.loanConfigs.map((loan) => loan.nftCollection.id)
+      desk.loanConfigs.map((loan) => loan.nftCollection.id),
     );
 
     if (nftIdArr?.length) {
       const fetchedNftArrPromise = Promise.all(
-        nftIdArr.map((arr) => fetchNFTDetails(arr))
+        nftIdArr.map((arr) => fetchNFTDetails(arr)),
       );
 
       fetchedNftArrPromise
@@ -205,7 +205,7 @@ const LoanCardParent = (props) => {
       <div className="specific-w-400 mw-100 mx-auto mt-5">
         <img
           src="theme/images/Vector.png"
-          alt="Image"
+          alt="Not Found Robot"
           className="img-fluid d-block mx-auto specific-w-150 mw-100"
         />
         <div className="h3 text-center mt-5">Nothing found</div>
@@ -222,22 +222,20 @@ const LoanCardParent = (props) => {
     return (
       <div key={desk.id}>
         <div className="d-flex align-items-center specific-h-25">
-          <h5 className="fw-medium text-body-secondary m-0">
-            Lending Desk {desk.id}
-          </h5>
+          <h5 className="fw-medium text-body-secondary m-0">Lending Desk {desk.id}</h5>
           <div
             className="position-relative ms-3"
             style={{ width: "48px", height: "24px" }}
           >
             {desk.loanConfigs?.map((config, j) => (
               <img
-                key={j}
+                key={config.id}
                 src={props.nfts?.[i]?.[j]?.logoURI}
                 height="24"
                 className={`d-block rounded-circle position-absolute top-0 start-0 z-${
                   desk.loanConfigs?.length - j
                 }`}
-                alt="Image"
+                alt={props.nfts?.[i]?.[j]?.symbol}
                 style={{ marginLeft: `${12 * j}px` }}
               />
             ))}
@@ -253,11 +251,7 @@ const LoanCardParent = (props) => {
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">
-                      {
-                        desk.loans.filter(
-                          (loan) => loan.status === props.status
-                        ).length
-                      }
+                      {desk.loans.filter((loan) => loan.status === props.status).length}
                     </h3>
                     <p className="m-0 text-body-secondary">Loans</p>
                   </div>

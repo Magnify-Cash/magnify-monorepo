@@ -1,0 +1,36 @@
+{
+	"$schema": "./biome.schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "space",
+		"indentWidth": 2,
+		"lineWidth": 88,
+		"lineEnding": "lf",
+		"ignore": []
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"a11y": {
+				"useButtonType": "off",
+				"useValidAnchor": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off"
+			},
+			"style": {
+				"useSelfClosingElements": "off",
+				"noUnusedTemplateLiteral": "off",
+				"noNonNullAssertion": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "off"
+			}
+		}
+	}
+}
