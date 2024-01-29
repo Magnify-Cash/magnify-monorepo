@@ -13,7 +13,7 @@ const CreateToast = (
       title={title}
       content={content}
       variant={variant}
-      key={index}
+      index={index}
     />
   );
 };
