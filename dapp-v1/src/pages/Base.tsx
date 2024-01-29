@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useState, useContext, createContext, useRef } from "react";
 import { useOutlet, Outlet } from "react-router-dom";
 import { ConnectKitProvider, ConnectKitButton } from "connectkit";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import { CreateToast } from "@/helpers/CreateToast";
+import { ToastProps } from "@/components/ToastComponent";
 
+type ToastContextType = {
+  addToast: (
+    title: string,
+    message: string,
+    type: ToastProps["variant"]
+  ) => void;
+};
 function findTitleProps(obj: any): string {
   if (obj.props && obj.props.title) {
     return obj.props.title;
@@ -43,10 +52,22 @@ function closeSidebar() {
   offcanvas && offcanvas.hide();
 }
 
+//Creating Toast Context to be used by all components to send toast messages
+export const ToastContext = createContext<ToastContextType | null>(null);
+
 export const Base = () => {
   // title
   const obj = useOutlet();
   const title = findTitleProps(obj);
+
+  //toasts state contains all the toasts that are currently both visible or hidden
+  const [toasts, setToasts] = useState<React.ReactNode[]>([]);
+
+  // Function to add a new toast
+  const addToast: ToastContextType["addToast"] = (title, message, type) => {
+    const newToast = CreateToast(title, message, type, toasts.length + 1);
+    setToasts((prevToasts) => [...prevToasts, newToast]);
+  };
 
   // theme
   const activeClass = "nav-link d-flex align-items-center active";
@@ -71,168 +92,169 @@ export const Base = () => {
   });
 
   return (
-    <ConnectKitProvider mode={mode}>
-      <Provider value={client}>
-        {/* Sidebar start */}
-        <nav
-          id="sidebar"
-          className="sidebar shadow border-0 offcanvas-start offcanvas-lg"
-          tabIndex={-1}
-        >
-          <div className="offcanvas-header">
-            <NavLink
-              to="/"
-              className="sidebar-brand d-flex align-items-center me-auto"
-              href="#"
-            >
-              <img
-                src="/theme/icon.svg"
-                alt="Logo"
-                width="28"
-                height="28"
-                className="d-block flex-shrink-0 me-2"
-              />
-              <strong>nfty.finance</strong>
-            </NavLink>
-            <button
-              type="button"
-              className="btn btn-secondary rounded-pill me-2 d-none d-lg-inline-block"
-              aria-label="Toggle dark mode"
-              onClick={() => toggleDarkMode()}
-              style={{ width: "30px" }}
-            >
-              <i className="fa-solid fa-moon"></i>
-            </button>
-            <button
-              type="button"
-              className="btn-close d-lg-none"
-              data-bs-dismiss="offcanvas"
-              data-bs-target="#sidebar"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div className="offcanvas-body">
-            <NavLink
-              to="/"
-              onClick={() => closeSidebar()}
-              className="btn btn-link d-block w-100 text-start bg-primary-subtle text-primary-emphasis"
-            >
-              <i className="fa-light fa-home me-1"></i>
-              Home
-            </NavLink>
+    <ToastContext.Provider value={{ addToast }}>
+      <ConnectKitProvider mode={mode}>
+        <Provider value={client}>
+          {/* Sidebar start */}
+          <nav
+            id="sidebar"
+            className="sidebar shadow border-0 offcanvas-start offcanvas-lg"
+            tabIndex={-1}
+          >
+            <div className="offcanvas-header">
+              <NavLink
+                to="/"
+                className="sidebar-brand d-flex align-items-center me-auto"
+                href="#"
+              >
+                <img
+                  src="/theme/icon.svg"
+                  alt="Logo"
+                  width="28"
+                  height="28"
+                  className="d-block flex-shrink-0 me-2"
+                />
+                <strong>nfty.finance</strong>
+              </NavLink>
+              <button
+                type="button"
+                className="btn btn-secondary rounded-pill me-2 d-none d-lg-inline-block"
+                aria-label="Toggle dark mode"
+                onClick={() => toggleDarkMode()}
+                style={{ width: "30px" }}
+              >
+                <i className="fa-solid fa-moon"></i>
+              </button>
+              <button
+                type="button"
+                className="btn-close d-lg-none"
+                data-bs-dismiss="offcanvas"
+                data-bs-target="#sidebar"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <NavLink
+                to="/"
+                onClick={() => closeSidebar()}
+                className="btn btn-link d-block w-100 text-start bg-primary-subtle text-primary-emphasis"
+              >
+                <i className="fa-light fa-home me-1"></i>
+                Home
+              </NavLink>
 
-            {/* Borrow */}
-            <ul className="sidebar-nav mt-3">
-              <li>
-                <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                  Borrow
-                </h6>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="borrower-dashboard"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-grid-2"></i>
-                  </span>
-                  Dashboard
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="quick-loan"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-bolt"></i>
-                  </span>
-                  Get Quick Loan
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="explore"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-folders"></i>
-                  </span>
-                  Browse Collections
-                </NavLink>
-              </li>
-            </ul>
-            {/* End Borrow */}
+              {/* Borrow */}
+              <ul className="sidebar-nav mt-3">
+                <li>
+                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
+                    Borrow
+                  </h6>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="borrower-dashboard"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-grid-2"></i>
+                    </span>
+                    Dashboard
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="quick-loan"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-bolt"></i>
+                    </span>
+                    Get Quick Loan
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="explore"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-folders"></i>
+                    </span>
+                    Browse Collections
+                  </NavLink>
+                </li>
+              </ul>
+              {/* End Borrow */}
 
-            {/* Lend */}
-            <ul className="sidebar-nav mt-3">
-              <li>
-                <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                  Lend
-                </h6>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="lender-dashboard"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-grid-2"></i>
-                  </span>
-                  Dashboard
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="create-desk"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-circle-plus"></i>
-                  </span>
-                  Create Lending Desk
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="manage-desks"
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-bank"></i>
-                  </span>
-                  Manage Lending Desks
-                </NavLink>
-              </li>
-            </ul>
-            {/* Borrow */}
+              {/* Lend */}
+              <ul className="sidebar-nav mt-3">
+                <li>
+                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
+                    Lend
+                  </h6>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="lender-dashboard"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-grid-2"></i>
+                    </span>
+                    Dashboard
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="create-desk"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-circle-plus"></i>
+                    </span>
+                    Create Lending Desk
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="manage-desks"
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-bank"></i>
+                    </span>
+                    Manage Lending Desks
+                  </NavLink>
+                </li>
+              </ul>
+              {/* Borrow */}
 
-            {/* Support */}
-            <ul className="sidebar-nav mt-3">
-              <li>
-                <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                  Support
-                </h6>
-              </li>
-              {/* <li className="nav-item">
+              {/* Support */}
+              <ul className="sidebar-nav mt-3">
+                <li>
+                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
+                    Support
+                  </h6>
+                </li>
+                {/* <li className="nav-item">
                 <NavLink
                   to="help"
                   onClick={() => closeSidebar()}
@@ -246,109 +268,127 @@ export const Base = () => {
                   Help
                 </NavLink>
               </li> */}
-              <li className="nav-item">
-                <NavLink
-                  to="https://docs.nfty.finance/"
-                  target="_blank" // Opens the link in a new tab
-                  rel="noopener noreferrer" // Recommended for security
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-square-list"></i>
-                  </span>
-                  Docs
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="https://discord.gg/nfty-finance"
-                  target="_blank" // Opens the link in a new tab
-                  rel="noopener noreferrer" // Recommended for security
-                  onClick={() => closeSidebar()}
-                  className={({ isActive }) =>
-                    isActive ? activeClass : inactiveClass
-                  }
-                >
-                  <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                    <i className="fa-light fa-city"></i>
-                  </span>
-                  Community
-                </NavLink>
-              </li>
-            </ul>
-            {/* End Support */}
-          </div>
-        </nav>
-        {/* Sidebar end */}
-
-        {/* Navbar start */}
-        <div className="border-bottom py-2 py-lg-3">
-          <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
-            <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
-              <div className="btn-group me-3 d-lg-none">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  aria-label="Toggle sidebar"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#sidebar"
-                >
-                  <i className="fa-solid fa-bars"></i>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  aria-label="Toggle dark mode"
-                  onClick={() => toggleDarkMode()}
-                  style={{ width: "30px" }}
-                >
-                  <i className="fa-solid fa-moon"></i>
-                </button>
-              </div>
-              <NavLink to="/" href="#" className="d-lg-none me-auto">
-                <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
-              </NavLink>
-              <ConnectKitButton.Custom>
-                {({
-                  isConnected,
-                  isConnecting,
-                  truncatedAddress,
-                  show,
-                  hide,
-                  address,
-                  ensName,
-                }) => {
-                  return (
-                    <>
-                      <button onClick={show} className="btn btn-md btn-primary">
-                        {isConnected && <small>{truncatedAddress}</small>}
-                        {!isConnected && <small>Connect</small>}
-                        <i className="fa-solid fa-wallet ms-2"></i>
-                      </button>
-                    </>
-                  );
-                }}
-              </ConnectKitButton.Custom>
+                <li className="nav-item">
+                  <NavLink
+                    to="https://docs.nfty.finance/"
+                    target="_blank" // Opens the link in a new tab
+                    rel="noopener noreferrer" // Recommended for security
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-square-list"></i>
+                    </span>
+                    Docs
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="https://discord.gg/nfty-finance"
+                    target="_blank" // Opens the link in a new tab
+                    rel="noopener noreferrer" // Recommended for security
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-city"></i>
+                    </span>
+                    Community
+                  </NavLink>
+                </li>
+              </ul>
+              {/* End Support */}
             </div>
-            <h3
-              id="base-title"
-              className="m-0 text-center text-lg-start order-lg-first"
-            >
-              {title}
-            </h3>
-          </div>
-        </div>
-        {/* Navbar end */}
+          </nav>
+          {/* Sidebar end */}
 
-        {/* Content start */}
-        <main className="mt-4 mt-xl-5">
-          <Outlet />
-        </main>
-        {/* Content end */}
-      </Provider>
-    </ConnectKitProvider>
+          {/* Navbar start */}
+          <div className="border-bottom py-2 py-lg-3">
+            <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
+              <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
+                <div className="btn-group me-3 d-lg-none">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    aria-label="Toggle sidebar"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebar"
+                  >
+                    <i className="fa-solid fa-bars"></i>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    aria-label="Toggle dark mode"
+                    onClick={() => toggleDarkMode()}
+                    style={{ width: "30px" }}
+                  >
+                    <i className="fa-solid fa-moon"></i>
+                  </button>
+                </div>
+                <NavLink to="/" href="#" className="d-lg-none me-auto">
+                  <img
+                    src="/theme/icon.svg"
+                    alt="Logo"
+                    width="28"
+                    height="28"
+                  />
+                </NavLink>
+                <ConnectKitButton.Custom>
+                  {({
+                    isConnected,
+                    isConnecting,
+                    truncatedAddress,
+                    show,
+                    hide,
+                    address,
+                    ensName,
+                  }) => {
+                    return (
+                      <>
+                        <button
+                          onClick={show}
+                          className="btn btn-md btn-primary"
+                        >
+                          {isConnected && <small>{truncatedAddress}</small>}
+                          {!isConnected && <small>Connect</small>}
+                          <i className="fa-solid fa-wallet ms-2"></i>
+                        </button>
+                      </>
+                    );
+                  }}
+                </ConnectKitButton.Custom>
+              </div>
+              <h3
+                id="base-title"
+                className="m-0 text-center text-lg-start order-lg-first"
+              >
+                {title}
+              </h3>
+            </div>
+          </div>
+          {/* Navbar end */}
+
+          {/* Content start */}
+          <main className="mt-4 mt-xl-5">
+            <Outlet />
+          </main>
+          {/* Content end */}
+
+          {/* Toasts start */}
+          <div
+            id="toast-container"
+            className="toast-container position-fixed top-0 end-0 p-3"
+          >
+            {toasts.map((toast) => toast)}
+          </div>
+          {/* Toasts end */}
+        </Provider>
+      </ConnectKitProvider>
+    </ToastContext.Provider>
   );
 };
