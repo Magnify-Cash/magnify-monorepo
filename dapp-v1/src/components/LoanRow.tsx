@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useChainId } from "wagmi";
+import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { PopupTransaction } from "@/components";
 import {
   usePrepareNftyFinanceV1MakeLoanPayment,
@@ -8,6 +8,7 @@ import {
   useNftyFinanceV1LiquidateDefaultedLoan,
   nftyFinanceV1Address,
   useErc20Approve,
+  useErc20Allowance,
 } from "@/wagmi-generated";
 import { Loan } from "../../.graphclient";
 import {
@@ -77,33 +78,65 @@ export const LoanRow = ({
       };
     }, [loan?.startTime, loan?.duration]);
 
-    // Make Loan Payment Hook
     const [payBackAmount, setPayBackAmount] = useState("0");
+    const [checked, setChecked] = useState(false);
     const chainId = useChainId();
-    const { writeAsync: approveErc20 } = useErc20Approve({
-      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-      args: [
-        nftyFinanceV1Address[chainId],
-        toWei(payBackAmount, loan?.lendingDesk?.erc20.decimals),
-      ],
-    });
-    const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
-      usePrepareNftyFinanceV1MakeLoanPayment({
-        enabled: false,
+    const { address } = useAccount();
+
+    //approveErc20 hook
+    const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
+      useErc20Approve({
+        address: loan?.lendingDesk?.erc20.id as `0x${string}`,
         args: [
-          BigInt(loan?.id || 0), // loan ID
-          toWei(payBackAmount, loan?.lendingDesk?.erc20.decimals), // amout
+          nftyFinanceV1Address[chainId],
+          toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals),
         ],
       });
+
+    const { data: approvalData, refetch: refetchApprovalData } =
+      useErc20Allowance({
+        address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+        args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+      });
+
+    //On successful transaction of approveErc20 hook, refetch the approval data
+    //Also refetch makeLoanPaymentConfig to update makeLoanPaymentWrite hook
+    useWaitForTransaction({
+      hash: approveErc20TransactionData?.hash as `0x${string}`,
+      onSuccess(data) {
+        refetchApprovalData();
+        makeLoanPaymentRefetch();
+      },
+    });
+
+    //update checked state on approvalData change and payBackAmount change
+    useEffect(() => {
+      if (!approvalData) {
+        setChecked(false);
+        return;
+      }
+      if (
+        Number(fromWei(approvalData, loan?.lendingDesk?.erc20?.decimals)) >=
+        Number(payBackAmount)
+      ) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    }, [payBackAmount, approvalData]);
+
+    // Make Loan Payment Hook
+    //This is auto refetched by default when query args change
+    const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
+      usePrepareNftyFinanceV1MakeLoanPayment({
+        args: [
+          BigInt(loan?.id || 0), // loan ID
+          toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
+        ],
+      });
+
     const { writeAsync: makeLoanPaymentWrite } =
       useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig);
-    async function makeLoanPayment(loanID: string) {
-      console.log("loanID", loanID);
-      console.log("payBackAmount", payBackAmount);
-      await approveErc20?.();
-      await makeLoanPaymentRefetch?.();
-      await makeLoanPaymentWrite?.();
-    }
 
     // Liquidate Overdue loan Hook
     const { config: liquidateConfig, refetch: liquidateRefetch } =
@@ -113,12 +146,33 @@ export const LoanRow = ({
           BigInt(loan?.id || 0), // loan ID
         ],
       });
+
     const { writeAsync: liquidateWrite } =
       useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig);
     async function liquidateOverdueLoan(loanID: string) {
       console.log("loanID", loanID);
       await liquidateRefetch();
       await liquidateWrite?.();
+    }
+
+    // Checkbox click function
+    async function approveERC20TokenTransfer() {
+      if (Number(payBackAmount) <= 0) {
+        console.log("insufficient allowance");
+        return;
+      }
+      if (checked) {
+        console.log("already approved");
+        return;
+      }
+      await approveErc20();
+    }
+
+    //modal submit function
+    async function makeLoanPayment(loanID: string) {
+      console.log("loanID", loanID);
+      console.log("payBackAmount", payBackAmount);
+      await makeLoanPaymentWrite?.();
     }
 
     return (
@@ -375,9 +429,29 @@ export const LoanRow = ({
                             <span>{loan?.lendingDesk?.erc20.symbol}</span>
                           </div>
                         </div>
+                        <div className="form-check mt-3 d-flex align-items-center ">
+                          <input
+                            checked={checked}
+                            onClick={() => approveERC20TokenTransfer()}
+                            className="form-check-input me-3 align-center"
+                            type="checkbox"
+                            value=""
+                            id="flexCheckChecked"
+                            style={{ transform: "scale(1.5)" }}
+                          />
+                          <label
+                            className="form-check-label "
+                            htmlFor="flexCheckChecked"
+                          >
+                            {`Grant permission for ${
+                              loan?.lendingDesk?.erc20.symbol || "USDT"
+                            } transfer by checking this box.`}
+                          </label>
+                        </div>
                         <button
                           type="button"
-                          className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-5 py-3 lh-1"
+                          disabled={!checked}
+                          className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                           onClick={() => makeLoanPayment(loan?.id)}
                         >
                           Pay Now

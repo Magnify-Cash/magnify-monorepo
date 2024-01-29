@@ -11,6 +11,8 @@ import { useAccount, useNetwork } from "wagmi";
 import { useEffect, useState } from "react";
 
 type GetLoanModalProps = {
+  onCheck: () => void;
+  checked: boolean;
   onSubmit: () => void;
   loanConfig?: LoanConfig;
   lendingDesk?: LendingDesk;
@@ -24,6 +26,7 @@ type GetLoanModalProps = {
   nftCollectionAddress?: string;
   disabled: boolean;
   btnClass: string;
+  btnOnClick: () => void;
 };
 
 export default function GetLoanModal({
@@ -40,11 +43,13 @@ export default function GetLoanModal({
   nftCollectionAddress,
   disabled,
   btnClass,
+  btnOnClick,
+  onCheck,
+  checked,
 }: GetLoanModalProps) {
   // Wallet NFTs
   const { address } = useAccount();
   const { chain } = useNetwork();
-  console.log("chainName", chain?.name);
   const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
 
   const selectedNft = walletNfts.find((x) => x.tokenId === nftId?.toString());
@@ -66,16 +71,36 @@ export default function GetLoanModal({
 
   return (
     <PopupTransaction
+      btnOnClick={btnOnClick}
       btnClass={btnClass}
       btnText="Get a Loan"
       modalId="txModal"
       modalTitle="Get a Loan"
       disabled={disabled}
       modalFooter={
-        <div className="modal-footer">
+        <div className="modal-footer text-start">
+          <div className="form-check mb-3 ms-2 ">
+            <input
+              checked={checked}
+              //   onClick={() => approveERC721TokenTransfer()}
+              onClick={onCheck}
+              className="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckChecked"
+              style={{ transform: "scale(1.5)" }}
+            />
+            <label
+              className="form-check-label ps-2 text-wrap"
+              htmlFor="flexCheckChecked"
+            >
+              {`Grant permission for ${"Pudgy Penguin #7338"} transfer by checking this box.`}
+            </label>
+          </div>
           <button
             type="button"
-            onClick={onSubmit}
+            disabled={!checked}
+            onClick={() => onSubmit()}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
           >
             Request Loan
@@ -261,7 +286,7 @@ export default function GetLoanModal({
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">Requested Amount</span>
               <span className="fw-medium ms-auto">
-                {amount} {lendingDesk.erc20.symbol}
+                {amount ? amount : "0"} {lendingDesk.erc20.symbol}
               </span>
             </div>
             <div className="my-2 d-flex align-items-center">
@@ -278,7 +303,7 @@ export default function GetLoanModal({
             <div className="mt-3 pt-3 border-top d-flex align-items-center">
               <span className="text-body-secondary">Gross Amount</span>
               <span className="h3 ms-auto my-0 text-primary-emphasis">
-                {calculateGrossAmount(amount)}{" "}
+                {amount ? calculateGrossAmount(amount) : "0"}{" "}
                 <span className="fw-medium">{lendingDesk.erc20.symbol}</span>
               </span>
             </div>

@@ -32,6 +32,9 @@ query ManageLendingDesks($walletAddress: String!) {
     loanConfigs {
       id
     }
+    loans {
+      status
+    }
   }
 }
 
@@ -157,6 +160,7 @@ query BorrowerDashboard($walletAddress: String!) {
       erc20 {
         id
         symbol
+        decimals
       }
     }
     nftId

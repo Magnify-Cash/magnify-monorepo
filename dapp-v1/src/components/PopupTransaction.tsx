@@ -7,6 +7,7 @@ interface PopupTransactionProps {
   divClass?: string; // Wrapper div className
   btnClass: string; // Modal button trigger classname
   btnText: string | React.ReactNode; // Modal button trigger text
+  btnOnClick?: () => void; // Modal button trigger onClick function
   modalId: string; // ID of the modal
   modalContent: React.ReactNode; // Modal content
   modalTitle: string; // Title of the modal
@@ -40,6 +41,7 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
         disabled={props.loading || props.disabled}
         data-bs-toggle="modal"
         data-bs-target={`#${props.modalId}`}
+        onClick={props.btnOnClick}
       >
         {props.btnText}
       </button>

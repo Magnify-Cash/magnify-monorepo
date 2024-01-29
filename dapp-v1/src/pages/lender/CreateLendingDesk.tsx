@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PopupTokenList, PopupTransaction } from "@/components";
 import { ITokenListItem, INFTListItem } from "@/components/PopupTokenList";
 import {
   useNftyFinanceV1InitializeNewLendingDesk,
   nftyFinanceV1Address,
   useErc20Approve,
+  useErc20Allowance,
 } from "@/wagmi-generated";
-import { useAccount, useChainId } from "wagmi";
-import { toWei } from "@/helpers/utils";
+import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { fromWei, toWei } from "@/helpers/utils";
 import { useQuery } from "urql";
 import { CreateLendingDeskDocument } from "../../../.graphclient";
 
@@ -22,58 +23,62 @@ interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
-  // tokenlist state management
+  // Data Hooks
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
   const [deskFundingAmount, setDeskFundingAmount] = useState("0");
-
+  const [checked, setChecked] = useState(false);
   const { address } = useAccount();
+  const chainId = useChainId();
   const [result] = useQuery({
     query: CreateLendingDeskDocument,
     variables: {
-      walletAddress: address?.toLowerCase(),
+      walletAddress: address?.toLowerCase() || "",
     },
   });
 
-  console.log(deskConfigs);
+  // ERC20 Token Allowance Hook
+  // Note: UseEffect check for existing token allowance to auto check the checkbox
+  const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
+    useErc20Approve({
+      address: token?.token?.address as `0x${string}`,
+      args: [
+        nftyFinanceV1Address[chainId],
+        toWei(deskFundingAmount, token?.token?.decimals),
+      ],
+    });
 
-  // lending desk config submit
-  function handleConfigSubmit(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    const form = document.getElementById("configForm") as HTMLFormElement;
-    const isValid = form.checkValidity();
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc20Allowance({
+      address: token?.token?.address as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
-    if (!isValid) {
-      form.reportValidity();
+  //On successful transaction of approveErc20 hook, refetch the approval data
+  useWaitForTransaction({
+    hash: approveErc20TransactionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+    },
+  });
+
+  useEffect(() => {
+    if (!approvalData) {
+      setChecked(false);
       return;
     }
-    const formData = new FormData(form);
-
-    const formJson: IConfigForm = {} as IConfigForm;
-    //Getting the value of selected nft("hiddenInputNft") directly from nftCollection state variable
-    if (nftCollection) {
-      try {
-        formJson["hiddenInputNft"] = nftCollection;
-      } catch (error) {
-        console.error(`Nft collection is not selected`);
-      }
+    if (
+      Number(fromWei(approvalData, token?.token?.decimals)) >=
+      Number(deskFundingAmount)
+    ) {
+      setChecked(true);
+    } else {
+      setChecked(false);
     }
-    formData.forEach((value, key) => {
-      formJson[key] = value;
-    });
-    setDeskConfigs([...deskConfigs, formJson]);
-  }
+  }, [deskFundingAmount, approvalData]);
 
   // Create Lending Desk Hook
-  const chainId = useChainId();
-  const { writeAsync: approveErc20 } = useErc20Approve({
-    address: token?.token?.address as `0x${string}`,
-    args: [
-      nftyFinanceV1Address[chainId],
-      toWei(deskFundingAmount, token?.token?.decimals),
-    ],
-  });
   const { writeAsync: initializeNewLendingDesk } =
     useNftyFinanceV1InitializeNewLendingDesk({
       args: [
@@ -94,15 +99,54 @@ export const CreateLendingDesk = (props: any) => {
       ],
     });
 
-  // modal submit
+  // Checkbox click function
+  async function approveERC20TokenTransfer() {
+    if (Number(deskFundingAmount) <= 0) {
+      console.log("insufficient allowance");
+      return;
+    }
+    if (checked) {
+      console.log("already approved");
+      return;
+    }
+
+    await approveErc20();
+  }
+
+  // Modal Submit function
   async function initLendingDesk() {
     console.log("token", token);
     console.log("deskConfigs", deskConfigs);
     console.log("nftCollection", nftCollection);
     console.log("deskFundingAmount", deskFundingAmount);
     console.log("wagmi function with above data.....");
-    await approveErc20();
     await initializeNewLendingDesk();
+  }
+
+  // Submit Lending Desk Config Function
+  function handleConfigSubmit(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    const form = document.getElementById("configForm") as HTMLFormElement;
+    const isValid = form.checkValidity();
+
+    if (!isValid) {
+      form.reportValidity();
+      return;
+    }
+    const formData = new FormData(form);
+    const formJson: IConfigForm = {} as IConfigForm;
+    // Getting the value of selected nft("hiddenInputNft") directly from nftCollection state variable
+    if (nftCollection) {
+      try {
+        formJson["hiddenInputNft"] = nftCollection;
+      } catch (error) {
+        console.error(`Nft collection is not selected`);
+      }
+    }
+    formData.forEach((value, key) => {
+      formJson[key] = value;
+    });
+    setDeskConfigs([...deskConfigs, formJson]);
   }
 
   return (
@@ -376,7 +420,7 @@ export const CreateLendingDesk = (props: any) => {
                               <a
                                 href="#"
                                 className="text-reset text-decoration-none"
-                                aria-lable="Edit"
+                                aria-label="Edit"
                               >
                                 <i className="fa-regular fa-edit"></i>
                               </a>
@@ -385,7 +429,7 @@ export const CreateLendingDesk = (props: any) => {
                               <a
                                 href="#"
                                 className="text-reset text-decoration-none"
-                                aria-lable="Delete"
+                                aria-label="Delete"
                               >
                                 <i className="fa-regular fa-trash-can"></i>
                               </a>
@@ -495,7 +539,7 @@ export const CreateLendingDesk = (props: any) => {
                                     <a
                                       href="#"
                                       className="text-reset text-decoration-none"
-                                      aria-lable="Edit"
+                                      aria-label="Edit"
                                     >
                                       <i className="fa-regular fa-edit"></i>
                                     </a>
@@ -504,7 +548,7 @@ export const CreateLendingDesk = (props: any) => {
                                     <a
                                       href="#"
                                       className="text-reset text-decoration-none"
-                                      aria-lable="Delete"
+                                      aria-label="Delete"
                                     >
                                       <i className="fa-regular fa-trash-can"></i>
                                     </a>
@@ -601,12 +645,32 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                       </div>
                     </div>
+                    <div className="form-check mb-3 ">
+                      <input
+                        checked={checked}
+                        onClick={() => approveERC20TokenTransfer()}
+                        className="form-check-input me-3"
+                        type="checkbox"
+                        value=""
+                        id="flexCheckChecked"
+                        style={{ transform: "scale(1.5)" }}
+                      />
+                      <label
+                        className="form-check-label "
+                        htmlFor="flexCheckChecked"
+                      >
+                        {`Grant permission for ${
+                          token?.token.symbol || "USDT"
+                        } transfer by checking this box.`}
+                      </label>
+                    </div>
                     <button
                       type="button"
+                      disabled={!checked}
                       onClick={() => initLendingDesk()}
                       className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
                     >
-                      Request Loan
+                      Create Lending Desk
                     </button>
                   </div>
                 </div>
