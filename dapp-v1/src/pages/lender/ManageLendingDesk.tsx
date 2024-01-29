@@ -19,10 +19,9 @@ import { fromWei, toWei } from "@/helpers/utils";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 
 export const ManageLendingDesk = (props: any) => {
-  // constants
-  const chainId = useChainId();
-
-  // GraphQL
+  /*
+  GraphQL Query
+  */
   const { id } = useParams();
   const [result] = useQuery({
     query: ManageLendingDeskDocument,
@@ -32,26 +31,10 @@ export const ManageLendingDesk = (props: any) => {
     },
   });
 
-  const { data, fetching, error } = result;
-
-  const [nftArr, setNftArr] = useState<INft[]>([]);
-
-  useEffect(() => {
-    // This function will be executed whenever the query data changes
-    if (!fetching) getNFTs();
-  }, [data]);
-
-  //This is used to lookup a list of nfts off chain
-  const getNFTs = async () => {
-    const nftIds: string[] | undefined = data?.lendingDesk?.loanConfigs.map(
-      (loan) => loan.nftCollection.id
-    );
-    if (nftIds?.length) {
-      const resultArr = await fetchNFTDetails(nftIds);
-      setNftArr(resultArr);
-    }
-  };
-  // Title
+  /*
+  Dynamic Title
+  This hook gets / sets the page title based on lending desk ID
+  */
   var title = document.getElementById("base-title");
   useEffect(() => {
     if (title && result.data?.lendingDesk) {
@@ -59,19 +42,49 @@ export const ManageLendingDesk = (props: any) => {
     }
   }, [result]);
 
-  // Freeze / Unfreeze
+  /*
+  Fetch NFT Details
+  This is used to lookup a list of NFTs off chain
+  */
+  const [nftArr, setNftArr] = useState<INft[]>([]);
+  const getNFTs = async () => {
+    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
+      (loan) => loan.nftCollection.id
+    );
+    if (nftIds?.length) {
+      const resultArr = await fetchNFTDetails(nftIds);
+      setNftArr(resultArr);
+    }
+  };
+  useEffect(() => {
+    if (!result.fetching) {
+      getNFTs();
+    }
+  }, [result.data]);
+
+
+  /*
+  Freeze/Unfreeze lending desk
+  Calls `setLendingDeskState` with relevant boolean status
+  */
   const boolStatus =
     result.data?.lendingDesk?.status === "Frozen" ? false : true;
+  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk"
   const { config: freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
     args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
   });
-  const { writeAsync: freezeWrite, isSuccess: freezeSuccess } =
+  const { writeAsync: freezeWrite } =
     useNftyFinanceV1SetLendingDeskState(freezeConfig);
-  const freezeUnfreeze = async (e) => {
+  const freezeUnfreeze = async () => {
     await freezeWrite?.();
   };
 
-  // Deposit Liquidity
+  /*
+  Deposit Liquidity
+  Calls `depositLendingDeskLiquidity`
+  Note: Requires token approval
+  */
+  const chainId = useChainId();
   const [depositAmount, setDepositAmount] = useState(0);
   const { writeAsync: approveErc20 } = useErc20Approve({
     address: result.data?.lendingDesk?.erc20.id as `0x${string}`,
@@ -100,7 +113,10 @@ export const ManageLendingDesk = (props: any) => {
     await depositWrite?.();
   };
 
-  // Withdraw Liquidity
+  /*
+  Withdraw Liquidity
+  Calls `withdrawLendingDeskLiquidity`
+  */
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const { config: withdrawConfig } =
     usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
@@ -118,7 +134,9 @@ export const ManageLendingDesk = (props: any) => {
     await withdrawWrite?.();
   };
 
-  // Return
+  /*
+  JSX Return
+  */
   return result.data?.lendingDesk ? (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="text-body-secondary position-relative">
@@ -163,9 +181,9 @@ export const ManageLendingDesk = (props: any) => {
                   </div>
                   <div className="col-lg-4 text-lg-end">
                     <PopupTransaction
-                      btnClass="btn btn-primary btn-lg py-2 px-5 rounded-pill"
+                      btnClass="btn btn-primary py-2 w-100 rounded-pill"
                       btnText="Add Funds"
-                      modalId="txModal"
+                      modalId="depositModal"
                       modalTitle="Add Funds"
                       modalContent={
                         <div className="text-lg-start mb-2 mt-2">
@@ -200,6 +218,48 @@ export const ManageLendingDesk = (props: any) => {
                         </div>
                       }
                     />
+                    <PopupTransaction
+                      btnClass="btn btn-primary py-2 mt-2 w-100 rounded-pill"
+                      btnText="Withdraw Funds"
+                      modalId="withdrawModal"
+                      modalTitle="Withdraw Funds"
+                      modalContent={
+                        <div className="text-lg-start mb-2 mt-2">
+                          <div className="card-body">
+                            <h5 className="fw-medium text-body-secondary mb-4">
+                              Withdraw Liquidity
+                            </h5>
+                            <div className="input-group ">
+                              <input
+                                value={withdrawAmount}
+                                onChange={(e) =>
+                                  // @ts-ignore
+                                  setWithdrawAmount(e.target.value)
+                                }
+                                type="number"
+                                className="form-control form-control-lg py-2 mb-4 flex-grow-1"
+                              />
+                              <div className="flex-shrink-0 fs-5 d-flex  ms-3">
+                                <div className="text-truncate ">
+                                  {result.data?.lendingDesk?.erc20.symbol}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
+                              onClick={() => withdrawLiquidity()}
+                            >
+                              Withdraw Liquidity
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    />
+                    <input type="checkbox" className="btn-check" id="btn-check" autoComplete="off" checked={!boolStatus}/>
+                    <label className="btn btn-primary py-2 mt-2 w-100 rounded-pill" htmlFor="btn-check" onClick={() => freezeUnfreeze()}>
+                      {boolString}
+                    </label>
                   </div>
                 </div>
               </div>
@@ -306,8 +366,6 @@ export const ManageLendingDesk = (props: any) => {
           </div>
         </div>
       </div>
-
-      {/* End Container*/}
     </div>
   ) : null;
 };

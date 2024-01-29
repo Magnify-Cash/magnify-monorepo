@@ -198,24 +198,6 @@ const LendingDeskRow = ({ desks, status }) => {
                 >
                   Edit <i className="fa-regular fa-pencil"></i>
                 </NavLink>
-                <a
-                  href="#"
-                  className="btn btn-lg py-2 px-3 focus-ring bg-primary-subtle rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100 mt-3"
-                >
-                  Deposit <i className="fa-regular fa-arrow-down-to-line"></i>
-                </a>
-                <a
-                  href="#"
-                  className="btn btn-lg py-2 px-3 focus-ring bg-primary-subtle rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100 mt-3"
-                >
-                  Withdraw <i className="fa-regular fa-arrow-up-to-line"></i>
-                </a>
-                <a
-                  href="#"
-                  className="btn btn-lg py-2 px-3 focus-ring bg-primary-subtle rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100 mt-3"
-                >
-                  Freeze <i className="fa-regular fa-snowflake"></i>
-                </a>
               </div>
             </div>
           </div>
