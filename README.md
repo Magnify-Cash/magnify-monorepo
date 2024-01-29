@@ -42,6 +42,28 @@ To begin local development, carefully follow the steps outlined below:
 
 The environment is now ready for development. You can launch the faucet service using `yarn faucet start` and/or start the dApp with `yarn dapp-v1 start`.
 
+### Deploying to Staging
+
+#### Requirements:
+
+1. Make sure you have a valid `PRIVATE_KEY` with Sepolia ETH in your `.env`.
+2. Run `graph auth --product hosted-service <SUBGRAPH_ACCESS_TOKEN>`.
+
+#### Steps:
+
+1. Run `yarn contracts deploy:testnet`.
+2. Change the addresses and block numbers in `subgraph/subgraph.yaml` and `dapp-v1/wagmi.config.ts` as needed by copying them from the new `deployments.json`.
+3. Run `yarn subgraph deploy:testnet`.
+4. Make sure `yarn dapp build` is working locally with the production `.env`s, and without the local graph node running.
+5. Push changes to `staging` branch for them to be deployed.
+
+**Note**: After deploying a new version of the subgraph, you must wait for the graph-node to sync the latest blocks before you can run the dapp. This usually takes 10-15 minutes.
+
+If you just want to deploy the subgraph and dapp and not the contracts, you can do the following:
+
+- Make sure the addresses and block numbers are correct in `subgraph/subgraph.yaml` and `dapp-v1/wagmi.config.ts`.
+- Do step 3 to 5 from above.
+
 **Notes:**
 
 - When you make changes to the contracts, always run `yarn deploy:local` to deploy the updated contracts and subgraph.
