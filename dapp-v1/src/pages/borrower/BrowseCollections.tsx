@@ -1,11 +1,10 @@
 import fetchNFTDetails from "@/helpers/FetchNfts";
+import { INft } from "@/helpers/FetchNfts";
+import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { BrowseCollectionsDocument } from "../../../.graphclient";
-
-import { INft } from "@/helpers/FetchNfts";
-import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 
 interface INftCollection extends INft {
   erc20s: IToken[];
@@ -114,7 +113,7 @@ export const BrowseCollections = (props: any) => {
                         src={nftArr.length ? nftArr[index].logoURI : ""}
                         width="30"
                         className="d-block rounded-circle"
-                        alt={nftArr[index].symbol}
+                        alt={nftArr[index]?.symbol}
                       />
                     </td>
                     <td className="py-3">

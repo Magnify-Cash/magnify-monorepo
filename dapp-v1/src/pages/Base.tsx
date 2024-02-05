@@ -1,14 +1,27 @@
 import { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { ConnectKitButton, ConnectKitProvider } from "connectkit";
-import { createContext, useState } from "react";
+import {
+  ReactElement,
+  cloneElement,
+  createContext,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 declare let bootstrap: any;
 
 type ToastContextType = {
-  addToast: (title: string, message: string, type: ToastProps["variant"]) => void;
+  addToast: (
+    title: string,
+    message: string,
+    type: ToastProps["variant"],
+    hide?: boolean,
+  ) => number;
+  closeToast: (indexOfToast: number) => void;
 };
 function findTitleProps(obj: any): string {
   if (obj.props?.title) {
@@ -58,12 +71,24 @@ export const Base = () => {
   const title = findTitleProps(obj);
 
   //toasts state contains all the toasts that are currently both visible or hidden
-  const [toasts, setToasts] = useState<React.ReactNode[]>([]);
+  const [toasts, setToasts] = useState<ReactElement[]>([]);
 
   // Function to add a new toast
   const addToast: ToastContextType["addToast"] = (title, message, type) => {
     const newToast = CreateToast(title, message, type, toasts.length + 1);
     setToasts((prevToasts) => [...prevToasts, newToast]);
+    return newToast.props.index;
+  };
+
+  // Function to close a toast
+  const closeToast: ToastContextType["closeToast"] = (indexOfToast) => {
+    setToasts((prevToasts) =>
+      prevToasts.map((toast) =>
+        toast && toast.props.index === indexOfToast
+          ? cloneElement(toast, { hide: true })
+          : toast,
+      ),
+    );
   };
 
   // theme
@@ -89,8 +114,8 @@ export const Base = () => {
   });
 
   return (
-    <ToastContext.Provider value={{ addToast }}>
-      <ConnectKitProvider mode={mode as any}>
+    <ToastContext.Provider value={{ addToast, closeToast }}>
+      <ConnectKitProvider mode={mode}>
         <Provider value={client}>
           {/* Sidebar start */}
           <nav

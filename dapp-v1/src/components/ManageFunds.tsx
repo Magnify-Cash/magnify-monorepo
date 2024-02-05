@@ -1,4 +1,5 @@
 import { PopupTransaction } from "@/components";
+import { useToastContext } from "@/helpers/CreateToast";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -21,6 +22,11 @@ interface ManageFundsProps {
 export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
   const { address } = useAccount();
   const chainId = useChainId();
+  const { addToast, closeToast } = useToastContext();
+
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
+  const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState(false);
   const [amount, setAmount] = useState(0);
 
@@ -66,6 +72,25 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
     onSuccess(data) {
       refetchApprovalData();
       refetchDepositConfig();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -88,7 +113,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         toWei(amount.toString(), lendingDesk?.erc20?.decimals),
       ],
     });
-  const { writeAsync: depositWrite } =
+  const { data: depositWriteData, writeAsync: depositWrite } =
     useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
   const depositLiquidity = async () => {
     await depositWrite?.();
@@ -105,18 +130,117 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         toWei(amount.toString(), lendingDesk?.erc20?.decimals),
       ],
     });
-  const { writeAsync: withdrawWrite } =
+  const { data: withdrawWriteData, writeAsync: withdrawWrite } =
     useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
 
   const withdrawLiquidity = async () => {
     await withdrawWrite?.();
   };
 
+  //Deposit function is used to deposit liquidity
+  //This function is called when the user clicks on the deposit button
+  async function deposit() {
+    setActionIsLoading(true);
+    try {
+      await depositLiquidity();
+    } catch (error) {
+      console.error(error);
+    }
+    setActionIsLoading(false);
+  }
+  //Withdraw function is used to withdraw liquidity
+  //This function is called when the user clicks on the withdraw button
+  async function withdraw() {
+    setActionIsLoading(true);
+    try {
+      await withdrawLiquidity();
+    } catch (error) {
+      console.error(error);
+    }
+    setActionIsLoading(false);
+  }
+
   //actionMap is used to call the respective function based on the action
   const actionMap = {
-    deposit: depositLiquidity,
-    withdraw: withdrawLiquidity,
+    deposit,
+    withdraw,
   };
+
+  //actionDataMap is used to aceess the action data based on the action
+  const actionDataMap = {
+    deposit: depositWriteData,
+    withdraw: withdrawWriteData,
+  };
+
+  //on successful transaction of deposit/withdraw hook, refetch approval data and display relevant toast
+
+  useWaitForTransaction({
+    hash: actionDataMap[action]?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
+    },
+  });
+
+  // Checkbox click function
+  async function approveERC20TokenTransfer() {
+    if (checked) {
+      console.log("already approved");
+      return;
+    }
+    setApprovalIsLoading(true);
+    try {
+      await approveErc20();
+    } catch (error) {}
+    setApprovalIsLoading(false);
+  }
+  //This hook is used to display loading toast when the approve transaction is pending
+
+  useEffect(() => {
+    if (approveErc20TransactionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [approveErc20TransactionData?.hash]);
+
+  //This hook is used to display loading toast when the deposit/withdraw transaction is pending
+
+  useEffect(() => {
+    if (actionDataMap[action]?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [actionDataMap[action]?.hash]);
 
   return (
     <PopupTransaction
@@ -129,8 +253,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
           {action === "deposit" && (
             <div className="form-check mb-3 ms-3 w-100 ">
               <input
+                disabled={approvalIsLoading}
                 checked={checked}
-                onClick={() => approveErc20()}
+                onClick={() => approveERC20TokenTransfer()}
                 className="form-check-input "
                 type="checkbox"
                 value=""
@@ -149,7 +274,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
           )}
           <button
             type="button"
-            disabled={!checked && action === "deposit"}
+            disabled={actionIsLoading || (!checked && action === "deposit")}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
           >

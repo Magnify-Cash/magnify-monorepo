@@ -2,6 +2,7 @@ import { PopupTokenList } from "@/components";
 import GetLoanModal from "@/components/GetLoanModal";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
+import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei, toWei } from "@/helpers/utils";
@@ -18,6 +19,11 @@ import { useChainId, useWaitForTransaction } from "wagmi";
 import { QuickLoanDocument } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
+  const { addToast, closeToast } = useToastContext();
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
+  const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
+
   // constants
   const chainId = useChainId();
 
@@ -88,6 +94,25 @@ export const QuickLoan = (props: any) => {
     onSuccess(data) {
       refetchApprovalData();
       refetchNewLoanConfig();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -123,6 +148,25 @@ export const QuickLoan = (props: any) => {
     hash: newLoanWriteTransactionData?.hash as `0x${string}`,
     onSuccess(data) {
       refetchApprovalData();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -132,7 +176,11 @@ export const QuickLoan = (props: any) => {
       console.log("already approved");
       return;
     }
-    await approveErc721();
+    setApprovalIsLoading(true);
+    try {
+      await approveErc721();
+    } catch (error) {}
+    setApprovalIsLoading(false);
   }
 
   // Modal submit
@@ -151,8 +199,42 @@ export const QuickLoan = (props: any) => {
     console.log("amount", amount);
     console.log("form is valid, wagmi functions with above data.....");
     console.log(newLoanConfig);
-    await newLoanWrite?.();
+    setNewLoanIsLoading(true);
+    try {
+      await newLoanWrite?.();
+    } catch (error) {}
+    setNewLoanIsLoading(false);
   }
+
+  //This hook is used to display loading toast when the approve transaction is pending
+
+  useEffect(() => {
+    if (approveErc721TransactionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [approveErc721TransactionData?.hash]);
+
+  //This hook is used to display loading toast when the new loan transaction is pending
+
+  useEffect(() => {
+    if (newLoanWriteTransactionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [newLoanWriteTransactionData?.hash]);
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -363,6 +445,8 @@ export const QuickLoan = (props: any) => {
               nftId,
               setNftId,
               nftCollectionAddress: nftCollection?.nft.address,
+              approvalIsLoading,
+              newLoanIsLoading,
             }}
           />
         </div>

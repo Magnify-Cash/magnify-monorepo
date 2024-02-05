@@ -27,6 +27,9 @@ type GetLoanModalProps = {
   disabled: boolean;
   btnClass: string;
   btnOnClick?: () => void;
+  index?: number;
+  approvalIsLoading: boolean;
+  newLoanIsLoading: boolean;
 };
 
 export default function GetLoanModal({
@@ -46,6 +49,9 @@ export default function GetLoanModal({
   btnOnClick,
   onCheck,
   checked,
+  index,
+  approvalIsLoading,
+  newLoanIsLoading,
 }: GetLoanModalProps) {
   // Wallet NFTs
   const { address } = useAccount();
@@ -74,15 +80,16 @@ export default function GetLoanModal({
       btnOnClick={btnOnClick}
       btnClass={btnClass}
       btnText="Get a Loan"
-      modalId="txModal"
+      modalId={`txModal${index || ""}`}
       modalTitle="Get a Loan"
       disabled={disabled}
       modalFooter={
         <div className="modal-footer text-start">
           <div className="form-check mb-3 ms-2 ">
             <input
+              name="check"
+              disabled={approvalIsLoading}
               checked={checked}
-              //   onClick={() => approveERC721TokenTransfer()}
               onClick={onCheck}
               className="form-check-input"
               type="checkbox"
@@ -99,7 +106,7 @@ export default function GetLoanModal({
           </div>
           <button
             type="button"
-            disabled={!checked}
+            disabled={!checked || newLoanIsLoading}
             onClick={() => onSubmit()}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
           >
@@ -110,7 +117,11 @@ export default function GetLoanModal({
       modalContent={
         loanConfig &&
         lendingDesk && (
-          <form id="quickLoanForm" className="modal-body text-start">
+          // using index to make formID unique
+          <form
+            id={`quickLoanForm${typeof index === "number" ? index : ""}`}
+            className="modal-body text-start"
+          >
             <p className="text-body-secondary">Lending Desk Details</p>
             <div className="container-fluid g-0 mt-3">
               <div className="row g-3">
@@ -199,6 +210,7 @@ export default function GetLoanModal({
                 <div className="input-group">
                   <input
                     type="number"
+                    name="loanDuration"
                     className="form-control form-control-lg py-2"
                     id="set-duration"
                     placeholder="Duration"
@@ -221,6 +233,7 @@ export default function GetLoanModal({
                 <div className="input-group">
                   <input
                     type="number"
+                    name="loanAmount"
                     className="form-control form-control-lg py-2"
                     id="set-amount"
                     placeholder="Amount"

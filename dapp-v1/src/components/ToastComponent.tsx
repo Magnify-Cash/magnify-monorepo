@@ -7,9 +7,16 @@ export interface ToastProps {
   content: string;
   variant: ToastVariant;
   index: number;
+  hide?: boolean;
 }
 
-const ToastComponent: React.FC<ToastProps> = ({ title, content, variant, index }) => {
+const ToastComponent: React.FC<ToastProps> = ({
+  title,
+  content,
+  variant,
+  index,
+  hide = false,
+}) => {
   let toastContext = "success";
   let toastIcon = "fa-check-circle";
   if (variant === "error") {
@@ -20,17 +27,30 @@ const ToastComponent: React.FC<ToastProps> = ({ title, content, variant, index }
     toastIcon = "fa-spinner fa-spin";
   }
   //Shows or hides the toast depending on the value
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(!hide);
+
+  //This hook is used to hide the toast when the hide prop is changed
+  useEffect(() => {
+    setShow(!hide);
+  }, [hide]);
+
+  //This hook is used to hide the toast if the hide prop is true
+  useEffect(() => {
+    setShow(!hide);
+  }, [hide]);
 
   //This hook is used to hide the toast after a certain amount of time
+  //The toast will not hide automatically if the variant is "loading"
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-    }, 3000); // Change this value to adjust the time before the toast hides
+    if (variant !== "loading") {
+      const timer = setTimeout(() => {
+        setShow(false);
+      }, 3000); // Change this value to adjust the time before the toast hides
 
-    return () => {
-      clearTimeout(timer);
-    };
+      return () => {
+        clearTimeout(timer);
+      };
+    }
   }, []);
 
   return (

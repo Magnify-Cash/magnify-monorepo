@@ -1,4 +1,5 @@
 import { ManageFunds } from "@/components";
+import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { fromWei } from "@/helpers/utils";
 import {
@@ -9,9 +10,15 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
+import { useWaitForTransaction } from "wagmi";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 
 export const ManageLendingDesk = (props: any) => {
+  const { addToast, closeToast } = useToastContext();
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [freezeUnfreezeIsLoading, setFreezeUnfreezeIsLoading] =
+    useState<boolean>(false);
+
   /*
   GraphQL Query
   */
@@ -61,14 +68,62 @@ export const ManageLendingDesk = (props: any) => {
   */
   const boolStatus = result.data?.lendingDesk?.status === "Frozen" ? false : true;
   const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk";
-  const { config: freezeConfig } = usePrepareNftyFinanceV1SetLendingDeskState({
-    args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
-  });
-  const { writeAsync: freezeWrite } = useNftyFinanceV1SetLendingDeskState(freezeConfig);
+  const { config: freezeConfig, refetch: refetchFreezeConfig } =
+    usePrepareNftyFinanceV1SetLendingDeskState({
+      args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
+    });
+  const { data: freezeData, writeAsync: freezeWrite } =
+    useNftyFinanceV1SetLendingDeskState(freezeConfig);
+
   const freezeUnfreeze = async () => {
-    await freezeWrite?.();
+    setFreezeUnfreezeIsLoading(true);
+    try {
+      await freezeWrite?.();
+    } catch (error) {}
+    setFreezeUnfreezeIsLoading(false);
   };
 
+  //On successful transaction of freeze/unfreeze hook, refetch approval data and display relevant toast
+  useWaitForTransaction({
+    hash: freezeData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchFreezeConfig();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
+    },
+  });
+
+  //This hook is used to display loading toast when the freeze/unfreeze transaction is pending
+
+  useEffect(() => {
+    if (freezeData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [freezeData?.hash]);
   /*
   JSX Return
   */
@@ -121,21 +176,14 @@ export const ManageLendingDesk = (props: any) => {
                       lendingDesk={result?.data?.lendingDesk}
                       action="withdraw"
                     />
-                    <input
-                      type="checkbox"
-                      className="btn-check"
-                      id="btn-check"
-                      autoComplete="off"
-                      checked={!boolStatus}
-                    />
-                    <label
+                    <button
                       className="btn btn-primary py-2 w-100 rounded-pill"
-                      htmlFor="btn-check"
                       onClick={() => freezeUnfreeze()}
                       onKeyDown={() => freezeUnfreeze()}
+                      disabled={freezeUnfreezeIsLoading}
                     >
                       {boolString}
-                    </label>
+                    </button>
                   </div>
                 </div>
               </div>

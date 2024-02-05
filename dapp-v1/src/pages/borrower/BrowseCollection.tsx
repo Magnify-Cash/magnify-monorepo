@@ -1,14 +1,9 @@
+import GetLoanModal from "@/components/GetLoanModal";
+import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei, toWei } from "@/helpers/utils";
-import { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
-import { useQuery } from "urql";
-import { useChainId, useWaitForTransaction } from "wagmi";
-import { BrowseCollectionDocument } from "../../../.graphclient";
-
-import GetLoanModal from "@/components/GetLoanModal";
 import {
   nftyFinanceV1Address,
   useErc721Approve,
@@ -16,8 +11,18 @@ import {
   useNftyFinanceV1InitializeNewLoan,
   usePrepareNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
+import { useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
+import { useQuery } from "urql";
+import { useChainId, useWaitForTransaction } from "wagmi";
+import { BrowseCollectionDocument } from "../../../.graphclient";
 
 export const BrowseCollection = (props) => {
+  const { addToast, closeToast } = useToastContext();
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
+  const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
+
   // GraphQL
   const { collection_address } = useParams();
   const chainId = useChainId();
@@ -90,6 +95,25 @@ export const BrowseCollection = (props) => {
     onSuccess(data) {
       refetchApprovalData();
       refetchNewLoanConfig();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -125,6 +149,25 @@ export const BrowseCollection = (props) => {
     hash: newLoanWriteTransactionData?.hash as `0x${string}`,
     onSuccess(data) {
       refetchApprovalData();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success",
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -134,18 +177,56 @@ export const BrowseCollection = (props) => {
       console.log("already approved");
       return;
     }
-    await approveErc721();
+    setApprovalIsLoading(true);
+    try {
+      await approveErc721();
+    } catch (error) {}
+    setApprovalIsLoading(false);
   }
   // Modal submit
-  async function requestLoan() {
-    const form = document.getElementById("quickLoanForm") as HTMLFormElement;
+  async function requestLoan(index: number) {
+    const form = document.getElementById(`quickLoanForm${index}`) as HTMLFormElement;
     const isValid = form.checkValidity();
     if (!isValid) {
       form.reportValidity();
       return;
     }
-    await newLoanWrite?.();
+    setNewLoanIsLoading(true);
+    try {
+      await newLoanWrite?.();
+    } catch (error) {}
+    setNewLoanIsLoading(false);
   }
+
+  //This hook is used to display loading toast when the approve transaction is pending
+
+  useEffect(() => {
+    if (approveErc721TransactionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [approveErc721TransactionData?.hash]);
+
+  //This hook is used to display loading toast when the new loan transaction is pending
+
+  useEffect(() => {
+    if (newLoanWriteTransactionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading",
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [newLoanWriteTransactionData?.hash]);
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -184,7 +265,7 @@ export const BrowseCollection = (props) => {
             <tbody>
               {result.data?.loanConfigs.map((loanConfig, index) => {
                 return (
-                  <tr className="align-middle" key={loanConfig.nftCollection.id}>
+                  <tr className="align-middle" key={loanConfig.lendingDesk.id}>
                     <td className="py-3 ps-3">
                       <img
                         src="/images/placeholder/images/image-12.png"
@@ -201,7 +282,7 @@ export const BrowseCollection = (props) => {
                         src={tokens?.[index]?.logoURI}
                         height="30"
                         className="d-block rounded-circle"
-                        alt={tokens?.[index].symbol}
+                        alt={tokens?.[index]?.symbol}
                       />
                     </td>
                     <td className="py-3">
@@ -229,7 +310,9 @@ export const BrowseCollection = (props) => {
                           btnOnClick: () => {
                             setSelectedLendingDesk(loanConfig?.lendingDesk);
                           },
-                          onSubmit: requestLoan,
+                          onSubmit: () => requestLoan(index),
+                          approvalIsLoading,
+                          newLoanIsLoading,
                           checked,
                           onCheck: approveERC721TokenTransfer,
                           nft,
@@ -242,6 +325,7 @@ export const BrowseCollection = (props) => {
                           nftId,
                           setNftId,
                           nftCollectionAddress: collection_address,
+                          index,
                         }}
                       />
                     </td>
