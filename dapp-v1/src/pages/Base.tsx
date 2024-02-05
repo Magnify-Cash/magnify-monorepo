@@ -1,6 +1,6 @@
 import { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
-import { ConnectKitButton, ConnectKitProvider } from "connectkit";
+import { ConnectKitButton, ConnectKitProvider, Types } from "connectkit";
 import {
   ReactElement,
   cloneElement,
@@ -95,7 +95,8 @@ export const Base = () => {
   const activeClass = "nav-link d-flex align-items-center active";
   const inactiveClass = "nav-link d-flex align-items-center";
   const cookie = getCookie("colorMode");
-  const [mode, setMode] = useState(cookie);
+  const initialMode: Types.Mode = cookie === "light" || cookie === "dark" ? cookie : "auto";
+  const [mode, setMode] = useState(initialMode);
   document.documentElement.setAttribute("data-bs-theme", cookie);
   function toggleDarkMode() {
     window.toggleDarkMode();
