@@ -8,16 +8,16 @@ describe("NFTY ERC721: Set NFTY Finance", () => {
 
   it("should fail when caller is not admin", async () => {
     const { nftyErc721, alice } = await loadFixture(deployNftyErc721);
-    await expect(nftyErc721.connect(alice).setNftyFinance(nftyFinance))
-      .to.be.revertedWithCustomError(nftyErc721, "OwnableUnauthorizedAccount")
-      .withArgs(alice.address);
+    await expect(
+      nftyErc721.connect(alice).setNftyFinance(nftyFinance)
+    ).to.be.revertedWithCustomError(nftyErc721, "Unauthorized");
   });
 
   it("should fail for zero address", async () => {
     const { nftyErc721 } = await loadFixture(deployNftyErc721);
     await expect(
       nftyErc721.setNftyFinance(ethers.ZeroAddress)
-    ).to.be.revertedWith("NFTY Finance address cannot be zero");
+    ).to.be.revertedWithCustomError(nftyErc721, "NFTYFinanceIsZeroAddress");
   });
 
   it("should set NFTY Finance", async () => {

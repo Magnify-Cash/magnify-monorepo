@@ -10,9 +10,9 @@ describe("NFTY ERC721: Mint", () => {
   it("should fail when caller is not NFTY Finance", async () => {
     const { nftyErc721 } = await loadFixture(deployNftyErc721AndSetNftyFinance);
 
-    await expect(nftyErc721.mint(mintTo, tokenId)).to.be.revertedWith(
-      "caller is not NFTY Finance"
-    );
+    await expect(
+      nftyErc721.mint(mintTo, tokenId)
+    ).to.be.revertedWithCustomError(nftyErc721, "CallerIsNotNFTYFinance");
   });
 
   it("should fail when minting to zero address", async () => {
@@ -22,7 +22,7 @@ describe("NFTY ERC721: Mint", () => {
 
     await expect(
       nftyErc721.connect(nftyFinance).mint(ethers.ZeroAddress, tokenId)
-    ).to.be.revertedWith("to address cannot be zero");
+    ).to.be.revertedWithCustomError(nftyErc721, "MintToZeroAddress");
   });
 
   it("should fail when token already exists", async () => {
@@ -33,7 +33,7 @@ describe("NFTY ERC721: Mint", () => {
 
     await expect(
       nftyErc721.connect(nftyFinance).mint(mintTo, tokenId)
-    ).to.be.revertedWith("token already exists");
+    ).to.be.revertedWithCustomError(nftyErc721, "TokenAlreadyExists");
   });
 
   it("should mint", async () => {

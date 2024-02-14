@@ -2,17 +2,20 @@
 
 pragma solidity ^0.8.22;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "solady/src/tokens/ERC721.sol";
+import "solady/src/auth/Ownable.sol";
+import {LibString} from "solady/src/utils/LibString.sol";
 
-import "./interfaces/INFTYERC721V1.sol";
+contract NFTYERC721V1 is ERC721, Ownable {
+    using LibString for uint256;
 
-contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
     /* *********** */
     /*   STORAGE   */
     /* *********** */
     string public baseURI;
     address public nftyFinance;
+    string public _name;
+    string public _symbol;
 
     /* *********** */
     /*   EVENTS    */
@@ -26,11 +29,18 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
     event BaseURISet(string indexed baseURI);
     event NFTYFinanceSet(address indexed nftyFinance);
 
+    error NameIsEmpty();
+    error SymbolIsEmpty();
+    error BaseURIIsEmpty();
+    error CallerIsNotNFTYFinance();
+    error MintToZeroAddress();
+    error NFTYFinanceIsZeroAddress();
+
     /**
      * @dev Requires caller to be the NFTY Finance contract
      */
     modifier onlyNftyFinance() {
-        require(msg.sender == nftyFinance, "caller is not NFTY Finance");
+        if (msg.sender != nftyFinance) revert CallerIsNotNFTYFinance();
         _;
     }
 
@@ -42,14 +52,32 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
         string memory symbol,
         string memory _baseURI,
         address initialOwner
-    ) Ownable(initialOwner) ERC721(name, symbol) {
-        require(bytes(name).length > 0, "name cannot be empty");
-        require(bytes(symbol).length > 0, "symbol cannot be empty");
-        require(bytes(_baseURI).length > 0, "base URI cannot be empty");
+    ) Ownable() ERC721() {
+        if (bytes(name).length == 0) revert NameIsEmpty();
+        if (bytes(symbol).length == 0) revert SymbolIsEmpty();
+        if (bytes(_baseURI).length == 0) revert BaseURIIsEmpty();
 
         baseURI = _baseURI;
+        _name = name;
+        _symbol = symbol;
+        _initializeOwner(initialOwner);
 
         emit Initialized(msg.sender, name, symbol, _baseURI);
+    }
+
+    function name() public view override returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view override returns (string memory) {
+        return _symbol;
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        if (_ownerOf(tokenId) == address(0)) revert TokenDoesNotExist();
+        return string.concat(baseURI, tokenId.toString());
     }
 
     /* *********** */
@@ -59,10 +87,7 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      * @dev Set NFTY Finance contract address, requires caller to be owner
      */
     function setNftyFinance(address _nftyFinance) external onlyOwner {
-        require(
-            _nftyFinance != address(0),
-            "NFTY Finance address cannot be zero"
-        );
+        if (_nftyFinance == address(0)) revert NFTYFinanceIsZeroAddress();
         nftyFinance = _nftyFinance;
         emit NFTYFinanceSet(_nftyFinance);
     }
@@ -71,7 +96,7 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      * @dev Update base URI but requires caller to be owner
      */
     function setBaseURI(string memory _baseURI) external onlyOwner {
-        require(bytes(_baseURI).length > 0, "base URI cannot be empty");
+        if (bytes(_baseURI).length == 0) revert BaseURIIsEmpty();
         baseURI = _baseURI;
         emit BaseURISet(_baseURI);
     }
@@ -80,8 +105,8 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      * @dev Call _safeMint but requires caller to be the NFTY Finance contract
      */
     function mint(address to, uint256 tokenId) external onlyNftyFinance {
-        require(to != address(0), "to address cannot be zero");
-        require(!(_ownerOf(tokenId) != address(0)), "token already exists");
+        if (to == address(0)) revert MintToZeroAddress();
+        if (_ownerOf(tokenId) != address(0)) revert TokenAlreadyExists();
         _safeMint(to, tokenId);
     }
 
@@ -89,16 +114,7 @@ contract NFTYERC721V1 is INFTYERC721V1, ERC721, Ownable {
      * @dev Call _safeMint but requires caller to be the NFTY Finance contract
      */
     function burn(uint256 tokenId) external onlyNftyFinance {
-        require((_ownerOf(tokenId) != address(0)), "token does not exist");
+        if (_ownerOf(tokenId) == address(0)) revert TokenDoesNotExist();
         _burn(tokenId);
-    }
-
-    /**
-     * @dev The following functions are overrides required by Solidity.
-     */
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC721, IERC165) returns (bool) {
-        return super.supportsInterface(interfaceId);
     }
 }

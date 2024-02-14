@@ -10,13 +10,13 @@ describe("NFTY ERC721: Burn", () => {
     );
 
     // Check for NFT holder
-    await expect(nftyErc721.connect(alice).burn(tokenId)).to.be.revertedWith(
-      "caller is not NFTY Finance"
-    );
+    await expect(
+      nftyErc721.connect(alice).burn(tokenId)
+    ).to.be.revertedWithCustomError(nftyErc721, "CallerIsNotNFTYFinance");
     // Check for contract owner// admin
-    await expect(nftyErc721.connect(owner).burn(tokenId)).to.be.revertedWith(
-      "caller is not NFTY Finance"
-    );
+    await expect(
+      nftyErc721.connect(owner).burn(tokenId)
+    ).to.be.revertedWithCustomError(nftyErc721, "CallerIsNotNFTYFinance");
   });
 
   it("should fail when token does not exist", async () => {
@@ -29,7 +29,7 @@ describe("NFTY ERC721: Burn", () => {
 
     await expect(
       nftyErc721.connect(nftyFinance).burn(invalidTokenId)
-    ).to.be.revertedWith("token does not exist");
+    ).to.be.revertedWithCustomError(nftyErc721, "TokenDoesNotExist");
   });
 
   it("should burn", async () => {

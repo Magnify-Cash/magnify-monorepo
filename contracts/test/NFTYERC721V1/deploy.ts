@@ -37,7 +37,7 @@ describe("NFTY ERC721: Deploy", function () {
     const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
     await expect(
       NFTYERC721V1.deploy("", symbol, baseUri, owner.address)
-    ).to.be.revertedWith("name cannot be empty");
+    ).to.be.revertedWithCustomError(NFTYERC721V1, "NameIsEmpty");
   });
 
   it("should fail to deploy with empty symbol", async () => {
@@ -46,7 +46,7 @@ describe("NFTY ERC721: Deploy", function () {
     const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
     await expect(
       NFTYERC721V1.deploy(name, "", baseUri, owner.address)
-    ).to.be.revertedWith("symbol cannot be empty");
+    ).to.be.revertedWithCustomError(NFTYERC721V1, "SymbolIsEmpty");
   });
 
   it("should fail to deploy with empty base URI", async () => {
@@ -55,6 +55,6 @@ describe("NFTY ERC721: Deploy", function () {
     const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
     await expect(
       NFTYERC721V1.deploy(name, symbol, "", owner.address)
-    ).to.be.revertedWith("base URI cannot be empty");
+    ).to.be.revertedWithCustomError(NFTYERC721V1, "BaseURIIsEmpty");
   });
 });
