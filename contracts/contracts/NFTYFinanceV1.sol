@@ -553,10 +553,10 @@ contract NFTYFinanceV1 is
      * @dev Emits an {NewLoanInitialized} event
      */
     function initializeNewLoan(
-        uint256 _lendingDeskId,
+        uint64 _lendingDeskId,
         address _nftCollection,
-        uint256 _nftId,
-        uint256 _duration,
+        uint64 _nftId,
+        uint32 _duration,
         uint256 _amount
     ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
@@ -588,7 +588,7 @@ contract NFTYFinanceV1 is
         When interest, amount, or duration is constant, it scales the interest accordingly.
         Ensures valid interest rates within specified ranges.
         */
-        uint256 interest;
+        uint32 interest;
 
         // Constant interest
         if (
@@ -602,9 +602,11 @@ contract NFTYFinanceV1 is
         else if (loanConfig.minDuration == loanConfig.maxDuration) {
             interest =
                 loanConfig.minInterest +
-                ((_amount - loanConfig.minAmount) *
-                    (loanConfig.maxInterest - loanConfig.minInterest)) /
-                (loanConfig.maxAmount - loanConfig.minAmount);
+                uint32(
+                    ((_amount - loanConfig.minAmount) *
+                        (loanConfig.maxInterest - loanConfig.minInterest)) /
+                        (loanConfig.maxAmount - loanConfig.minAmount)
+                );
         }
         // Constant amount, scale interest based on duration
         else if (loanConfig.minAmount == loanConfig.maxAmount) {
@@ -618,13 +620,15 @@ contract NFTYFinanceV1 is
         else {
             interest =
                 loanConfig.minInterest +
-                (((loanConfig.maxInterest - loanConfig.minInterest) *
-                    // Take average of amount and duration factors
-                    (((_amount - loanConfig.minAmount) /
-                        (loanConfig.maxAmount - loanConfig.minAmount)) +
-                        ((_duration - loanConfig.minDuration) /
-                            (loanConfig.maxDuration -
-                                loanConfig.minDuration)))) / 2);
+                uint32(
+                    ((loanConfig.maxInterest - loanConfig.minInterest) *
+                        // Take average of amount and duration factors
+                        (((_amount - loanConfig.minAmount) /
+                            (loanConfig.maxAmount - loanConfig.minAmount)) +
+                            ((_duration - loanConfig.minDuration) /
+                                (loanConfig.maxDuration -
+                                    loanConfig.minDuration)))) / 2
+                );
         }
 
         // Calculate platform fees
@@ -636,7 +640,7 @@ contract NFTYFinanceV1 is
             amount: _amount,
             amountPaidBack: 0,
             duration: _duration,
-            startTime: block.timestamp,
+            startTime: uint64(block.timestamp),
             nftId: _nftId,
             status: LoanStatus.Active,
             lendingDeskId: _lendingDeskId,

@@ -35,22 +35,23 @@ interface INFTYFinanceV1 {
      *
      * @param amount The amount borrowed
      * @param amountPaidBack The amount borrower has paid back
-     * @param duration The initial duration of the loan. Used to verify if defaulted
+     * @param nftCollection The address of the NFT collection used as collateral for this loan
      * @param startTime The time when the loan was initiated. Used to verify if defaulted
      * @param nftId The collateral NFT id for this loan
      * @param lendingDeskId The id of the lending desk this loan is associated with
+     * @param duration The initial duration of the loan. Used to verify if defaulted
+     * @param interest The interest rate of this loan in basis points
      * @param status The status of this loan. Active when first created and Resolved once resolved
-     * @param config Struct containing details about the loan params set by lender
      */
     struct Loan {
         uint256 amount;
         uint256 amountPaidBack;
-        uint256 duration;
-        uint256 startTime;
         address nftCollection;
-        uint256 interest;
-        uint256 nftId;
-        uint256 lendingDeskId;
+        uint64 startTime;
+        uint64 nftId;
+        uint64 lendingDeskId;
+        uint32 duration;
+        uint32 interest;
         LoanStatus status;
     }
 
@@ -71,10 +72,10 @@ interface INFTYFinanceV1 {
         bool nftCollectionIsErc1155;
         uint256 minAmount;
         uint256 maxAmount;
-        uint256 minInterest;
-        uint256 maxInterest;
-        uint256 minDuration;
-        uint256 maxDuration;
+        uint32 minInterest;
+        uint32 maxInterest;
+        uint32 minDuration;
+        uint32 maxDuration;
     }
 
     /**
@@ -187,10 +188,10 @@ interface INFTYFinanceV1 {
      * @dev Emits an {NewLoanInitialized} event
      */
     function initializeNewLoan(
-        uint256 _lendingDeskId,
+        uint64 _lendingDeskId,
         address _nftCollection,
-        uint256 _nftId,
-        uint256 _duration,
+        uint64 _nftId,
+        uint32 _duration,
         uint256 _amount
     ) external;
 
