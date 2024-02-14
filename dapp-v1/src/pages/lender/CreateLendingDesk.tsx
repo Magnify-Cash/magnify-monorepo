@@ -11,10 +11,11 @@ import {
 import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateLendingDeskDocument } from "../../../.graphclient";
 
 interface IConfigForm {
-  hiddenInputNft: INFTListItem;
+  selectedNftCollection?: INFTListItem;
   maxDuration: string;
   maxInterest: string;
   maxOffer: string;
@@ -24,6 +25,13 @@ interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IConfigForm>();
+
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
@@ -34,6 +42,8 @@ export const CreateLendingDesk = (props: any) => {
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
+  const [editDesk, setEditDesk] = useState<boolean>(false);
+  const [editDeskIndex, setEditDeskIndex] = useState<number>(0);
   const [deskFundingAmount, setDeskFundingAmount] = useState("0");
   const [checked, setChecked] = useState(false);
   const { address } = useAccount();
@@ -44,6 +54,53 @@ export const CreateLendingDesk = (props: any) => {
       walletAddress: address?.toLowerCase() || "",
     },
   });
+
+  //handle deleting the lending desk config given the index
+  const handleDeleteConfig = (index: number) => {
+    const newDeskConfigs = deskConfigs.filter((_, i) => i !== index);
+    setDeskConfigs(newDeskConfigs);
+  };
+
+  //handle loading the form for editing the lending desk config given the index
+  const handleEditConfig = (index: number) => {
+    setEditDesk(true);
+    setEditDeskIndex(index);
+    const exisitingConfig = deskConfigs[index];
+    Object.entries(exisitingConfig).forEach(([key, value]) => {
+      setValue(key as keyof IConfigForm, value);
+    });
+    setNftCollection(exisitingConfig.selectedNftCollection);
+  };
+
+  //handle updating the lending desk config given the index and the new config
+  const onUpdate: SubmitHandler<IConfigForm> = (newConfig) => {
+    // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
+    // If nft is selected form can not be submitted
+    if (nftCollection) {
+      newConfig.selectedNftCollection = nftCollection;
+      const newDeskConfigs = deskConfigs.map((config, i) =>
+        i === editDeskIndex ? newConfig : config
+      );
+
+      setDeskConfigs(newDeskConfigs);
+      setEditDesk(false); // reset the edit desk state
+      setEditDeskIndex(0); // reset the edit desk index
+    }
+  };
+
+  //On submit of the lending desk form, add the form data to the deskConfigs state variable
+  const onSubmit: SubmitHandler<IConfigForm> = (data) => {
+    // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
+    // If nft is selected form can not be submitted
+    if (nftCollection) {
+      try {
+        data.selectedNftCollection = nftCollection;
+        setDeskConfigs([...deskConfigs, data]);
+      } catch (error) {
+        console.error(`Nft collection is not selected`);
+      }
+    }
+  };
 
   // ERC20 Token Allowance Hook
   // Note: UseEffect check for existing token allowance to auto check the checkbox
@@ -56,10 +113,11 @@ export const CreateLendingDesk = (props: any) => {
       ],
     });
 
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: token?.token?.address as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc20Allowance({
+      address: token?.token?.address as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
   //On successful transaction of approveErc20 hook, refetch the approval data
   useWaitForTransaction({
@@ -72,7 +130,7 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -83,7 +141,7 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -94,7 +152,8 @@ export const CreateLendingDesk = (props: any) => {
       return;
     }
     if (
-      Number(fromWei(approvalData, token?.token?.decimals)) >= Number(deskFundingAmount)
+      Number(fromWei(approvalData, token?.token?.decimals)) >=
+      Number(deskFundingAmount)
     ) {
       setChecked(true);
     } else {
@@ -104,25 +163,28 @@ export const CreateLendingDesk = (props: any) => {
 
   // Create Lending Desk Hook
 
-  const { data: initializeNewLendingDeskData, writeAsync: initializeNewLendingDesk } =
-    useNftyFinanceV1InitializeNewLendingDesk({
-      args: [
-        token?.token?.address as `0x${string}`,
-        toWei(deskFundingAmount, token?.token?.decimals),
-        deskConfigs.map((config) => ({
-          nftCollection: config.hiddenInputNft.nft.address as `0x${string}`,
-          nftCollectionIsErc1155: false,
-          minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
-          maxAmount: toWei(config.maxOffer, token?.token?.decimals),
-          // To account for days
-          minDuration: BigInt(parseInt(config.minDuration) * 24),
-          maxDuration: BigInt(parseInt(config.maxDuration) * 24),
-          // To account for basis points
-          minInterest: BigInt(parseInt(config.minInterest) * 100),
-          maxInterest: BigInt(parseInt(config.maxInterest) * 100),
-        })),
-      ],
-    });
+  const {
+    data: initializeNewLendingDeskData,
+    writeAsync: initializeNewLendingDesk,
+  } = useNftyFinanceV1InitializeNewLendingDesk({
+    args: [
+      token?.token?.address as `0x${string}`,
+      toWei(deskFundingAmount, token?.token?.decimals),
+      deskConfigs.map((config) => ({
+        nftCollection: config.selectedNftCollection?.nft
+          ?.address as `0x${string}`,
+        nftCollectionIsErc1155: false,
+        minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
+        maxAmount: toWei(config.maxOffer, token?.token?.decimals),
+        // To account for days
+        minDuration: BigInt(parseInt(config.minDuration) * 24),
+        maxDuration: BigInt(parseInt(config.maxDuration) * 24),
+        // To account for basis points
+        minInterest: BigInt(parseInt(config.minInterest) * 100),
+        maxInterest: BigInt(parseInt(config.maxInterest) * 100),
+      })),
+    ],
+  });
 
   //On successful transaction of initializeNewLendingDesk hook, display success toast
   //On failure display error toast
@@ -135,8 +197,11 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
+      refetchApprovalData();
+      // reset the desk funding amount
+      setDeskFundingAmount("0");
     },
     onError(error) {
       console.error(error);
@@ -146,7 +211,7 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -182,32 +247,6 @@ export const CreateLendingDesk = (props: any) => {
     setInitLendingDeskIsLoading(false);
   }
 
-  // Submit Lending Desk Config Function
-  function handleConfigSubmit(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    const form = document.getElementById("configForm") as HTMLFormElement;
-    const isValid = form.checkValidity();
-
-    if (!isValid) {
-      form.reportValidity();
-      return;
-    }
-    const formData = new FormData(form);
-    const formJson: IConfigForm = {} as IConfigForm;
-    // Getting the value of selected nft("hiddenInputNft") directly from nftCollection state variable
-    if (nftCollection) {
-      try {
-        formJson.hiddenInputNft = nftCollection;
-      } catch (error) {
-        console.error(`Nft collection is not selected`);
-      }
-    }
-    formData.forEach((value, key) => {
-      formJson[key] = value;
-    });
-    setDeskConfigs([...deskConfigs, formJson]);
-  }
-
   //This hook is used to display loading toast when the approve transaction is pending
 
   useEffect(() => {
@@ -215,7 +254,7 @@ export const CreateLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -230,7 +269,7 @@ export const CreateLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -286,7 +325,11 @@ export const CreateLendingDesk = (props: any) => {
                     <div className="card-body p-4">
                       <div>
                         <h5 className="fw-medium text-primary-emphasis">
-                          Choose Collection(s) & Paramaters
+                          {editDesk
+                            ? `Edit Collection ${
+                                editDeskIndex + 1
+                              } & Paramaters`
+                            : " Choose Collection(s) & Paramaters"}
                         </h5>
                         <div
                           className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4 w-lg-75"
@@ -301,7 +344,9 @@ export const CreateLendingDesk = (props: any) => {
                                 height="20"
                                 width="20"
                               />
-                              <p className="m-0 ms-1">{nftCollection.nft.name}</p>
+                              <p className="m-0 ms-1">
+                                {nftCollection.nft.name}
+                              </p>
                             </div>
                           ) : (
                             "Choose NFT Collection..."
@@ -324,6 +369,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("minOffer")}
                                 type="number"
                                 className="form-control fs-5"
                                 id="min-offer"
@@ -345,6 +391,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("maxOffer")}
                                 type="number"
                                 className="form-control fs-5"
                                 name="maxOffer"
@@ -370,6 +417,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("minDuration")}
                                 type="number"
                                 className="form-control fs-5"
                                 name="minDuration"
@@ -390,6 +438,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("maxDuration")}
                                 type="number"
                                 className="form-control fs-5"
                                 name="maxDuration"
@@ -415,6 +464,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("minInterest")}
                                 type="number"
                                 className="form-control fs-5"
                                 name="minInterest"
@@ -437,6 +487,7 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
+                                {...register("maxInterest")}
                                 type="number"
                                 className="form-control fs-5"
                                 name="maxInterest"
@@ -461,10 +512,14 @@ export const CreateLendingDesk = (props: any) => {
                           type="button"
                           className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
                           disabled={!nftCollection}
-                          onClick={(e) => handleConfigSubmit(e)}
+                          onClick={
+                            editDesk
+                              ? handleSubmit(onUpdate)
+                              : handleSubmit(onSubmit)
+                          }
                           style={{ filter: "grayscale(1)" }}
                         >
-                          Add to Desk
+                          {editDesk ? "Update Desk" : "Add to Desk"}
                         </button>
                       </div>
                     </div>
@@ -497,45 +552,40 @@ export const CreateLendingDesk = (props: any) => {
 
                   {deskConfigs.map((config, index) => {
                     return (
-                      <div
-                        key={config.hiddenInputNft.nft.address}
-                        className="pb-2 mb-2 border-bottom"
-                      >
+                      <div key={index} className="pb-2 mb-2 border-bottom">
                         <div className="d-flex align-items-center">
-                          <div className="text-body-secondary text-truncate">
-                            Collection {index + 1}
-                          </div>
+
                           <div className="flex-shrink-0 ms-auto">
                             <span className="text-body-secondary me-2">
-                              <a
-                                href="#"
-                                className="text-reset text-decoration-none"
+                              <button
+                                onClick={() => handleEditConfig(index)}
+                                className="text-reset text-decoration-none btn border-0 p-0"
                                 aria-label="Edit"
                               >
                                 <i className="fa-regular fa-edit"></i>
-                              </a>
+                              </button>
                             </span>
                             <span className="text-danger-emphasis">
-                              <a
-                                href="#"
-                                className="text-reset text-decoration-none"
+                              <button
+                                onClick={() => handleDeleteConfig(index)}
+                                className="text-reset text-decoration-none btn border-0 p-0"
                                 aria-label="Delete"
                               >
                                 <i className="fa-regular fa-trash-can"></i>
-                              </a>
+                              </button>
                             </span>
                           </div>
                         </div>
 
                         <div className="d-flex align-items-center">
                           <img
-                            src={config.hiddenInputNft.nft?.logoURI}
-                            alt={`${config.hiddenInputNft.nft.name} Logo`}
+                            src={config.selectedNftCollection?.nft?.logoURI}
+                            alt={`${config.selectedNftCollection?.nft.name} Logo`}
                             height="24"
                             className="d-block rounded-circle flex-shrink-0 me-2"
                           />
                           <div className="text-truncate fw-medium">
-                            {config.hiddenInputNft.nft.name}
+                            {config.selectedNftCollection?.nft.name}
                           </div>
                         </div>
                         <div className="mt-2 d-flex align-items-center">
@@ -543,8 +593,8 @@ export const CreateLendingDesk = (props: any) => {
                             <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
                           </span>
                           <div className="text-truncate">
-                            <strong>Offer:</strong> {config.minOffer}-{config.maxOffer}{" "}
-                            {token.token.symbol}
+                            <strong>Offer:</strong> {config.minOffer}-
+                            {config.maxOffer} {token.token.symbol}
                           </div>
                         </div>
                         <div className="mt-1 d-flex align-items-center">
@@ -561,8 +611,8 @@ export const CreateLendingDesk = (props: any) => {
                             <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                           </span>
                           <div className="text-truncate">
-                            <strong>Interest Rate:</strong> {config.minInterest}-
-                            {config.maxInterest}%
+                            <strong>Interest Rate:</strong> {config.minInterest}
+                            -{config.maxInterest}%
                           </div>
                         </div>
                       </div>
@@ -576,7 +626,9 @@ export const CreateLendingDesk = (props: any) => {
                     alt="Thinking"
                     className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
                   />
-                  <p className="text-center">Start customizing to see details...</p>
+                  <p className="text-center">
+                    Start customizing to see details...
+                  </p>
                 </div>
               )}
             </div>
@@ -596,7 +648,9 @@ export const CreateLendingDesk = (props: any) => {
                     {token ? (
                       <div>
                         <div className="pb-2 mb-2 border-bottom">
-                          <div className="text-body-secondary">Currency Type</div>
+                          <div className="text-body-secondary">
+                            Currency Type
+                          </div>
                           <div className="mt-1 fs-5 d-flex align-items-center">
                             <img
                               src={token.token.logoURI}
@@ -604,51 +658,29 @@ export const CreateLendingDesk = (props: any) => {
                               height="24"
                               className="d-block rounded-circle flex-shrink-0 me-2"
                             />
-                            <div className="text-truncate">{token.token.name}</div>
+                            <div className="text-truncate">
+                              {token.token.name}
+                            </div>
                           </div>
                         </div>
 
                         {deskConfigs.map((config, index) => {
                           return (
                             <div
-                              key={config.hiddenInputNft.nft.address}
+                              key={config.selectedNftCollection?.nft.address}
                               className="pb-2 mb-2 border-bottom"
                             >
                               <div className="d-flex align-items-center">
-                                <div className="text-body-secondary text-truncate">
-                                  Collection {index + 1}
-                                </div>
-                                <div className="flex-shrink-0 ms-auto">
-                                  <span className="text-body-secondary me-2">
-                                    <a
-                                      href="#"
-                                      className="text-reset text-decoration-none"
-                                      aria-label="Edit"
-                                    >
-                                      <i className="fa-regular fa-edit"></i>
-                                    </a>
-                                  </span>
-                                  <span className="text-danger-emphasis">
-                                    <a
-                                      href="#"
-                                      className="text-reset text-decoration-none"
-                                      aria-label="Delete"
-                                    >
-                                      <i className="fa-regular fa-trash-can"></i>
-                                    </a>
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="d-flex align-items-center">
                                 <img
-                                  src={config.hiddenInputNft.nft?.logoURI}
-                                  alt={`${config.hiddenInputNft.nft.name} Logo`}
+                                  src={
+                                    config.selectedNftCollection?.nft?.logoURI
+                                  }
+                                  alt={`${config.selectedNftCollection?.nft.name} Logo`}
                                   height="24"
                                   className="d-block rounded-circle flex-shrink-0 me-2"
                                 />
                                 <div className="text-truncate fw-medium">
-                                  {config.hiddenInputNft.nft.name}
+                                  {config.selectedNftCollection?.nft.name}
                                 </div>
                               </div>
                               <div className="mt-2 d-flex align-items-center">
@@ -673,8 +705,8 @@ export const CreateLendingDesk = (props: any) => {
                                   <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                                 </span>
                                 <div className="text-truncate">
-                                  <strong>Interest Rate:</strong> {config.minInterest}-
-                                  {config.maxInterest}%
+                                  <strong>Interest Rate:</strong>{" "}
+                                  {config.minInterest}-{config.maxInterest}%
                                 </div>
                               </div>
                             </div>
@@ -740,7 +772,10 @@ export const CreateLendingDesk = (props: any) => {
                         id="flexCheckChecked"
                         style={{ transform: "scale(1.5)" }}
                       />
-                      <label className="form-check-label " htmlFor="flexCheckChecked">
+                      <label
+                        className="form-check-label "
+                        htmlFor="flexCheckChecked"
+                      >
                         {`Grant permission for ${
                           token?.token.symbol || "USDT"
                         } transfer by checking this box.`}
