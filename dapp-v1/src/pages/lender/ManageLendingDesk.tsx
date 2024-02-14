@@ -1,23 +1,52 @@
 import { ManageFunds } from "@/components";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
-import { fromWei } from "@/helpers/utils";
+import { fromWei, toWei } from "@/helpers/utils";
 import {
   useNftyFinanceV1SetLendingDeskState,
   usePrepareNftyFinanceV1SetLendingDeskState,
+  useNftyFinanceV1SetLendingDeskLoanConfigs,
+  useNftyFinanceV1RemoveLendingDeskLoanConfig,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { useWaitForTransaction } from "wagmi";
+import { IConfigForm } from "./CreateLendingDesk";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
+import { INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
+import { NFTInfo } from "@nftylabs/nft-lists";
 
 export const ManageLendingDesk = (props: any) => {
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [freezeUnfreezeIsLoading, setFreezeUnfreezeIsLoading] =
     useState<boolean>(false);
+  const [updateDeskIsLoading, setUpdateDeskIsLoading] =
+    useState<boolean>(false);
+  const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
+  //State variable to store the form data. It only stores one loan config at a time
+  const [deskConfig, setDeskConfig] = useState<IConfigForm>({
+    hiddenInputNft: {} as INFTListItem,
+    minOffer: "0",
+    maxOffer: "0",
+    minDuration: "0",
+    maxDuration: "0",
+    minInterest: "0",
+    maxInterest: "0",
+  });
+  const [editDesk, setEditDesk] = useState<boolean>(false);
+  const [editDeskIndex, setEditDeskIndex] = useState<number>(0);
+  const [deletingCollection, setDeletingCollection] = useState<boolean>(false);
+  //Initialize useform hook
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IConfigForm>();
 
   /*
   GraphQL Query
@@ -30,6 +59,8 @@ export const ManageLendingDesk = (props: any) => {
       deskId: id,
     },
   });
+
+  const token = result.data?.lendingDesk?.erc20?.decimals;
 
   /*
   Dynamic Title
@@ -48,9 +79,10 @@ export const ManageLendingDesk = (props: any) => {
   */
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
-      (loan) => loan.nftCollection.id,
-    );
+    const nftIds: string[] | undefined =
+      result.data?.lendingDesk?.loanConfigs.map(
+        (loan) => loan.nftCollection.id
+      );
     if (nftIds?.length) {
       const resultArr = await fetchNFTDetails(nftIds);
       setNftArr(resultArr);
@@ -62,12 +94,114 @@ export const ManageLendingDesk = (props: any) => {
     }
   }, [result.data]);
 
+  //Loads the supplied values into the add to desk/edit desk form
+  const loadValuesIntoForm = (values: IConfigForm) => {
+    for (const key in values) {
+      //@ts-ignore
+      setValue(key, values[key]);
+    }
+  };
+
+  const handleEditCollection = (index: number) => {
+    // Extract loanConfigs from result.data.lendingDesk
+    const loanConfigs = result.data?.lendingDesk?.loanConfigs;
+    const selectedConfig = loanConfigs?.[index];
+    const selectedNft = nftArr[index];
+
+    // Set editDesk and editDeskIndex state
+    setEditDesk(true);
+    setEditDeskIndex(index);
+
+    // load the selected config into form values
+    const formValues = getFormValues(selectedConfig);
+
+    // Set form values
+    Object.entries(formValues).forEach(([key, value]) =>
+      setValue(key as keyof IConfigForm, value)
+    );
+
+    // Set the selected NFT collection
+    setNftCollection({ nft: selectedNft as NFTInfo });
+  };
+
+  //set deleting collection variable to true
+  const handleDeleteCollection = async (index) => {
+    const selectedNft = nftArr[index];
+    setNftCollection({ nft: selectedNft as NFTInfo });
+    setDeletingCollection(true);
+  };
+
+  //delete collection when deleting collection variable is updated
+  useEffect(() => {
+    const deleteCollectionConfig = async () => {
+      try {
+        await deleteCollection();
+      } catch (error) {}
+      setDeletingCollection(false);
+    };
+    if (deletingCollection) deleteCollectionConfig();
+  }, [deletingCollection]);
+
+  // Whenever an nft collection is selected, first check if
+  // the collection is already present in result loan configs
+  // If it is present then auto load the present values in the add to desk form
+  useEffect(() => {
+    if (nftCollection) {
+      const selectedNftAddress = nftCollection.nft.address;
+      const loanConfigs = result?.data?.lendingDesk?.loanConfigs;
+
+      const filteredLoans = loanConfigs?.filter((loan) => {
+        return (
+          loan.nftCollection.id.toLowerCase() ===
+          selectedNftAddress.toLowerCase()
+        );
+      });
+
+      const loanIndex = loanConfigs?.findIndex((loan) => {
+        return (
+          loan.nftCollection.id.toLowerCase() ===
+          selectedNftAddress.toLowerCase()
+        );
+      });
+
+      if (filteredLoans?.length) {
+        const selectedLoan = filteredLoans[0];
+        setEditDesk(true);
+        setEditDeskIndex(loanIndex as number);
+        const formValues = getFormValues(selectedLoan);
+        loadValuesIntoForm(formValues);
+      } else {
+        setEditDesk(false);
+        setEditDeskIndex(0);
+      }
+    }
+  }, [nftCollection]);
+
+  const getFormValues = (selectedLoan: any) => {
+    const { maxAmount, minAmount, minDuration, maxInterest, minInterest } =
+      selectedLoan;
+    const decimals = result?.data?.lendingDesk?.erc20?.decimals;
+
+    const formValues: IConfigForm = {
+      maxOffer: fromWei(maxAmount, decimals),
+      minOffer: fromWei(minAmount, decimals),
+      maxDuration: (minDuration / 24).toString(),
+      minDuration: (minDuration / 24).toString(),
+      maxInterest: (maxInterest / 100).toString(),
+      minInterest: (minInterest / 100).toString(),
+    };
+    return formValues;
+  };
+
   /*
   Freeze/Unfreeze lending desk
   Calls `setLendingDeskState` with relevant boolean status
   */
-  const boolStatus = result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk";
+  const boolStatus =
+    result.data?.lendingDesk?.status === "Frozen" ? false : true;
+  const boolString = boolStatus
+    ? "Freeze Lending Desk"
+    : "Un-Freeze Lending Desk";
   const { config: freezeConfig, refetch: refetchFreezeConfig } =
     usePrepareNftyFinanceV1SetLendingDeskState({
       args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
@@ -94,7 +228,7 @@ export const ManageLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -105,7 +239,7 @@ export const ManageLendingDesk = (props: any) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -117,13 +251,170 @@ export const ManageLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
       }
     }
   }, [freezeData?.hash]);
+
+  // Update Lending Desk Hook
+
+  const { data: updateLendingDeskData, writeAsync: updateLendingDesk } =
+    useNftyFinanceV1SetLendingDeskLoanConfigs({
+      args: [
+        BigInt(result.data?.lendingDesk?.id || 0),
+        [
+          {
+            nftCollection: deskConfig?.hiddenInputNft?.nft
+              ?.address as `0x${string}`,
+            nftCollectionIsErc1155: false,
+            minAmount: BigInt(
+              toWei(
+                deskConfig?.minOffer,
+                result.data?.lendingDesk?.erc20?.decimals
+              )
+            ),
+            maxAmount: toWei(
+              deskConfig?.maxOffer,
+              result.data?.lendingDesk?.erc20?.decimals
+            ),
+            // To account for days
+            minDuration: BigInt(parseInt(deskConfig?.minDuration) * 24),
+            maxDuration: BigInt(parseInt(deskConfig?.maxDuration) * 24),
+            // To account for basis points
+            minInterest: BigInt(parseInt(deskConfig?.minInterest) * 100),
+            maxInterest: BigInt(parseInt(deskConfig?.maxInterest) * 100),
+          },
+        ],
+      ],
+    });
+
+  //On successful transaction of updateLendingDesk hook, display success toast
+  //On failure display error toast
+  useWaitForTransaction({
+    hash: updateLendingDeskData?.hash as `0x${string}`,
+    onSuccess(data) {
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success"
+      );
+      setEditDesk(false);
+      setEditDeskIndex(0);
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error"
+      );
+    },
+  });
+
+  //This hook is used to display loading toast when the update lending desk transaction is pending
+
+  useEffect(() => {
+    if (updateLendingDeskData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [updateLendingDeskData?.hash]);
+
+  //On submit of the add to desk form, add the form data to the deskConfigs state variable
+  const onSubmit: SubmitHandler<IConfigForm> = (data) => {
+    // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
+    // If nft is selected form can not be submitted
+    if (nftCollection) {
+      try {
+        data.hiddenInputNft = nftCollection;
+        setDeskConfig(data);
+      } catch (error) {
+        console.error(`Nft collection is not selected`);
+      }
+    }
+  };
+
+  //Call update desk hook when deskconfig is updated i.e. when new deskconfig is submitted via the form
+  useEffect(() => {
+    if (deskConfig.hiddenInputNft) updateDesk();
+  }, [deskConfig]);
+
+  // Update desk with the new loanconfig
+  async function updateDesk() {
+    setUpdateDeskIsLoading(true);
+    try {
+      await updateLendingDesk();
+    } catch (error) {}
+    setUpdateDeskIsLoading(false);
+  }
+
+  // Delete Lending Desk Hook
+
+  const { data: deleteCollectionData, writeAsync: deleteCollection } =
+    useNftyFinanceV1RemoveLendingDeskLoanConfig({
+      args: [
+        BigInt(result.data?.lendingDesk?.id || 0),
+        nftCollection?.nft?.address as `0x${string}`,
+      ],
+    });
+
+  //On successful transaction of deleteCollection hook, display success toast
+  //On failure display error toast
+
+  useWaitForTransaction({
+    hash: deleteCollectionData?.hash as `0x${string}`,
+    onSuccess(data) {
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success"
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error"
+      );
+    },
+  });
+
+  //This hook is used to display loading toast when the delete collection transaction is pending
+  useEffect(() => {
+    if (deleteCollectionData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [deleteCollectionData?.hash]);
+
   /*
   JSX Return
   */
@@ -145,7 +436,9 @@ export const ManageLendingDesk = (props: any) => {
               <div className="container-fluid g-0 mt-4">
                 <div className="row g-4">
                   <div className="col-lg-4">
-                    <h6 className="fw-medium text-body-secondary">Currency Type</h6>
+                    <h6 className="fw-medium text-body-secondary">
+                      Currency Type
+                    </h6>
                     <div className="mt-1 fs-4 d-flex align-items-center">
                       <div className="text-truncate">
                         {result.data?.lendingDesk?.erc20.symbol}
@@ -160,7 +453,7 @@ export const ManageLendingDesk = (props: any) => {
                       <strong className="text-primary-emphasis">
                         {fromWei(
                           result.data?.lendingDesk?.balance,
-                          result.data?.lendingDesk?.erc20?.decimals,
+                          result.data?.lendingDesk?.erc20?.decimals
                         )}
                         &nbsp;
                       </strong>
@@ -209,22 +502,22 @@ export const ManageLendingDesk = (props: any) => {
                       </div>
                       <div className="flex-shrink-0 ms-auto">
                         <span className="text-body-secondary me-2">
-                          <a
-                            href="#"
-                            className="text-reset text-decoration-none"
+                          <button
+                            onClick={() => handleEditCollection(index)}
+                            className="text-reset text-decoration-none btn border-0 p-0"
                             aria-label="Edit"
                           >
                             <i className="fa-regular fa-edit"></i>
-                          </a>
+                          </button>
                         </span>
                         <span className="text-danger-emphasis">
-                          <a
-                            href="#"
-                            className="text-reset text-decoration-none"
-                            aria-label="Delete"
+                          <button
+                            onClick={() => handleDeleteCollection(index)}
+                            className="text-reset text-decoration-none btn border-0 p-0"
+                            aria-label="Edit"
                           >
                             <i className="fa-regular fa-trash-can"></i>
-                          </a>
+                          </button>
                         </span>
                       </div>
                     </div>
@@ -247,12 +540,12 @@ export const ManageLendingDesk = (props: any) => {
                         <strong>Offer:</strong>{" "}
                         {fromWei(
                           config.minAmount,
-                          result.data?.lendingDesk?.erc20?.decimals,
+                          result.data?.lendingDesk?.erc20?.decimals
                         )}
                         -
                         {fromWei(
                           config.maxAmount,
-                          result.data?.lendingDesk?.erc20?.decimals,
+                          result.data?.lendingDesk?.erc20?.decimals
                         )}{" "}
                         {result.data?.lendingDesk?.erc20.symbol}
                       </div>
@@ -271,8 +564,8 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Interest Rate:</strong> {config.minInterest / 100}-
-                        {config.maxInterest / 100}%
+                        <strong>Interest Rate:</strong>{" "}
+                        {config.minInterest / 100}-{config.maxInterest / 100}%
                       </div>
                     </div>
                   </div>
@@ -284,7 +577,189 @@ export const ManageLendingDesk = (props: any) => {
         <div className="col-xxl-6">
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body p-4">
-              <h5 className="fw-medium text-primary-emphasis">Collection Paramaters</h5>
+              <div>
+                <h5 className="fw-medium text-primary-emphasis">
+                  {editDesk
+                    ? `Edit Collection ${editDeskIndex + 1} & Paramaters`
+                    : `Collection Paramaters`}
+                </h5>
+                <div
+                  className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4 w-lg-75"
+                  data-bs-toggle="modal"
+                  data-bs-target="#nftModal"
+                >
+                  {nftCollection ? (
+                    <div className="d-flex align-items-center">
+                      <img
+                        src={nftCollection.nft.logoURI}
+                        alt={`${nftCollection.nft.name} Logo`}
+                        height="20"
+                        width="20"
+                      />
+                      <p className="m-0 ms-1">{nftCollection.nft.name}</p>
+                    </div>
+                  ) : (
+                    "Choose NFT Collection..."
+                  )}
+                </div>
+                <PopupTokenList
+                  nft
+                  urls={[
+                    "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
+                  ]}
+                  modalId="nftModal"
+                  onClick={setNftCollection}
+                />
+              </div>
+              <h6 className="fw-medium text-primary-emphasis mt-4">
+                Min/Max Offer
+              </h6>
+              <div className="row g-4">
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("minOffer")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="min-offer"
+                        placeholder="Min Offer"
+                        min="0"
+                        max="99999"
+                        step="1"
+                      />
+                      <label htmlFor="min-offer">Min Offer</label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      USDT
+                    </span>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("maxOffer")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="max-offer"
+                        placeholder="Max Offer"
+                        min="0"
+                        max="99999"
+                        step="1"
+                      />
+                      <label htmlFor="max-offer">Max Offer</label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      USDT
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <h6 className="fw-medium text-primary-emphasis mt-4">
+                Min/Max Duration
+              </h6>
+              <div className="row g-4">
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("minDuration")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="min-duration"
+                        placeholder="Min Duration"
+                        min="0"
+                        max="99999"
+                        step="1"
+                      />
+                      <label htmlFor="min-duration">Min Duration</label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      DAYS
+                    </span>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("maxDuration")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="max-duration"
+                        placeholder="Max Durtion"
+                        min="0"
+                        max="99999"
+                        step="1"
+                      />
+                      <label htmlFor="max-duration">Max Duration</label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      DAYS
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <h6 className="fw-medium text-primary-emphasis mt-4">
+                Min/Max Interest Rate
+              </h6>
+              <div className="row g-4">
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("minInterest")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="min-interest-rate"
+                        placeholder="Min Interest Rate"
+                        min="0"
+                        max="100"
+                        step="1"
+                      />
+                      <label htmlFor="min-interest-rate">
+                        Min Interest Rate
+                      </label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      %
+                    </span>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="input-group">
+                    <div className="form-floating">
+                      <input
+                        {...register("maxInterest")}
+                        type="number"
+                        className="form-control fs-5"
+                        id="max-interest-rate"
+                        placeholder="Max Durtion"
+                        min="0"
+                        max="100"
+                        step="1"
+                      />
+                      <label htmlFor="max-interest-rate">
+                        Max Interest Rate
+                      </label>
+                    </div>
+                    <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
+                      %
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="my-4 text-end">
+                <button
+                  type="button"
+                  disabled={!nftCollection || updateDeskIsLoading}
+                  onClick={handleSubmit(onSubmit)} //update deskconfig state
+                  className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
+                >
+                  {editDesk ? "Update Collection" : "Add to Desk"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

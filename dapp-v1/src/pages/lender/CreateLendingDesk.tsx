@@ -171,8 +171,7 @@ export const CreateLendingDesk = (props: any) => {
       token?.token?.address as `0x${string}`,
       toWei(deskFundingAmount, token?.token?.decimals),
       deskConfigs.map((config) => ({
-        nftCollection: config.selectedNftCollection?.nft
-          ?.address as `0x${string}`,
+        nftCollection: config.selectedNftCollection?.nft?.address as `0x${string}`,
         nftCollectionIsErc1155: false,
         minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
         maxAmount: toWei(config.maxOffer, token?.token?.decimals),

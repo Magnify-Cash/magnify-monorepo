@@ -54,7 +54,7 @@ export interface ITokenListItem {
   token: TokenInfo;
 }
 export interface INFTListItem {
-  parent: IParent;
+  parent?: IParent;
   nft: NFTInfo;
 }
 
@@ -74,7 +74,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         props.urls.map(async (url) => {
           const response = await fetch(url);
           return response.json();
-        }),
+        })
       );
       const jsonData = responses.map((response) => response);
       if (props.nft) {
@@ -200,7 +200,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: ITokenListItem) =>
           item.token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.token.address.includes(searchQuery.toLowerCase()),
+          item.token.address.includes(searchQuery.toLowerCase())
       );
     }
     return [];
@@ -212,7 +212,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: INFTListItem) =>
           item.nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.nft.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.nft.address.includes(searchQuery.toLowerCase()),
+          item.nft.address.includes(searchQuery.toLowerCase())
       );
     }
     return [];
@@ -303,11 +303,15 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredTokens[virtualItem.index].token.logoURI}
-                          alt={`${filteredTokens[virtualItem.index].token.name} Logo`}
+                          alt={`${
+                            filteredTokens[virtualItem.index].token.name
+                          } Logo`}
                           height="48px"
                         />
                         <div className="text-start">
-                          <div>{filteredTokens[virtualItem.index].token.name}</div>
+                          <div>
+                            {filteredTokens[virtualItem.index].token.name}
+                          </div>
                           <div className="text-body-secondary fw-normal">
                             <small>
                               {filteredTokens[virtualItem.index].token.symbol}
@@ -331,13 +335,17 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredNfts[virtualItem.index].nft.logoURI}
-                          alt={`${filteredNfts[virtualItem.index].nft.name} Logo`}
+                          alt={`${
+                            filteredNfts[virtualItem.index].nft.name
+                          } Logo`}
                           height="48px"
                         />
                         <div className="text-start">
                           <div>{filteredNfts[virtualItem.index].nft.name}</div>
                           <div className="text-body-secondary fw-normal">
-                            <small>{filteredNfts[virtualItem.index].nft.symbol}</small>
+                            <small>
+                              {filteredNfts[virtualItem.index].nft.symbol}
+                            </small>
                           </div>
                         </div>
                       </SelectButton>
