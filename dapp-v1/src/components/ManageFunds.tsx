@@ -11,6 +11,7 @@ import {
   usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 
 interface ManageFundsProps {
@@ -18,8 +19,18 @@ interface ManageFundsProps {
   action: "deposit" | "withdraw";
 }
 
+interface ManageFundForm {
+  amount: number;
+}
+
 //ManageFunds component is used to deposit or withdraw liquidity from a lending desk
 export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useForm<ManageFundForm>();
+
   const { address } = useAccount();
   const chainId = useChainId();
   const { addToast, closeToast } = useToastContext();
@@ -28,7 +39,8 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState(false);
-  const [amount, setAmount] = useState(0);
+  //use watch to get the value of the input field as it changes
+  const amount = watch("amount", 0);
 
   let btnText: string;
   let modalId: string;
@@ -61,10 +73,11 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       ],
     });
 
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc20Allowance({
+      address: lendingDesk?.erc20.id as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
   //On successful transaction of approveErc20 hook, refetch the approval data
   useWaitForTransaction({
@@ -78,7 +91,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -89,7 +102,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -99,7 +112,10 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       setChecked(false);
       return;
     }
-    if (Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >= Number(amount)) {
+    if (
+      Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >=
+      Number(amount)
+    ) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -184,7 +200,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -195,7 +211,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -219,7 +235,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -234,7 +250,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -255,7 +271,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
               <input
                 disabled={approvalIsLoading}
                 checked={checked}
-                onClick={() => approveERC20TokenTransfer()}
+                onChange={() => approveERC20TokenTransfer()}
                 className="form-check-input "
                 type="checkbox"
                 value=""
@@ -288,16 +304,14 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
             <h5 className="fw-medium text-body-secondary mb-4">{actionText}</h5>
             <div className="input-group ">
               <input
-                value={amount}
-                onChange={(e) =>
-                  // @ts-ignore
-                  setAmount(e.target.value)
-                }
+                {...register("amount")}
                 type="number"
                 className="form-control form-control-lg py-2 mb-2 flex-grow-1"
               />
               <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                <div className="text-truncate ">{lendingDesk?.erc20.symbol}</div>
+                <div className="text-truncate ">
+                  {lendingDesk?.erc20.symbol}
+                </div>
               </div>
             </div>
           </div>

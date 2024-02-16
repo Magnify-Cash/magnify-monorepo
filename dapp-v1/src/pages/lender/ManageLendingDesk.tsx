@@ -29,7 +29,7 @@ export const ManageLendingDesk = (props: any) => {
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   //State variable to store the form data. It only stores one loan config at a time
   const [deskConfig, setDeskConfig] = useState<IConfigForm>({
-    hiddenInputNft: {} as INFTListItem,
+    selectedNftCollection: {} as INFTListItem,
     minOffer: "0",
     maxOffer: "0",
     minDuration: "0",
@@ -267,7 +267,7 @@ export const ManageLendingDesk = (props: any) => {
         BigInt(result.data?.lendingDesk?.id || 0),
         [
           {
-            nftCollection: deskConfig?.hiddenInputNft?.nft
+            nftCollection: deskConfig?.selectedNftCollection?.nft
               ?.address as `0x${string}`,
             nftCollectionIsErc1155: false,
             minAmount: BigInt(
@@ -338,10 +338,10 @@ export const ManageLendingDesk = (props: any) => {
   //On submit of the add to desk form, add the form data to the deskConfigs state variable
   const onSubmit: SubmitHandler<IConfigForm> = (data) => {
     // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
-    // If nft is selected form can not be submitted
+    // If nft is not selected form can not be submitted
     if (nftCollection) {
       try {
-        data.hiddenInputNft = nftCollection;
+        data.selectedNftCollection = nftCollection;
         setDeskConfig(data);
       } catch (error) {
         console.error(`Nft collection is not selected`);
@@ -351,7 +351,7 @@ export const ManageLendingDesk = (props: any) => {
 
   //Call update desk hook when deskconfig is updated i.e. when new deskconfig is submitted via the form
   useEffect(() => {
-    if (deskConfig.hiddenInputNft) updateDesk();
+    if (deskConfig.selectedNftCollection) updateDesk();
   }, [deskConfig]);
 
   // Update desk with the new loanconfig

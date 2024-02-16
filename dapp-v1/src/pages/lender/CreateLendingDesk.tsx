@@ -14,7 +14,7 @@ import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateLendingDeskDocument } from "../../../.graphclient";
 
-interface IConfigForm {
+export interface IConfigForm {
   selectedNftCollection?: INFTListItem;
   maxDuration: string;
   maxInterest: string;
@@ -31,6 +31,14 @@ export const CreateLendingDesk = (props: any) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IConfigForm>();
+
+  //Loads the supplied values into the add to desk/edit desk form
+  const loadValuesIntoForm = (values: IConfigForm) => {
+    for (const key in values) {
+      //@ts-ignore
+      setValue(key, values[key]);
+    }
+  };
 
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
@@ -74,6 +82,18 @@ export const CreateLendingDesk = (props: any) => {
 
   //handle updating the lending desk config given the index and the new config
   const onUpdate: SubmitHandler<IConfigForm> = (newConfig) => {
+    if (
+      newConfig.minDuration > newConfig.maxDuration ||
+      newConfig.minInterest > newConfig.maxInterest ||
+      newConfig.minOffer > newConfig.maxOffer
+    ) {
+      addToast(
+        "Invalid Input",
+        "Please ensure that the min values are less than or equal to the max values",
+        "error"
+      );
+      return;
+    }
     // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
     // If nft is selected form can not be submitted
     if (nftCollection) {
@@ -81,21 +101,69 @@ export const CreateLendingDesk = (props: any) => {
       const newDeskConfigs = deskConfigs.map((config, i) =>
         i === editDeskIndex ? newConfig : config
       );
-
       setDeskConfigs(newDeskConfigs);
-      setEditDesk(false); // reset the edit desk state
-      setEditDeskIndex(0); // reset the edit desk index
+      //Don't switch to add desk mode because this collection is already added
     }
   };
 
+  // Whenever an nft collection is selected, first check if
+  // the collection is already present in result loan configs
+  // If it is present then auto load the present values in the add to desk form
+  useEffect(() => {
+    if (nftCollection) {
+      const selectedNftAddress = nftCollection.nft.address;
+      const loanConfigs = deskConfigs;
+
+      const filteredLoans = loanConfigs?.filter((loan) => {
+        return (
+          loan?.selectedNftCollection?.nft?.address.toLowerCase() ===
+          selectedNftAddress.toLowerCase()
+        );
+      });
+
+      const loanIndex = loanConfigs?.findIndex((loan) => {
+        return (
+          loan?.selectedNftCollection?.nft?.address.toLowerCase() ===
+          selectedNftAddress.toLowerCase()
+        );
+      });
+
+      if (filteredLoans?.length) {
+        const selectedLoan = filteredLoans[0];
+        setEditDesk(true);
+        setEditDeskIndex(loanIndex as number);
+        // const formValues = getFormValues(selectedLoan);
+        loadValuesIntoForm(selectedLoan);
+      } else {
+        setEditDesk(false);
+        setEditDeskIndex(0);
+      }
+    }
+  }, [nftCollection]);
+
   //On submit of the lending desk form, add the form data to the deskConfigs state variable
   const onSubmit: SubmitHandler<IConfigForm> = (data) => {
+    if (
+      data.minDuration > data.maxDuration ||
+      data.minInterest > data.maxInterest ||
+      data.minOffer > data.maxOffer
+    ) {
+      addToast(
+        "Invalid Input",
+        "Please ensure that the min values are less than or equal to the max values",
+        "error"
+      );
+      return;
+    }
     // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
     // If nft is selected form can not be submitted
     if (nftCollection) {
       try {
         data.selectedNftCollection = nftCollection;
         setDeskConfigs([...deskConfigs, data]);
+        //switch to edit desk mode because this collection is already added
+        setEditDesk(true);
+        setEditDeskIndex(deskConfigs.length);
       } catch (error) {
         console.error(`Nft collection is not selected`);
       }
@@ -171,7 +239,8 @@ export const CreateLendingDesk = (props: any) => {
       token?.token?.address as `0x${string}`,
       toWei(deskFundingAmount, token?.token?.decimals),
       deskConfigs.map((config) => ({
-        nftCollection: config.selectedNftCollection?.nft?.address as `0x${string}`,
+        nftCollection: config.selectedNftCollection?.nft
+          ?.address as `0x${string}`,
         nftCollectionIsErc1155: false,
         minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
         maxAmount: toWei(config.maxOffer, token?.token?.decimals),
@@ -327,7 +396,7 @@ export const CreateLendingDesk = (props: any) => {
                           {editDesk
                             ? `Edit Collection ${
                                 editDeskIndex + 1
-                              } & Paramaters`
+                              } Paramaters`
                             : " Choose Collection(s) & Paramaters"}
                         </h5>
                         <div
@@ -375,7 +444,7 @@ export const CreateLendingDesk = (props: any) => {
                                 name="minOffer"
                                 placeholder="Min Offer"
                                 min="0"
-                                max="99999"
+                                max={"99999"}
                                 step="1"
                                 defaultValue="0"
                               />
@@ -553,7 +622,6 @@ export const CreateLendingDesk = (props: any) => {
                     return (
                       <div key={index} className="pb-2 mb-2 border-bottom">
                         <div className="d-flex align-items-center">
-
                           <div className="flex-shrink-0 ms-auto">
                             <span className="text-body-secondary me-2">
                               <button
