@@ -17,7 +17,7 @@ describe("NFTY Finance: Initialize new lending desk", () => {
         initialBalance,
         []
       )
-    ).to.be.revertedWith("zero addr erc20");
+    ).to.be.revertedWithCustomError(nftyFinance, "ERC20IsZeroAddr");
   });
 
   it("should fail if contract is paused", async () => {

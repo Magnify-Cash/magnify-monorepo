@@ -49,7 +49,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance
         .connect(lender)
         .setLendingDeskLoanConfigs(invalidLendingDeskId, loanConfigParams)
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail when contract is paused", async () => {
@@ -73,7 +73,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
       nftyFinance
         .connect(alice)
         .setLendingDeskLoanConfigs(lendingDeskId, loanConfigParams)
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail for zero addr NFT collection", async () => {
@@ -87,7 +87,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           nftCollection: ethers.ZeroAddress,
         },
       ])
-    ).to.be.revertedWith("invalid nft collection");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidNFTCollection");
   });
 
   it("should fail for invalid ERC721", async () => {
@@ -102,7 +102,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           nftCollectionIsErc1155: false,
         },
       ])
-    ).to.be.revertedWith("invalid nft collection");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidNFTCollection");
   });
 
   it("should fail for invalid ERC1155", async () => {
@@ -117,7 +117,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           nftCollectionIsErc1155: true,
         },
       ])
-    ).to.be.revertedWith("invalid nft collection");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidNFTCollection");
   });
 
   it("should fail for invalid value of numeric params", async () => {
@@ -132,7 +132,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           minAmount: 0n,
         },
       ])
-    ).to.be.revertedWith("min amount = 0");
+    ).to.be.revertedWithCustomError(nftyFinance, "MinAmountIsZero");
 
     // max amount
     await expect(
@@ -142,7 +142,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           maxAmount: ethers.parseUnits("5", 18),
         },
       ])
-    ).to.be.revertedWith("max amount < min amount");
+    ).to.be.revertedWithCustomError(nftyFinance, "MaxAmountIsLessThanMin");
 
     // min interest
     await expect(
@@ -152,7 +152,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           minInterest: 0n,
         },
       ])
-    ).to.be.revertedWith("min interest = 0");
+    ).to.be.revertedWithCustomError(nftyFinance, "MinInterestIsZero");
 
     // max interest
     await expect(
@@ -162,7 +162,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           maxInterest: 5n * 100n,
         },
       ])
-    ).to.be.revertedWith("max interest < min interest");
+    ).to.be.revertedWithCustomError(nftyFinance, "MaxInterestIsLessThanMin");
 
     // min duration
     await expect(
@@ -172,7 +172,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           minDuration: 0n,
         },
       ])
-    ).to.be.revertedWith("min duration = 0");
+    ).to.be.revertedWithCustomError(nftyFinance, "MinDurationIsZero");
 
     // max duration
     await expect(
@@ -182,7 +182,7 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           maxDuration: 5n,
         },
       ])
-    ).to.be.revertedWith("max duration < min duration");
+    ).to.be.revertedWithCustomError(nftyFinance, "MaxDurationIsLessThanMin");
   });
 
   it("should add loan configs", async () => {
@@ -302,8 +302,6 @@ describe("NFTY Finance: Set lending desk loan configs", () => {
           maxAmount: ethers.parseUnits("100", 18),
         },
       ])
-    ).to.be.revertedWith(
-      "interest must be constant if amount and duration are constant"
-    );
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidInterest");
   });
 });

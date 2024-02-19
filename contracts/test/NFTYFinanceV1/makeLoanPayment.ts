@@ -25,14 +25,16 @@ describe("NFTY Finance: Make loan payment", () => {
   };
 
   it("should fail for invalid loan id", async () => {
-    const { nftyFinance, borrower, loanId } = await loadFixture(setup);
+    const { nftyFinance, borrower, loanId, obligationNotes } =
+      await loadFixture(setup);
 
     const invalidLoanId = 2;
     expect(loanId).to.not.equal(invalidLoanId); // check if actually invalid
 
     await expect(
       nftyFinance.connect(borrower).makeLoanPayment(invalidLoanId, 0)
-    ).to.be.revertedWith("invalid loan id");
+      // This reverts with TokenDoesNotExist and not InvalidLoanId
+    ).to.be.revertedWithCustomError(obligationNotes, "TokenDoesNotExist");
   });
 
   it("should fail when caller is not borrower", async () => {
@@ -40,7 +42,7 @@ describe("NFTY Finance: Make loan payment", () => {
 
     await expect(
       nftyFinance.connect(lender).makeLoanPayment(loanId, partialPaymentAmount)
-    ).to.be.revertedWith("not borrower");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotBorrower");
   });
 
   it("should fail when loan has defaulted", async () => {
@@ -53,7 +55,7 @@ describe("NFTY Finance: Make loan payment", () => {
 
     await expect(
       nftyFinance.connect(borrower).makeLoanPayment(loanId, 0)
-    ).to.be.revertedWith("loan has defaulted");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanHasDefaulted");
   });
 
   it("should fail if contract is paused", async () => {
@@ -79,7 +81,7 @@ describe("NFTY Finance: Make loan payment", () => {
           loanAmount +
             loanAmount * loanConfig.maxInterest * loanConfig.maxDuration
         )
-    ).to.be.revertedWith("payment amount > debt");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanPaymentExceedsDebt");
   });
 
   it("should make partial loan payment", async () => {

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.22;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "solady/src/auth/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -76,6 +76,42 @@ contract NFTYFinanceV1 is
      * @notice The address of the platform wallet
      */
     address public platformWallet;
+
+    // ERRORS
+    error PromissoryNotesIsZeroAddr();
+    error ObligationNotesIsZeroAddr();
+    error LendingKeysIsZeroAddr();
+    error ERC20IsZeroAddr();
+    error InvalidLendingDeskId();
+    error CallerIsNotLendingDeskOwner();
+    error MinAmountIsZero();
+    error MaxAmountIsLessThanMin();
+    error MinInterestIsZero();
+    error MaxInterestIsLessThanMin();
+    error MinDurationIsZero();
+    error MaxDurationIsLessThanMin();
+    error InvalidInterest();
+    error InvalidNFTCollection();
+    error LendingDeskIsNotActive();
+    error InsufficientLendingDeskBalance();
+    error UnsupportedNFTCollection();
+    error AmountIsZero();
+    error LendingDeskIsNotFrozen();
+    error InvalidLoanId();
+    error LendingDeskIsNotEmpty();
+    error LoanAmountTooLow();
+    error LoanAmountTooHigh();
+    error LoanDurationTooLow();
+    error LoanDurationTooHigh();
+    error LoanIsNotActive();
+    error CallerIsNotBorrower();
+    error CallerIsNotLender();
+    error LoanHasNotDefaulted();
+    error LoanHasDefaulted();
+    error PlatformWalletIsZeroAddr();
+    error LoanOriginationFeeMoreThan10Percent();
+    error LoanMustBeActiveForMin1Hour();
+    error LoanPaymentExceedsDebt();
 
     /* *********** */
     /*  EVENTS     */
@@ -226,15 +262,17 @@ contract NFTYFinanceV1 is
         uint256 _loanOriginationFee,
         address _platformWallet,
         address _initialOwner
-    ) Ownable(_initialOwner) {
+    ) {
         // Check & set peripheral contract addresses, emit event
-        require(_promissoryNotes != address(0), "promissory note is zero addr");
-        require(_obligationNotes != address(0), "obligation note is zero addr");
-        require(_lendingKeys != address(0), "lending keys is zero addr");
+        if (_promissoryNotes == address(0)) revert PromissoryNotesIsZeroAddr();
+        if (_obligationNotes == address(0)) revert ObligationNotesIsZeroAddr();
+        if (_lendingKeys == address(0)) revert LendingKeysIsZeroAddr();
         promissoryNotes = _promissoryNotes;
         obligationNotes = _obligationNotes;
         lendingKeys = _lendingKeys;
 
+        // Set initial owner
+        _initializeOwner(_initialOwner);
         // Set loan origination fee
         setLoanOriginationFee(_loanOriginationFee);
         // Set platform wallet
@@ -265,28 +303,32 @@ contract NFTYFinanceV1 is
         LoanConfig[] calldata _loanConfigs
     ) external whenNotPaused {
         // Check valid inputs
-        require(_erc20 != address(0), "zero addr erc20");
+        if (_erc20 == address(0)) revert ERC20IsZeroAddr();
 
+        uint256 lendingDeskId = lendingDeskIdCounter;
+        unchecked {
+            lendingDeskId++;
+        }
         // Set new desk in storage and update related storage
-        lendingDeskIdCounter++;
-        LendingDesk storage lendingDesk = lendingDesks[lendingDeskIdCounter];
+        LendingDesk storage lendingDesk = lendingDesks[lendingDeskId];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
 
         // Mint lending desk ownership NFT
-        INFTYERC721V1(lendingKeys).mint(msg.sender, lendingDeskIdCounter);
+        INFTYERC721V1(lendingKeys).mint(msg.sender, lendingDeskId);
 
         // Set loan configs and deposit liquidity
-        setLendingDeskLoanConfigs(lendingDeskIdCounter, _loanConfigs);
-        depositLendingDeskLiquidity(lendingDeskIdCounter, _depositAmount);
+        setLendingDeskLoanConfigs(lendingDeskId, _loanConfigs);
+        depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
 
         // Emit event
         emit NewLendingDeskInitialized(
-            lendingDeskIdCounter,
+            lendingDeskId,
             msg.sender,
             lendingDesk.erc20,
             _depositAmount
         );
+        lendingDeskIdCounter = lendingDeskId;
     }
 
     /**
@@ -298,51 +340,45 @@ contract NFTYFinanceV1 is
      */
     function setLendingDeskLoanConfigs(
         uint256 _lendingDeskId,
-        LoanConfig[] memory _loanConfigs
+        LoanConfig[] calldata _loanConfigs
     ) public whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
 
         // Note: Two loops over _loanConfigs to avoid re-entry
         // 1. Perform checks and update storage
-        for (uint256 i = 0; i < _loanConfigs.length; i++) {
-            require(_loanConfigs[i].minAmount > 0, "min amount = 0");
-            require(
-                _loanConfigs[i].maxAmount >= _loanConfigs[i].minAmount,
-                "max amount < min amount"
-            );
-            require(_loanConfigs[i].minInterest > 0, "min interest = 0");
-            require(
-                _loanConfigs[i].maxInterest >= _loanConfigs[i].minInterest,
-                "max interest < min interest"
-            );
-            require(_loanConfigs[i].minDuration > 0, "min duration = 0");
-            require(
-                _loanConfigs[i].maxDuration >= _loanConfigs[i].minDuration,
-                "max duration < min duration"
-            );
+        for (uint256 i; i < _loanConfigs.length; ) {
+            if (_loanConfigs[i].minAmount == 0) revert MinAmountIsZero();
+            if (_loanConfigs[i].maxAmount < _loanConfigs[i].minAmount)
+                revert MaxAmountIsLessThanMin();
+            if (_loanConfigs[i].minInterest == 0) revert MinInterestIsZero();
+            if (_loanConfigs[i].maxInterest < _loanConfigs[i].minInterest)
+                revert MaxInterestIsLessThanMin();
+            if (_loanConfigs[i].minDuration == 0) revert MinDurationIsZero();
+            if (_loanConfigs[i].maxDuration < _loanConfigs[i].minDuration)
+                revert MaxDurationIsLessThanMin();
             // If both duration and amount are constant, interest must be constant, because interest is a function of both
             // In other words, if amount and duration are constant, we can not scale and adjust interest
             // In logical notation it's the following, => meaning "implies"
             // minAmount = maxAmount && minDuration = maxDuration => minInterest = maxInterest
-            require(
-                !(_loanConfigs[i].minAmount == _loanConfigs[i].maxAmount &&
-                    _loanConfigs[i].minDuration ==
-                    _loanConfigs[i].maxDuration) ||
-                    (_loanConfigs[i].minInterest ==
-                        _loanConfigs[i].maxInterest),
-                "interest must be constant if amount and duration are constant"
-            );
+            if (
+                _loanConfigs[i].minAmount == _loanConfigs[i].maxAmount &&
+                _loanConfigs[i].minDuration == _loanConfigs[i].maxDuration &&
+                _loanConfigs[i].minInterest != _loanConfigs[i].maxInterest
+            ) revert InvalidInterest();
 
             // Update loan config state, emit event
             lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
+
+            // Increment counter
+            unchecked {
+                i++;
+            }
         }
 
         // Emit event
@@ -352,26 +388,29 @@ contract NFTYFinanceV1 is
         });
 
         // 2. Verify NFT collection is valid NFT
-        for (uint256 i = 0; i < _loanConfigs.length; i++) {
+        for (uint256 i; i < _loanConfigs.length; ) {
             // 1155
             if (_loanConfigs[i].nftCollectionIsErc1155) {
-                require(
-                    ERC165Checker.supportsInterface(
+                if (
+                    !ERC165Checker.supportsInterface(
                         _loanConfigs[i].nftCollection,
                         type(IERC1155).interfaceId
-                    ),
-                    "invalid nft collection"
-                );
+                    )
+                ) revert InvalidNFTCollection();
             }
             // 721
             else {
-                require(
-                    ERC165Checker.supportsInterface(
+                if (
+                    !ERC165Checker.supportsInterface(
                         _loanConfigs[i].nftCollection,
                         type(IERC721).interfaceId
-                    ),
-                    "invalid nft collection"
-                );
+                    )
+                ) revert InvalidNFTCollection();
+            }
+
+            // Increment counter
+            unchecked {
+                i++;
             }
         }
     }
@@ -389,16 +428,13 @@ contract NFTYFinanceV1 is
     ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (
             lendingDeskLoanConfigs[_lendingDeskId][_nftCollection]
-                .nftCollection != address(0),
-            "lending desk does not support NFT collection"
-        );
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
+                .nftCollection == address(0)
+        ) revert UnsupportedNFTCollection();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
 
         // Delete loan config from lending desk
         delete lendingDeskLoanConfigs[_lendingDeskId][_nftCollection];
@@ -422,18 +458,18 @@ contract NFTYFinanceV1 is
         uint256 _amount
     ) public whenNotPaused {
         // Ensure positive amount
-        require(_amount > 0, "amount = 0");
+        if (_amount == 0) revert AmountIsZero();
 
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
 
         // Update balance state, emit event
-        lendingDesk.balance = lendingDesk.balance + _amount;
+        unchecked {
+            lendingDesk.balance = lendingDesk.balance + _amount;
+        }
         emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
 
         // Transfer tokens
@@ -457,16 +493,12 @@ contract NFTYFinanceV1 is
     ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
-        require(
-            lendingDesk.balance >= _amount,
-            "insufficient lending desk balance"
-        );
-        require(_amount > 0, "amount = 0");
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
+        if (lendingDesk.balance < _amount)
+            revert InsufficientLendingDeskBalance();
+        if (_amount == 0) revert AmountIsZero();
 
         // Update balance state, emit event
         lendingDesk.balance = lendingDesk.balance - _amount;
@@ -489,26 +521,20 @@ contract NFTYFinanceV1 is
     ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
 
         // Freeze
         if (_freeze) {
-            require(
-                lendingDesk.status == LendingDeskStatus.Active,
-                "lending desk not active"
-            );
+            if (lendingDesk.status == LendingDeskStatus.Frozen)
+                revert LendingDeskIsNotActive();
             lendingDesk.status = LendingDeskStatus.Frozen;
         }
         // Unfreeze
         else {
-            require(
-                lendingDesk.status == LendingDeskStatus.Frozen,
-                "lending desk not frozen"
-            );
+            if (lendingDesk.status != LendingDeskStatus.Frozen)
+                revert LendingDeskIsNotFrozen();
             lendingDesk.status = LendingDeskStatus.Active;
         }
 
@@ -527,12 +553,10 @@ contract NFTYFinanceV1 is
     ) external whenNotPaused {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) == msg.sender,
-            "not lending desk owner"
-        );
-        require(lendingDesk.balance == 0, "lending desk not empty");
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
+            revert CallerIsNotLendingDeskOwner();
+        if (lendingDesk.balance != 0) revert LendingDeskIsNotEmpty();
 
         // Update status, emit event
         lendingDesk.status = LendingDeskStatus.Dissolved;
@@ -564,23 +588,18 @@ contract NFTYFinanceV1 is
         LoanConfig storage loanConfig = lendingDeskLoanConfigs[_lendingDeskId][
             _nftCollection
         ];
-        require(lendingDesk.erc20 != address(0), "invalid lending desk id");
-        require(
-            lendingDesk.status == LendingDeskStatus.Active,
-            "lending desk not active"
-        );
-        require(
-            loanConfig.nftCollection != address(0),
-            "lending desk does not support NFT collection"
-        );
-        require(
-            _amount <= lendingDesk.balance,
-            "insufficient lending desk balance"
-        );
-        require(_amount >= loanConfig.minAmount, "amount < min amount");
-        require(_amount <= loanConfig.maxAmount, "amount > max amount");
-        require(_duration >= loanConfig.minDuration, "duration < min duration");
-        require(_duration <= loanConfig.maxDuration, "duration > max duration");
+        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
+        if (lendingDesk.status != LendingDeskStatus.Active)
+            revert LendingDeskIsNotActive();
+        if (lendingDesk.balance < _amount)
+            revert InsufficientLendingDeskBalance();
+        if (loanConfig.nftCollection == address(0))
+            revert UnsupportedNFTCollection();
+
+        if (_amount > loanConfig.maxAmount) revert LoanAmountTooHigh();
+        if (_amount < loanConfig.minAmount) revert LoanAmountTooLow();
+        if (_duration > loanConfig.maxDuration) revert LoanDurationTooHigh();
+        if (_duration < loanConfig.minDuration) revert LoanDurationTooLow();
 
         /*
         Interest rate calculation
@@ -634,8 +653,11 @@ contract NFTYFinanceV1 is
         // Calculate platform fees
         uint256 platformFee = (loanOriginationFee * _amount) / 10000;
 
+        uint256 loanId = loanIdCounter;
+        unchecked {
+            loanId++;
+        }
         // Set new desk in storage and update related storage, emit event
-        loanIdCounter++;
         Loan memory loan = Loan({
             amount: _amount,
             amountPaidBack: 0,
@@ -647,11 +669,11 @@ contract NFTYFinanceV1 is
             interest: interest,
             nftCollection: _nftCollection
         });
-        loans[loanIdCounter] = loan;
+        loans[loanId] = loan;
         lendingDesk.balance = lendingDesk.balance - _amount;
         emit NewLoanInitialized(
             _lendingDeskId,
-            loanIdCounter,
+            loanId,
             msg.sender,
             _nftCollection,
             _nftId,
@@ -665,9 +687,9 @@ contract NFTYFinanceV1 is
         // Note: Promissory note is minted to the owner of the desk key
         INFTYERC721V1(promissoryNotes).mint(
             INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId),
-            loanIdCounter
+            loanId
         );
-        INFTYERC721V1(obligationNotes).mint(msg.sender, loanIdCounter);
+        INFTYERC721V1(obligationNotes).mint(msg.sender, loanId);
 
         // Transfer NFT to escrow
         // 1155
@@ -697,6 +719,9 @@ contract NFTYFinanceV1 is
 
         // Transfer fees to platform wallet
         IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
+
+        // Update loanIdCounter in storage
+        loanIdCounter = loanId;
     }
 
     /**
@@ -709,13 +734,13 @@ contract NFTYFinanceV1 is
     ) public view returns (uint256 amount) {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
-        require(loan.nftCollection != address(0), "invalid loan id");
-        require(loan.status == LoanStatus.Active, "loan not active");
+        if (loan.nftCollection == address(0)) revert InvalidLoanId();
+        if (loan.status != LoanStatus.Active) revert LoanIsNotActive();
 
         // Separate variable to get integer// floor value of hours elapsed
         uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
-        require(hoursElapsed < loan.duration, "loan has defaulted");
-        require(hoursElapsed > 0, "loan must be active for minimum of 1 hour");
+        if (hoursElapsed > loan.duration) revert LoanHasDefaulted();
+        if (hoursElapsed == 0) revert LoanMustBeActiveForMin1Hour();
 
         // Calculate total amount due
         uint256 totalAmountDue = loan.amount +
@@ -723,7 +748,8 @@ contract NFTYFinanceV1 is
             ((8760 * 10000) / hoursElapsed); // Yearly scale, 8760 hours in a year
 
         // Check for underflow
-        require(totalAmountDue >= loan.amountPaidBack, "payment amount > debt");
+        if (totalAmountDue < loan.amountPaidBack)
+            revert LoanPaymentExceedsDebt();
 
         return totalAmountDue - loan.amountPaidBack;
     }
@@ -742,13 +768,11 @@ contract NFTYFinanceV1 is
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
-        require(loan.nftCollection != address(0), "invalid loan id");
-        require(loan.status == LoanStatus.Active, "loan not active");
 
         // Get note holders and verify sender is borrower i.e. obligation note holder
         address borrower = INFTYERC721V1(obligationNotes).ownerOf(_loanId);
         address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
-        require(borrower == msg.sender, "not borrower");
+        if (borrower != msg.sender) revert CallerIsNotBorrower();
 
         // Update amountPaidBack, emit event
         loan.amountPaidBack += _amount;
@@ -807,18 +831,14 @@ contract NFTYFinanceV1 is
     function liquidateDefaultedLoan(uint256 _loanId) external whenNotPaused {
         // Get loan from storage
         Loan storage loan = loans[_loanId];
-        require(loan.nftCollection != address(0), "invalid loan id");
-        require(loan.status == LoanStatus.Active, "loan not active");
-        require(
-            INFTYERC721V1(promissoryNotes).ownerOf(_loanId) == msg.sender,
-            "not lender"
-        );
+        if (loan.nftCollection == address(0)) revert InvalidLoanId();
+        if (loan.status != LoanStatus.Active) revert LoanIsNotActive();
+        if (INFTYERC721V1(promissoryNotes).ownerOf(_loanId) != msg.sender)
+            revert CallerIsNotLender();
 
         // Check loan is expired / in default
-        require(
-            block.timestamp >= loan.startTime + (loan.duration * 1 hours),
-            "loan has not defaulted"
-        );
+        if (block.timestamp < loan.startTime + (loan.duration * 1 hours))
+            revert LoanHasNotDefaulted();
 
         // Update loan state to resolved & emit event
         loan.status = LoanStatus.Defaulted;
@@ -865,7 +885,8 @@ contract NFTYFinanceV1 is
         uint256 _loanOriginationFee
     ) public onlyOwner {
         // Check inputs (fee cannot be greater than 10%)
-        require(_loanOriginationFee <= 10000, "fee > 10%");
+        if (_loanOriginationFee > 10000)
+            revert LoanOriginationFeeMoreThan10Percent();
 
         // Set loan origination fees & emit event
         loanOriginationFee = _loanOriginationFee;
@@ -880,7 +901,7 @@ contract NFTYFinanceV1 is
      */
     function setPlatformWallet(address _platformWallet) public onlyOwner {
         // Check inputs
-        require(_platformWallet != address(0), "platform wallet is zero addr");
+        if (_platformWallet == address(0)) revert PlatformWalletIsZeroAddr();
 
         // Set platform wallet & emit event
         platformWallet = _platformWallet;

@@ -7,12 +7,12 @@ describe("NFTY Finance: Set paused", () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
     // try pausing and unpausing both
-    await expect(nftyFinance.connect(alice).setPaused(true))
-      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
-      .withArgs(alice.address);
-    await expect(nftyFinance.connect(alice).setPaused(false))
-      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
-      .withArgs(alice.address);
+    await expect(
+      nftyFinance.connect(alice).setPaused(true)
+    ).to.be.revertedWithCustomError(nftyFinance, "Unauthorized");
+    await expect(
+      nftyFinance.connect(alice).setPaused(false)
+    ).to.be.revertedWithCustomError(nftyFinance, "Unauthorized");
   });
 
   it("should fail to pause when already paused", async () => {

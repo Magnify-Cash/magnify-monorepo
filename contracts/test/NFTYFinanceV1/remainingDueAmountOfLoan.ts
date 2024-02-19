@@ -47,7 +47,7 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
 
     await expect(
       nftyFinance.getLoanAmountDue(invalidLoanId)
-    ).to.be.revertedWith("invalid loan id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLoanId");
   });
 
   it("should fail when loan has defaulted", async () => {
@@ -56,9 +56,9 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     // advance time and default the loan
     await time.increase(loanDuration * 3600);
 
-    await expect(nftyFinance.getLoanAmountDue(loanId)).to.be.revertedWith(
-      "loan has defaulted"
-    );
+    await expect(
+      nftyFinance.getLoanAmountDue(loanId)
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanHasDefaulted");
   });
 
   it("should fail when loan is resolved", async () => {
@@ -68,9 +68,9 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     const amountDue = await nftyFinance.getLoanAmountDue(loanId);
     await nftyFinance.connect(borrower).makeLoanPayment(loanId, amountDue);
 
-    await expect(nftyFinance.getLoanAmountDue(loanId)).to.be.revertedWith(
-      "loan not active"
-    );
+    await expect(
+      nftyFinance.getLoanAmountDue(loanId)
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanIsNotActive");
   });
 
   it("should return remaining due amount when no payment has been made", async () => {

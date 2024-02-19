@@ -16,7 +16,7 @@ describe("NFTY Finance: Dissolve lending desk", () => {
     // Try freeze and unfreeze both
     await expect(
       nftyFinance.connect(lender).dissolveLendingDesk(invalidLendingDeskId)
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -26,7 +26,7 @@ describe("NFTY Finance: Dissolve lending desk", () => {
 
     await expect(
       nftyFinance.dissolveLendingDesk(lendingDeskId)
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail to when lending desk has some balance", async () => {
@@ -36,7 +36,7 @@ describe("NFTY Finance: Dissolve lending desk", () => {
 
     await expect(
       nftyFinance.connect(lender).dissolveLendingDesk(lendingDeskId)
-    ).to.be.revertedWith("lending desk not empty");
+    ).to.be.revertedWithCustomError(nftyFinance, "LendingDeskIsNotEmpty");
   });
 
   it("should dissolve lending desk", async () => {

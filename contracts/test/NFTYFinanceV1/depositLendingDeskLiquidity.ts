@@ -29,7 +29,7 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
 
     await expect(
       nftyFinance.connect(lender).depositLendingDeskLiquidity(lendingDeskId, 0)
-    ).to.be.revertedWith("amount = 0");
+    ).to.be.revertedWithCustomError(nftyFinance, "AmountIsZero");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -39,7 +39,7 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
 
     await expect(
       nftyFinance.depositLendingDeskLiquidity(lendingDeskId, liquidityAmount)
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail for invalid lending desk id", async () => {
@@ -55,7 +55,7 @@ describe("NFTY Finance: Deposit lending desk liquidity", () => {
         invalidLendingDeskId,
         liquidityAmount
       )
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail if contract is paused", async () => {

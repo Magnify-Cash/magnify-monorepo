@@ -14,7 +14,7 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
     expect(lendingDeskId).to.not.equal(invalidLendingDeskId); // check if actually invalid
     await expect(
       nftyFinance.withdrawLendingDeskLiquidity(invalidLendingDeskId, amount)
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -27,7 +27,7 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
       nftyFinance
         .connect(alice)
         .withdrawLendingDeskLiquidity(lendingDeskId, amount)
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail if contract is paused", async () => {
@@ -86,7 +86,10 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
       nftyFinance
         .connect(lender)
         .withdrawLendingDeskLiquidity(lendingDeskId, highAmount)
-    ).to.be.revertedWith("insufficient lending desk balance");
+    ).to.be.revertedWithCustomError(
+      nftyFinance,
+      "InsufficientLendingDeskBalance"
+    );
   });
 
   it("should fail for zero amount", async () => {
@@ -96,6 +99,6 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
 
     await expect(
       nftyFinance.connect(lender).withdrawLendingDeskLiquidity(lendingDeskId, 0)
-    ).to.be.revertedWith("amount = 0");
+    ).to.be.revertedWithCustomError(nftyFinance, "AmountIsZero");
   });
 });

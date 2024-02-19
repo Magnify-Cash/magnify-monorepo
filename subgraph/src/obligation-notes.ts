@@ -7,7 +7,7 @@ export function handleTransfer(event: Transfer): void {
   if (event.params.from == Address.zero() || event.params.to == Address.zero())
     return;
 
-  const loan = Loan.load(event.params.tokenId.toString());
+  const loan = Loan.load(event.params.id.toString());
   if (!loan) return;
 
   // Create borrower User instance if doesn't exist

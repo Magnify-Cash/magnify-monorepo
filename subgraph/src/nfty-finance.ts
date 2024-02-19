@@ -349,7 +349,7 @@ export function handleProtocolInitialized(event: ProtocolInitialized): void {
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   // Contract deployment, create ProtocolInfo entity
-  if (event.params.previousOwner == Address.zero()) {
+  if (event.params.oldOwner == Address.zero()) {
     const protocolInfo = new ProtocolInfo("0");
     protocolInfo.owner = event.params.newOwner;
     protocolInfo.paused = false;

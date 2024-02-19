@@ -22,7 +22,7 @@ export function handleTransfer(event: Transfer): void {
   }
 
   // Update lending desk owner
-  const lendingDesk = LendingDesk.load(event.params.tokenId.toString());
+  const lendingDesk = LendingDesk.load(event.params.id.toString());
   if (!lendingDesk) return;
 
   lendingDesk.owner = event.params.to.toHex();

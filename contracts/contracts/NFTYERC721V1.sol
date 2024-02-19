@@ -52,7 +52,7 @@ contract NFTYERC721V1 is ERC721, Ownable {
         string memory symbol,
         string memory _baseURI,
         address initialOwner
-    ) Ownable() ERC721() {
+    ) {
         if (bytes(name).length == 0) revert NameIsEmpty();
         if (bytes(symbol).length == 0) revert SymbolIsEmpty();
         if (bytes(_baseURI).length == 0) revert BaseURIIsEmpty();

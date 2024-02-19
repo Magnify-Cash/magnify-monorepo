@@ -17,13 +17,13 @@ describe("NFTY Finance: Set lending desk state", () => {
       nftyFinance
         .connect(lender)
         .setLendingDeskState(invalidLendingDeskId, true)
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
 
     await expect(
       nftyFinance
         .connect(lender)
         .setLendingDeskState(invalidLendingDeskId, false)
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -33,7 +33,7 @@ describe("NFTY Finance: Set lending desk state", () => {
 
     await expect(
       nftyFinance.setLendingDeskState(lendingDeskId, true)
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail to freeze when lending desk is frozen", async () => {
@@ -45,7 +45,7 @@ describe("NFTY Finance: Set lending desk state", () => {
 
     await expect(
       nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, true)
-    ).to.be.revertedWith("lending desk not active");
+    ).to.be.revertedWithCustomError(nftyFinance, "LendingDeskIsNotActive");
   });
 
   it("should fail to unfreeze when lending desk is active", async () => {
@@ -55,7 +55,7 @@ describe("NFTY Finance: Set lending desk state", () => {
 
     await expect(
       nftyFinance.connect(lender).setLendingDeskState(lendingDeskId, false)
-    ).to.be.revertedWith("lending desk not frozen");
+    ).to.be.revertedWithCustomError(nftyFinance, "LendingDeskIsNotFrozen");
   });
 
   it("should freeze lending desk", async () => {

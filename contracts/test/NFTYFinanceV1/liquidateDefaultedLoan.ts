@@ -13,7 +13,7 @@ describe("NFTY Finance: Liquidate defaulted loan", () => {
 
     await expect(
       nftyFinance.connect(lender).liquidateDefaultedLoan(invalidLoanId)
-    ).to.be.revertedWith("invalid loan id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLoanId");
   });
 
   it("should fail when caller is not lender", async () => {
@@ -26,7 +26,7 @@ describe("NFTY Finance: Liquidate defaulted loan", () => {
 
     await expect(
       nftyFinance.connect(alice).liquidateDefaultedLoan(loanId)
-    ).to.be.revertedWith("not lender");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLender");
   });
 
   it("should fail when loan is not defaulted", async () => {
@@ -34,7 +34,7 @@ describe("NFTY Finance: Liquidate defaulted loan", () => {
 
     await expect(
       nftyFinance.connect(lender).liquidateDefaultedLoan(loanId)
-    ).to.be.revertedWith("loan has not defaulted");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanHasNotDefaulted");
   });
 
   it("should fail if contract is paused", async () => {

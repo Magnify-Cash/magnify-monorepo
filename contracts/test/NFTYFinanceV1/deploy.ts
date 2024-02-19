@@ -66,7 +66,7 @@ describe("NFTY Finance: Deploy", () => {
         platformWallet,
         owner.address
       )
-    ).to.be.revertedWith("promissory note is zero addr");
+    ).to.be.revertedWithCustomError(NFTYFinance, "PromissoryNotesIsZeroAddr");
   });
 
   it("should fail for zero addr obligation receipt", async () => {
@@ -82,7 +82,7 @@ describe("NFTY Finance: Deploy", () => {
         platformWallet,
         owner.address
       )
-    ).to.be.revertedWith("obligation note is zero addr");
+    ).to.be.revertedWithCustomError(NFTYFinance, "ObligationNotesIsZeroAddr");
   });
 
   it("should fail for zero addr lending keys", async () => {
@@ -103,7 +103,7 @@ describe("NFTY Finance: Deploy", () => {
         platformWallet,
         owner.address
       )
-    ).to.be.revertedWith("lending keys is zero addr");
+    ).to.be.revertedWithCustomError(NFTYFinance, "LendingKeysIsZeroAddr");
   });
 
   it("should deploy", async () => {

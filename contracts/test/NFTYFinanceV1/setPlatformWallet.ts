@@ -9,7 +9,7 @@ describe("NFTY Finance: Set platform wallet", function () {
 
     expect(
       nftyFinance.setPlatformWallet(ethers.ZeroAddress)
-    ).to.be.revertedWith("platform wallet is zero addr");
+    ).to.be.revertedWithCustomError(nftyFinance, "PlatformWalletIsZeroAddr");
   });
 
   it("should set platform wallet", async () => {
@@ -28,8 +28,8 @@ describe("NFTY Finance: Set platform wallet", function () {
   it("should fail when caller is not admin", async () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
-    await expect(nftyFinance.connect(alice).setPlatformWallet(alice.address))
-      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
-      .withArgs(alice.address);
+    await expect(
+      nftyFinance.connect(alice).setPlatformWallet(alice.address)
+    ).to.be.revertedWithCustomError(nftyFinance, "Unauthorized");
   });
 });

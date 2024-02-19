@@ -47,7 +47,7 @@ describe("NFTY Finance: Initialize new loan", () => {
           loanDuration,
           loanAmount
         )
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail for duration < min duration", async () => {
@@ -63,7 +63,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         10, // loan duration
         loanAmount
       )
-    ).to.be.revertedWith("duration < min duration");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanDurationTooLow");
   });
 
   it("should fail for duration > max duration", async () => {
@@ -79,7 +79,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         300, // loan duration
         loanAmount
       )
-    ).to.be.revertedWith("duration > max duration");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanDurationTooHigh");
   });
 
   it("should fail for amount < min amount", async () => {
@@ -95,7 +95,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         loanDuration,
         ethers.parseUnits("5", 18) // loan amount
       )
-    ).to.be.revertedWith("amount < min amount");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanAmountTooLow");
   });
 
   it("should fail for amount > max amount", async () => {
@@ -111,7 +111,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         loanDuration,
         ethers.parseUnits("200", 18) // loan amount
       )
-    ).to.be.revertedWith("amount > max amount");
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanAmountTooHigh");
   });
 
   it("should fail if contract is paused", async () => {
@@ -150,7 +150,7 @@ describe("NFTY Finance: Initialize new loan", () => {
         loanDuration,
         loanAmount
       )
-    ).to.be.revertedWith("lending desk does not support NFT collection");
+    ).to.be.revertedWithCustomError(nftyFinance, "UnsupportedNFTCollection");
   });
 
   it("should fail if lending desk does not have enough balance", async () => {
@@ -181,7 +181,10 @@ describe("NFTY Finance: Initialize new loan", () => {
           loanDuration,
           loanAmount
         )
-    ).to.be.revertedWith("insufficient lending desk balance");
+    ).to.be.revertedWithCustomError(
+      nftyFinance,
+      "InsufficientLendingDeskBalance"
+    );
   });
 
   it("should fail if liquidity shop is not active", async () => {
@@ -200,7 +203,7 @@ describe("NFTY Finance: Initialize new loan", () => {
           loanDuration,
           loanAmount
         )
-    ).to.be.revertedWith("lending desk not active");
+    ).to.be.revertedWithCustomError(nftyFinance, "LendingDeskIsNotActive");
   });
 
   it("should create loan", async () => {

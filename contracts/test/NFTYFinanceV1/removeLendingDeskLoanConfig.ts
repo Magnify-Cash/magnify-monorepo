@@ -22,7 +22,7 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
           invalidLendingDeskId,
           loanConfig.nftCollection
         )
-    ).to.be.revertedWith("invalid lending desk id");
+    ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
 
   it("should fail when caller is not lending desk owner", async () => {
@@ -35,7 +35,7 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
         lendingDeskId,
         loanConfig.nftCollection
       )
-    ).to.be.revertedWith("not lending desk owner");
+    ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
   it("should fail when loan config does not exist", async () => {
@@ -47,7 +47,7 @@ describe("NFTY Finance: Remove lending desk loan config", () => {
       nftyFinance
         .connect(lender)
         .removeLendingDeskLoanConfig(lendingDeskId, erc721.target)
-    ).to.be.revertedWith("lending desk does not support NFT collection");
+    ).to.be.revertedWithCustomError(nftyFinance, "UnsupportedNFTCollection");
   });
 
   it("should remove loan config", async () => {

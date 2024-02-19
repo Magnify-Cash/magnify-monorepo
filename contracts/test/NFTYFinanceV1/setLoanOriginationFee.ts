@@ -7,7 +7,10 @@ describe("NFTY Finance: Set loan origination fee", function () {
     const { nftyFinance } = await loadFixture(deployNftyFinance);
 
     const tx = await nftyFinance.setLoanOriginationFee(10000);
-    expect(tx).to.be.revertedWith("fee > 10%");
+    expect(tx).to.be.revertedWithCustomError(
+      nftyFinance,
+      "LoanOriginationFeeMoreThan10Percent"
+    );
   });
 
   it("should set loan origination fee", async () => {
@@ -26,8 +29,8 @@ describe("NFTY Finance: Set loan origination fee", function () {
   it("should fail when caller is not admin", async () => {
     const { nftyFinance, alice } = await loadFixture(deployNftyFinance);
 
-    await expect(nftyFinance.connect(alice).setLoanOriginationFee(100))
-      .to.be.revertedWithCustomError(nftyFinance, "OwnableUnauthorizedAccount")
-      .withArgs(alice.address);
+    await expect(
+      nftyFinance.connect(alice).setLoanOriginationFee(100)
+    ).to.be.revertedWithCustomError(nftyFinance, "Unauthorized");
   });
 });
