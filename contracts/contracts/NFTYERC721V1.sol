@@ -14,8 +14,8 @@ contract NFTYERC721V1 is ERC721, Ownable {
     /* *********** */
     string public baseURI;
     address public nftyFinance;
-    string public _name;
-    string public _symbol;
+    string private _name;
+    string private _symbol;
 
     /* *********** */
     /*   EVENTS    */
