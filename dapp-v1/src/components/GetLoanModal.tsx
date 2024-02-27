@@ -143,8 +143,15 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}-
-                        {fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
+                        {fromWei(
+                          loanConfig?.minAmount,
+                          lendingDesk?.erc20?.decimals
+                        )}
+                        -
+                        {fromWei(
+                          loanConfig?.maxAmount,
+                          lendingDesk?.erc20?.decimals
+                        )}
                       </div>
                       <span className="text-body-secondary ms-2">
                         {lendingDesk.erc20.symbol}
@@ -157,7 +164,8 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {loanConfig?.minDuration / 24}-{loanConfig?.maxDuration / 24}
+                        {loanConfig?.minDuration / 24}-
+                        {loanConfig?.maxDuration / 24}
                       </div>
                       <span className="text-body-secondary ms-2">Days</span>
                     </div>
@@ -173,7 +181,9 @@ export default function GetLoanModal({
                       </div>
                       <span className="text-body-secondary ms-2">%</span>
                     </div>
-                    <div className="text-body-secondary">Min/Max Interest Rate</div>
+                    <div className="text-body-secondary">
+                      Min/Max Interest Rate
+                    </div>
                   </div>
                 </div>
               </div>
@@ -189,7 +199,7 @@ export default function GetLoanModal({
                   onChange={(e) =>
                     setNftId(
                       // @ts-ignore
-                      e.target.value ? parseInt(e.target.value) : undefined,
+                      e.target.value ? parseInt(e.target.value) : undefined
                     )
                   }
                 >
@@ -214,7 +224,7 @@ export default function GetLoanModal({
                     className="form-control form-control-lg py-2"
                     id="set-duration"
                     placeholder="Duration"
-                    step="1"
+                    step="any"
                     min={loanConfig?.minDuration / 24}
                     max={loanConfig?.maxDuration / 24}
                     value={duration}
@@ -222,6 +232,7 @@ export default function GetLoanModal({
                       // @ts-ignore
                       setDuration(e.target.value)
                     }
+                    required
                   />
                   <span className="input-group-text">Days</span>
                 </div>
@@ -237,14 +248,23 @@ export default function GetLoanModal({
                     className="form-control form-control-lg py-2"
                     id="set-amount"
                     placeholder="Amount"
-                    step="1"
-                    min={fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}
-                    max={fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
+                    step="any"
+                    min={fromWei(
+                      loanConfig?.minAmount,
+                      lendingDesk?.erc20?.decimals
+                    )}
+                    max={fromWei(
+                      loanConfig?.maxAmount,
+                      lendingDesk?.erc20?.decimals
+                    )}
                     value={amount}
                     // @ts-ignore
                     onChange={(e) => setAmount(e.target.value)}
+                    required
                   />
-                  <span className="input-group-text">{lendingDesk.erc20.symbol}</span>
+                  <span className="input-group-text">
+                    {lendingDesk.erc20.symbol}
+                  </span>
                 </div>
               </div>
             </div>
@@ -272,7 +292,7 @@ export default function GetLoanModal({
                       loanConfig,
                       amount,
                       duration,
-                      lendingDesk.erc20?.decimals,
+                      lendingDesk.erc20?.decimals
                     )
                   : null}
                 %
@@ -286,7 +306,8 @@ export default function GetLoanModal({
             </div>
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">
-                2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1"></i>
+                2% Loan Origination Fee{" "}
+                <i className="fa-light fa-info-circle ms-1"></i>
               </span>
               <span className="fw-medium ms-auto">
                 {`- `}

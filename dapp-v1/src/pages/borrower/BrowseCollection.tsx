@@ -188,7 +188,10 @@ export const BrowseCollection = (props) => {
     setApprovalIsLoading(true);
     try {
       await approveErc721();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setApprovalIsLoading(false);
   }
   // Modal submit
@@ -204,7 +207,10 @@ export const BrowseCollection = (props) => {
     setNewLoanIsLoading(true);
     try {
       await newLoanWrite?.();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setNewLoanIsLoading(false);
   }
 

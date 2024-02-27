@@ -161,6 +161,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       await depositLiquidity();
     } catch (error) {
       console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
     }
     setActionIsLoading(false);
   }
@@ -172,6 +173,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       await withdrawLiquidity();
     } catch (error) {
       console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
     }
     setActionIsLoading(false);
   }
@@ -225,7 +227,10 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setApprovalIsLoading(false);
   }
   //This hook is used to display loading toast when the approve transaction is pending

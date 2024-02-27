@@ -136,7 +136,10 @@ export const ManageLendingDesk = (props: any) => {
     const deleteCollectionConfig = async () => {
       try {
         await deleteCollection();
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+        addToast("Error", "An error occurred. Please try again.", "error");
+      }
       setDeletingCollection(false);
     };
     if (deletingCollection) deleteCollectionConfig();
@@ -213,7 +216,10 @@ export const ManageLendingDesk = (props: any) => {
     setFreezeUnfreezeIsLoading(true);
     try {
       await freezeWrite?.();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setFreezeUnfreezeIsLoading(false);
   };
 
@@ -359,7 +365,10 @@ export const ManageLendingDesk = (props: any) => {
     setUpdateDeskIsLoading(true);
     try {
       await updateLendingDesk();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setUpdateDeskIsLoading(false);
   }
 
@@ -619,9 +628,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("minOffer")}
+                        {...register("minOffer", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.minOffer ? " is-invalid" : "")
+                        }
                         id="min-offer"
                         placeholder="Min Offer"
                         min="0"
@@ -639,9 +651,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("maxOffer")}
+                        {...register("maxOffer", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.maxOffer ? " is-invalid" : "")
+                        }
                         id="max-offer"
                         placeholder="Max Offer"
                         min="0"
@@ -664,9 +679,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("minDuration")}
+                        {...register("minDuration", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.minDuration ? " is-invalid" : "")
+                        }
                         id="min-duration"
                         placeholder="Min Duration"
                         min="0"
@@ -684,9 +702,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("maxDuration")}
+                        {...register("maxDuration", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.maxDuration ? " is-invalid" : "")
+                        }
                         id="max-duration"
                         placeholder="Max Durtion"
                         min="0"
@@ -709,9 +730,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("minInterest")}
+                        {...register("minInterest", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.minInterest ? " is-invalid" : "")
+                        }
                         id="min-interest-rate"
                         placeholder="Min Interest Rate"
                         min="0"
@@ -731,9 +755,12 @@ export const ManageLendingDesk = (props: any) => {
                   <div className="input-group">
                     <div className="form-floating">
                       <input
-                        {...register("maxInterest")}
+                        {...register("maxInterest", { required: true })}
                         type="number"
-                        className="form-control fs-5"
+                        className={
+                          "form-control fs-5" +
+                          (errors.maxInterest ? " is-invalid" : "")
+                        }
                         id="max-interest-rate"
                         placeholder="Max Durtion"
                         min="0"

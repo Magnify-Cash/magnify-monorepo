@@ -83,9 +83,9 @@ export const CreateLendingDesk = (props: any) => {
   //handle updating the lending desk config given the index and the new config
   const onUpdate: SubmitHandler<IConfigForm> = (newConfig) => {
     if (
-      newConfig.minDuration > newConfig.maxDuration ||
-      newConfig.minInterest > newConfig.maxInterest ||
-      newConfig.minOffer > newConfig.maxOffer
+      parseFloat(newConfig.minDuration) > parseFloat(newConfig.maxDuration) ||
+      parseFloat(newConfig.minInterest) > parseFloat(newConfig.maxInterest) ||
+      parseFloat(newConfig.minOffer) > parseFloat(newConfig.maxOffer)
     ) {
       addToast(
         "Invalid Input",
@@ -144,9 +144,9 @@ export const CreateLendingDesk = (props: any) => {
   //On submit of the lending desk form, add the form data to the deskConfigs state variable
   const onSubmit: SubmitHandler<IConfigForm> = (data) => {
     if (
-      data.minDuration > data.maxDuration ||
-      data.minInterest > data.maxInterest ||
-      data.minOffer > data.maxOffer
+      parseFloat(data.minDuration) > parseFloat(data.maxDuration) ||
+      parseFloat(data.minInterest) > parseFloat(data.maxInterest) ||
+      parseFloat(data.minOffer) > parseFloat(data.maxOffer)
     ) {
       addToast(
         "Invalid Input",
@@ -297,7 +297,10 @@ export const CreateLendingDesk = (props: any) => {
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setApprovalIsLoading(false);
   }
 
@@ -311,7 +314,10 @@ export const CreateLendingDesk = (props: any) => {
     setInitLendingDeskIsLoading(true);
     try {
       await initializeNewLendingDesk();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setInitLendingDeskIsLoading(false);
   }
 
@@ -435,15 +441,18 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("minOffer")}
+                                {...register("minOffer", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.minOffer ? " is-invalid" : "")
+                                }
                                 id="min-offer"
                                 name="minOffer"
                                 placeholder="Min Offer"
                                 min="0"
                                 max={"99999"}
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="min-offer">Min Offer</label>
@@ -457,14 +466,17 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("maxOffer")}
+                                {...register("maxOffer", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.maxOffer ? " is-invalid" : "")
+                                }
                                 name="maxOffer"
                                 placeholder="Max Offer"
                                 min="0"
                                 max="99999"
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="max-offer">Max Offer</label>
@@ -483,14 +495,17 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("minDuration")}
+                                {...register("minDuration", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.minDuration ? " is-invalid" : "")
+                                }
                                 name="minDuration"
                                 placeholder="Min Duration"
                                 min="0"
                                 max="99999"
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="min-duration">Min Duration</label>
@@ -504,14 +519,17 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("maxDuration")}
+                                {...register("maxDuration", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.maxDuration ? " is-invalid" : "")
+                                }
                                 name="maxDuration"
                                 placeholder="Max Durtion"
                                 min="0"
                                 max="99999"
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="max-duration">Max Duration</label>
@@ -530,14 +548,17 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("minInterest")}
+                                {...register("minInterest", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.minInterest ? " is-invalid" : "")
+                                }
                                 name="minInterest"
                                 placeholder="Min Interest Rate"
                                 min="0"
                                 max="100"
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="min-interest-rate">
@@ -553,14 +574,17 @@ export const CreateLendingDesk = (props: any) => {
                           <div className="input-group">
                             <div className="form-floating">
                               <input
-                                {...register("maxInterest")}
+                                {...register("maxInterest", { required: true })}
                                 type="number"
-                                className="form-control fs-5"
+                                className={
+                                  "form-control fs-5" +
+                                  (errors.maxInterest ? " is-invalid" : "")
+                                }
                                 name="maxInterest"
                                 placeholder="Max Durtion"
                                 min="0"
                                 max="100"
-                                step="1"
+                                step="any"
                                 defaultValue="0"
                               />
                               <label htmlFor="max-interest-rate">
