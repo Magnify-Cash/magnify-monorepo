@@ -281,11 +281,11 @@ export const ManageLendingDesk = (props: any) => {
               result.data?.lendingDesk?.erc20?.decimals
             ),
             // To account for days
-            minDuration: BigInt(parseInt(deskConfig?.minDuration) * 24),
-            maxDuration: BigInt(parseInt(deskConfig?.maxDuration) * 24),
+            minDuration: parseFloat(deskConfig?.minDuration) * 24, // Convert days to hours
+            maxDuration: parseFloat(deskConfig?.maxDuration) * 24,
             // To account for basis points
-            minInterest: BigInt(parseInt(deskConfig?.minInterest) * 100),
-            maxInterest: BigInt(parseInt(deskConfig?.maxInterest) * 100),
+            minInterest: parseFloat(deskConfig?.minInterest) * 100,
+            maxInterest: parseFloat(deskConfig?.maxInterest) * 100,
           },
         ],
       ],

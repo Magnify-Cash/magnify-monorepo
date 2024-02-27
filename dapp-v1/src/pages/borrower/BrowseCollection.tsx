@@ -39,7 +39,9 @@ export const BrowseCollection = (props) => {
     // This function will be executed whenever the query data changes
     const getTitle = async () => {
       if (!fetching && collection_address) {
-        const fetchedNftArr: INft[] = await fetchNFTDetails([collection_address]);
+        const fetchedNftArr: INft[] = await fetchNFTDetails([
+          collection_address,
+        ]);
         if (title) {
           title.innerHTML = `${fetchedNftArr[0].name} Liquidity Desks`;
         }
@@ -83,10 +85,11 @@ export const BrowseCollection = (props) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
-    address: nft?.address as `0x${string}`,
-    args: [BigInt(nftId || 0)],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc721GetApproved({
+      address: nft?.address as `0x${string}`,
+      args: [BigInt(nftId || 0)],
+    });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -101,7 +104,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -112,7 +115,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -122,7 +125,9 @@ export const BrowseCollection = (props) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
+    if (
+      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
+    ) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -136,8 +141,11 @@ export const BrowseCollection = (props) => {
         BigInt(selectedLendingDesk?.id ? selectedLendingDesk.id : 0),
         nft?.address as `0x${string}`,
         BigInt(nftId || 0),
-        BigInt((duration || 0) * 24),
-        toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
+        (duration || 0) * 24,
+        toWei(
+          amount ? amount.toString() : "0",
+          selectedLendingDesk?.erc20.decimals
+        ),
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
@@ -155,7 +163,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -166,7 +174,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -185,7 +193,9 @@ export const BrowseCollection = (props) => {
   }
   // Modal submit
   async function requestLoan(index: number) {
-    const form = document.getElementById(`quickLoanForm${index}`) as HTMLFormElement;
+    const form = document.getElementById(
+      `quickLoanForm${index}`
+    ) as HTMLFormElement;
     const isValid = form.checkValidity();
     if (!isValid) {
       form.reportValidity();
@@ -205,7 +215,7 @@ export const BrowseCollection = (props) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -220,7 +230,7 @@ export const BrowseCollection = (props) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -252,14 +262,18 @@ export const BrowseCollection = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Currency
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">Offer</th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">
+                  Offer
+                </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Duration
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Interest Rate
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
+                  {" "}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -288,19 +302,21 @@ export const BrowseCollection = (props) => {
                     <td className="py-3">
                       {fromWei(
                         loanConfig.minAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals,
+                        loanConfig.lendingDesk?.erc20?.decimals
                       )}{" "}
                       -{" "}
                       {fromWei(
                         loanConfig.maxAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals,
+                        loanConfig.lendingDesk?.erc20?.decimals
                       )}
                     </td>
                     <td className="py-3">
-                      {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
+                      {loanConfig.minDuration / 24}-
+                      {loanConfig.maxDuration / 24} days
                     </td>
                     <td className="py-3">
-                      {loanConfig.minInterest / 100}-{loanConfig.maxInterest / 100}%
+                      {loanConfig.minInterest / 100}-
+                      {loanConfig.maxInterest / 100}%
                     </td>
                     <td className="py-3 pe-3">
                       <GetLoanModal

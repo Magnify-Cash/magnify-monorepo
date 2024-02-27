@@ -245,11 +245,11 @@ export const CreateLendingDesk = (props: any) => {
         minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
         maxAmount: toWei(config.maxOffer, token?.token?.decimals),
         // To account for days
-        minDuration: BigInt(parseInt(config.minDuration) * 24),
-        maxDuration: BigInt(parseInt(config.maxDuration) * 24),
+        minDuration: parseFloat(config.minDuration) * 24,
+        maxDuration: parseFloat(config.maxDuration) * 24,
         // To account for basis points
-        minInterest: BigInt(parseInt(config.minInterest) * 100),
-        maxInterest: BigInt(parseInt(config.maxInterest) * 100),
+        minInterest: parseFloat(config.minInterest) * 100,
+        maxInterest: parseFloat(config.maxInterest) * 100,
       })),
     ],
   });
@@ -394,9 +394,7 @@ export const CreateLendingDesk = (props: any) => {
                       <div>
                         <h5 className="fw-medium text-primary-emphasis">
                           {editDesk
-                            ? `Edit Collection ${
-                                editDeskIndex + 1
-                              } Paramaters`
+                            ? `Edit Collection ${editDeskIndex + 1} Paramaters`
                             : " Choose Collection(s) & Paramaters"}
                         </h5>
                         <div

@@ -40,7 +40,8 @@ export const QuickLoan = (props: any) => {
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
 
-  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) =>
+    _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails([
@@ -81,10 +82,11 @@ export const QuickLoan = (props: any) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
-    address: nftCollection?.nft.address as `0x${string}`,
-    args: [BigInt(nftId || 0)],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc721GetApproved({
+      address: nftCollection?.nft.address as `0x${string}`,
+      args: [BigInt(nftId || 0)],
+    });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -100,7 +102,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -111,7 +113,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -121,7 +123,9 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
+    if (
+      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
+    ) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -134,7 +138,7 @@ export const QuickLoan = (props: any) => {
         BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
         nftCollection?.nft.address as `0x${string}`,
         BigInt(nftId || 0),
-        BigInt((duration || 0) * 24),
+        (duration || 0) * 24,
         //TODO supply decimals value
         toWei(amount ? amount.toString() : "0", token?.token.decimals),
       ],
@@ -154,7 +158,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -165,7 +169,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -213,7 +217,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -228,7 +232,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -348,7 +352,9 @@ export const QuickLoan = (props: any) => {
                         name="desks"
                         id={item.lendingDesk.id}
                         onClick={(e) =>
-                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
+                          setSelectedLendingDesk(
+                            (e.target as HTMLInputElement).value
+                          )
                         }
                         value={JSON.stringify(item)}
                       />
@@ -377,7 +383,7 @@ export const QuickLoan = (props: any) => {
                                 <div className="fw-bold">
                                   {fromWei(
                                     item.loanConfig.maxAmount,
-                                    token?.token.decimals,
+                                    token?.token.decimals
                                   )}
                                 </div>
                                 <small className="fw-normal">max offer</small>
