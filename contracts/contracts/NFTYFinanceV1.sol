@@ -840,7 +840,7 @@ contract NFTYFinanceV1 is
         if (block.timestamp < loan.startTime + (loan.duration * 1 hours))
             revert LoanHasNotDefaulted();
 
-        // Update loan state to resolved & emit event
+        // Update loan status to Defaulted & emit event
         loan.status = LoanStatus.Defaulted;
         emit DefaultedLoanLiquidated(_loanId);
 
