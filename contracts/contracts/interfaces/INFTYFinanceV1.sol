@@ -53,6 +53,7 @@ interface INFTYFinanceV1 {
         uint32 duration;
         uint32 interest;
         LoanStatus status;
+        bool nftCollectionIsErc1155;
     }
 
     /**

@@ -667,7 +667,8 @@ contract NFTYFinanceV1 is
             status: LoanStatus.Active,
             lendingDeskId: _lendingDeskId,
             interest: interest,
-            nftCollection: _nftCollection
+            nftCollection: _nftCollection,
+            nftCollectionIsErc1155: loanConfig.nftCollectionIsErc1155
         });
         loans[loanId] = loan;
         lendingDesk.balance = lendingDesk.balance - _amount;
@@ -791,10 +792,7 @@ contract NFTYFinanceV1 is
             loan.status = LoanStatus.Resolved;
 
             // Send NFT collateral from escrow to borrower
-            if (
-                lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
-                    .nftCollectionIsErc1155
-            ) // 1155
+            if (loan.nftCollectionIsErc1155) // 1155
             {
                 IERC1155(loan.nftCollection).safeTransferFrom(
                     address(this),
@@ -845,10 +843,7 @@ contract NFTYFinanceV1 is
         emit DefaultedLoanLiquidated(_loanId);
 
         // Transfer NFT from escrow to promissory note holder
-        if (
-            lendingDeskLoanConfigs[loan.lendingDeskId][loan.nftCollection]
-                .nftCollectionIsErc1155
-        ) // 1155
+        if (loan.nftCollectionIsErc1155) // 1155
         {
             IERC1155(loan.nftCollection).safeTransferFrom(
                 address(this),
