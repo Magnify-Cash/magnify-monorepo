@@ -112,6 +112,7 @@ contract NFTYFinanceV1 is
     error LoanOriginationFeeMoreThan10Percent();
     error LoanMustBeActiveForMin1Hour();
     error LoanPaymentExceedsDebt();
+    error InterestRateTooHigh();
 
     /* *********** */
     /*  EVENTS     */
@@ -581,7 +582,8 @@ contract NFTYFinanceV1 is
         address _nftCollection,
         uint64 _nftId,
         uint32 _duration,
-        uint256 _amount
+        uint256 _amount,
+        uint32 _maxInterestAllowed
     ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
@@ -649,6 +651,9 @@ contract NFTYFinanceV1 is
                                     loanConfig.minDuration)))) / 2
                 );
         }
+
+        // Check interest is within max interest allowed
+        if (interest > _maxInterestAllowed) revert InterestRateTooHigh();
 
         // Calculate platform fees
         uint256 platformFee = (loanOriginationFee * _amount) / 10000;

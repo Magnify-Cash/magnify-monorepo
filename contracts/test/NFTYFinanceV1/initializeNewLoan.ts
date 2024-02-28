@@ -13,6 +13,7 @@ describe("NFTY Finance: Initialize new loan", () => {
   const loanDuration = 30;
   const loanAmount = ethers.parseUnits("20", 18);
   const nftId = 0;
+  const maxInterestAllowed = 10000000n;
 
   const setup = async () => {
     const { borrower, erc20, erc721, nftyFinance, ...rest } =
@@ -45,7 +46,8 @@ describe("NFTY Finance: Initialize new loan", () => {
           erc721.target,
           nftId,
           loanDuration,
-          loanAmount
+          loanAmount,
+          maxInterestAllowed
         )
     ).to.be.revertedWithCustomError(nftyFinance, "InvalidLendingDeskId");
   });
@@ -61,7 +63,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         10, // loan duration
-        loanAmount
+        loanAmount,
+        maxInterestAllowed
       )
     ).to.be.revertedWithCustomError(nftyFinance, "LoanDurationTooLow");
   });
@@ -77,7 +80,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         300, // loan duration
-        loanAmount
+        loanAmount,
+        maxInterestAllowed
       )
     ).to.be.revertedWithCustomError(nftyFinance, "LoanDurationTooHigh");
   });
@@ -93,7 +97,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         loanDuration,
-        ethers.parseUnits("5", 18) // loan amount
+        ethers.parseUnits("5", 18), // loan amount
+        maxInterestAllowed
       )
     ).to.be.revertedWithCustomError(nftyFinance, "LoanAmountTooLow");
   });
@@ -109,7 +114,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         loanDuration,
-        ethers.parseUnits("200", 18) // loan amount
+        ethers.parseUnits("200", 18), // loan amount
+        maxInterestAllowed
       )
     ).to.be.revertedWithCustomError(nftyFinance, "LoanAmountTooHigh");
   });
@@ -128,7 +134,8 @@ describe("NFTY Finance: Initialize new loan", () => {
           erc721.target,
           nftId,
           loanDuration,
-          loanAmount
+          loanAmount,
+          maxInterestAllowed
         )
     ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
@@ -148,7 +155,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target, // not supported
         nftId,
         loanDuration,
-        loanAmount
+        loanAmount,
+        maxInterestAllowed
       )
     ).to.be.revertedWithCustomError(nftyFinance, "UnsupportedNFTCollection");
   });
@@ -179,7 +187,8 @@ describe("NFTY Finance: Initialize new loan", () => {
           erc721.target,
           nftId,
           loanDuration,
-          loanAmount
+          loanAmount,
+          maxInterestAllowed
         )
     ).to.be.revertedWithCustomError(
       nftyFinance,
@@ -201,7 +210,8 @@ describe("NFTY Finance: Initialize new loan", () => {
           erc721.target,
           nftId,
           loanDuration,
-          loanAmount
+          loanAmount,
+          maxInterestAllowed
         )
     ).to.be.revertedWithCustomError(nftyFinance, "LendingDeskIsNotActive");
   });
@@ -226,7 +236,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         loanDuration,
-        loanAmount
+        loanAmount,
+        maxInterestAllowed
       );
 
     const platformFee = (loanAmount * 2n) / 100n; // 2% of loan amount
@@ -299,7 +310,8 @@ describe("NFTY Finance: Initialize new loan", () => {
         erc721.target,
         nftId,
         24n,
-        ethers.parseUnits("10", 18)
+        ethers.parseUnits("10", 18),
+        maxInterestAllowed
       );
     // Make sure it passes
     await expect(tx).to.emit(nftyFinance, "NewLoanInitialized");

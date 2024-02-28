@@ -177,6 +177,7 @@ export const initializeLoan = async () => {
   const loanDuration = 30;
   const loanAmount = ethers.parseUnits("20", 18);
   const nftId = 0;
+  const maxInterestAllowed = 10000000n;
 
   const { borrower, erc20, erc721, nftyFinance, lendingDeskId, ...rest } =
     await initializeLendingDeskAndAddLoanConfig();
@@ -196,7 +197,8 @@ export const initializeLoan = async () => {
       erc721.target,
       nftId,
       loanDuration,
-      loanAmount
+      loanAmount,
+      maxInterestAllowed
     );
 
   // Get details from event
