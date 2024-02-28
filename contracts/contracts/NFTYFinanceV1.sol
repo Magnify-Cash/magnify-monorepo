@@ -740,7 +740,7 @@ contract NFTYFinanceV1 is
 
         // Separate variable to get integer// floor value of hours elapsed
         uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
-        if (hoursElapsed > loan.duration) revert LoanHasDefaulted();
+        if (hoursElapsed >= loan.duration) revert LoanHasDefaulted();
         if (hoursElapsed == 0) revert LoanMustBeActiveForMin1Hour();
 
         // Calculate total amount due
