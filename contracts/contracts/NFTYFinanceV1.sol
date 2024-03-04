@@ -642,13 +642,14 @@ contract NFTYFinanceV1 is
             interest =
                 loanConfig.minInterest +
                 uint32(
-                    ((loanConfig.maxInterest - loanConfig.minInterest) *
-                        // Take average of amount and duration factors
-                        (((_amount - loanConfig.minAmount) /
-                            (loanConfig.maxAmount - loanConfig.minAmount)) +
-                            ((_duration - loanConfig.minDuration) /
-                                (loanConfig.maxDuration -
-                                    loanConfig.minDuration)))) / 2
+                    // Take average of amount and duration factors
+                    ((((_amount - loanConfig.minAmount) *
+                        (loanConfig.maxInterest - loanConfig.minInterest)) /
+                        (loanConfig.maxAmount - loanConfig.minAmount)) +
+                        (((_duration - loanConfig.minDuration) *
+                            (loanConfig.maxInterest - loanConfig.minInterest)) /
+                            (loanConfig.maxDuration -
+                                loanConfig.minDuration))) / 2
                 );
         }
 
