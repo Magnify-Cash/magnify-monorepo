@@ -111,7 +111,7 @@ contract NFTYERC721V1 is ERC721, Ownable {
     }
 
     /**
-     * @dev Call _safeMint but requires caller to be the NFTY Finance contract
+     * @dev Call _burn but requires caller to be the NFTY Finance contract
      */
     function burn(uint256 tokenId) external onlyNftyFinance {
         if (_ownerOf(tokenId) == address(0)) revert TokenDoesNotExist();
