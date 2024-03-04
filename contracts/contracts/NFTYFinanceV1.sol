@@ -724,7 +724,8 @@ contract NFTYFinanceV1 is
         );
 
         // Transfer fees to platform wallet
-        IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
+        if (platformFee > 0)
+            IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
 
         // Update loanIdCounter in storage
         loanIdCounter = loanId;
