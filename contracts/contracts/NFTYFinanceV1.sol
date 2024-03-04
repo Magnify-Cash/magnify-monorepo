@@ -885,7 +885,7 @@ contract NFTYFinanceV1 is
         uint256 _loanOriginationFee
     ) public onlyOwner {
         // Check inputs (fee cannot be greater than 10%)
-        if (_loanOriginationFee > 10000)
+        if (_loanOriginationFee > 1000)
             revert LoanOriginationFeeMoreThan10Percent();
 
         // Set loan origination fees & emit event
