@@ -755,10 +755,6 @@ contract NFTYFinanceV1 is
             (loan.amount * loan.interest) /
             ((8760 * 10000) / hoursElapsed); // Yearly scale, 8760 hours in a year
 
-        // Check for underflow
-        if (totalAmountDue < loan.amountPaidBack)
-            revert LoanPaymentExceedsDebt();
-
         return totalAmountDue - loan.amountPaidBack;
     }
 
@@ -767,11 +763,13 @@ contract NFTYFinanceV1 is
      *
      * @param _loanId ID of the loan
      * @param _amount The amount to be paid, in erc20 tokens
+     * @param _resolve Whether to resolve the loan or not. If true, _amount is ignored.
      * @dev Emits an {LoanPaymentMade} event.
      */
     function makeLoanPayment(
         uint256 _loanId,
-        uint256 _amount
+        uint256 _amount,
+        bool _resolve
     ) external whenNotPaused {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
@@ -782,19 +780,26 @@ contract NFTYFinanceV1 is
         address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
         if (borrower != msg.sender) revert CallerIsNotBorrower();
 
+        uint256 amountDue = getLoanAmountDue(_loanId);
+        // If resolve, set amount to amountDue
+        if (_resolve) {
+            _amount = amountDue;
+        } else {
+            // Make sure amount is less than or equal to amountDue if not resolving
+            if (_amount > amountDue) revert LoanPaymentExceedsDebt();
+        }
+
         // Update amountPaidBack, emit event
         loan.amountPaidBack += _amount;
-        uint256 amountDue = getLoanAmountDue(_loanId);
-
         emit LoanPaymentMade(
             _loanId,
             _amount,
-            amountDue == 0 // loan is fully paid back
+            _resolve // loan is fully paid back
         );
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
-        if (amountDue == 0) {
+        if (_resolve) {
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 

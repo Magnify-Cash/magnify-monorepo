@@ -65,8 +65,7 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     const { nftyFinance, loanId, borrower } = await loadFixture(setup);
 
     // Pay back the loan fully
-    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
-    await nftyFinance.connect(borrower).makeLoanPayment(loanId, amountDue);
+    await nftyFinance.connect(borrower).makeLoanPayment(loanId, 1, true);
 
     await expect(
       nftyFinance.getLoanAmountDue(loanId)
@@ -90,7 +89,7 @@ describe("NFTY Finance: Remaining due amount of loan", () => {
     // Make partial payment
     await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, partialPaymentAmount);
+      .makeLoanPayment(loanId, partialPaymentAmount, false);
 
     // Check remaining due amount
     const amountDue = await nftyFinance.getLoanAmountDue(loanId);

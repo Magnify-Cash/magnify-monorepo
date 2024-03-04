@@ -211,9 +211,14 @@ interface INFTYFinanceV1 {
      *
      * @param _loanId ID of the loan
      * @param _amount The amount to be paid, in erc20 tokens
+     * @param _resolve Whether to resolve the loan or not. If true, _amount is ignored.
      * @dev Emits an {LoanPaymentMade} event.
      */
-    function makeLoanPayment(uint256 _loanId, uint256 _amount) external;
+    function makeLoanPayment(
+        uint256 _loanId,
+        uint256 _amount,
+        bool _resolve
+    ) external;
 
     /**
      * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral

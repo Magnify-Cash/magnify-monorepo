@@ -32,7 +32,7 @@ describe("NFTY Finance: Make loan payment", () => {
     expect(loanId).to.not.equal(invalidLoanId); // check if actually invalid
 
     await expect(
-      nftyFinance.connect(borrower).makeLoanPayment(invalidLoanId, 0)
+      nftyFinance.connect(borrower).makeLoanPayment(invalidLoanId, 0, false)
       // This reverts with TokenDoesNotExist and not InvalidLoanId
     ).to.be.revertedWithCustomError(obligationNotes, "TokenDoesNotExist");
   });
@@ -41,7 +41,9 @@ describe("NFTY Finance: Make loan payment", () => {
     const { nftyFinance, loanId, lender } = await loadFixture(setup);
 
     await expect(
-      nftyFinance.connect(lender).makeLoanPayment(loanId, partialPaymentAmount)
+      nftyFinance
+        .connect(lender)
+        .makeLoanPayment(loanId, partialPaymentAmount, false)
     ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotBorrower");
   });
 
@@ -54,7 +56,7 @@ describe("NFTY Finance: Make loan payment", () => {
     await time.increase(loanDuration * 3600);
 
     await expect(
-      nftyFinance.connect(borrower).makeLoanPayment(loanId, 0)
+      nftyFinance.connect(borrower).makeLoanPayment(loanId, 0, false)
     ).to.be.revertedWithCustomError(nftyFinance, "LoanHasDefaulted");
   });
 
@@ -65,7 +67,7 @@ describe("NFTY Finance: Make loan payment", () => {
     await nftyFinance.setPaused(true);
 
     await expect(
-      nftyFinance.connect(borrower).makeLoanPayment(loanId, 0)
+      nftyFinance.connect(borrower).makeLoanPayment(loanId, 0, false)
     ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
   });
 
@@ -79,7 +81,8 @@ describe("NFTY Finance: Make loan payment", () => {
         .makeLoanPayment(
           loanId,
           loanAmount +
-            loanAmount * loanConfig.maxInterest * loanConfig.maxDuration
+            loanAmount * loanConfig.maxInterest * loanConfig.maxDuration,
+          false
         )
     ).to.be.revertedWithCustomError(nftyFinance, "LoanPaymentExceedsDebt");
   });
@@ -89,7 +92,7 @@ describe("NFTY Finance: Make loan payment", () => {
 
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, partialPaymentAmount);
+      .makeLoanPayment(loanId, partialPaymentAmount, false);
 
     // Check emitted event and storage
     expect(tx)
@@ -117,12 +120,12 @@ describe("NFTY Finance: Make loan payment", () => {
     const amountDue = await nftyFinance.getLoanAmountDue(loanId);
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, amountDue);
+      .makeLoanPayment(loanId, 0, true);
 
     // Check emitted event and storage
     expect(tx)
       .to.emit(nftyFinance, "LoanPaymentMade")
-      .withArgs(loanId, partialPaymentAmount, true);
+      .withArgs(loanId, amountDue, true);
 
     // NFTYNotes should be burned
     expect(tx)
