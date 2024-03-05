@@ -6,7 +6,7 @@ describe("NFTY Finance: Set loan origination fee", function () {
   it("should fail when fee > 10%", async () => {
     const { nftyFinance } = await loadFixture(deployNftyFinance);
 
-    const tx = await nftyFinance.setLoanOriginationFee(10000);
+    const tx = nftyFinance.setLoanOriginationFee(10000);
     expect(tx).to.be.revertedWithCustomError(
       nftyFinance,
       "LoanOriginationFeeMoreThan10Percent"
