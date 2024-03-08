@@ -792,12 +792,12 @@ contract NFTYFinanceV1 is
         emit LoanPaymentMade(
             _loanId,
             _amount,
-            _resolve // loan is fully paid back
+            _amount == amountDue // loan is fully paid back
         );
 
         // OPTIONAL: Loan paid back, proceed with fulfillment
         // (Returning NFT from escrow, burning obligation/promissory notes)
-        if (_resolve) {
+        if (_amount == amountDue) {
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 
