@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import {SafeCastLib} from "solady/src/utils/SafeCastLib.sol";
 
 import "./interfaces/INFTYFinanceV1.sol";
 import "./interfaces/INFTYERC721V1.sol";
@@ -22,6 +23,7 @@ contract NFTYFinanceV1 is
     ERC1155Holder
 {
     using SafeERC20 for IERC20;
+    using SafeCastLib for uint256;
 
     /* *********** */
     /*   STORAGE   */
@@ -623,11 +625,9 @@ contract NFTYFinanceV1 is
         else if (loanConfig.minDuration == loanConfig.maxDuration) {
             interest =
                 loanConfig.minInterest +
-                uint32(
-                    ((_amount - loanConfig.minAmount) *
-                        (loanConfig.maxInterest - loanConfig.minInterest)) /
-                        (loanConfig.maxAmount - loanConfig.minAmount)
-                );
+                (((_amount - loanConfig.minAmount) *
+                    (loanConfig.maxInterest - loanConfig.minInterest)) /
+                    (loanConfig.maxAmount - loanConfig.minAmount)).toUint32();
         }
         // Constant amount, scale interest based on duration
         else if (loanConfig.minAmount == loanConfig.maxAmount) {
@@ -641,16 +641,14 @@ contract NFTYFinanceV1 is
         else {
             interest =
                 loanConfig.minInterest +
-                uint32(
-                    // Take average of amount and duration factors
-                    ((((_amount - loanConfig.minAmount) *
+                // Take average of amount and duration factors
+                (((((_amount - loanConfig.minAmount) *
+                    (loanConfig.maxInterest - loanConfig.minInterest)) /
+                    (loanConfig.maxAmount - loanConfig.minAmount)) +
+                    (((_duration - loanConfig.minDuration) *
                         (loanConfig.maxInterest - loanConfig.minInterest)) /
-                        (loanConfig.maxAmount - loanConfig.minAmount)) +
-                        (((_duration - loanConfig.minDuration) *
-                            (loanConfig.maxInterest - loanConfig.minInterest)) /
-                            (loanConfig.maxDuration -
-                                loanConfig.minDuration))) / 2
-                );
+                        (loanConfig.maxDuration - loanConfig.minDuration))) / 2)
+                    .toUint32();
         }
 
         // Check interest is within max interest allowed
