@@ -102,12 +102,12 @@ contract NFTYERC721V1 is ERC721, Ownable {
     }
 
     /**
-     * @dev Call _safeMint but requires caller to be the NFTY Finance contract
+     * @dev Call _mint but requires caller to be the NFTY Finance contract
      */
     function mint(address to, uint256 tokenId) external onlyNftyFinance {
         if (to == address(0)) revert MintToZeroAddress();
         if (_ownerOf(tokenId) != address(0)) revert TokenAlreadyExists();
-        _safeMint(to, tokenId);
+        _mint(to, tokenId);
     }
 
     /**
