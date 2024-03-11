@@ -181,14 +181,20 @@ export const ManageLendingDesk = (props: any) => {
   }, [nftCollection]);
 
   const getFormValues = (selectedLoan: any) => {
-    const { maxAmount, minAmount, minDuration, maxInterest, minInterest } =
-      selectedLoan;
+    const {
+      maxAmount,
+      minAmount,
+      maxDuration,
+      minDuration,
+      maxInterest,
+      minInterest,
+    } = selectedLoan;
     const decimals = result?.data?.lendingDesk?.erc20?.decimals;
 
     const formValues: IConfigForm = {
       maxOffer: fromWei(maxAmount, decimals),
       minOffer: fromWei(minAmount, decimals),
-      maxDuration: (minDuration / 24).toString(),
+      maxDuration: (maxDuration / 24).toString(),
       minDuration: (minDuration / 24).toString(),
       maxInterest: (maxInterest / 100).toString(),
       minInterest: (minInterest / 100).toString(),
@@ -208,6 +214,7 @@ export const ManageLendingDesk = (props: any) => {
   const { config: freezeConfig, refetch: refetchFreezeConfig } =
     usePrepareNftyFinanceV1SetLendingDeskState({
       args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
+      enabled: !!result.data?.lendingDesk?.id,
     });
   const { data: freezeData, writeAsync: freezeWrite } =
     useNftyFinanceV1SetLendingDeskState(freezeConfig);
@@ -357,7 +364,11 @@ export const ManageLendingDesk = (props: any) => {
 
   //Call update desk hook when deskconfig is updated i.e. when new deskconfig is submitted via the form
   useEffect(() => {
-    if (deskConfig.selectedNftCollection) updateDesk();
+    // Check if nftCollection is selected from the drop down selection list before calling update desk hook
+    //This stops the update desk hook from being called when the page is first loaded as nftCollection is null
+    if (nftCollection?.nft?.address) {
+      updateDesk();
+    }
   }, [deskConfig]);
 
   // Update desk with the new loanconfig

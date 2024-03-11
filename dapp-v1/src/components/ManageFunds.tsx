@@ -128,11 +128,21 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         BigInt(lendingDesk?.id || 0),
         toWei(amount.toString(), lendingDesk?.erc20?.decimals),
       ],
+      enabled: amount > 0 && checked,
     });
   const { data: depositWriteData, writeAsync: depositWrite } =
     useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
   const depositLiquidity = async () => {
-    await depositWrite?.();
+    // Check if depositWrite is a function i.e. if the depositWrite function is defined
+    try {
+      if (typeof depositWrite !== "function") {
+        throw new Error("depositWrite is not a function");
+      }
+      await depositWrite();
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
   };
 
   /*
@@ -143,14 +153,24 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
     usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
       args: [
         BigInt(lendingDesk?.id || 0),
-        toWei(amount.toString(), lendingDesk?.erc20?.decimals),
+        toWei(amount?.toString(), lendingDesk?.erc20?.decimals),
       ],
+      enabled: amount > 0,
     });
   const { data: withdrawWriteData, writeAsync: withdrawWrite } =
     useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
 
   const withdrawLiquidity = async () => {
-    await withdrawWrite?.();
+    // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
+    try {
+      if (typeof withdrawWrite !== "function") {
+        throw new Error("withdrawWrite is not a function");
+      }
+      await withdrawWrite();
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
   };
 
   //Deposit function is used to deposit liquidity

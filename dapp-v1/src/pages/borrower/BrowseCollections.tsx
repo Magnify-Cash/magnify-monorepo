@@ -30,7 +30,9 @@ export const BrowseCollections = (props: any) => {
     const resultArr: INftCollection[] = [];
 
     //An array of nft ids
-    const nftIdArr = data?.nftCollections.map((nftCollection) => nftCollection.id);
+    const nftIdArr = data?.nftCollections.map(
+      (nftCollection) => nftCollection.id
+    );
 
     if (nftIdArr?.length) {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr);
@@ -60,7 +62,9 @@ export const BrowseCollections = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">TODO</h3>
-                  <p className="m-0 text-primary-emphasis">number of collections</p>
+                  <p className="m-0 text-primary-emphasis">
+                    number of collections
+                  </p>
                 </div>
               </div>
             </div>
@@ -71,7 +75,9 @@ export const BrowseCollections = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">TODO</h3>
-                  <p className="m-0 text-primary-emphasis">number of currencies</p>
+                  <p className="m-0 text-primary-emphasis">
+                    number of currencies
+                  </p>
                 </div>
               </div>
             </div>
@@ -92,19 +98,15 @@ export const BrowseCollections = (props: any) => {
                 >
                   Collection
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Currency
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">Desks</th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3 text-end">
-                  {" "}
+                <th className="py-3 bg-primary-subtle text-primary-emphasis  text-end">
+                  {""}
                 </th>
               </tr>
             </thead>
             <tbody>
               {result.data?.nftCollections.map((nftCollection, index) => {
                 const currencies: string[] = nftCollection.loanConfigs.map(
-                  (x) => x.lendingDesk.erc20.symbol,
+                  (x) => x.lendingDesk.erc20.symbol
                 );
                 return (
                   <tr className="align-middle" key={nftCollection.id}>
@@ -119,34 +121,7 @@ export const BrowseCollections = (props: any) => {
                     <td className="py-3">
                       {nftArr.length ? nftArr[index].name : null}
                     </td>
-                    <td className="py-3 align-middle">
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="position-relative"
-                          style={{
-                            width: `${15 * (nftArr[index]?.erc20s.length + 1)}px`,
-                            height: "30px",
-                          }}
-                        >
-                          {nftArr[index]?.erc20s?.map((erc20, i) => {
-                            return (
-                              <img
-                                key={erc20.address}
-                                src={erc20.logoURI}
-                                height="30"
-                                className={`d-block rounded-circle position-absolute top-0 start-0 z-${
-                                  3 - i
-                                }`}
-                                alt={erc20.symbol}
-                                style={{ marginLeft: `${15 * i}px` }}
-                              />
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3">{nftCollection?.loanConfigs?.length}</td>
-                    <td className="py-3 pe-3 text-end">
+                    <td className="py-3 pe-5 text-end">
                       <NavLink
                         to={`/explore/${nftCollection.id}`}
                         className="btn btn-primary rounded-pill px-4"

@@ -13,7 +13,12 @@ interface ILoanRowProps {
   liquidate?: boolean; // Whether or not loan card should have liquidate UI
 }
 
-export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) => {
+export const LoanRow = ({
+  loans,
+  payback,
+  status,
+  liquidate,
+}: ILoanRowProps) => {
   const { addToast, closeToast } = useToastContext();
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
@@ -44,7 +49,13 @@ export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) =>
       </div>
     );
   }
-  return loans.map((loan: Loan) => (
-    <LoanDetails loan={loan} payback={payback} liquidate={liquidate} status={status!} />
+  return loans.map((loan: Loan, index) => (
+    <LoanDetails
+      key={index}
+      loan={loan}
+      payback={payback}
+      liquidate={liquidate}
+      status={status!}
+    />
   ));
 };

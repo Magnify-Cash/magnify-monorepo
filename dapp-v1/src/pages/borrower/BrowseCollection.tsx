@@ -22,6 +22,7 @@ export const BrowseCollection = (props) => {
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
+  const [formattedData, setFormattedData] = useState<any>();
 
   // GraphQL
   const { collection_address } = useParams();
@@ -34,9 +35,34 @@ export const BrowseCollection = (props) => {
   });
   const { data, fetching, error } = result;
 
+  // We are using the useEffect hook to format the data from the query
+  // This is done to make the data easier to work with
+  // Initial data is an array of active lending desks with loan configs property
+  // We are formatting the data to be an array of loanConfigs with lendingDesk property
+  useEffect(() => {
+    const formatData = (data) => ({
+      loanConfigs: data.lendingDesks
+        .filter((lendingDesk) => lendingDesk.loanConfigs.length > 0)
+        .map((lendingDesk) => ({
+          lendingDesk: {
+            id: lendingDesk.id,
+            balance: lendingDesk.balance,
+            owner: lendingDesk.owner,
+            status: lendingDesk.status,
+            erc20: lendingDesk.erc20,
+          },
+          ...lendingDesk.loanConfigs[0],
+        })),
+    });
+    if (data && !fetching && !error) {
+      const formatted = formatData(data);
+      setFormattedData(formatted);
+    }
+  }, [data]);
+
   const title = document.getElementById("base-title");
   useEffect(() => {
-    // This function will be executed whenever the query data changes
+    // This function will be executed whenever the query data changes and formattedData is set
     const getTitle = async () => {
       if (!fetching && collection_address) {
         const fetchedNftArr: INft[] = await fetchNFTDetails([
@@ -48,15 +74,15 @@ export const BrowseCollection = (props) => {
       }
     };
     getTitle();
-  }, [data]);
+  }, [formattedData]);
 
   useEffect(() => {
-    // This function will be executed whenever the query data changes
+    // This function will be executed whenever the query data changes and formattedData is set
     if (!fetching) {
       getTokenDetails();
       getNFTdetails();
     }
-  }, [data]);
+  }, [formattedData]);
 
   // loan params selection
   const [nft, setNFT] = useState<INft>();
@@ -68,7 +94,7 @@ export const BrowseCollection = (props) => {
   const [checked, setChecked] = useState(false);
 
   const getTokenDetails = async () => {
-    const fetchedTokens = await fetchTokensForCollection(result.data);
+    const fetchedTokens = await fetchTokensForCollection(formattedData);
     setTokens(fetchedTokens);
   };
 
@@ -283,7 +309,7 @@ export const BrowseCollection = (props) => {
               </tr>
             </thead>
             <tbody>
-              {result.data?.loanConfigs.map((loanConfig, index) => {
+              {formattedData?.loanConfigs.map((loanConfig, index) => {
                 return (
                   <tr className="align-middle" key={loanConfig.lendingDesk.id}>
                     <td className="py-3 ps-3">

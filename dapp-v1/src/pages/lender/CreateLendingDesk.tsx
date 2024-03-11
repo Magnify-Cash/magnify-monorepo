@@ -786,7 +786,8 @@ export const CreateLendingDesk = (props: any) => {
                                   <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
                                 </span>
                                 <div className="text-truncate">
-                                  <strong>Duration:</strong> 4-30 Days
+                                  <strong>Duration:</strong>{" "}
+                                  {config.minDuration}-{config.maxDuration} Days
                                 </div>
                               </div>
                               <div className="mt-1 d-flex align-items-center">

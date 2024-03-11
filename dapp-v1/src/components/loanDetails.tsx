@@ -1,6 +1,11 @@
 import { PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
-import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
+import {
+  calculateTimeInfo,
+  formatTimeInfo,
+  fromWei,
+  toWei,
+} from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
   useErc20Allowance,
@@ -23,7 +28,12 @@ interface LoanDetailsProps {
 }
 
 // LoanDetails component
-const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => {
+const LoanDetails = ({
+  loan,
+  payback,
+  liquidate,
+  status,
+}: LoanDetailsProps) => {
   // Set action based on payback or liquidate
   //If action is payback, then set action to payback, else set action to liquidate
   const action: "payback" | "liquidate" = payback ? "payback" : "liquidate";
@@ -31,7 +41,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
   const { addToast, closeToast } = useToastContext();
   // Date/Time info
   const [timeInfo, setTimeInfo] = useState(
-    calculateTimeInfo(loan?.startTime, loan?.duration),
+    calculateTimeInfo(loan?.startTime, loan?.duration)
   );
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -61,10 +71,11 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       ],
     });
 
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc20Allowance({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
   //On successful transaction of approveErc20 hook, refetch the approval data
   //Also refetch makeLoanPaymentConfig to update makeLoanPaymentWrite hook
@@ -79,7 +90,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -90,7 +101,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -119,6 +130,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
         BigInt(loan?.id || 0), // loan ID
         toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
       ],
+      enabled: Number(payBackAmount) > 0 && checked,
     });
 
   const { data: makeLoanPaymentData, writeAsync: makeLoanPaymentWrite } =
@@ -141,9 +153,16 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
     setActionIsLoading(true);
     try {
       await liquidateRefetch();
-      await liquidateWrite?.();
-    } catch (error) {}
-    setActionIsLoading(false);
+      if (typeof liquidateWrite !== "function") {
+        throw new Error("liquidateWrite is not a function");
+      }
+      await liquidateWrite();
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    } finally {
+      setActionIsLoading(false);
+    }
   }
 
   // Checkbox click function
@@ -169,8 +188,18 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
     console.log("payBackAmount", payBackAmount);
     setActionIsLoading(true);
     try {
-      await makeLoanPaymentWrite?.();
-    } catch (error) {}
+      if (typeof makeLoanPaymentWrite === "function") {
+        await makeLoanPaymentWrite();
+      } else {
+        makeLoanPaymentRefetch();
+        throw new Error(
+          "makeLoanPaymentWrite is not defined or not a function"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
     setActionIsLoading(false);
   }
 
@@ -196,7 +225,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       addToast(
         "Transaction Successful",
         "Your transaction has been confirmed.",
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -207,7 +236,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       addToast(
         "Transaction Failed",
         "Your transaction has failed. Please try again.",
-        "error",
+        "error"
       );
     },
   });
@@ -218,7 +247,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -233,7 +262,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -273,7 +302,9 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-info-subtle"
+                    status === "Defaulted"
+                      ? "bg-secondary-subtle"
+                      : "bg-info-subtle"
                   } text-center`}
                 >
                   <div className="text-info-emphasis h3 mb-3">
@@ -289,7 +320,9 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-success-subtle"
+                    status === "Defaulted"
+                      ? "bg-secondary-subtle"
+                      : "bg-success-subtle"
                   } text-center`}
                 >
                   <div className="text-success-emphasis h3 mb-3">
@@ -297,13 +330,13 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                   </div>
                   <div className="h6 mb-0">
                     {parseInt(
-                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
+                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)
                     ) -
                       parseInt(
                         fromWei(
                           loan?.amountPaidBack,
-                          loan?.lendingDesk?.erc20.decimals,
-                        ),
+                          loan?.lendingDesk?.erc20.decimals
+                        )
                       )}{" "}
                     {loan?.lendingDesk?.erc20.symbol}
                   </div>
@@ -401,7 +434,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals,
+                                  loan?.lendingDesk?.erc20.decimals
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -417,18 +450,26 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">%</span>
+                              <span className="text-body-secondary ms-2">
+                                %
+                              </span>
                             </div>
-                            <div className="text-body-secondary">interest rate</div>
+                            <div className="text-body-secondary">
+                              interest rate
+                            </div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">{}</span>
+                              <span className="text-body-secondary ms-2">
+                                {}
+                              </span>
                             </div>
-                            <div className="text-body-secondary">loan duration</div>
+                            <div className="text-body-secondary">
+                              loan duration
+                            </div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
@@ -494,7 +535,10 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           id="flexCheckChecked"
                           style={{ transform: "scale(1.5)" }}
                         />
-                        <label className="form-check-label " htmlFor="flexCheckChecked">
+                        <label
+                          className="form-check-label "
+                          htmlFor="flexCheckChecked"
+                        >
                           {`Grant permission for ${
                             loan?.lendingDesk?.erc20.symbol || "USDT"
                           } transfer by checking this box.`}

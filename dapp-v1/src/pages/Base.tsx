@@ -19,7 +19,7 @@ type ToastContextType = {
     title: string,
     message: string,
     type: ToastProps["variant"],
-    hide?: boolean,
+    hide?: boolean
   ) => number;
   closeToast: (indexOfToast: number) => void;
 };
@@ -86,8 +86,8 @@ export const Base = () => {
       prevToasts.map((toast) =>
         toast && toast.props.index === indexOfToast
           ? cloneElement(toast, { hide: true })
-          : toast,
-      ),
+          : toast
+      )
     );
   };
 
@@ -95,7 +95,8 @@ export const Base = () => {
   const activeClass = "nav-link d-flex align-items-center active";
   const inactiveClass = "nav-link d-flex align-items-center";
   const cookie = getCookie("colorMode");
-  const initialMode: Types.Mode = cookie === "light" || cookie === "dark" ? cookie : "auto";
+  const initialMode: Types.Mode =
+    cookie === "light" || cookie === "dark" ? cookie : "auto";
   const [mode, setMode] = useState(initialMode);
   document.documentElement.setAttribute("data-bs-theme", cookie);
   function toggleDarkMode() {
@@ -353,7 +354,12 @@ export const Base = () => {
                   </button>
                 </div>
                 <NavLink to="/" className="d-lg-none me-auto">
-                  <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
+                  <img
+                    src="/theme/icon.svg"
+                    alt="Logo"
+                    width="28"
+                    height="28"
+                  />
                 </NavLink>
                 <ConnectKitButton.Custom>
                   {({
@@ -367,7 +373,10 @@ export const Base = () => {
                   }) => {
                     return (
                       <>
-                        <button onClick={show} className="btn btn-md btn-primary">
+                        <button
+                          onClick={show}
+                          className="btn btn-md btn-primary"
+                        >
                           {isConnected && <small>{truncatedAddress}</small>}
                           {!isConnected && <small>Connect</small>}
                           <i className="fa-solid fa-wallet ms-2"></i>
@@ -398,7 +407,8 @@ export const Base = () => {
             id="toast-container"
             className="toast-container position-fixed top-0 end-0 p-3"
           >
-            {toasts.map((toast) => toast)}
+            {/* {toasts.map((toast) => toast)} */}
+            {toasts.map((toast, index) => cloneElement(toast, { key: index }))}
           </div>
           {/* Toasts end */}
         </Provider>
