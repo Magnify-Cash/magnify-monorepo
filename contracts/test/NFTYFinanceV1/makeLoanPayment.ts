@@ -61,8 +61,15 @@ describe("NFTY Finance: Make loan payment", () => {
   });
 
   it("should fail if payment amount > debt", async () => {
-    const { nftyFinance, loanId, borrower, loanAmount, loanConfig } =
+    const { nftyFinance, loanId, borrower, loanAmount, loanConfig, erc20 } =
       await loadFixture(setup);
+
+    await erc20
+      .connect(borrower)
+      .mint(
+        loanAmount +
+          loanAmount * loanConfig.maxInterest * loanConfig.maxDuration
+      );
 
     await expect(
       nftyFinance

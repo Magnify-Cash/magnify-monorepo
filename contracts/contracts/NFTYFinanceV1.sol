@@ -316,13 +316,14 @@ contract NFTYFinanceV1 is
         LendingDesk storage lendingDesk = lendingDesks[lendingDeskId];
         lendingDesk.erc20 = _erc20;
         lendingDesk.status = LendingDeskStatus.Active;
+        lendingDeskIdCounter = lendingDeskId;
+
+        // Set loan configs and deposit liquidity
+        _setLendingDeskLoanConfigs(lendingDeskId, _loanConfigs);
+        _depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
 
         // Mint lending desk ownership NFT
         INFTYERC721V1(lendingKeys).mint(msg.sender, lendingDeskId);
-
-        // Set loan configs and deposit liquidity
-        setLendingDeskLoanConfigs(lendingDeskId, _loanConfigs);
-        depositLendingDeskLiquidity(lendingDeskId, _depositAmount);
 
         // Emit event
         emit NewLendingDeskInitialized(
@@ -331,7 +332,6 @@ contract NFTYFinanceV1 is
             lendingDesk.erc20,
             _depositAmount
         );
-        lendingDeskIdCounter = lendingDeskId;
     }
 
     /**
@@ -351,6 +351,13 @@ contract NFTYFinanceV1 is
         if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
             revert CallerIsNotLendingDeskOwner();
 
+        _setLendingDeskLoanConfigs(_lendingDeskId, _loanConfigs);
+    }
+
+    function _setLendingDeskLoanConfigs(
+        uint256 _lendingDeskId,
+        LoanConfig[] calldata _loanConfigs
+    ) internal {
         // Note: Two loops over _loanConfigs to avoid re-entry
         // 1. Perform checks and update storage
         for (uint256 i; i < _loanConfigs.length; ) {
@@ -373,7 +380,7 @@ contract NFTYFinanceV1 is
                 _loanConfigs[i].minInterest != _loanConfigs[i].maxInterest
             ) revert InvalidInterest();
 
-            // Update loan config state, emit event
+            // Update loan config state
             lendingDeskLoanConfigs[_lendingDeskId][
                 _loanConfigs[i].nftCollection
             ] = _loanConfigs[i];
@@ -469,11 +476,15 @@ contract NFTYFinanceV1 is
         if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
             revert CallerIsNotLendingDeskOwner();
 
-        // Update balance state, emit event
-        unchecked {
-            lendingDesk.balance = lendingDesk.balance + _amount;
-        }
-        emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
+        _depositLendingDeskLiquidity(_lendingDeskId, _amount);
+    }
+
+    function _depositLendingDeskLiquidity(
+        uint256 _lendingDeskId,
+        uint256 _amount
+    ) internal {
+        // Get desk from storage
+        LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
 
         // Transfer tokens
         IERC20(lendingDesk.erc20).safeTransferFrom(
@@ -481,6 +492,12 @@ contract NFTYFinanceV1 is
             address(this),
             _amount
         );
+
+        // Update balance state, emit event
+        unchecked {
+            lendingDesk.balance = lendingDesk.balance + _amount;
+        }
+        emit LendingDeskLiquidityDeposited(_lendingDeskId, _amount);
     }
 
     /**
@@ -589,7 +606,7 @@ contract NFTYFinanceV1 is
     ) external whenNotPaused {
         // Get desk & loan config from storage, check valid inputs
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        LoanConfig storage loanConfig = lendingDeskLoanConfigs[_lendingDeskId][
+        LoanConfig memory loanConfig = lendingDeskLoanConfigs[_lendingDeskId][
             _nftCollection
         ];
         if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
@@ -604,6 +621,26 @@ contract NFTYFinanceV1 is
         if (_amount < loanConfig.minAmount) revert LoanAmountTooLow();
         if (_duration > loanConfig.maxDuration) revert LoanDurationTooHigh();
         if (_duration < loanConfig.minDuration) revert LoanDurationTooLow();
+
+        // Transfer NFT to escrow
+        // 1155
+        if (loanConfig.nftCollectionIsErc1155) {
+            IERC1155(_nftCollection).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _nftId,
+                1,
+                ""
+            );
+        }
+        // 721
+        else {
+            IERC721(_nftCollection).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _nftId
+            );
+        }
 
         /*
         Interest rate calculation
@@ -688,6 +725,9 @@ contract NFTYFinanceV1 is
             platformFee
         );
 
+        // Update loanIdCounter in storage
+        loanIdCounter = loanId;
+
         // Mint promissory and obligation notes
         // Note: Promissory note is minted to the owner of the desk key
         INFTYERC721V1(promissoryNotes).mint(
@@ -695,26 +735,6 @@ contract NFTYFinanceV1 is
             loanId
         );
         INFTYERC721V1(obligationNotes).mint(msg.sender, loanId);
-
-        // Transfer NFT to escrow
-        // 1155
-        if (loanConfig.nftCollectionIsErc1155) {
-            IERC1155(_nftCollection).safeTransferFrom(
-                msg.sender,
-                address(this),
-                _nftId,
-                1,
-                ""
-            );
-        }
-        // 721
-        else {
-            IERC721(_nftCollection).safeTransferFrom(
-                msg.sender,
-                address(this),
-                _nftId
-            );
-        }
 
         // Transfer amount minus fees to borrower
         IERC20(lendingDesk.erc20).safeTransfer(
@@ -725,9 +745,6 @@ contract NFTYFinanceV1 is
         // Transfer fees to platform wallet
         if (platformFee > 0)
             IERC20(lendingDesk.erc20).safeTransfer(platformWallet, platformFee);
-
-        // Update loanIdCounter in storage
-        loanIdCounter = loanId;
     }
 
     /**
@@ -778,6 +795,9 @@ contract NFTYFinanceV1 is
         address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
         if (borrower != msg.sender) revert CallerIsNotBorrower();
 
+        // Transfer Tokens
+        IERC20(lendingDesk.erc20).safeTransferFrom(msg.sender, lender, _amount);
+
         uint256 amountDue = getLoanAmountDue(_loanId);
         // If resolve, set amount to amountDue
         if (_resolve) {
@@ -801,6 +821,10 @@ contract NFTYFinanceV1 is
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
 
+            // Burn promissory note and obligation note
+            INFTYERC721V1(obligationNotes).burn(_loanId);
+            INFTYERC721V1(promissoryNotes).burn(_loanId);
+
             // Send NFT collateral from escrow to borrower
             if (loan.nftCollectionIsErc1155) // 1155
             {
@@ -820,14 +844,7 @@ contract NFTYFinanceV1 is
                     loan.nftId
                 );
             }
-
-            // Burn promissory note and obligation note
-            INFTYERC721V1(obligationNotes).burn(_loanId);
-            INFTYERC721V1(promissoryNotes).burn(_loanId);
         }
-
-        // Transfer Tokens
-        IERC20(lendingDesk.erc20).safeTransferFrom(msg.sender, lender, _amount);
     }
 
     /**
@@ -852,6 +869,10 @@ contract NFTYFinanceV1 is
         loan.status = LoanStatus.Defaulted;
         emit DefaultedLoanLiquidated(_loanId);
 
+        // burn both promissory note and obligation note
+        INFTYERC721V1(promissoryNotes).burn(_loanId);
+        INFTYERC721V1(obligationNotes).burn(_loanId);
+
         // Transfer NFT from escrow to promissory note holder
         if (loan.nftCollectionIsErc1155) // 1155
         {
@@ -871,10 +892,6 @@ contract NFTYFinanceV1 is
                 loan.nftId
             );
         }
-
-        // burn both promissory note and obligation note
-        INFTYERC721V1(promissoryNotes).burn(_loanId);
-        INFTYERC721V1(obligationNotes).burn(_loanId);
     }
 
     /* ******************** */
