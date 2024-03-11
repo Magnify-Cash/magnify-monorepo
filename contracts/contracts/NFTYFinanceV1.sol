@@ -493,7 +493,7 @@ contract NFTYFinanceV1 is
     function withdrawLendingDeskLiquidity(
         uint256 _lendingDeskId,
         uint256 _amount
-    ) external whenNotPaused {
+    ) external {
         // Get desk from storage
         LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
         if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
@@ -768,7 +768,7 @@ contract NFTYFinanceV1 is
         uint256 _loanId,
         uint256 _amount,
         bool _resolve
-    ) external whenNotPaused {
+    ) external {
         // Get loan + related lending desk and check status
         Loan storage loan = loans[_loanId];
         LendingDesk storage lendingDesk = lendingDesks[loan.lendingDeskId];
@@ -836,7 +836,7 @@ contract NFTYFinanceV1 is
      *
      * @dev Emits an {LiquidatedOverdueLoan} event.
      */
-    function liquidateDefaultedLoan(uint256 _loanId) external whenNotPaused {
+    function liquidateDefaultedLoan(uint256 _loanId) external {
         // Get loan from storage
         Loan storage loan = loans[_loanId];
         if (loan.nftCollection == address(0)) revert InvalidLoanId();

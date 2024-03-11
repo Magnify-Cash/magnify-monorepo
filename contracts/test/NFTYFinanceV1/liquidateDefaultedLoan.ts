@@ -37,20 +37,6 @@ describe("NFTY Finance: Liquidate defaulted loan", () => {
     ).to.be.revertedWithCustomError(nftyFinance, "LoanHasNotDefaulted");
   });
 
-  it("should fail if contract is paused", async () => {
-    const { nftyFinance, loanId, lender, loanDuration } = await loadFixture(
-      initializeLoan
-    );
-
-    // advance time and default the loan, then pause the contract
-    await time.increase(loanDuration * 3600);
-    await nftyFinance.setPaused(true);
-
-    await expect(
-      nftyFinance.connect(lender).liquidateDefaultedLoan(loanId)
-    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
-  });
-
   it("should liquidate defaulted loan", async () => {
     const { nftyFinance, lender, loanDuration, loanId } = await loadFixture(
       initializeLoan

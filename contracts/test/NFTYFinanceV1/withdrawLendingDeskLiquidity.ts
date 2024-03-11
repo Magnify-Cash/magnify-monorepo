@@ -30,17 +30,6 @@ describe("NFTY Finance: Withdraw lending desk liquidity", () => {
     ).to.be.revertedWithCustomError(nftyFinance, "CallerIsNotLendingDeskOwner");
   });
 
-  it("should fail if contract is paused", async () => {
-    const { nftyFinance, lendingDeskId } = await loadFixture(
-      initializeLendingDesk
-    );
-    await nftyFinance.setPaused(true);
-
-    await expect(
-      nftyFinance.withdrawLendingDeskLiquidity(lendingDeskId, amount)
-    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
-  });
-
   it("should withdraw lending desk liquidity", async () => {
     const { nftyFinance, lendingDeskId, lender, erc20, lendingDesk } =
       await loadFixture(initializeLendingDesk);

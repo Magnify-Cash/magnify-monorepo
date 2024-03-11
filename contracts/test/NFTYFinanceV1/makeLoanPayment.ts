@@ -60,17 +60,6 @@ describe("NFTY Finance: Make loan payment", () => {
     ).to.be.revertedWithCustomError(nftyFinance, "LoanHasDefaulted");
   });
 
-  it("should fail if contract is paused", async () => {
-    const { nftyFinance, loanId, borrower } = await loadFixture(setup);
-
-    // pause the contract
-    await nftyFinance.setPaused(true);
-
-    await expect(
-      nftyFinance.connect(borrower).makeLoanPayment(loanId, 0, false)
-    ).to.be.revertedWithCustomError(nftyFinance, "EnforcedPause");
-  });
-
   it("should fail if payment amount > debt", async () => {
     const { nftyFinance, loanId, borrower, loanAmount, loanConfig } =
       await loadFixture(setup);
