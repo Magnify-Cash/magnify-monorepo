@@ -10,12 +10,10 @@ interface INFTYFinanceV1 {
      * @notice LendingDeskStatus used to store lending desk status
      * @notice Active Default status when a lending desk is created
      * @notice Frozen Used when a lender pauses or 'freezes' their desk
-     * @notice Dissolved Used when a lender fully dissolves their desk. Non-reversible.
      */
     enum LendingDeskStatus {
         Active,
-        Frozen,
-        Dissolved
+        Frozen
     }
 
     /**
@@ -171,14 +169,6 @@ interface INFTYFinanceV1 {
     ) external;
 
     /**
-     * @notice This function is called to dissolve a lending desk
-     *
-     * @param _lendingDeskId The id of the lending desk
-     * @dev Emits an {LendingDeskDissolved} event.
-     */
-    function dissolveLendingDesk(uint256 _lendingDeskId) external;
-
-    /**
      * @notice This function can be called by a borrower to create a loan
      *
      * @param _lendingDeskId ID of the lending desk related to this offer
@@ -221,7 +211,7 @@ interface INFTYFinanceV1 {
     ) external;
 
     /**
-     * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral
+     * @notice This function is called by the desk owner in order to liquidate a loan and claim the NFT collateral
      * @param _loanId ID of the loan
      *
      * @dev Emits an {LiquidatedOverdueLoan} event.

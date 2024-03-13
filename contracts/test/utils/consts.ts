@@ -1,7 +1,6 @@
 export enum LendingDeskStatus {
   Active,
-  Frozen,
-  Dissolved,
+  Frozen
 }
 
 export enum LoanStatus {

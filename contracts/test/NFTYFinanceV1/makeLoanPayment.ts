@@ -83,8 +83,53 @@ describe("NFTY Finance: Make loan payment", () => {
     ).to.be.revertedWithCustomError(nftyFinance, "LoanPaymentExceedsDebt");
   });
 
+  it("should fail if payment made on resolved loan", async () => {
+    const {
+      nftyFinance,
+      loanId,
+      lendingDeskId,
+      borrower,
+      lender,
+      obligationNotes,
+      lendingDesk,
+      erc20
+    } = await loadFixture(setup);
+    let oldLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+
+    // Pay back loan in full
+    const amountDue = await nftyFinance.getLoanAmountDue(loanId);
+    const tx = await nftyFinance
+      .connect(borrower)
+      .makeLoanPayment(loanId, amountDue, true);
+
+    // Check emitted event and storage
+    expect(tx)
+      .to.emit(nftyFinance, "LoanPaymentMade")
+      .withArgs(loanId, amountDue, true);
+
+    // Check loan is resolved
+    const newLoan = await nftyFinance.loans(loanId);
+    expect(newLoan.status).to.equal(LoanStatus.Resolved);
+
+    // Check lending desk balance updated
+    const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+    expect(newLendingDesk.balance).to.equal(oldLendingDesk.balance + amountDue);
+
+    // Pay back loan in full again
+    await erc20.connect(borrower).mint(amountDue);
+    await erc20
+      .connect(borrower)
+      .approve(nftyFinance.target, ethers.MaxUint256);
+    await expect(
+      nftyFinance
+        .connect(borrower)
+        .makeLoanPayment(loanId, amountDue, true)
+    ).to.be.revertedWithCustomError(nftyFinance, "LoanIsNotActive");
+  });
+
   it("should make partial loan payment", async () => {
     const { nftyFinance, loanId, borrower, loan } = await loadFixture(setup);
+    const oldLendingDesk = await nftyFinance.lendingDesks(loan.lendingDeskId);
 
     const tx = await nftyFinance
       .connect(borrower)
@@ -100,39 +145,42 @@ describe("NFTY Finance: Make loan payment", () => {
       loan.amountPaidBack + partialPaymentAmount
     );
     expect(newLoan.status).to.equal(LoanStatus.Active);
+
+    const newLendingDesk = await nftyFinance.lendingDesks(loan.lendingDeskId);
+    expect(newLendingDesk.balance).to.equal(
+      oldLendingDesk.balance + partialPaymentAmount
+    );
   });
 
   it("should make full loan payment", async () => {
     const {
       nftyFinance,
       loanId,
+      lendingDeskId,
       borrower,
       lender,
-      promissoryNotes,
       obligationNotes,
+      lendingDesk
     } = await loadFixture(setup);
+    const oldLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
 
     // Pay back loan in full
     const amountDue = await nftyFinance.getLoanAmountDue(loanId);
     const tx = await nftyFinance
       .connect(borrower)
-      .makeLoanPayment(loanId, 0, true);
+      .makeLoanPayment(loanId, amountDue, true);
 
     // Check emitted event and storage
     expect(tx)
       .to.emit(nftyFinance, "LoanPaymentMade")
       .withArgs(loanId, amountDue, true);
 
-    // NFTYNotes should be burned
-    expect(tx)
-      .to.emit(promissoryNotes, "Transfer")
-      .withArgs(loanId, borrower.address, ethers.ZeroAddress);
-
-    expect(tx)
-      .to.emit(obligationNotes, "Transfer")
-      .withArgs(loanId, lender.address, ethers.ZeroAddress);
-
+    // Check loan is resolved
     const newLoan = await nftyFinance.loans(loanId);
     expect(newLoan.status).to.equal(LoanStatus.Resolved);
+
+    // Check lending desk balance updated
+    const newLendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+    expect(newLendingDesk.balance).to.equal(oldLendingDesk.balance + amountDue);
   });
 });

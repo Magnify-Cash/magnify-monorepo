@@ -38,11 +38,6 @@ task(
   await punks.mint(10);
 
   // Deploy NFTYFinance's dependencies
-  const promissoryNotes: Contract = await hre.run("deploy-nfty-erc721", {
-    name: "NFTY Finance Promissory Notes",
-    symbol: "LEND",
-    baseuri: "https://api.nfty.finance/metadata/LEND/",
-  });
   const obligationNotes: Contract = await hre.run("deploy-nfty-erc721", {
     name: "NFTY Finance Obligation Notes",
     symbol: "BORROW",
@@ -61,7 +56,6 @@ task(
 
   const NFTYFinanceV1 = await hre.ethers.getContractFactory("NFTYFinanceV1");
   const nftyFinance = await NFTYFinanceV1.deploy(
-    promissoryNotes.target,
     obligationNotes.target,
     lendingKeys.target,
     200,
@@ -71,15 +65,11 @@ task(
   await nftyFinance.waitForDeployment();
 
   // Set NFTYFinance address in NFTYERC721s
-  await promissoryNotes.setNftyFinance(nftyFinance.target);
   await obligationNotes.setNftyFinance(nftyFinance.target);
   await lendingKeys.setNftyFinance(nftyFinance.target);
 
   // Wait for transactions to be mined so that we can get the block numbers
   const nftyFinanceTx = await nftyFinance.deploymentTransaction()?.wait();
-  const promissoryNotesTx = await promissoryNotes
-    .deploymentTransaction()
-    ?.wait();
   const obligationNotesTx = await obligationNotes
     .deploymentTransaction()
     ?.wait();
@@ -94,10 +84,6 @@ task(
     nftyFinance: {
       address: nftyFinance.target,
       startBlock: nftyFinanceTx?.blockNumber,
-    },
-    promissoryNotes: {
-      address: promissoryNotes.target,
-      startBlock: promissoryNotesTx?.blockNumber,
     },
     obligationNotes: {
       address: obligationNotes.target,
@@ -135,7 +121,6 @@ task(
   const networks = JSON.parse(networksFile);
   networks["mainnet"] = {
     NFTYFinance: deployments.nftyFinance,
-    PromissoryNotes: deployments.promissoryNotes,
     ObligationNotes: deployments.obligationNotes,
     LendingKeys: deployments.lendingKeys,
   };

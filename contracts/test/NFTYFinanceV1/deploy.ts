@@ -7,18 +7,6 @@ describe("NFTY Finance: Deploy", () => {
   const deployDependencies = async () => {
     const [owner, alice, platformWallet] = await ethers.getSigners();
 
-    // Promissory Notes
-    const PromissoryNotes = await ethers.getContractFactory(
-      "NFTYPromissoryNotesV1"
-    );
-    const promissoryNotes = await PromissoryNotes.deploy(
-      "NFTY Promissory Notes",
-      "LEND",
-      "https://metadata.nfty.finance/LEND/",
-      owner.address
-    );
-    await promissoryNotes.waitForDeployment();
-
     // Obligation Notes
     const ObligationNotes = await ethers.getContractFactory(
       "NFTYObligationNotesV1"
@@ -44,7 +32,6 @@ describe("NFTY Finance: Deploy", () => {
     const NFTYFinance = await ethers.getContractFactory("NFTYFinanceV1");
 
     return {
-      promissoryNotes,
       obligationNotes,
       lendingKeys,
       NFTYFinance,
@@ -53,29 +40,12 @@ describe("NFTY Finance: Deploy", () => {
     };
   };
 
-  it("should fail for zero addr promissory note", async () => {
-    const { NFTYFinance, obligationNotes, lendingKeys, platformWallet, owner } =
-      await loadFixture(deployDependencies);
-
-    await expect(
-      NFTYFinance.deploy(
-        ethers.ZeroAddress, // zero address for promissory note
-        obligationNotes.target,
-        lendingKeys.target,
-        200,
-        platformWallet,
-        owner.address
-      )
-    ).to.be.revertedWithCustomError(NFTYFinance, "PromissoryNotesIsZeroAddr");
-  });
-
   it("should fail for zero addr obligation receipt", async () => {
-    const { NFTYFinance, promissoryNotes, lendingKeys, platformWallet, owner } =
+    const { NFTYFinance, lendingKeys, platformWallet, owner } =
       await loadFixture(deployDependencies);
 
     await expect(
       NFTYFinance.deploy(
-        promissoryNotes.target,
         ethers.ZeroAddress, // zero address for obligation notes
         lendingKeys.target,
         200,
@@ -88,7 +58,6 @@ describe("NFTY Finance: Deploy", () => {
   it("should fail for zero addr lending keys", async () => {
     const {
       NFTYFinance,
-      promissoryNotes,
       obligationNotes,
       platformWallet,
       owner,
@@ -96,7 +65,6 @@ describe("NFTY Finance: Deploy", () => {
 
     await expect(
       NFTYFinance.deploy(
-        promissoryNotes.target,
         obligationNotes.target,
         ethers.ZeroAddress, // zero address for lending keys
         200,
@@ -109,7 +77,6 @@ describe("NFTY Finance: Deploy", () => {
   it("should deploy", async () => {
     const {
       NFTYFinance,
-      promissoryNotes,
       obligationNotes,
       lendingKeys,
       platformWallet,
@@ -117,7 +84,6 @@ describe("NFTY Finance: Deploy", () => {
     const [owner] = await ethers.getSigners();
 
     const nftyFinance = await NFTYFinance.deploy(
-      promissoryNotes.target,
       obligationNotes.target,
       lendingKeys.target,
       200,
@@ -153,7 +119,6 @@ describe("NFTY Finance: Deploy", () => {
     expect(tx)
       .to.emit(nftyFinance, "ProtocolInitialized")
       .withArgs(
-        promissoryNotes.target,
         obligationNotes.target,
         lendingKeys.target
       );
@@ -161,9 +126,6 @@ describe("NFTY Finance: Deploy", () => {
     // check expected values set in constructor
     expect(await nftyFinance.owner()).to.equal(owner.address);
     expect(await nftyFinance.paused()).to.be.false;
-    expect(await nftyFinance.promissoryNotes()).to.equal(
-      promissoryNotes.target
-    );
     expect(await nftyFinance.obligationNotes()).to.equal(
       obligationNotes.target
     );

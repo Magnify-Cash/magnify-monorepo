@@ -55,11 +55,6 @@ contract NFTYFinanceV1 is
     mapping(uint256 => Loan) public loans;
 
     /**
-     * @notice The address of the ERC721 to generate promissory notes for lenders
-     */
-    address public immutable promissoryNotes;
-
-    /**
      * @notice The address of the ERC721 to generate obligation notes for borrowers
      */
     address public immutable obligationNotes;
@@ -80,7 +75,6 @@ contract NFTYFinanceV1 is
     address public platformWallet;
 
     // ERRORS
-    error PromissoryNotesIsZeroAddr();
     error ObligationNotesIsZeroAddr();
     error LendingKeysIsZeroAddr();
     error ERC20IsZeroAddr();
@@ -186,13 +180,6 @@ contract NFTYFinanceV1 is
     event LendingDeskStateSet(uint256 lendingDeskId, bool freeze);
 
     /**
-     * @notice Event that will be emitted when a lending desk is dissolved
-     *
-     * @param lendingDeskId The ID of the lending desk
-     */
-    event LendingDeskDissolved(uint256 lendingDeskId);
-
-    /**
      * @notice Event that will be emitted every time a new offer is accepted
      *
      * @param lendingDeskId A unique identifier that determines the lending desk to which this offer belongs
@@ -231,12 +218,10 @@ contract NFTYFinanceV1 is
     /**
      * @notice Event that will be when the contract is deployed
      *
-     * @param promissoryNotes The address of the ERC721 to generate promissory notes for lenders
      * @param obligationNotes The address of the ERC721 to generate obligation notes for borrowers
      * @param lendingKeys The address of the lending desk ownership ERC721
      */
     event ProtocolInitialized(
-        address promissoryNotes,
         address obligationNotes,
         address lendingKeys
     );
@@ -259,7 +244,6 @@ contract NFTYFinanceV1 is
     /* CONSTRUCTOR */
     /* *********** */
     constructor(
-        address _promissoryNotes,
         address _obligationNotes,
         address _lendingKeys,
         uint256 _loanOriginationFee,
@@ -267,10 +251,8 @@ contract NFTYFinanceV1 is
         address _initialOwner
     ) {
         // Check & set peripheral contract addresses, emit event
-        if (_promissoryNotes == address(0)) revert PromissoryNotesIsZeroAddr();
         if (_obligationNotes == address(0)) revert ObligationNotesIsZeroAddr();
         if (_lendingKeys == address(0)) revert LendingKeysIsZeroAddr();
-        promissoryNotes = _promissoryNotes;
         obligationNotes = _obligationNotes;
         lendingKeys = _lendingKeys;
 
@@ -283,7 +265,6 @@ contract NFTYFinanceV1 is
 
         // Emit event
         emit ProtocolInitialized(
-            _promissoryNotes,
             _obligationNotes,
             _lendingKeys
         );
@@ -563,30 +544,6 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice This function is called to dissolve a lending desk
-     *
-     * @param _lendingDeskId The id of the lending desk
-     * @dev Emits an {LendingDeskDissolved} event.
-     */
-    function dissolveLendingDesk(
-        uint256 _lendingDeskId
-    ) external whenNotPaused {
-        // Get desk from storage
-        LendingDesk storage lendingDesk = lendingDesks[_lendingDeskId];
-        if (lendingDesk.erc20 == address(0)) revert InvalidLendingDeskId();
-        if (INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId) != msg.sender)
-            revert CallerIsNotLendingDeskOwner();
-        if (lendingDesk.balance != 0) revert LendingDeskIsNotEmpty();
-
-        // Update status, emit event
-        lendingDesk.status = LendingDeskStatus.Dissolved;
-        emit LendingDeskDissolved(_lendingDeskId);
-
-        // Burn lending key
-        INFTYERC721V1(lendingKeys).burn(_lendingDeskId);
-    }
-
-    /**
      * @notice This function can be called by a borrower to create a loan
      *
      * @param _lendingDeskId ID of the lending desk related to this offer
@@ -728,12 +685,7 @@ contract NFTYFinanceV1 is
         // Update loanIdCounter in storage
         loanIdCounter = loanId;
 
-        // Mint promissory and obligation notes
-        // Note: Promissory note is minted to the owner of the desk key
-        INFTYERC721V1(promissoryNotes).mint(
-            INFTYERC721V1(lendingKeys).ownerOf(_lendingDeskId),
-            loanId
-        );
+        // Mint obligation note
         INFTYERC721V1(obligationNotes).mint(msg.sender, loanId);
 
         // Transfer amount minus fees to borrower
@@ -792,19 +744,26 @@ contract NFTYFinanceV1 is
 
         // Get note holders and verify sender is borrower i.e. obligation note holder
         address borrower = INFTYERC721V1(obligationNotes).ownerOf(_loanId);
-        address lender = INFTYERC721V1(promissoryNotes).ownerOf(_loanId);
         if (borrower != msg.sender) revert CallerIsNotBorrower();
 
-        // Transfer Tokens
-        IERC20(lendingDesk.erc20).safeTransferFrom(msg.sender, lender, _amount);
-
+        // Get amount due
+        // If resolving loan, set _amount to amountDue
+        // If not resolving loan, ensure _amount is less than or equal to amountDue
         uint256 amountDue = getLoanAmountDue(_loanId);
-        // If resolve, set amount to amountDue
         if (_resolve) {
             _amount = amountDue;
         } else {
-            // Make sure amount is less than or equal to amountDue if not resolving
             if (_amount > amountDue) revert LoanPaymentExceedsDebt();
+        }
+
+        // Transfer tokens, update lending desk balance state
+        IERC20(lendingDesk.erc20).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _amount
+        );
+        unchecked {
+            lendingDesk.balance = lendingDesk.balance + _amount;
         }
 
         // Update amountPaidBack, emit event
@@ -815,15 +774,10 @@ contract NFTYFinanceV1 is
             _amount == amountDue // loan is fully paid back
         );
 
-        // OPTIONAL: Loan paid back, proceed with fulfillment
-        // (Returning NFT from escrow, burning obligation/promissory notes)
+        // OPTIONAL: Loan paid back, proceed with returning NFT from escrow
         if (_amount == amountDue) {
             // Set status to resolved
             loan.status = LoanStatus.Resolved;
-
-            // Burn promissory note and obligation note
-            INFTYERC721V1(obligationNotes).burn(_loanId);
-            INFTYERC721V1(promissoryNotes).burn(_loanId);
 
             // Send NFT collateral from escrow to borrower
             if (loan.nftCollectionIsErc1155) // 1155
@@ -848,7 +802,7 @@ contract NFTYFinanceV1 is
     }
 
     /**
-     * @notice This function is called by the promissory note owner in order to liquidate a loan and claim the NFT collateral
+     * @notice This function is called by the lending desk key owner in order to liquidate a loan and claim the NFT collateral
      * @param _loanId ID of the loan
      *
      * @dev Emits an {LiquidatedOverdueLoan} event.
@@ -858,7 +812,7 @@ contract NFTYFinanceV1 is
         Loan storage loan = loans[_loanId];
         if (loan.nftCollection == address(0)) revert InvalidLoanId();
         if (loan.status != LoanStatus.Active) revert LoanIsNotActive();
-        if (INFTYERC721V1(promissoryNotes).ownerOf(_loanId) != msg.sender)
+        if (INFTYERC721V1(lendingKeys).ownerOf(loan.lendingDeskId) != msg.sender)
             revert CallerIsNotLender();
 
         // Check loan is expired / in default
@@ -869,11 +823,7 @@ contract NFTYFinanceV1 is
         loan.status = LoanStatus.Defaulted;
         emit DefaultedLoanLiquidated(_loanId);
 
-        // burn both promissory note and obligation note
-        INFTYERC721V1(promissoryNotes).burn(_loanId);
-        INFTYERC721V1(obligationNotes).burn(_loanId);
-
-        // Transfer NFT from escrow to promissory note holder
+        // Transfer NFT from escrow to lending key holder
         if (loan.nftCollectionIsErc1155) // 1155
         {
             IERC1155(loan.nftCollection).safeTransferFrom(

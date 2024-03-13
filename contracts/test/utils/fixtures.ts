@@ -5,18 +5,6 @@ import { getEvent } from "./utils";
 export const deployNftyFinance = async () => {
   const [owner, alice] = await ethers.getSigners();
 
-  // Promissory Notes
-  const PromissoryNotes = await ethers.getContractFactory(
-    "NFTYPromissoryNotesV1"
-  );
-  const promissoryNotes = await PromissoryNotes.deploy(
-    "NFTY Promissory Notes",
-    "LEND",
-    "https://metadata.nfty.finance/LEND/",
-    owner.address
-  );
-  await promissoryNotes.waitForDeployment();
-
   // Obligation Notes
   const ObligationNotes = await ethers.getContractFactory(
     "NFTYObligationNotesV1"
@@ -45,7 +33,6 @@ export const deployNftyFinance = async () => {
   const platformWallet = ethers.Wallet.createRandom().address;
 
   const nftyFinance = await NFTYFinance.deploy(
-    promissoryNotes.target,
     obligationNotes.target,
     lendingKeys.target,
     loanOriginationFee,
@@ -55,13 +42,11 @@ export const deployNftyFinance = async () => {
   await nftyFinance.waitForDeployment();
 
   // Configuration
-  await promissoryNotes.setNftyFinance(nftyFinance.target);
   await obligationNotes.setNftyFinance(nftyFinance.target);
   await lendingKeys.setNftyFinance(nftyFinance.target);
 
   return {
     nftyFinance,
-    promissoryNotes,
     obligationNotes,
     lendingKeys,
     loanOriginationFee,
@@ -106,7 +91,6 @@ export const deployNftyFinanceWithTestTokens = async () => {
 export const initializeLendingDesk = async () => {
   const {
     nftyFinance,
-    promissoryNotes,
     obligationNotes,
     erc20,
     erc721,
@@ -139,7 +123,6 @@ export const initializeLendingDesk = async () => {
     alice,
     borrower,
     nftyFinance,
-    promissoryNotes,
     obligationNotes,
     erc20,
     erc721,
