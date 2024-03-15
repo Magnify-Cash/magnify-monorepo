@@ -4,16 +4,20 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "yarn hardhat clean && yarn hardhat compile",
+    "compile": "yarn hardhat compile",
     "start": "yarn hardhat node",
     "test": "yarn hardhat test",
     "deploy:local": "yarn build && yarn hardhat deploy --network localhost",
     "deploy:testnet": "yarn build && yarn hardhat deploy --network sepolia",
     "mythril": "myth analyze contracts/contracts/NFTYFinanceV1.sol  --solc-json ./solc.json",
-    "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings"
+    "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings",
+    "fuzz": "echidna ./test/GuardianAudits/fuzz/EchidnaRouter.sol --contract EchidnaRouter --config config.yaml",
+    "invariants": "FOUNDRY_PROFILE=quick forge test --match-contract NFTYFinanceInvariantTest -vvvv"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-foundry": "^1.1.1",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.2",

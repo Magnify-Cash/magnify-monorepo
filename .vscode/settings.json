@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity",
+    "coverage-gutters.showLineCoverage": false,
+    "coverage-gutters.coverageBaseDir": "./contracts/corpus/",
+    "coverage-gutters.coverageFileNames": [
+        "covered.**.lcov"
+    ]
+}

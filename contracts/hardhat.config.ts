@@ -2,6 +2,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
 import "dotenv/config";
+// import "@nomicfoundation/hardhat-foundry";
 
 // Import tasks
 import "./tasks/deploy-nft-collection";

@@ -1,3 +1,3 @@
 {
-"remappings": [ "@=../node_modules/@" ]
+    "remappings": [ "@=../node_modules/@", "solady=../node_modules/solady/"]
 }

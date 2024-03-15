@@ -6,3 +6,9 @@ graph-node
 **.DS_Store
 .nova
 typechain-types
+
+# Audit
+crytic-export/
+cache_forge/
+corpus/
+out/

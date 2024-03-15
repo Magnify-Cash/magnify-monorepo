@@ -1,0 +1,11 @@
+# Echidna Setup
+testMode: assertion
+corpusDir: corpus
+codeSize: 100000
+seqLen: 300
+testLimit: 5000000
+shrinkLimit: 2000
+stopOnFail: true
+cryticArgs: ["--solc-remaps", "@=../node_modules/@ solady=../node_modules/solady/ hardhat=../node_modules/hardhat/"]
+workers: 8
+coverageFormats: ["lcov"] # ["txt","html","lcov"]
