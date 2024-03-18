@@ -94,7 +94,7 @@ export const BrowseCollection = (props) => {
   const [checked, setChecked] = useState(false);
 
   const getTokenDetails = async () => {
-    const fetchedTokens = await fetchTokensForCollection(formattedData);
+    const fetchedTokens = await fetchTokensForCollection(formattedData,chainId);
     setTokens(fetchedTokens);
   };
 
@@ -324,12 +324,16 @@ export const BrowseCollection = (props) => {
                       {formatAddress(loanConfig.lendingDesk.owner.id)}
                     </td>
                     <td className="py-3 align-middle">
-                      <img
-                        src={tokens?.[index]?.logoURI}
-                        height="30"
-                        className="d-block rounded-circle"
-                        alt={tokens?.[index]?.symbol}
-                      />
+                      {tokens?.[index]?.logoURI ? (
+                        <img
+                          src={tokens?.[index]?.logoURI}
+                          height="30"
+                          className="d-block rounded-circle"
+                          alt={tokens?.[index]?.symbol}
+                        />
+                      ) : (
+                        <div>{tokens?.[index]?.name}</div>
+                      )}
                     </td>
                     <td className="py-3">
                       {fromWei(

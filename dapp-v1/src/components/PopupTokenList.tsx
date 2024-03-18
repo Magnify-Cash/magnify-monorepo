@@ -11,6 +11,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { useChainId } from "wagmi";
+import { isAddress } from "viem";
+import { useToastContext } from "@/helpers/CreateToast";
+import { formatAddress } from "@/helpers/formatAddress";
+import { getTokenListUrls } from "@/helpers/tokenUrls";
 
 /*
 Component Props
@@ -62,16 +67,20 @@ export interface INFTListItem {
 PopupTokenList Component
 */
 export const PopupTokenList = (props: PopupTokenListProps) => {
+  const chainId = useChainId();
+  const { addToast, closeToast } = useToastContext();
+
   // Handle TokenList Logic
   const [searchQuery, setSearchQuery] = useState("");
   const [tokenLists, setTokenLists] = useState(Array<ITokenListItem>);
   const [nftLists, setNftLists] = useState(Array<INFTListItem>);
 
   async function fetchListData() {
+    const urls = getTokenListUrls(chainId, props.nft, props.token) || [];
     try {
       // get list data
       const responses = await Promise.all(
-        props.urls.map(async (url) => {
+        urls.map(async (url) => {
           const response = await fetch(url);
           return response.json();
         })
@@ -194,13 +203,18 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
   /*
 	Handle Data Filtering
 	*/
+
+  // Helper function to check if a field includes the search query
+  const includesQuery = (field: string) =>
+    field.toLowerCase().includes(searchQuery.toLowerCase());
+
   const filteredTokens = useMemo(() => {
     if (tokenLists.length > 0) {
       return tokenLists.filter(
         (item: ITokenListItem) =>
-          item.token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.token.address.includes(searchQuery.toLowerCase())
+          includesQuery(item.token.name) ||
+          includesQuery(item.token.symbol) ||
+          includesQuery(item.token.address)
       );
     }
     return [];
@@ -210,9 +224,9 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
     if (nftLists.length > 0) {
       return nftLists.filter(
         (item: INFTListItem) =>
-          item.nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.nft.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.nft.address.includes(searchQuery.toLowerCase())
+          includesQuery(item.nft.name) ||
+          includesQuery(item.nft.symbol) ||
+          includesQuery(item.nft.address)
       );
     }
     return [];
@@ -222,8 +236,11 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 	Handle TokenList virtualization
 	*/
   const parentRef = useRef<HTMLInputElement>(null);
+  const filteredItemsCount = props.token
+    ? filteredTokens.length
+    : filteredNfts.length;
   const rowVirtualizer = useVirtualizer({
-    count: props.token ? filteredTokens.length : filteredNfts.length,
+    count: filteredItemsCount,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 50,
   });
@@ -233,6 +250,49 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 	*/
   function onClickCallback(data) {
     props.onClick?.(data);
+
+    // hide modal
+    const el = document.getElementById(props.modalId);
+    if (el) {
+      window.bootstrap.Modal.getInstance(el)?.hide();
+    }
+  }
+
+  /*
+	handle custom token selection
+	*/
+  function handleCustomTokenSelection(data: string) {
+    // validate address
+    if (!isAddress(data)) {
+      addToast("Invalid address", "Please enter a valid address", "error");
+      return;
+    }
+    if (props.nft) {
+      const selectedCustomNFT = {
+        nft: {
+          name: formatAddress(data),
+          address: data,
+          chainId,
+          logoURI: "https://via.placeholder.com/150",
+          symbol: "Custom NFT",
+        },
+      } as any;
+
+      props.onClick?.(selectedCustomNFT);
+    }
+    if (props.token) {
+      const selectedCustomToken = {
+        token: {
+          name: formatAddress(data),
+          address: data,
+          chainId,
+          decimals: 18,
+          logoURI: "https://via.placeholder.com/150",
+          symbol: "CUSTOM",
+        },
+      } as any;
+      props.onClick?.(selectedCustomToken);
+    }
 
     // hide modal
     const el = document.getElementById(props.modalId);
@@ -350,6 +410,27 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         </div>
                       </SelectButton>
                     ))}
+                  {!filteredItemsCount && (
+                    <CustomTokenSelectionButton
+                      data={searchQuery}
+                      clickFunction={handleCustomTokenSelection}
+                      className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
+                      type="button"
+                    >
+                      <div className="text-start">
+                        <div>
+                          {props.nft
+                            ? "Use Custom NFT"
+                            : props.token
+                            ? "Use Custom Token"
+                            : null}
+                        </div>
+                        <div className="text-body-secondary fw-normal">
+                          <small>{searchQuery}</small>
+                        </div>
+                      </div>
+                    </CustomTokenSelectionButton>
+                  )}
                 </div>
               </div>
               {/* End List */}
@@ -367,6 +448,21 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 //ClickFunction and data are props for SelectButton component which can be supplied as needed.
 
 const SelectButton: React.FC<CustomSelectButton> = ({
+  data,
+  children,
+  clickFunction,
+  ...buttonProps
+}) => {
+  return (
+    <button onClick={() => clickFunction?.(data)} {...buttonProps}>
+      {children}
+    </button>
+  );
+};
+
+//CustomTokenSelectionButton is used for selecting a custom token or an nft which is not present in the dropdown list of tokens and nfts.
+
+const CustomTokenSelectionButton = ({
   data,
   children,
   clickFunction,

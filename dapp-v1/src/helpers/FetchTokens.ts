@@ -1,4 +1,7 @@
+import { format } from "util";
 import { fetchLocalTokens } from "./Localdata";
+import { formatAddress } from "./formatAddress";
+import { getTokenListUrls } from "./tokenUrls";
 
 interface IJsonData {
   tokens: IToken[];
@@ -14,19 +17,21 @@ export interface IToken {
 
 //Given an array of addresses, returns an array of token objects in order
 const fetchTokenDetails = async (addresses: string[]) => {
-  const url = "https://tokens.coingecko.com/uniswap/all.json";
   let jsonData: IJsonData = { tokens: [] };
   if (import.meta.env.DEV) {
     jsonData = await fetchLocalTokens();
   } else {
     try {
-      const response = await fetch(url);
+      const urls = getTokenListUrls(chainId, false, true) || [];
 
-      // Check if the request was successful
-      if (!response.ok) {
-        throw new Error(`Network response was not ok, status: ${response.status}`);
-      }
-      jsonData = await response.json();
+      // get list data
+      const responses = await Promise.all(
+        urls.map(async (url) => {
+          const response = await fetch(url);
+          return await response.json();
+        })
+      );
+      jsonData = { tokens: responses.flatMap((response) => response.tokens) };
     } catch (error: any) {
       console.log("Error fetching and parsing JSON:", error.message);
     }
@@ -38,7 +43,11 @@ const fetchTokenDetails = async (addresses: string[]) => {
     TokenMap.set(token.address.toLowerCase(), token);
   }
   const result = addresses.map(
-    (address) => TokenMap.get(address.toLowerCase()) || ({} as IToken), // Return empty object if token not found
+    // Return object only with name and address property if token is not found
+    // This can be the case if the token is a custom token
+    (address) =>
+      TokenMap.get(address.toLowerCase()) ||
+      ({ name: formatAddress(address), address } as IToken)
   );
 
   return result;
@@ -49,7 +58,7 @@ export default fetchTokenDetails;
 // Function to fetch tokens for a given collection
 export const fetchTokensForCollection = async (nftCollection) => {
   const tokenIdArr = nftCollection.loanConfigs.map(
-    (loanConfig) => loanConfig.lendingDesk.erc20.id,
+    (loanConfig) => loanConfig.lendingDesk.erc20.id
   );
 
   if (tokenIdArr?.length) {

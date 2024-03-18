@@ -16,10 +16,15 @@ task(
     name: "Dai Stablecoin",
     symbol: "DAI",
   });
+  const unlisted: Contract = await hre.run("deploy-token", {
+    name: "UNLISTED Stablecoin",
+    symbol: "UNLISTED",
+  });
 
   // Mint 10,000 ERC20s to deployer
   await usdc.mint(hre.ethers.parseEther("10000"));
   await dai.mint(hre.ethers.parseEther("10000"));
+  await unlisted.mint(hre.ethers.parseEther("10000"));
 
   // Deploy NFT Collections
   const doodles: Contract = await hre.run("deploy-nft-collection", {
@@ -32,10 +37,16 @@ task(
     symbol: "ρ",
     baseuri: "https://api.polygonpunks.io/metadata/",
   });
+  const unlistedpunks: Contract = await hre.run("deploy-nft-collection", {
+    name: "UnlistedPunks",
+    symbol: "ρ",
+    baseuri: "https://api.polygonpunks.io/metadata/",
+  });
 
   // Mint 10 NFTs to deployer
   await doodles.mint(10);
   await punks.mint(10);
+  await unlistedpunks.mint(10);
 
   // Deploy NFTYFinance's dependencies
   const obligationNotes: Contract = await hre.run("deploy-nfty-erc721", {
@@ -78,6 +89,8 @@ task(
   const punksTx = await punks.deploymentTransaction()?.wait();
   const usdcTx = await usdc.deploymentTransaction()?.wait();
   const daiTx = await dai.deploymentTransaction()?.wait();
+  const unlistedTx = await unlisted.deploymentTransaction()?.wait();
+  const unlistedpunksTx = await punks.deploymentTransaction()?.wait();
 
   // Write addresses to deployments.json
   const deployments = {

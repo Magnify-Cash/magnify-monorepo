@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { BrowseCollectionsDocument } from "../../../.graphclient";
+import { useChainId } from "wagmi";
+
 
 interface INftCollection extends INft {
   erc20s: IToken[];
@@ -16,6 +18,7 @@ export const BrowseCollections = (props: any) => {
     query: BrowseCollectionsDocument,
   });
   const { data, fetching, error } = result;
+  const chainId = useChainId();
 
   const [nftArr, setNftArr] = useState<INftCollection[]>([]);
 
@@ -35,13 +38,13 @@ export const BrowseCollections = (props: any) => {
     );
 
     if (nftIdArr?.length) {
-      const fetchedNftArr = await fetchNFTDetails(nftIdArr);
+      const fetchedNftArr = await fetchNFTDetails(nftIdArr,chainId);
 
       //fetching tokens associated with each collection
       if (data?.nftCollections.length) {
         for (let i = 0; i < data.nftCollections.length; i++) {
           const nftCollection = data.nftCollections[i];
-          const tokens = await fetchTokensForCollection(nftCollection);
+          const tokens = await fetchTokensForCollection(nftCollection,chainId);
           resultArr[i] = { ...fetchedNftArr[i], erc20s: tokens };
         }
       }
@@ -52,7 +55,7 @@ export const BrowseCollections = (props: any) => {
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       {/* start stats card */}
-      <div className="card border-0 shadow rounded-4">
+      <div className="card border-0 shadow rounded-4 col-lg-10 mx-auto">
         <div className="card-body p-4">
           <div className="row g-4 g-xl-5 justify-space-around">
             <div className="col-sm-6 col-xl-4">
@@ -87,7 +90,7 @@ export const BrowseCollections = (props: any) => {
       {/* End stats card */}
 
       {/* Start table */}
-      <div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
+      <div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden col-lg-8 mx-auto">
         <div className="table-responsive">
           <table className="table m-0 text-nowrap">
             <thead>
@@ -112,7 +115,7 @@ export const BrowseCollections = (props: any) => {
                   <tr className="align-middle" key={nftCollection.id}>
                     <td className="py-3 ps-3">
                       <img
-                        src={nftArr.length ? nftArr[index].logoURI : ""}
+                        src={nftArr[index]?.logoURI ? nftArr[index].logoURI : "/images/placeholder/images/image-12.png"}
                         width="30"
                         className="d-block rounded-circle"
                         alt={nftArr[index]?.symbol}

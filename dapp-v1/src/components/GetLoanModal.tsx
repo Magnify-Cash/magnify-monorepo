@@ -128,12 +128,14 @@ export default function GetLoanModal({
                 <div className="col-12 col-sm-6">
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
-                      <img
-                        src={nft?.logoURI}
-                        alt={nft?.name}
-                        className="d-block flex-shrink-0 me-2 rounded-circle"
-                        width="30"
-                      />
+                      {nft?.logoURI && (
+                        <img
+                          src={nft.logoURI}
+                          alt={nft.name}
+                          className="d-block flex-shrink-0 me-2 rounded-circle"
+                          width="30"
+                        />
+                      )}
                       <div className="h5 fw-medium m-0">{nft?.name}</div>
                     </div>
                     <div className="text-body-secondary">Collection Type</div>
