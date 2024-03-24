@@ -644,6 +644,17 @@ export const CreateLendingDesk = (props: any) => {
                     return (
                       <div key={index} className="pb-2 mb-2 border-bottom">
                         <div className="d-flex align-items-center">
+                          <div className="d-flex align-items-center">
+                            <img
+                              src={config.selectedNftCollection?.nft?.logoURI}
+                              alt={`${config.selectedNftCollection?.nft.name} Logo`}
+                              height="24"
+                              className="d-block rounded-circle flex-shrink-0 me-2"
+                            />
+                            <div className="text-truncate fw-medium">
+                              {config.selectedNftCollection?.nft.name}
+                            </div>
+                          </div>
                           <div className="flex-shrink-0 ms-auto">
                             <span className="text-body-secondary me-2">
                               <button
@@ -663,18 +674,6 @@ export const CreateLendingDesk = (props: any) => {
                                 <i className="fa-regular fa-trash-can"></i>
                               </button>
                             </span>
-                          </div>
-                        </div>
-
-                        <div className="d-flex align-items-center">
-                          <img
-                            src={config.selectedNftCollection?.nft?.logoURI}
-                            alt={`${config.selectedNftCollection?.nft.name} Logo`}
-                            height="24"
-                            className="d-block rounded-circle flex-shrink-0 me-2"
-                          />
-                          <div className="text-truncate fw-medium">
-                            {config.selectedNftCollection?.nft.name}
                           </div>
                         </div>
                         <div className="mt-2 d-flex align-items-center">

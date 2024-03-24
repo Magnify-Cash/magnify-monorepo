@@ -7,8 +7,8 @@ dataSources:
     network: mainnet
     source:
       abi: NFTYFinance
-      address: "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90"
-      startBlock: 54
+      address: "0xf5059a5D33d5853360D16C683c16e67980206f36"
+      startBlock: 38
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -29,7 +29,7 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: LoanOriginationFeeSet(uint256)
           handler: handleLoanOriginationFeeSet
-        - event: ProtocolInitialized(address,address,address)
+        - event: ProtocolInitialized(address,address)
           handler: handleProtocolInitialized
         - event: NewLendingDeskInitialized(uint256,address,address,uint256)
           handler: handleNewLendingDeskInitialized
@@ -43,8 +43,6 @@ dataSources:
           handler: handleLendingDeskLoanConfigRemoved
         - event: LendingDeskStateSet(uint256,bool)
           handler: handleLendingDeskStateSet
-        - event: LendingDeskDissolved(uint256)
-          handler: handleLendingDeskDissolved
         - event: Paused(address)
           handler: handlePaused
         - event: Unpaused(address)
@@ -63,8 +61,8 @@ dataSources:
     network: mainnet
     source:
       abi: LendingKeys
-      address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575"
-      startBlock: 53
+      address: "0x851356ae760d987E095750cCeb3bC6014560891C"
+      startBlock: 37
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -79,32 +77,12 @@ dataSources:
           handler: handleTransfer
       file: ./src/lending-keys.ts
   - kind: ethereum/contract
-    name: PromissoryNotes
-    network: mainnet
-    source:
-      abi: PromissoryNotes
-      address: "0x1291Be112d480055DaFd8a610b7d1e203891C274"
-      startBlock: 51
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Loan
-      abis:
-        - name: PromissoryNotes
-          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-      file: ./src/promissory-notes.ts
-  - kind: ethereum/contract
     name: ObligationNotes
     network: mainnet
     source:
       abi: ObligationNotes
-      address: "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154"
-      startBlock: 52
+      address: "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8"
+      startBlock: 36
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

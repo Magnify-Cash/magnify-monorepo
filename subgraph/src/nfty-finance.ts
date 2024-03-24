@@ -12,7 +12,6 @@ import {
   NewLoanInitialized,
   DefaultedLoanLiquidated,
   LoanPaymentMade,
-  LendingDeskDissolved,
   ProtocolInitialized,
   PlatformWalletSet,
 } from "../generated/NFTYFinance/NFTYFinance";
@@ -158,25 +157,7 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
   lendingDesk.save();
 }
 
-export function handleLendingDeskDissolved(event: LendingDeskDissolved): void {
-  // Load entities
-  const protocolInfo = ProtocolInfo.load("0");
-  if (!protocolInfo) return;
-  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
-  if (!lendingDesk) return;
-
-  lendingDesk.status = "Dissolved";
-  lendingDesk.save();
-
-  // Decrement LendingDesk count
-  protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.minus(
-    BigInt.fromI32(1)
-  );
-  protocolInfo.save();
-}
-
 // Loan related events
-
 export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   // Load entities
   const protocolInfo = ProtocolInfo.load("0");
@@ -340,7 +321,6 @@ export function handleProtocolInitialized(event: ProtocolInitialized): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
 
-  protocolInfo.promissoryNotes = event.params.promissoryNotes;
   protocolInfo.obligationNotes = event.params.obligationNotes;
   protocolInfo.lendingKeys = event.params.lendingKeys;
 
@@ -356,7 +336,6 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
 
     // Dummy values, will populate properly through ProtocolInitialized, LoanOriginationFeeSet and PlatformWalletSet events
     protocolInfo.loanOriginationFee = BigInt.fromU32(0);
-    protocolInfo.promissoryNotes = Address.zero();
     protocolInfo.obligationNotes = Address.zero();
     protocolInfo.lendingKeys = Address.zero();
     protocolInfo.platformWallet = Address.zero();

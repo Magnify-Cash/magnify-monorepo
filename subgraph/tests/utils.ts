@@ -1,7 +1,6 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
   DefaultedLoanLiquidated,
-  LendingDeskDissolved,
   LendingDeskLiquidityDeposited,
   LendingDeskLiquidityWithdrawn,
   LendingDeskLoanConfigRemoved,
@@ -36,7 +35,6 @@ import {
   lendingKeys,
   loanOriginationFee,
   obligationNotes,
-  promissoryNotes,
   protocolOwner,
   platformWallet,
 } from "./consts";
@@ -75,15 +73,10 @@ export const createPlatformWalletSetEvent = (
   ]);
 
 export const createProtocolInitializedEvent = (
-  promissoryNotes: Address,
   obligationNotes: Address,
   lendingKeys: Address
 ): ProtocolInitialized =>
   newTypedMockEventWithParams<ProtocolInitialized>([
-    new ethereum.EventParam(
-      "promissoryNotes",
-      ethereum.Value.fromAddress(promissoryNotes)
-    ),
     new ethereum.EventParam(
       "obligationNotes",
       ethereum.Value.fromAddress(obligationNotes)
@@ -109,7 +102,6 @@ export const initializeProtocol = (): void => {
   handlePlatformWalletSet(createPlatformWalletSetEvent(platformWallet));
   handleProtocolInitialized(
     createProtocolInitializedEvent(
-      promissoryNotes,
       obligationNotes,
       lendingKeys
     )
@@ -322,17 +314,6 @@ export const createNewLoanInitializedEvent = (
     new ethereum.EventParam(
       "platformFee",
       ethereum.Value.fromUnsignedBigInt(platformFee)
-    ),
-  ]);
-
-export const createLendingDeskDissolvedEvent = (
-  lendingDeskId: number
-): LendingDeskDissolved =>
-  newTypedMockEventWithParams<LendingDeskDissolved>([
-    new ethereum.EventParam(
-      "lendingDeskId",
-      // @ts-ignore
-      ethereum.Value.fromI32(<i32>lendingDeskId)
     ),
   ]);
 

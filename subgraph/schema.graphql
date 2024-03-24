@@ -1,7 +1,6 @@
 enum LendingDeskStatus {
   Active
   Frozen
-  Dissolved
 }
 
 enum LoanStatus {
@@ -43,7 +42,6 @@ type ProtocolInfo @entity {
   owner: Bytes!
   paused: Boolean!
   loanOriginationFee: BigInt!
-  promissoryNotes: Bytes!
   obligationNotes: Bytes!
   lendingKeys: Bytes!
   platformWallet: Bytes!

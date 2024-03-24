@@ -1,4 +1,5 @@
 import GetLoanModal from "@/components/GetLoanModal";
+import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
 import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
@@ -89,6 +90,7 @@ export const BrowseCollection = (props) => {
   const [nftId, setNftId] = useState<number>();
   const [tokens, setTokens] = useState<IToken[]>([]);
   const [selectedLendingDesk, setSelectedLendingDesk] = useState<any>();
+  const [selectedLoanConfig, setSelectedLoanConfig] = useState<any>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
@@ -172,6 +174,12 @@ export const BrowseCollection = (props) => {
           amount ? amount.toString() : "0",
           selectedLendingDesk?.erc20.decimals
         ),
+        (selectedLoanConfig && selectedLendingDesk && calculateLoanInterest(
+          selectedLoanConfig,
+          amount,
+          duration,
+          selectedLendingDesk?.erc20?.decimals || 18
+        ) * 100)
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
@@ -361,6 +369,7 @@ export const BrowseCollection = (props) => {
                           disabled: false,
                           btnOnClick: () => {
                             setSelectedLendingDesk(loanConfig?.lendingDesk);
+                            setSelectedLoanConfig(loanConfig);
                           },
                           onSubmit: () => requestLoan(index),
                           approvalIsLoading,

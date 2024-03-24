@@ -9,7 +9,6 @@ query Home {
     owner
     paused
     platformWallet
-    promissoryNotes
   }
 }
 

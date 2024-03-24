@@ -1,5 +1,6 @@
 import { PopupTokenList } from "@/components";
 import GetLoanModal from "@/components/GetLoanModal";
+import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { ITokenListItem } from "@/components/PopupTokenList";
 import { INFTListItem } from "@/components/PopupTokenList";
 import { useToastContext } from "@/helpers/CreateToast";
@@ -34,7 +35,6 @@ export const QuickLoan = (props: any) => {
   // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
   const [nftId, setNftId] = useState<number>();
-  //
   const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
@@ -139,8 +139,13 @@ export const QuickLoan = (props: any) => {
         nftCollection?.nft.address as `0x${string}`,
         BigInt(nftId || 0),
         (duration || 0) * 24,
-        //TODO supply decimals value
         toWei(amount ? amount.toString() : "0", token?.token.decimals),
+        (selectedLendingDesk && calculateLoanInterest(
+          selectedLendingDesk?.loanConfig,
+          amount,
+          duration,
+          selectedLendingDesk?.erc20?.decimals || 18
+        )*100)
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =

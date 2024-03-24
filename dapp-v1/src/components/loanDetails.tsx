@@ -14,6 +14,7 @@ import {
   useNftyFinanceV1MakeLoanPayment,
   usePrepareNftyFinanceV1LiquidateDefaultedLoan,
   usePrepareNftyFinanceV1MakeLoanPayment,
+  useNftyFinanceV1GetLoanAmountDue,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -56,10 +57,24 @@ const LoanDetails = ({
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
-
+  //checked state for the checkbox on make payment modal
   const [checked, setChecked] = useState(false);
+  //checked state for the checkbox on resolve loan modal
+  const [checkedResolveLoan, setCheckedResolveLoan] = useState(false);
   const chainId = useChainId();
   const { address } = useAccount();
+
+  //get loan amount due for resolving the loan using GetLoanAmountDue hook
+  const { data: loanAmountDue, refetch: loanAmountDueRefetch } =
+    useNftyFinanceV1GetLoanAmountDue({
+      args: [BigInt(loan?.id || 0)],
+      onSuccess(data) {
+        console.log("data", data);
+      },
+      onError(error) {
+        console.error(error);
+      },
+    });
 
   //approveErc20 hook
   const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
@@ -71,6 +86,45 @@ const LoanDetails = ({
       ],
     });
 
+  //approveErc20 hook for resolving loan
+  const {
+    data: approveErc20ResolveLoanData,
+    writeAsync: approveErc20ResolveLoan,
+  } = useErc20Approve({
+    address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+    args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
+  });
+
+  //On successful transaction of approveErc20ResolveLoanData hook, refetch the approval data
+  //Also refetch resolveLoanPaymentConfig to update resolveLoanPaymentWrite hook
+  //and call the resolve loan function
+  useWaitForTransaction({
+    hash: approveErc20ResolveLoanData?.hash as `0x${string}`,
+    onSuccess(data) {
+      refetchApprovalData();
+      makeLoanPaymentRefetch();
+      resolveLoanPaymentRefetch();
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display success toast
+      addToast(
+        "Transaction Successful",
+        "Your transaction has been confirmed.",
+        "success"
+      );
+    },
+    onError(error) {
+      console.error(error);
+      // Close loading toast
+      loadingToastId ? closeToast(loadingToastId) : null;
+      // Display error toast
+      addToast(
+        "Transaction Failed",
+        "Your transaction has failed. Please try again.",
+        "error"
+      );
+    },
+  });
   const { data: approvalData, refetch: refetchApprovalData } =
     useErc20Allowance({
       address: loan?.lendingDesk?.erc20.id as `0x${string}`,
@@ -84,6 +138,7 @@ const LoanDetails = ({
     onSuccess(data) {
       refetchApprovalData();
       makeLoanPaymentRefetch();
+      resolveLoanPaymentRefetch();
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display success toast
@@ -110,6 +165,7 @@ const LoanDetails = ({
   useEffect(() => {
     if (!approvalData) {
       setChecked(false);
+      setCheckedResolveLoan(false);
       return;
     }
     if (
@@ -120,21 +176,47 @@ const LoanDetails = ({
     } else {
       setChecked(false);
     }
+    if (
+      Number(fromWei(approvalData, loan?.lendingDesk?.erc20?.decimals)) >=
+      Number(
+        fromWei(loanAmountDue ?? BigInt(0), loan?.lendingDesk?.erc20?.decimals)
+      )
+    ) {
+      setCheckedResolveLoan(true);
+    } else {
+      setCheckedResolveLoan(false);
+    }
   }, [payBackAmount, approvalData]);
 
   // Make Loan Payment Hook
-  //This is auto refetched by default when query args change
+  // This is auto refetched by default when query args change
   const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
     usePrepareNftyFinanceV1MakeLoanPayment({
       args: [
         BigInt(loan?.id || 0), // loan ID
         toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
+        false,
       ],
       enabled: Number(payBackAmount) > 0 && checked,
     });
-
   const { data: makeLoanPaymentData, writeAsync: makeLoanPaymentWrite } =
     useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig);
+
+  // Resolve Loan Hook
+  //This is enabled when resolve is set to true
+  const {
+    config: resolveLoanPaymentConfig,
+    refetch: resolveLoanPaymentRefetch,
+  } = usePrepareNftyFinanceV1MakeLoanPayment({
+    args: [
+      BigInt(loan?.id || 0), // loan ID
+      BigInt(0), // amount doesn't matter when resolving loan
+      true, // set to true to resolve loan
+    ],
+    enabled: checkedResolveLoan,
+  });
+  const { data: resolveLoanPaymentData, writeAsync: resolveLoanPaymentWrite } =
+    useNftyFinanceV1MakeLoanPayment(resolveLoanPaymentConfig);
 
   // Liquidate Overdue loan Hook
   const { config: liquidateConfig, refetch: liquidateRefetch } =
@@ -203,6 +285,50 @@ const LoanDetails = ({
     setActionIsLoading(false);
   }
 
+  //loan resolve function
+  //This function also needs to be called after approveErc20 hook to approve the token transfer
+
+  //checkbox click function on resolve loan popup modal
+  async function approveTokenTransferResolveLoan() {
+    if (checked) {
+      console.log("already approved");
+      return;
+    }
+    setApprovalIsLoading(true);
+    try {
+      //calling approveErc20ResolveLoan hook to approve the token transfer
+      if (loanAmountDue) {
+        await approveErc20ResolveLoan();
+      } else {
+        loanAmountDueRefetch();
+        throw new Error("loanAmountDue is not defined");
+      }
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
+    setApprovalIsLoading(false);
+  }
+
+  async function resolveLoan(loanID: string) {
+    console.log("loanID", loanID);
+    setActionIsLoading(true);
+    try {
+      if (typeof resolveLoanPaymentWrite === "function") {
+        await resolveLoanPaymentWrite();
+      } else {
+        resolveLoanPaymentRefetch();
+        throw new Error(
+          "resolveLoanPaymentWrite is not defined or not a function"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      addToast("Error", "An error occurred. Please try again.", "error");
+    }
+    setActionIsLoading(false);
+  }
+
   //actionMap is used to call the respective function based on the type of action
   const actionMap = {
     payback: makeLoanPayment,
@@ -255,7 +381,22 @@ const LoanDetails = ({
     }
   }, [approveErc20TransactionData?.hash]);
 
-  //This hook is used to display loading toast when the makeLoanPayment transaction is pending
+  //This hook is used to display loading toast when the approve transaction for resolve loan is pending
+
+  useEffect(() => {
+    if (approveErc20ResolveLoanData?.hash) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+  }, [approveErc20ResolveLoanData?.hash]);
+
+  //This hook is used to display loading toast when the makeLoanPayment/liquidate transaction is pending
 
   useEffect(() => {
     if (actionDataMap[action]?.hash) {
@@ -405,12 +546,13 @@ const LoanDetails = ({
                 </div>
               </div>
             </div>
+            {/* Make Payment button */}
             {payback ? (
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
-                btnText="Pay Back"
+                btnText="Make Payment"
                 modalId={`paybackModal${loan?.id}`}
-                modalTitle="Pay Back Loan"
+                modalTitle="Make Loan Payment"
                 modalContent={
                   <div className="modal-body">
                     <p className="text-body-secondary">Loan Details</p>
@@ -557,6 +699,164 @@ const LoanDetails = ({
                 }
               />
             ) : null}
+            {/* display resolve loan modal only if payback is true */}
+            {/* Resolve Loan Button */}
+            {payback ? (
+              <PopupTransaction
+                btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
+                btnText="Resolve Loan"
+                modalId={`resolveLoanModal${loan?.id}`}
+                modalTitle="Resolve Loan"
+                modalContent={
+                  <div className="modal-body">
+                    <p className="text-body-secondary">Loan Details</p>
+                    <div className="d-flex align-items-center">
+                      {/* Replace fixed image with proper image */}
+                      <img
+                        src="theme/images/image-1.png"
+                        className="img-fluid flex-shrink-0 me-3"
+                        width="32"
+                        alt={`${loan?.nftCollection.id} ${loan?.nftId}`}
+                      />
+                      <h6 className="m-0">
+                        {loan?.nftCollection.id} #{loan?.nftId}
+                      </h6>
+                    </div>
+                    <div className="container-fluid g-0 mt-3">
+                      <div className="row g-3">
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">
+                                {fromWei(
+                                  loan?.amount,
+                                  loan?.lendingDesk?.erc20.decimals
+                                )}
+                              </div>
+                              <span className="text-body-secondary ms-2">
+                                {loan?.lendingDesk?.erc20.symbol}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              original borrow amount
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">{loan?.interest / 100}</div>
+                              <span className="text-body-secondary ms-2">
+                                %
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              interest rate
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h5">{timeInfo.elapsedTime}</div>
+                              <span className="text-body-secondary ms-2">
+                                {}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              loan duration
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">[x]</div>
+                              <span className="text-body-secondary ms-2">
+                                {loan?.lendingDesk?.erc20.symbol}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              amount due on expiry date
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <div className="h-100 rounded bg-success-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">[x]</div>
+                              <span className="text-body-secondary ms-2">
+                                {loan?.lendingDesk?.erc20.symbol}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              current payoff amount
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-top">
+                      <label htmlFor="enter-amount" className="form-label">
+                        Enter Amount
+                      </label>
+                      <div className="d-flex align-items-center">
+                        <input
+                          disabled
+                          type="number"
+                          className="form-control form-control-lg flex-grow-1"
+                          id="enter-amount"
+                          placeholder="Enter Amount"
+                          value={fromWei(
+                            loanAmountDue ?? BigInt("0"),
+                            loan?.lendingDesk?.erc20?.decimals
+                          )}
+                        />
+                        {/* Fix image for currency */}
+                        <div className="d-flex align-items-center flex-shrink-0 ms-3">
+                          <img
+                            src="theme/images/usdc.svg"
+                            className="img-fluid flex-shrink-0 me-2"
+                            width="32"
+                            alt={loan?.lendingDesk?.erc20.symbol}
+                          />
+                          <span>{loan?.lendingDesk?.erc20.symbol}</span>
+                        </div>
+                      </div>
+                      <div className="form-check mt-3 d-flex align-items-center ">
+                        <input
+                          disabled={approvalIsLoading}
+                          checked={checkedResolveLoan}
+                          onClick={() => approveTokenTransferResolveLoan()}
+                          className="form-check-input me-3 align-center"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked"
+                          style={{ transform: "scale(1.5)" }}
+                        />
+                        <label
+                          className="form-check-label "
+                          htmlFor="flexCheckChecked"
+                        >
+                          {`Grant permission for ${
+                            loan?.lendingDesk?.erc20.symbol || "USDT"
+                          } transfer by checking this box.`}
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={!checkedResolveLoan || actionIsLoading}
+                        className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
+                        onClick={() => resolveLoan(loan?.id)}
+                      >
+                        Resolve Now
+                      </button>
+                    </div>
+                  </div>
+                }
+              />
+            ) : null}
+            {/* Liquidate Overdue Loan Button */}
             {liquidate ? (
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"

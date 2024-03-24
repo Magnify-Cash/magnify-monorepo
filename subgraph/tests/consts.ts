@@ -5,9 +5,6 @@ import { TestLoanConfig } from "./utils";
 export const protocolOwner = Address.fromString(
   "0x89205a3a3b2a69de6dbf7f01ed13b2108b2c43e7"
 );
-export const promissoryNotes = Address.fromString(
-  "0x90cBa2Bbb19ecc291A12066Fd8329D65FA1f1947"
-);
 export const obligationNotes = Address.fromString(
   "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
 );

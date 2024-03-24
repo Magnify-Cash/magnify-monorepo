@@ -13,7 +13,6 @@ import {
   lendingKeys,
   loanOriginationFee,
   obligationNotes,
-  promissoryNotes,
   protocolOwner,
 } from "../consts";
 import { ProtocolInfo } from "../../generated/schema";
@@ -33,7 +32,6 @@ test("Should create a new ProtocolInfo entity on contract initialization", () =>
   );
   handleProtocolInitialized(
     createProtocolInitializedEvent(
-      promissoryNotes,
       obligationNotes,
       lendingKeys
     )
@@ -45,7 +43,6 @@ test("Should create a new ProtocolInfo entity on contract initialization", () =>
   if (!protocolInfo) return;
 
   assert.bytesEquals(protocolInfo.owner, protocolOwner);
-  assert.bytesEquals(protocolInfo.promissoryNotes, promissoryNotes);
   assert.bytesEquals(protocolInfo.obligationNotes, obligationNotes);
   assert.bytesEquals(protocolInfo.lendingKeys, lendingKeys);
   assert.booleanEquals(protocolInfo.paused, false);

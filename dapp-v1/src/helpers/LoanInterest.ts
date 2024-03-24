@@ -4,7 +4,7 @@ export const calculateLoanInterest = (
   loanConfig,
   amountInput,
   durationInput,
-  decimals?,
+  decimals?
 ) => {
   const minAmount = BigInt(loanConfig.minAmount);
   const maxAmount = BigInt(loanConfig.maxAmount);
@@ -15,32 +15,33 @@ export const calculateLoanInterest = (
 
   const amount = amountInput ? toWei(amountInput, decimals) : minAmount;
   const duration = BigInt(durationInput ? durationInput * 24 : minDuration);
-  const interestRange = maxInterest - minInterest;
+  const interestRange = Number(maxInterest - minInterest);
 
-  let interest = minInterest;
+  let interest: BigInt;
 
-  if (minInterest === maxInterest) {
-    return Number(interest) / 100;
-  }
-  if (maxAmount === minAmount && maxDuration === minDuration) {
-    return Number(interest) / 100;
+  if (
+    minInterest === maxInterest ||
+    (maxAmount === minAmount && maxDuration === minDuration)
+  ) {
+    interest = minInterest;
   }
   if (minDuration === maxDuration) {
-    const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
-    interest = minInterest + amountFactor * interestRange;
+    const amountFactor = Number(amount - minAmount) / Number(maxAmount - minAmount);
+    interest = minInterest + BigInt(amountFactor * interestRange);
   } else if (minAmount === maxAmount) {
-    const durationFactor = (duration - minDuration) / (maxDuration - minDuration);
-    interest = minInterest + durationFactor * interestRange;
+    const durationFactor =
+      Number(duration - minDuration) / Number(maxDuration - minDuration);
+    interest = minInterest + BigInt(durationFactor * interestRange);
   } else {
     //Taking average of amountFactor and durationFactor giving both equal weightage
     //Diving by BigInt(2) after multiplying by interestRange because of integer division
     //Otherwise (amountFactor + durationFactor)/2 will produce 0
+    const amountFactor = Number((amount - minAmount)) / Number((maxAmount - minAmount));
+    const durationFactor = Number((duration - minDuration)) / Number((maxDuration - minDuration));
+  
+    interest =
+      minInterest + BigInt(((amountFactor + durationFactor) * interestRange) / 2);
   }
-  const amountFactor = (amount - minAmount) / (maxAmount - minAmount);
-  const durationFactor = (duration - minDuration) / (maxDuration - minDuration);
-
-  interest =
-    minInterest + ((amountFactor + durationFactor) * interestRange) / BigInt(2);
 
   return Number(interest) / 100;
 };

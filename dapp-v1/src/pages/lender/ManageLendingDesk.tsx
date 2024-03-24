@@ -517,8 +517,16 @@ export const ManageLendingDesk = (props: any) => {
                 return (
                   <div key={config.id} className="pb-2 mb-2 border-bottom">
                     <div className="d-flex align-items-center">
-                      <div className="text-body-secondary text-truncate">
-                        Collection {index + 1}
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={nftArr[index]?.logoURI}
+                          alt={nftArr[index]?.symbol}
+                          height="24"
+                          className="d-block rounded-circle flex-shrink-0 me-2"
+                        />
+                        <div className="text-truncate fw-medium">
+                          {nftArr[index]?.name}
+                        </div>
                       </div>
                       <div className="flex-shrink-0 ms-auto">
                         <span className="text-body-secondary me-2">
@@ -539,17 +547,6 @@ export const ManageLendingDesk = (props: any) => {
                             <i className="fa-regular fa-trash-can"></i>
                           </button>
                         </span>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={nftArr[index]?.logoURI}
-                        alt={nftArr[index]?.symbol}
-                        height="24"
-                        className="d-block rounded-circle flex-shrink-0 me-2"
-                      />
-                      <div className="text-truncate fw-medium">
-                        {nftArr[index]?.name}
                       </div>
                     </div>
                     <div className="mt-2 d-flex align-items-center">
