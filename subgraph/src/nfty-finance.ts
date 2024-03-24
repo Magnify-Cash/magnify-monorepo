@@ -215,6 +215,7 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.plus(
     event.params.amount
   );
+  lendingDesk.balance = lendingDesk.balance.minus(event.params.amount);
   lendingDesk.save();
 }
 
