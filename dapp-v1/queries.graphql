@@ -9,6 +9,8 @@ query Home {
     owner
     paused
     platformWallet
+    erc20sCount
+    nftCollectionsCount
   }
 }
 
@@ -91,6 +93,10 @@ query BrowseCollections {
   }
   erc20S {
     symbol
+  }
+  protocolInfo(id: "0") {
+    erc20sCount
+    nftCollectionsCount
   }
 }
 

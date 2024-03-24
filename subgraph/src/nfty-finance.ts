@@ -45,6 +45,10 @@ export function handleNewLendingDeskInitialized(
     erc20.decimals = erc20Contract.decimals();
 
     erc20.save();
+
+    // Increment ERC20 count
+    protocolInfo.erc20sCount = protocolInfo.erc20sCount.plus(BigInt.fromI32(1));
+    protocolInfo.save();
   }
 
   // Create User instance if doesn't exist
@@ -87,8 +91,19 @@ export function handleNewLendingDeskInitialized(
 export function handleLendingDeskLoanConfigsSet(
   event: LendingDeskLoanConfigsSet
 ): void {
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
+
   for (let i = 0; i < event.params.loanConfigs.length; i++) {
     const loanConfigStruct = event.params.loanConfigs[i];
+
+    // Increment NftCollection count if doesn't exist
+    if (!NftCollection.load(loanConfigStruct.nftCollection.toHex())) {
+      protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.plus(
+        BigInt.fromI32(1)
+      );
+      protocolInfo.save();
+    }
 
     // Create NftCollection instance
     const nftCollection = new NftCollection(
@@ -120,12 +135,19 @@ export function handleLendingDeskLoanConfigsSet(
 export function handleLendingDeskLoanConfigRemoved(
   event: LendingDeskLoanConfigRemoved
 ): void {
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
+  
   store.remove(
     "LoanConfig",
     event.params.lendingDeskId.toString() +
       "-" +
       event.params.nftCollection.toHex()
   );
+  protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.minus(
+    BigInt.fromI32(1)
+  );
+  protocolInfo.save();
 }
 
 export function handleLendingDeskLiquidityDeposited(
@@ -343,6 +365,8 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
     // Initialize counts to 0
     protocolInfo.lendingDesksCount = BigInt.fromU32(0);
     protocolInfo.loansCount = BigInt.fromU32(0);
+    protocolInfo.nftCollectionsCount = BigInt.fromU32(0);
+    protocolInfo.erc20sCount = BigInt.fromU32(0);
 
     protocolInfo.save();
   } else {

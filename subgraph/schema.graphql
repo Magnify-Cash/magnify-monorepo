@@ -47,6 +47,8 @@ type ProtocolInfo @entity {
   platformWallet: Bytes!
   lendingDesksCount: BigInt!
   loansCount: BigInt!
+  nftCollectionsCount: BigInt!
+  erc20sCount: BigInt!
 }
 
 type Erc20 @entity {

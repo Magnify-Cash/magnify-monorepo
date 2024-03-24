@@ -8,8 +8,6 @@ export const Home = (props) => {
     query: HomeDocument,
   });
 
-  console.log(result.data);
-
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="row g-4 g-xl-5 justify-content-center">
@@ -69,7 +67,7 @@ export const Home = (props) => {
                   <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">TODO</h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.nftCollectionsCount}</h3>
                   <p className="m-0 text-primary-emphasis">collections supported</p>
                 </div>
               </div>

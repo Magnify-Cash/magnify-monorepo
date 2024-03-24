@@ -64,7 +64,7 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-hexagon-vertical-nft h4 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">TODO</h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.nftCollectionsCount}</h3>
                   <p className="m-0 text-primary-emphasis">
                     number of collections
                   </p>
@@ -77,7 +77,7 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-square-dollar h4 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">TODO</h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.erc20sCount}</h3>
                   <p className="m-0 text-primary-emphasis">
                     number of currencies
                   </p>
