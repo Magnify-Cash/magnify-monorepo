@@ -1,8 +1,0 @@
-sources:
-  - name: nftyFinance
-    handler:
-      graphql:
-        endpoint: http://localhost:8000/subgraphs/name/nftyfinance-local
-
-documents:
-  - queries.graphql

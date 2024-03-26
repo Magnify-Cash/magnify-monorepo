@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["dapp/src/*"]
-    }
-  }
-  "include": ["src"]
-}
