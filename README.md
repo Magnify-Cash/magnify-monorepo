@@ -1,7 +1,4 @@
 # NFTY Finance V1 Monorepo
-
-![NFTY Finance Logo](https://nfty.finance/icon.svg)
-
 Welcome to NFTY Finance V1! This repository serves as the central hub for various subprojects that collectively constitute the NFTY Finance protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
 
 ## Repo Structure
@@ -42,18 +39,18 @@ To begin local development, carefully follow the steps outlined below:
 
 The environment is now ready for development. You can launch the faucet service using `yarn faucet start` and/or start the dApp with `yarn dapp-v1 start`.
 
-### Deploying to Staging
+## Deploying to Staging
 
-#### Requirements:
+### Requirements:
 
-1. Make sure you have a valid `PRIVATE_KEY` with Sepolia ETH in your `.env`.
+1. Make sure you have a valid `PRIVATE_KEY` with testnet ETH in your `.env`.
 2. Run `graph auth --product hosted-service <SUBGRAPH_ACCESS_TOKEN>`.
 
-#### Steps:
+### Steps:
 
-1. Run `yarn contracts deploy:testnet`.
+1. Run `yarn contracts deploy:<network>`.
 2. Change the addresses and block numbers in `subgraph/subgraph.yaml` and `dapp-v1/wagmi.config.ts` as needed by copying them from the new `deployments.json`.
-3. Run `yarn subgraph deploy:testnet`.
+3. Run `yarn subgraph deploy:<network>`.
 4. Make sure `yarn dapp build` is working locally with the production `.env`s, and without the local graph node running.
 5. Push changes to `staging` branch for them to be deployed.
 
@@ -72,12 +69,22 @@ If you just want to deploy the subgraph and dapp and not the contracts, you can 
 
 - For the scripts to work correctly, ensure that both this repo and the graph-node repo are present in the same parent directory.
 
-### Running Tests
+## Supporting new chain (WIP)
+
+### contracts
+- add new network in contracts/hardhat.config.ts
+- add new `deploy:<network>` command in `contracts/package.json`
+
+### frontend
+- add deployed contract address in `dapp-v1/wagmi.config.ts`
+- add new chain in `dapp-v1/src/wagmi.ts`
+- update protocol defaults in `dapp-v1/src/helpers/constants.ts` + `dapp-v1/src/helpers/protocolDefaults`
+- update alchemy networks in `dapp-v1/src/helpers/utils.ts`
+
+### subgraph
+- add new `deploy:<network>` command in `subgraph/package.json`
+
+
+## Running Tests
 
 To run all smart contract tests, execute `yarn contracts test`. If you want to target specific tests, e.g., tests with the name `NFTYNotes`, you can use `yarn contracts test --grep "NFTYNotes"`.
-
-## Contributing
-
-We highly value and welcome contributions to enhance the NFTY Finance protocol. Whether you find issues or have ideas for improvements, feel free to open a pull request or create an issue on the repository. We kindly request that all contributions adhere to the project's guidelines and coding standards.
-
-Thank you for showing interest in NFTY Finance! We believe a comprehensive README is crucial for any project as it offers valuable insights into the project and reflects the developer's commitment to quality and transparency. If you have any further questions or require assistance, don't hesitate to reach out. Happy coding!

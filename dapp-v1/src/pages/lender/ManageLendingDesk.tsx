@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { useWaitForTransaction } from "wagmi";
+import { useWaitForTransaction, useChainId } from "wagmi";
 import { IConfigForm } from "./CreateLendingDesk";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 import { INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
@@ -77,6 +77,7 @@ export const ManageLendingDesk = (props: any) => {
   Fetch NFT Details
   This is used to lookup a list of NFTs off chain
   */
+  const chainId = useChainId();
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
     const nftIds: string[] | undefined =
@@ -84,7 +85,7 @@ export const ManageLendingDesk = (props: any) => {
         (loan) => loan.nftCollection.id
       );
     if (nftIds?.length) {
-      const resultArr = await fetchNFTDetails(nftIds);
+      const resultArr = await fetchNFTDetails(nftIds, chainId);
       setNftArr(resultArr);
     }
   };

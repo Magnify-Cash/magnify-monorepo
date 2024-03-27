@@ -1,5 +1,6 @@
 import { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
+import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
 import { ConnectKitButton, ConnectKitProvider, Types } from "connectkit";
 import {
   ReactElement,
@@ -12,6 +13,7 @@ import {
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import { useChainId } from "wagmi";
 declare let bootstrap: any;
 
 type ToastContextType = {
@@ -110,8 +112,9 @@ export const Base = () => {
   }
 
   // graphQL
+  const chainId = useChainId();
   const client = new Client({
-    url: import.meta.env.VITE_GRAPHQL_ENDPOINT,
+    url: getProtocolGraphUrl(chainId),
     exchanges: [cacheExchange, fetchExchange],
   });
 

@@ -1,19 +1,11 @@
-const nftListUrlsMap = new Map<number, string[]>([
-  [
-    11155111,
-    [
-      "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-    ],
-  ],
-  [2, ["http://example.com/url3", "http://example.com/url4"]],
-  // Add more entries as needed
-]);
+const nftListUrlsMap = {
+  1: ["https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json"]
+};
 
-const tokenListUrlsMap = new Map<number, string[]>([
-  [11155111, ["https://tokens.coingecko.com/uniswap/all.json"]],
-  [2, ["http://example.com/url3", "http://example.com/url4"]],
-  // Add more entries as needed
-]);
+const tokenListUrlsMap = {
+  1: ["https://tokens.coingecko.com/ethereum/all.json"],
+  8453: ["https://tokens.coingecko.com/base/all.json"],
+}
 
 export function getTokenListUrls(
   chainId: number,
@@ -21,9 +13,9 @@ export function getTokenListUrls(
   isToken: boolean | undefined
 ): string[] | undefined {
   if (isNft) {
-    return nftListUrlsMap.get(chainId);
+    return nftListUrlsMap[chainId];
   }
   if (isToken) {
-    return tokenListUrlsMap.get(chainId);
+    return tokenListUrlsMap[chainId];
   }
 }

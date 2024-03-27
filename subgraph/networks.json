@@ -1,0 +1,48 @@
+{
+  "sepolia": {
+    "NFTYFinance": {
+      "address": "0x6CeAF3EFF44b434B6e91041101FDe8c449A6A2f0",
+      "startBlock": 5225934
+    },
+    "PromissoryNotes": {
+      "address": "0xF3e4e7c515E25360A6FB5cAf0d66a70c73875409",
+      "startBlock": 5225931
+    },
+    "ObligationNotes": {
+      "address": "0x0A43735C8d33Ee0FAaf9fca1240ac1C973c30f9A",
+      "startBlock": 5225932
+    },
+    "LendingKeys": {
+      "address": "0x9b38849ed1e6DB97328ED85137252cf668c1e840",
+      "startBlock": 5225933
+    }
+  },
+  "base-sepolia": {
+    "NFTYFinance": {
+      "address": "0xf065Eb15c0a7EB2662d708Dc55A3BC7d899905D7",
+      "startBlock": 7859553
+    },
+    "ObligationNotes": {
+      "address": "0x127e1883682cD5aAAA1311DA168F9983d8a4BD10",
+      "startBlock": 7859547
+    },
+    "LendingKeys": {
+      "address": "0xB696d76472FCe84893A5dBdc635cF88C18193316",
+      "startBlock": 7859550
+    }
+  },
+  "mainnet": {
+    "NFTYFinance": {
+      "address": "0xf065Eb15c0a7EB2662d708Dc55A3BC7d899905D7",
+      "startBlock": 7859553
+    },
+    "ObligationNotes": {
+      "address": "0x127e1883682cD5aAAA1311DA168F9983d8a4BD10",
+      "startBlock": 7859547
+    },
+    "LendingKeys": {
+      "address": "0xB696d76472FCe84893A5dBdc635cF88C18193316",
+      "startBlock": 7859550
+    }
+  }
+}

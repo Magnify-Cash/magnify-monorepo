@@ -66,9 +66,10 @@ export const BrowseCollection = (props) => {
     // This function will be executed whenever the query data changes and formattedData is set
     const getTitle = async () => {
       if (!fetching && collection_address) {
-        const fetchedNftArr: INft[] = await fetchNFTDetails([
-          collection_address,
-        ]);
+        const fetchedNftArr: INft[] = await fetchNFTDetails(
+          [collection_address],
+          chainId
+        );
         if (title) {
           title.innerHTML = `${fetchedNftArr[0].name} Liquidity Desks`;
         }
@@ -101,7 +102,7 @@ export const BrowseCollection = (props) => {
   };
 
   const getNFTdetails = async () => {
-    const fetchedNfts = await fetchNFTDetails([collection_address!]);
+    const fetchedNfts = await fetchNFTDetails([collection_address!], chainId);
     setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
 

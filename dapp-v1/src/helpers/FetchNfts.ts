@@ -1,5 +1,4 @@
 import { NFTInfo } from "@nftylabs/nft-lists";
-import { fetchLocalNfts } from "./Localdata";
 import { getTokenListUrls } from "./tokenUrls";
 import { formatAddress } from "./formatAddress";
 
@@ -16,26 +15,21 @@ export interface INft {
 }
 
 //Given an array of addresses, returns an array of nft objects in order
-const fetchNFTDetails = async (addresses: string[]) => {
+const fetchNFTDetails = async (addresses: string[], chainId:number) => {
   let jsonData: IJsonData = { nfts: [] };
+  try {
+    const urls = getTokenListUrls(chainId, true, false) || [];
 
-  if (import.meta.env.DEV) {
-    jsonData = await fetchLocalNfts();
-  } else {
-    try {
-      const urls = getTokenListUrls(chainId, true, false) || [];
-
-      // get list data
-      const responses = await Promise.all(
-        urls.map(async (url) => {
-          const response = await fetch(url);
-          return await response.json();
-        })
-      );
-      jsonData = { nfts: responses.flatMap((response) => response.nfts) };
-    } catch (error) {
-      console.error("Error fetching nft data", error);
-    }
+    // get list data
+    const responses = await Promise.all(
+      urls.map(async (url) => {
+        const response = await fetch(url);
+        return await response.json();
+      })
+    );
+    jsonData = { nfts: responses.flatMap((response) => response.nfts) };
+  } catch (error) {
+    console.error("Error fetching nft data", error);
   }
 
     //Creating a Map for fast lookup. Here key = address of an nft; value = an nft object

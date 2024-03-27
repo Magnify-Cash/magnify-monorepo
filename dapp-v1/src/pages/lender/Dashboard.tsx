@@ -4,7 +4,7 @@ import { fromWei } from "@/helpers/utils";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
 
 export const Dashboard = (props: any) => {
@@ -30,6 +30,7 @@ export const Dashboard = (props: any) => {
   }, [data]);
 
   //This is used to lookup a list of nfts off chain
+  const chainId = useChainId();
   const getNFTs = async () => {
     //A two dimensional array of nft ids
     const nftIdArr = data?.lendingDesks.map((desk) =>
@@ -38,7 +39,7 @@ export const Dashboard = (props: any) => {
 
     if (nftIdArr?.length) {
       const fetchedNftArrPromise = Promise.all(
-        nftIdArr.map((arr) => fetchNFTDetails(arr)),
+        nftIdArr.map((arr) => fetchNFTDetails(arr, chainId)),
       );
 
       fetchedNftArrPromise

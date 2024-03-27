@@ -7,7 +7,7 @@ import {
 import { WalletNft, fromWei, getWalletNfts } from "@/helpers/utils";
 import { LendingDesk, LoanConfig } from "dapp-v1/.graphclient";
 import { useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import PopupTransaction from "./PopupTransaction";
 
 type GetLoanModalProps = {
@@ -55,7 +55,7 @@ export default function GetLoanModal({
 }: GetLoanModalProps) {
   // Wallet NFTs
   const { address } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
 
   const selectedNft = walletNfts.find((x) => x.tokenId === nftId?.toString());
@@ -66,7 +66,7 @@ export default function GetLoanModal({
   useEffect(() => {
     const fetchWalletNfts = async () => {
       const walletNfts = await getWalletNfts({
-        chain: chain?.name!,
+        chainId: chainId,
         wallet: address?.toLowerCase()!,
         nftCollection: nftCollectionAddress!,
       });

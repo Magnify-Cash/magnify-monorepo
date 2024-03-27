@@ -103,7 +103,7 @@ export const truncateAddress = (addr: string) =>
   `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
 type GetWalletNftsArgs = {
-  chain: string;
+  chainId: number;
   wallet: string;
   nftCollection: string;
 };
@@ -113,35 +113,39 @@ export type WalletNft = {
   name?: string;
 };
 
+
 export const getWalletNfts = async ({
-  chain,
+  chainId,
   wallet,
   nftCollection,
 }: GetWalletNftsArgs): Promise<WalletNft[]> => {
-  switch (chain) {
-    case "Sepolia": {
-      const alchemy = new Alchemy({
-        apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
-        network: Network.ETH_SEPOLIA,
-      });
-      const response = await alchemy.nft.getNftsForOwner(wallet, {
-        contractAddresses: [nftCollection],
-      });
-      return response.ownedNfts.map((x) => ({
-        tokenId: x.tokenId,
-        name: x.name,
+  // handle hardhat
+  if (chainId === 31337) {
+    return Array(10)
+      .fill(null)
+      .map((_, index) => ({
+        tokenId: index.toString(),
       }));
-    }
-
-    case "Hardhat": {
-      return Array(10)
-        .fill(null)
-        .map((_, index) => ({
-          tokenId: index.toString(),
-        }));
-    }
   }
 
+  // handle live networks
+  const chainIdToAlchemyNetwork = {
+    5: Network.ETH_GOERLI,
+    80001: Network.MATIC_MUMBAI,
+    11155111: Network.ETH_SEPOLIA,
+    84532: Network.BASE_SEPOLIA
+  }
+  const alchemy = new Alchemy({
+    apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
+    network: chainIdToAlchemyNetwork[chainId],
+  });
+  const response = await alchemy.nft.getNftsForOwner(wallet, {
+    contractAddresses: [nftCollection],
+  });
+  return response.ownedNfts.map((x) => ({
+    tokenId: x.tokenId,
+    name: x.name,
+  }));
   return [];
 };
 

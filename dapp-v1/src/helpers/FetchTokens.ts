@@ -1,5 +1,4 @@
 import { format } from "util";
-import { fetchLocalTokens } from "./Localdata";
 import { formatAddress } from "./formatAddress";
 import { getTokenListUrls } from "./tokenUrls";
 
@@ -16,25 +15,21 @@ export interface IToken {
 }
 
 //Given an array of addresses, returns an array of token objects in order
-const fetchTokenDetails = async (addresses: string[]) => {
+const fetchTokenDetails = async (addresses: string[],chainId:number) => {
   let jsonData: IJsonData = { tokens: [] };
-  if (import.meta.env.DEV) {
-    jsonData = await fetchLocalTokens();
-  } else {
-    try {
-      const urls = getTokenListUrls(chainId, false, true) || [];
+  try {
+    const urls = getTokenListUrls(chainId, false, true) || [];
 
-      // get list data
-      const responses = await Promise.all(
-        urls.map(async (url) => {
-          const response = await fetch(url);
-          return await response.json();
-        })
-      );
-      jsonData = { tokens: responses.flatMap((response) => response.tokens) };
-    } catch (error: any) {
-      console.log("Error fetching and parsing JSON:", error.message);
-    }
+    // get list data
+    const responses = await Promise.all(
+      urls.map(async (url) => {
+        const response = await fetch(url);
+        return await response.json();
+      })
+    );
+    jsonData = { tokens: responses.flatMap((response) => response.tokens) };
+  } catch (error: any) {
+    console.log("Error fetching and parsing JSON:", error.message);
   }
 
   //Creating a Map for fast lookup. Here key = address of a token; value = a token object
@@ -56,13 +51,13 @@ const fetchTokenDetails = async (addresses: string[]) => {
 export default fetchTokenDetails;
 
 // Function to fetch tokens for a given collection
-export const fetchTokensForCollection = async (nftCollection) => {
+export const fetchTokensForCollection = async (nftCollection, chainId) => {
   const tokenIdArr = nftCollection.loanConfigs.map(
     (loanConfig) => loanConfig.lendingDesk.erc20.id
   );
 
   if (tokenIdArr?.length) {
-    return await fetchTokenDetails(tokenIdArr);
+    return await fetchTokenDetails(tokenIdArr, chainId);
   }
 
   return [];

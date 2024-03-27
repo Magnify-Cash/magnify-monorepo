@@ -44,9 +44,10 @@ export const QuickLoan = (props: any) => {
     _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
-    const fetchedNfts = await fetchNFTDetails([
-      selectedLendingDesk?.loanConfig?.nftCollection?.id,
-    ]);
+    const fetchedNfts = await fetchNFTDetails(
+      [selectedLendingDesk?.loanConfig?.nftCollection?.id],
+      chainId
+  );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
 
