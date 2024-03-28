@@ -85,25 +85,27 @@ export default function GetLoanModal({
       disabled={disabled}
       modalFooter={
         <div className="modal-footer text-start">
-          <div className="form-check mb-3 ms-2 ">
-            <input
-              name="check"
-              disabled={approvalIsLoading}
-              checked={checked}
-              onClick={onCheck}
-              className="form-check-input"
-              type="checkbox"
-              value=""
-              id="flexCheckChecked"
-              style={{ transform: "scale(1.5)" }}
-            />
-            <label
-              className="form-check-label ps-2 text-wrap"
-              htmlFor="flexCheckChecked"
-            >
-              {`Grant permission for ${"Pudgy Penguin #7338"} transfer by checking this box.`}
-            </label>
-          </div>
+          {selectedNftName && (
+            <div className="form-check mb-3 ms-2 ">
+              <input
+                name="check"
+                disabled={approvalIsLoading}
+                checked={checked}
+                onClick={onCheck}
+                className="form-check-input"
+                type="checkbox"
+                value=""
+                id="flexCheckChecked"
+                style={{ transform: "scale(1.5)" }}
+              />
+              <label
+                className="form-check-label ps-2 text-wrap"
+                htmlFor="flexCheckChecked"
+              >
+                Grant permission for {selectedNftName} transfer by checking this box.
+              </label>
+            </div>
+          )}
           <button
             type="button"
             disabled={!checked || newLoanIsLoading}
@@ -254,12 +256,6 @@ export default function GetLoanModal({
             </div>
             <p className="text-body-secondary">Loan Overview</p>
             <div className="d-flex align-items-center mb-3">
-              <img
-                src="/images/placeholder/images/image-1.png"
-                className="img-fluid flex-shrink-0 me-3"
-                width="32"
-                alt={selectedNftName!}
-              />
               <h6 className="m-0">{selectedNftName}</h6>
             </div>
             <div className="my-2 d-flex align-items-center">

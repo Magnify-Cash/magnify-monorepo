@@ -49,7 +49,7 @@ const ToastComponent: React.FC<ToastProps> = ({
     if (variant !== "loading") {
       const timer = setTimeout(() => {
         setShow(false);
-      }, 3000); // Change this value to adjust the time before the toast hides
+      }, 10000); // Change this value to adjust the time before the toast hides
 
       return () => {
         clearTimeout(timer);
@@ -77,9 +77,9 @@ const ToastComponent: React.FC<ToastProps> = ({
           </div>
           <div className="mx-3">
             <div className="h5 mb-1">{title}</div>
-            <p className="text-body-secondary mb-0" style={{ fontSize: "12px" }}>
+            <div className="text-body-secondary mb-0" style={{ fontSize: "12px" }}>
               {content}
-            </p>
+            </div>
           </div>
           <button
             type="button"

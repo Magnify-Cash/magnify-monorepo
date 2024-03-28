@@ -620,7 +620,7 @@ export const ManageLendingDesk = (props: any) => {
                       <label htmlFor="min-offer">Min Offer</label>
                     </div>
                     <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                      USDT
+                      {result.data?.lendingDesk?.erc20.symbol}
                     </span>
                   </div>
                 </div>
@@ -642,7 +642,7 @@ export const ManageLendingDesk = (props: any) => {
                       <label htmlFor="max-offer">Max Offer</label>
                     </div>
                     <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                      USDT
+                      {result.data?.lendingDesk?.erc20.symbol}
                     </span>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { PopupTransaction } from "@/components";
+import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
 import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
@@ -399,12 +399,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       <div className="card border-0 shadow rounded-4 h-100">
         <div className="card-body p-4">
           <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
-            <img
-              className="object-fit-cover"
-              src="theme/images/image-1.png"
-              alt="test"
-              height="100%"
-            />
+            <Blockies seed={`${loan?.nftId}-${loan?.nftCollection.id}`} size={32} />
             {status === "Defaulted" ? (
               <div
                 className="position-absolute top-50 start-50 translate-middle z-1 w-100 h-100 d-flex align-items-center justify-content-center"
@@ -460,7 +455,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                       )}{" "}
                     {loan?.lendingDesk?.erc20.symbol}
                   </div>
-                  <div>payoff</div>
+                  <div>unpaid</div>
                 </div>
               </div>
               <div className="mt-2">
@@ -576,8 +571,8 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                             <div className="text-body-secondary">interest rate</div>
                           </div>
                         </div>
-                        <div className="col-12 col-sm-6">
-                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="col-12">
+                          <div className="h-100 rounded bg-info-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
                               <span className="text-body-secondary ms-2">{}</span>
@@ -585,29 +580,21 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                             <div className="text-body-secondary">loan duration</div>
                           </div>
                         </div>
-                        <div className="col-12 col-sm-6">
-                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
-                            <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">[x]</div>
-                              <span className="text-body-secondary ms-2">
-                                {loan?.lendingDesk?.erc20.symbol}
-                              </span>
-                            </div>
-                            <div className="text-body-secondary">
-                              amount due on expiry date
-                            </div>
-                          </div>
-                        </div>
                         <div className="col-12">
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">[x]</div>
+                              <div className="h3">
+                                {fromWei(
+                                  loanAmountDue ?? BigInt("0"),
+                                  loan?.lendingDesk?.erc20?.decimals,
+                                )}
+                              </div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
                               </span>
                             </div>
                             <div className="text-body-secondary">
-                              current payoff amount
+                              total remaining balance
                             </div>
                           </div>
                         </div>
@@ -650,7 +637,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         />
                         <label className="form-check-label " htmlFor="flexCheckChecked">
                           {`Grant permission for ${
-                            loan?.lendingDesk?.erc20.symbol || "USDT"
+                            loan?.lendingDesk?.erc20.symbol || ""
                           } transfer by checking this box.`}
                         </label>
                       </div>
@@ -721,8 +708,8 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                             <div className="text-body-secondary">interest rate</div>
                           </div>
                         </div>
-                        <div className="col-12 col-sm-6">
-                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                        <div className="col-12">
+                          <div className="h-100 rounded bg-info-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
                               <span className="text-body-secondary ms-2">{}</span>
@@ -730,29 +717,21 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                             <div className="text-body-secondary">loan duration</div>
                           </div>
                         </div>
-                        <div className="col-12 col-sm-6">
-                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
-                            <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">[x]</div>
-                              <span className="text-body-secondary ms-2">
-                                {loan?.lendingDesk?.erc20.symbol}
-                              </span>
-                            </div>
-                            <div className="text-body-secondary">
-                              amount due on expiry date
-                            </div>
-                          </div>
-                        </div>
                         <div className="col-12">
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">[x]</div>
+                              <div className="h3">
+                                {fromWei(
+                                  loanAmountDue ?? BigInt("0"),
+                                  loan?.lendingDesk?.erc20?.decimals,
+                                )}
+                              </div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
                               </span>
                             </div>
                             <div className="text-body-secondary">
-                              current payoff amount
+                              total remaining balance
                             </div>
                           </div>
                         </div>
@@ -798,7 +777,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         />
                         <label className="form-check-label " htmlFor="flexCheckChecked">
                           {`Grant permission for ${
-                            loan?.lendingDesk?.erc20.symbol || "USDT"
+                            loan?.lendingDesk?.erc20.symbol || ""
                           } transfer by checking this box.`}
                         </label>
                       </div>
@@ -839,17 +818,19 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         <h6>{loan?.interest} %</h6>
                         <small>interest date</small>
                       </div>
-                      <div className="col-6 bg-secondary">
+                      <div className="col-12 bg-info">
                         <h6>{timeInfo.elapsedTime}</h6>
                         <small>loan duration</small>
                       </div>
-                      <div className="col-6 bg-secondary">
-                        <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-                        <small>amount due on expiry date</small>
-                      </div>
                       <div className="col-12 bg-success">
-                        <h6>[x]{loan?.lendingDesk?.erc20.symbol}</h6>
-                        <small>current payoff amount</small>
+                        <h6>
+                          {fromWei(
+                            loanAmountDue ?? BigInt("0"),
+                            loan?.lendingDesk?.erc20?.decimals,
+                          )}
+                          {loan?.lendingDesk?.erc20.symbol}
+                        </h6>
+                        <small>total remaining balance</small>
                       </div>
                     </div>
                     <hr />

@@ -1,3 +1,4 @@
+import { Blockies } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
 import TransactionDetails from "@/components/TransactionDetails";
@@ -309,12 +310,7 @@ export const BrowseCollection = (props) => {
                 return (
                   <tr className="align-middle" key={loanConfig.lendingDesk.id}>
                     <td className="py-3 ps-3">
-                      <img
-                        src="/images/placeholder/images/image-12.png"
-                        width="30"
-                        className="d-block rounded-circle"
-                        alt="Placeholder"
-                      />
+                      <Blockies seed={loanConfig.lendingDesk.owner.id} size={16} />
                     </td>
                     <td className="py-3">
                       {formatAddress(loanConfig.lendingDesk.owner.id)}

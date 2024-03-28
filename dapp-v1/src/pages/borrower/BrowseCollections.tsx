@@ -1,3 +1,4 @@
+import { Blockies } from "@/components";
 import fetchNFTDetails from "@/helpers/FetchNfts";
 import type { INft } from "@/helpers/FetchNfts";
 import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
@@ -109,16 +110,16 @@ export const BrowseCollections = (props: any) => {
                 return (
                   <tr className="align-middle" key={nftCollection.id}>
                     <td className="py-3 ps-3">
-                      <img
-                        src={
-                          nftArr[index]?.logoURI
-                            ? nftArr[index].logoURI
-                            : "/images/placeholder/images/image-12.png"
-                        }
-                        width="30"
-                        className="d-block rounded-circle"
-                        alt={nftArr[index]?.symbol}
-                      />
+                      {nftArr.length && nftArr[index]?.logoURI ? (
+                        <img
+                          src={nftArr[index].logoURI}
+                          width="30"
+                          className="d-block rounded-circle"
+                          alt={nftArr[index]?.symbol}
+                        />
+                      ) : (
+                        <Blockies seed={nftArr[index]?.address} size={16} />
+                      )}
                     </td>
                     <td className="py-3">
                       {nftArr.length ? nftArr[index].name : null}

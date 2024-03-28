@@ -441,7 +441,7 @@ export const CreateLendingDesk = (props: any) => {
                               <label htmlFor="min-offer">Min Offer</label>
                             </div>
                             <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                              {token?.token.symbol || "USDT"}
+                              {token?.token.symbol || ""}
                             </span>
                           </div>
                         </div>
@@ -464,7 +464,7 @@ export const CreateLendingDesk = (props: any) => {
                               <label htmlFor="max-offer">Max Offer</label>
                             </div>
                             <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
-                              {token?.token.symbol || "USDT"}
+                              {token?.token.symbol || ""}
                             </span>
                           </div>
                         </div>
@@ -816,7 +816,7 @@ export const CreateLendingDesk = (props: any) => {
                             />
                           )}
                           <div className="text-truncate">
-                            {token?.token.symbol || "USDT"}
+                            {token?.token.symbol || ""}
                           </div>
                         </div>
                       </div>
@@ -834,7 +834,7 @@ export const CreateLendingDesk = (props: any) => {
                       />
                       <label className="form-check-label " htmlFor="flexCheckChecked">
                         {`Grant permission for ${
-                          token?.token.symbol || "USDT"
+                          token?.token.symbol || ""
                         } transfer by checking this box.`}
                       </label>
                     </div>

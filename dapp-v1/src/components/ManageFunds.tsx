@@ -298,7 +298,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
                 htmlFor="flexCheckChecked"
               >
                 {`Grant permission for ${
-                  lendingDesk?.erc20.symbol || "USDT"
+                  lendingDesk?.erc20.symbol || ""
                 } transfer by checking this box.`}{" "}
               </label>
             </div>
