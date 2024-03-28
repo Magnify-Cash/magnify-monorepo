@@ -18,6 +18,8 @@ import { IConfigForm } from "./CreateLendingDesk";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
 import { INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import { NFTInfo } from "@nftylabs/nft-lists";
+import TransactionDetails from "@/components/TransactionDetails";
+import ErrorDetails from "@/components/ErrorDetails";
 
 export const ManageLendingDesk = (props: any) => {
   const { addToast, closeToast } = useToastContext();
@@ -137,9 +139,9 @@ export const ManageLendingDesk = (props: any) => {
     const deleteCollectionConfig = async () => {
       try {
         await deleteCollection();
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
-        addToast("Error", "An error occurred. Please try again.", "error");
+        addToast("Error", <ErrorDetails error={error.message} />, "error");
       }
       setDeletingCollection(false);
     };
@@ -223,10 +225,13 @@ export const ManageLendingDesk = (props: any) => {
   const freezeUnfreeze = async () => {
     setFreezeUnfreezeIsLoading(true);
     try {
-      await freezeWrite?.();
-    } catch (error) {
+      if (typeof freezeWrite !== "function") {
+        throw new Error("freezeWrite is not a function");
+      }
+      await freezeWrite();
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setFreezeUnfreezeIsLoading(false);
   };
@@ -241,7 +246,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -252,7 +257,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -315,7 +320,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
       setEditDesk(false);
@@ -328,7 +333,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -357,7 +362,7 @@ export const ManageLendingDesk = (props: any) => {
       try {
         data.selectedNftCollection = nftCollection;
         setDeskConfig(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Nft collection is not selected`);
       }
     }
@@ -377,9 +382,9 @@ export const ManageLendingDesk = (props: any) => {
     setUpdateDeskIsLoading(true);
     try {
       await updateLendingDesk();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setUpdateDeskIsLoading(false);
   }
@@ -405,7 +410,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -416,7 +421,7 @@ export const ManageLendingDesk = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },

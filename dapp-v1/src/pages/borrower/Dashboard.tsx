@@ -56,7 +56,7 @@ export const Dashboard = (props: any) => {
               aria-controls="pills-completed"
               aria-selected="false"
             >
-              Completed Loans
+              Resolved Loans
             </button>
           </li>
         </ul>
@@ -84,7 +84,7 @@ export const Dashboard = (props: any) => {
           aria-labelledby="pills-completed-tab"
         >
           <div className="row g-4 justify-content-start mt-0">
-            <LoanRow loans={result?.data?.loans || []} status="Completed" />
+            <LoanRow loans={result?.data?.loans || []} status="Resolved" />
           </div>
         </div>
         {/* End completed Row */}

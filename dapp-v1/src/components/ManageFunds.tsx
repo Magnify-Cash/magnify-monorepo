@@ -13,6 +13,8 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import TransactionDetails from "./TransactionDetails";
+import ErrorDetails from "./ErrorDetails";
 
 interface ManageFundsProps {
   lendingDesk: any;
@@ -90,7 +92,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -101,7 +103,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -139,9 +141,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         throw new Error("depositWrite is not a function");
       }
       await depositWrite();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
   };
 
@@ -167,9 +169,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         throw new Error("withdrawWrite is not a function");
       }
       await withdrawWrite();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
   };
 
@@ -179,9 +181,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
     setActionIsLoading(true);
     try {
       await depositLiquidity();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setActionIsLoading(false);
   }
@@ -191,9 +193,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
     setActionIsLoading(true);
     try {
       await withdrawLiquidity();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setActionIsLoading(false);
   }
@@ -221,7 +223,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -232,7 +234,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -241,15 +243,15 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setApprovalIsLoading(false);
   }

@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransaction } from "wagmi";
 import { QuickLoanDocument } from "../../../.graphclient";
+import TransactionDetails from "@/components/TransactionDetails";
+import ErrorDetails from "@/components/ErrorDetails";
 
 export const QuickLoan = (props: any) => {
   const { addToast, closeToast } = useToastContext();
@@ -102,7 +104,7 @@ export const QuickLoan = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -113,7 +115,7 @@ export const QuickLoan = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -141,12 +143,13 @@ export const QuickLoan = (props: any) => {
         BigInt(nftId || 0),
         (duration || 0) * 24,
         toWei(amount ? amount.toString() : "0", token?.token.decimals),
-        (selectedLendingDesk && calculateLoanInterest(
-          selectedLendingDesk?.loanConfig,
-          amount,
-          duration,
-          selectedLendingDesk?.erc20?.decimals || 18
-        )*100)
+        selectedLendingDesk &&
+          calculateLoanInterest(
+            selectedLendingDesk?.loanConfig,
+            amount,
+            duration,
+            selectedLendingDesk?.erc20?.decimals || 18
+          ) * 100,
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
@@ -163,7 +166,7 @@ export const QuickLoan = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -174,7 +177,7 @@ export const QuickLoan = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -183,15 +186,15 @@ export const QuickLoan = (props: any) => {
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
     try {
       await approveErc721();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setApprovalIsLoading(false);
   }
@@ -214,10 +217,13 @@ export const QuickLoan = (props: any) => {
     console.log(newLoanConfig);
     setNewLoanIsLoading(true);
     try {
-      await newLoanWrite?.();
-    } catch (error) {
+      if (typeof newLoanWrite !== "function") {
+        throw new Error("newLoanWrite is not a function");
+      }
+      await newLoanWrite();
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setNewLoanIsLoading(false);
   }

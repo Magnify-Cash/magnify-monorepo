@@ -97,7 +97,7 @@ export const Dashboard = (props: any) => {
               aria-controls="pills-completed"
               aria-selected="false"
             >
-              Completed Loans
+              Resolved Loans
             </button>
           </li>
           <li className="nav-item" role="presentation">
@@ -176,7 +176,7 @@ export const Dashboard = (props: any) => {
         </div>
         {/* End Defaulted Row */}
 
-        {/* Completed Row */}
+        {/* Resolved Row */}
         <div
           className="tab-pane fade"
           id="pills-completed"
@@ -188,12 +188,12 @@ export const Dashboard = (props: any) => {
               <LoanCardParent
                 desks={result?.data?.lendingDesks || []}
                 nfts={nftTwoDimArr}
-                status="Completed"
+                status="Resolved"
               />
             </div>
           </div>
         </div>
-        {/* End Completed Row */}
+        {/* End Resolved Row */}
       </div>
     </div>
   );

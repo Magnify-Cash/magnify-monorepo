@@ -13,6 +13,8 @@ import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateLendingDeskDocument } from "../../../.graphclient";
+import TransactionDetails from "@/components/TransactionDetails";
+import ErrorDetails from "@/components/ErrorDetails";
 
 export interface IConfigForm {
   selectedNftCollection?: INFTListItem;
@@ -197,7 +199,7 @@ export const CreateLendingDesk = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -208,7 +210,7 @@ export const CreateLendingDesk = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -264,7 +266,7 @@ export const CreateLendingDesk = (props: any) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
       refetchApprovalData();
@@ -278,7 +280,7 @@ export const CreateLendingDesk = (props: any) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -287,36 +289,31 @@ export const CreateLendingDesk = (props: any) => {
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (Number(deskFundingAmount) <= 0) {
-      console.log("insufficient allowance");
+      addToast("Error", <ErrorDetails error={"insufficient allowance"} />, "error");
       return;
     }
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setApprovalIsLoading(false);
   }
 
   // Modal Submit function
   async function initLendingDesk() {
-    console.log("token", token);
-    console.log("deskConfigs", deskConfigs);
-    console.log("nftCollection", nftCollection);
-    console.log("deskFundingAmount", deskFundingAmount);
-    console.log("wagmi function with above data.....");
     setInitLendingDeskIsLoading(true);
     try {
       await initializeNewLendingDesk();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setInitLendingDeskIsLoading(false);
   }
@@ -853,7 +850,7 @@ export const CreateLendingDesk = (props: any) => {
                     <div className="form-check mb-3 ">
                       <input
                         checked={checked}
-                        disabled={approvalIsLoading}
+                        disabled={approvalIsLoading || Number(deskFundingAmount) <= 0}
                         onClick={() => approveERC20TokenTransfer()}
                         className="form-check-input me-3"
                         type="checkbox"

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactElement } from "react";
 
-type ToastVariant = "success" | "error" | "loading";
+type ToastVariant = "success" | "error" | "warning" | "loading";
 
 export interface ToastProps {
   title: string;
-  content: string;
+  content: string | ReactElement;
   variant: ToastVariant;
   index: number;
   hide?: boolean;
@@ -25,6 +25,9 @@ const ToastComponent: React.FC<ToastProps> = ({
   } else if (variant === "loading") {
     toastContext = "primary";
     toastIcon = "fa-spinner fa-spin";
+  } else if (variant === "warning") {
+    toastContext = "warning";
+    toastIcon = "fa-diamond-exclamation";
   }
   //Shows or hides the toast depending on the value
   const [show, setShow] = useState(!hide);
@@ -73,7 +76,10 @@ const ToastComponent: React.FC<ToastProps> = ({
           </div>
           <div className="mx-3">
             <div className="h5 mb-1">{title}</div>
-            <p className="text-body-secondary mb-0" style={{ fontSize: "12px" }}>
+            <p
+              className="text-body-secondary mb-0"
+              style={{ fontSize: "12px" }}
+            >
               {content}
             </p>
           </div>

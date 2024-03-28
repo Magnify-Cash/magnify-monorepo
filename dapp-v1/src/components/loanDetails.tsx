@@ -20,6 +20,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import { Loan } from "../../.graphclient";
+import TransactionDetails from "./TransactionDetails";
+import ErrorDetails from "./ErrorDetails";
 
 interface LoanDetailsProps {
   loan: Loan;
@@ -53,6 +55,7 @@ const LoanDetails = ({
     };
   }, [loan?.startTime, loan?.duration]);
 
+  const [modalOpen, setModalOpen] = useState(false);
   const [payBackAmount, setPayBackAmount] = useState("0");
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
@@ -65,14 +68,20 @@ const LoanDetails = ({
   const { address } = useAccount();
 
   //get loan amount due for resolving the loan using GetLoanAmountDue hook
-  const { data: loanAmountDue, refetch: loanAmountDueRefetch } =
+  const { data: loanAmountDue, refetch: loanAmountDueRefetch, error: loanAmountDueError } =
     useNftyFinanceV1GetLoanAmountDue({
       args: [BigInt(loan?.id || 0)],
+      enabled: modalOpen,
       onSuccess(data) {
         console.log("data", data);
       },
       onError(error) {
         console.error(error);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={error.message} />,
+          "error"
+        );
       },
     });
 
@@ -109,18 +118,19 @@ const LoanDetails = ({
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
     onError(error) {
       console.error(error);
+
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -144,7 +154,7 @@ const LoanDetails = ({
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -155,7 +165,7 @@ const LoanDetails = ({
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -190,7 +200,7 @@ const LoanDetails = ({
 
   // Make Loan Payment Hook
   // This is auto refetched by default when query args change
-  const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch } =
+  const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch, error: makeLoanPaymentError } =
     usePrepareNftyFinanceV1MakeLoanPayment({
       args: [
         BigInt(loan?.id || 0), // loan ID
@@ -207,6 +217,7 @@ const LoanDetails = ({
   const {
     config: resolveLoanPaymentConfig,
     refetch: resolveLoanPaymentRefetch,
+    error: resolveLoanPaymentError
   } = usePrepareNftyFinanceV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
@@ -231,7 +242,6 @@ const LoanDetails = ({
     useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig);
 
   async function liquidateOverdueLoan(loanID: string) {
-    console.log("loanID", loanID);
     setActionIsLoading(true);
     try {
       await liquidateRefetch();
@@ -239,9 +249,9 @@ const LoanDetails = ({
         throw new Error("liquidateWrite is not a function");
       }
       await liquidateWrite();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast;
     } finally {
       setActionIsLoading(false);
     }
@@ -250,24 +260,22 @@ const LoanDetails = ({
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (Number(payBackAmount) <= 0) {
-      console.log("insufficient allowance");
+      addToast("Error", <ErrorDetails error={"insufficient allowance"} />, "error");
       return;
     }
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error) {}
+    } catch (error: any) {}
     setApprovalIsLoading(false);
   }
 
   //modal submit function
   async function makeLoanPayment(loanID: string) {
-    console.log("loanID", loanID);
-    console.log("payBackAmount", payBackAmount);
     setActionIsLoading(true);
     try {
       if (typeof makeLoanPaymentWrite === "function") {
@@ -275,12 +283,12 @@ const LoanDetails = ({
       } else {
         makeLoanPaymentRefetch();
         throw new Error(
-          "makeLoanPaymentWrite is not defined or not a function"
+          makeLoanPaymentError?.message || "makeLoanPaymentWrite is not defined or not a function"
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setActionIsLoading(false);
   }
@@ -291,7 +299,7 @@ const LoanDetails = ({
   //checkbox click function on resolve loan popup modal
   async function approveTokenTransferResolveLoan() {
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
@@ -301,17 +309,16 @@ const LoanDetails = ({
         await approveErc20ResolveLoan();
       } else {
         loanAmountDueRefetch();
-        throw new Error("loanAmountDue is not defined");
+        throw new Error(loanAmountDueError?.message || "loanAmountDue is not defined");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setApprovalIsLoading(false);
   }
 
   async function resolveLoan(loanID: string) {
-    console.log("loanID", loanID);
     setActionIsLoading(true);
     try {
       if (typeof resolveLoanPaymentWrite === "function") {
@@ -319,12 +326,12 @@ const LoanDetails = ({
       } else {
         resolveLoanPaymentRefetch();
         throw new Error(
-          "resolveLoanPaymentWrite is not defined or not a function"
+          resolveLoanPaymentError?.message || "resolveLoanPaymentWrite is not defined or not a function"
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setActionIsLoading(false);
   }
@@ -350,7 +357,7 @@ const LoanDetails = ({
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -361,7 +368,7 @@ const LoanDetails = ({
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -495,7 +502,7 @@ const LoanDetails = ({
                     <strong className="fs-4">{`0 days`}</strong>
                     <span className="text-body-secondary">{` left`}</span>
                   </div>
-                ) : status === "Completed" ? (
+                ) : status === "Resolved" ? (
                   <div className="mt-2">
                     <strong className="fs-5">{`Complete`}</strong>
                   </div>
@@ -520,7 +527,7 @@ const LoanDetails = ({
                       aria-valuemax={100}
                       style={{ width: "100%" }}
                     ></div>
-                  ) : status === "Completed" ? (
+                  ) : status === "Resolved" ? (
                     <div
                       className="progress-bar text-bg-success"
                       role="progressbar"
@@ -705,6 +712,8 @@ const LoanDetails = ({
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Resolve Loan"
+                btnOnClick={() => setModalOpen(true)}
+                onClose={() => setModalOpen(false)}
                 modalId={`resolveLoanModal${loan?.id}`}
                 modalTitle="Resolve Loan"
                 modalContent={
@@ -910,7 +919,7 @@ const LoanDetails = ({
         </div>
         {status === "Defaulted" ? (
           <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
-        ) : status === "Completed" ? (
+        ) : status === "Resolved" ? (
           <i className="fa-solid fa-check-circle text-success-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
         ) : null}
       </div>

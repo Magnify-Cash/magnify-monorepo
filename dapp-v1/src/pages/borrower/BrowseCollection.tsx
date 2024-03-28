@@ -17,6 +17,8 @@ import { NavLink, useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransaction } from "wagmi";
 import { BrowseCollectionDocument } from "../../../.graphclient";
+import TransactionDetails from "@/components/TransactionDetails";
+import ErrorDetails from "@/components/ErrorDetails";
 
 export const BrowseCollection = (props) => {
   const { addToast, closeToast } = useToastContext();
@@ -97,7 +99,10 @@ export const BrowseCollection = (props) => {
   const [checked, setChecked] = useState(false);
 
   const getTokenDetails = async () => {
-    const fetchedTokens = await fetchTokensForCollection(formattedData,chainId);
+    const fetchedTokens = await fetchTokensForCollection(
+      formattedData,
+      chainId
+    );
     setTokens(fetchedTokens);
   };
 
@@ -132,7 +137,7 @@ export const BrowseCollection = (props) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -143,7 +148,7 @@ export const BrowseCollection = (props) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -175,12 +180,14 @@ export const BrowseCollection = (props) => {
           amount ? amount.toString() : "0",
           selectedLendingDesk?.erc20.decimals
         ),
-        (selectedLoanConfig && selectedLendingDesk && calculateLoanInterest(
-          selectedLoanConfig,
-          amount,
-          duration,
-          selectedLendingDesk?.erc20?.decimals || 18
-        ) * 100)
+        selectedLoanConfig &&
+          selectedLendingDesk &&
+          calculateLoanInterest(
+            selectedLoanConfig,
+            amount,
+            duration,
+            selectedLendingDesk?.erc20?.decimals || 18
+          ) * 100,
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
@@ -197,7 +204,7 @@ export const BrowseCollection = (props) => {
       // Display success toast
       addToast(
         "Transaction Successful",
-        "Your transaction has been confirmed.",
+        <TransactionDetails transactionHash={data.transactionHash} />,
         "success"
       );
     },
@@ -208,7 +215,7 @@ export const BrowseCollection = (props) => {
       // Display error toast
       addToast(
         "Transaction Failed",
-        "Your transaction has failed. Please try again.",
+        <ErrorDetails error={error.message} />,
         "error"
       );
     },
@@ -217,15 +224,15 @@ export const BrowseCollection = (props) => {
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      console.log("already approved");
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
     try {
       await approveErc721();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setApprovalIsLoading(false);
   }
@@ -241,10 +248,13 @@ export const BrowseCollection = (props) => {
     }
     setNewLoanIsLoading(true);
     try {
-      await newLoanWrite?.();
-    } catch (error) {
+      if (typeof newLoanWrite !== "function") {
+        throw new Error("newLoanWrite is not a function");
+      }
+      await newLoanWrite();
+    } catch (error: any) {
       console.error(error);
-      addToast("Error", "An error occurred. Please try again.", "error");
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     }
     setNewLoanIsLoading(false);
   }

@@ -8,6 +8,7 @@ interface PopupTransactionProps {
   btnClass: string; // Modal button trigger classname
   btnText: string | React.ReactNode; // Modal button trigger text
   btnOnClick?: () => void; // Modal button trigger onClick function
+  onClose?: () => void; // Modal close function
   modalId: string; // ID of the modal
   modalContent: React.ReactNode; // Modal content
   modalTitle: string; // Title of the modal
@@ -60,6 +61,7 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
             <div className="modal-header">
               <h1 className="modal-title fs-4 fw-medium">{props.modalTitle}</h1>
               <button
+              onClick={props.onClose}
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"

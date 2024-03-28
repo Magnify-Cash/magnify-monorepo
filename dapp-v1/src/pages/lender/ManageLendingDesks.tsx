@@ -107,7 +107,6 @@ const LendingDeskRow = ({ desks, status }) => {
 
   // OK
   return desks.map((desk) => {
-    console.log(desk);
     return (
       <div className="card border-0 shadow rounded-4 my-4" key={desk.id}>
         <div className="card-body p-4">
@@ -140,7 +139,7 @@ const LendingDeskRow = ({ desks, status }) => {
                   <strong>{desk.loansDefaultedCount}</strong>
                 </div>
                 <br />
-                <h6 className="fw-medium text-body-secondary">Completed Loans</h6>
+                <h6 className="fw-medium text-body-secondary">Resolved Loans</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>{desk.loansResolvedCount}</strong>
                 </div>

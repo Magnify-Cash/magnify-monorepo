@@ -19,7 +19,7 @@ declare let bootstrap: any;
 type ToastContextType = {
   addToast: (
     title: string,
-    message: string,
+    message: string | ReactElement,
     type: ToastProps["variant"],
     hide?: boolean
   ) => number;
