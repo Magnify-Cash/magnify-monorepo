@@ -1,33 +1,32 @@
 import { ManageFunds } from "@/components";
-import { useForm, SubmitHandler } from "react-hook-form";
+import ErrorDetails from "@/components/ErrorDetails";
+import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
+import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
+  useNftyFinanceV1RemoveLendingDeskLoanConfig,
+  useNftyFinanceV1SetLendingDeskLoanConfigs,
   useNftyFinanceV1SetLendingDeskState,
   usePrepareNftyFinanceV1SetLendingDeskState,
-  useNftyFinanceV1SetLendingDeskLoanConfigs,
-  useNftyFinanceV1RemoveLendingDeskLoanConfig,
 } from "@/wagmi-generated";
+import type { NFTInfo } from "@nftylabs/nft-lists";
 import { useEffect, useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { useWaitForTransaction, useChainId } from "wagmi";
-import { IConfigForm } from "./CreateLendingDesk";
+import { useChainId, useWaitForTransaction } from "wagmi";
 import { ManageLendingDeskDocument } from "../../../.graphclient";
-import { INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
-import { NFTInfo } from "@nftylabs/nft-lists";
-import TransactionDetails from "@/components/TransactionDetails";
-import ErrorDetails from "@/components/ErrorDetails";
+import type { IConfigForm } from "./CreateLendingDesk";
 
 export const ManageLendingDesk = (props: any) => {
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [freezeUnfreezeIsLoading, setFreezeUnfreezeIsLoading] =
     useState<boolean>(false);
-  const [updateDeskIsLoading, setUpdateDeskIsLoading] =
-    useState<boolean>(false);
+  const [updateDeskIsLoading, setUpdateDeskIsLoading] = useState<boolean>(false);
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   //State variable to store the form data. It only stores one loan config at a time
   const [deskConfig, setDeskConfig] = useState<IConfigForm>({
@@ -82,10 +81,9 @@ export const ManageLendingDesk = (props: any) => {
   const chainId = useChainId();
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined =
-      result.data?.lendingDesk?.loanConfigs.map(
-        (loan) => loan.nftCollection.id
-      );
+    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
+      (loan) => loan.nftCollection.id,
+    );
     if (nftIds?.length) {
       const resultArr = await fetchNFTDetails(nftIds, chainId);
       setNftArr(resultArr);
@@ -120,7 +118,7 @@ export const ManageLendingDesk = (props: any) => {
 
     // Set form values
     Object.entries(formValues).forEach(([key, value]) =>
-      setValue(key as keyof IConfigForm, value)
+      setValue(key as keyof IConfigForm, value),
     );
 
     // Set the selected NFT collection
@@ -157,17 +155,11 @@ export const ManageLendingDesk = (props: any) => {
       const loanConfigs = result?.data?.lendingDesk?.loanConfigs;
 
       const filteredLoans = loanConfigs?.filter((loan) => {
-        return (
-          loan.nftCollection.id.toLowerCase() ===
-          selectedNftAddress.toLowerCase()
-        );
+        return loan.nftCollection.id.toLowerCase() === selectedNftAddress.toLowerCase();
       });
 
       const loanIndex = loanConfigs?.findIndex((loan) => {
-        return (
-          loan.nftCollection.id.toLowerCase() ===
-          selectedNftAddress.toLowerCase()
-        );
+        return loan.nftCollection.id.toLowerCase() === selectedNftAddress.toLowerCase();
       });
 
       if (filteredLoans?.length) {
@@ -184,14 +176,8 @@ export const ManageLendingDesk = (props: any) => {
   }, [nftCollection]);
 
   const getFormValues = (selectedLoan: any) => {
-    const {
-      maxAmount,
-      minAmount,
-      maxDuration,
-      minDuration,
-      maxInterest,
-      minInterest,
-    } = selectedLoan;
+    const { maxAmount, minAmount, maxDuration, minDuration, maxInterest, minInterest } =
+      selectedLoan;
     const decimals = result?.data?.lendingDesk?.erc20?.decimals;
 
     const formValues: IConfigForm = {
@@ -209,11 +195,8 @@ export const ManageLendingDesk = (props: any) => {
   Freeze/Unfreeze lending desk
   Calls `setLendingDeskState` with relevant boolean status
   */
-  const boolStatus =
-    result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolString = boolStatus
-    ? "Freeze Lending Desk"
-    : "Un-Freeze Lending Desk";
+  const boolStatus = result.data?.lendingDesk?.status === "Frozen" ? false : true;
+  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk";
   const { config: freezeConfig, refetch: refetchFreezeConfig } =
     usePrepareNftyFinanceV1SetLendingDeskState({
       args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
@@ -247,7 +230,7 @@ export const ManageLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -255,11 +238,7 @@ export const ManageLendingDesk = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -270,7 +249,7 @@ export const ManageLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -290,21 +269,18 @@ export const ManageLendingDesk = (props: any) => {
               ?.address as `0x${string}`,
             nftCollectionIsErc1155: false,
             minAmount: BigInt(
-              toWei(
-                deskConfig?.minOffer,
-                result.data?.lendingDesk?.erc20?.decimals
-              )
+              toWei(deskConfig?.minOffer, result.data?.lendingDesk?.erc20?.decimals),
             ),
             maxAmount: toWei(
               deskConfig?.maxOffer,
-              result.data?.lendingDesk?.erc20?.decimals
+              result.data?.lendingDesk?.erc20?.decimals,
             ),
             // To account for days
-            minDuration: parseFloat(deskConfig?.minDuration) * 24, // Convert days to hours
-            maxDuration: parseFloat(deskConfig?.maxDuration) * 24,
+            minDuration: Number.parseFloat(deskConfig?.minDuration) * 24, // Convert days to hours
+            maxDuration: Number.parseFloat(deskConfig?.maxDuration) * 24,
             // To account for basis points
-            minInterest: parseFloat(deskConfig?.minInterest) * 100,
-            maxInterest: parseFloat(deskConfig?.maxInterest) * 100,
+            minInterest: Number.parseFloat(deskConfig?.minInterest) * 100,
+            maxInterest: Number.parseFloat(deskConfig?.maxInterest) * 100,
           },
         ],
       ],
@@ -321,7 +297,7 @@ export const ManageLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
       setEditDesk(false);
       setEditDeskIndex(0);
@@ -331,11 +307,7 @@ export const ManageLendingDesk = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -346,7 +318,7 @@ export const ManageLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -411,7 +383,7 @@ export const ManageLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -419,11 +391,7 @@ export const ManageLendingDesk = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -433,7 +401,7 @@ export const ManageLendingDesk = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -462,9 +430,7 @@ export const ManageLendingDesk = (props: any) => {
               <div className="container-fluid g-0 mt-4">
                 <div className="row g-4">
                   <div className="col-lg-4">
-                    <h6 className="fw-medium text-body-secondary">
-                      Currency Type
-                    </h6>
+                    <h6 className="fw-medium text-body-secondary">Currency Type</h6>
                     <div className="mt-1 fs-4 d-flex align-items-center">
                       <div className="text-truncate">
                         {result.data?.lendingDesk?.erc20.symbol}
@@ -479,7 +445,7 @@ export const ManageLendingDesk = (props: any) => {
                       <strong className="text-primary-emphasis">
                         {fromWei(
                           result.data?.lendingDesk?.balance,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}
                         &nbsp;
                       </strong>
@@ -563,12 +529,12 @@ export const ManageLendingDesk = (props: any) => {
                         <strong>Offer:</strong>{" "}
                         {fromWei(
                           config.minAmount,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}
                         -
                         {fromWei(
                           config.maxAmount,
-                          result.data?.lendingDesk?.erc20?.decimals
+                          result.data?.lendingDesk?.erc20?.decimals,
                         )}{" "}
                         {result.data?.lendingDesk?.erc20.symbol}
                       </div>
@@ -587,8 +553,8 @@ export const ManageLendingDesk = (props: any) => {
                         <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
                       </span>
                       <div className="text-truncate">
-                        <strong>Interest Rate:</strong>{" "}
-                        {config.minInterest / 100}-{config.maxInterest / 100}%
+                        <strong>Interest Rate:</strong> {config.minInterest / 100}-
+                        {config.maxInterest / 100}%
                       </div>
                     </div>
                   </div>
@@ -634,9 +600,7 @@ export const ManageLendingDesk = (props: any) => {
                   onClick={setNftCollection}
                 />
               </div>
-              <h6 className="fw-medium text-primary-emphasis mt-4">
-                Min/Max Offer
-              </h6>
+              <h6 className="fw-medium text-primary-emphasis mt-4">Min/Max Offer</h6>
               <div className="row g-4">
                 <div className="col-lg-6">
                   <div className="input-group">
@@ -644,10 +608,9 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("minOffer", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.minOffer ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.minOffer ? " is-invalid" : ""
+                        }`}
                         id="min-offer"
                         placeholder="Min Offer"
                         min="0"
@@ -667,10 +630,9 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("maxOffer", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.maxOffer ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.maxOffer ? " is-invalid" : ""
+                        }`}
                         id="max-offer"
                         placeholder="Max Offer"
                         min="0"
@@ -685,9 +647,7 @@ export const ManageLendingDesk = (props: any) => {
                   </div>
                 </div>
               </div>
-              <h6 className="fw-medium text-primary-emphasis mt-4">
-                Min/Max Duration
-              </h6>
+              <h6 className="fw-medium text-primary-emphasis mt-4">Min/Max Duration</h6>
               <div className="row g-4">
                 <div className="col-lg-6">
                   <div className="input-group">
@@ -695,10 +655,9 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("minDuration", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.minDuration ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.minDuration ? " is-invalid" : ""
+                        }`}
                         id="min-duration"
                         placeholder="Min Duration"
                         min="0"
@@ -718,10 +677,9 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("maxDuration", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.maxDuration ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.maxDuration ? " is-invalid" : ""
+                        }`}
                         id="max-duration"
                         placeholder="Max Durtion"
                         min="0"
@@ -746,19 +704,16 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("minInterest", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.minInterest ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.minInterest ? " is-invalid" : ""
+                        }`}
                         id="min-interest-rate"
                         placeholder="Min Interest Rate"
                         min="0"
                         max="100"
                         step="1"
                       />
-                      <label htmlFor="min-interest-rate">
-                        Min Interest Rate
-                      </label>
+                      <label htmlFor="min-interest-rate">Min Interest Rate</label>
                     </div>
                     <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
                       %
@@ -771,19 +726,16 @@ export const ManageLendingDesk = (props: any) => {
                       <input
                         {...register("maxInterest", { required: true })}
                         type="number"
-                        className={
-                          "form-control fs-5" +
-                          (errors.maxInterest ? " is-invalid" : "")
-                        }
+                        className={`form-control fs-5${
+                          errors.maxInterest ? " is-invalid" : ""
+                        }`}
                         id="max-interest-rate"
                         placeholder="Max Durtion"
                         min="0"
                         max="100"
                         step="1"
                       />
-                      <label htmlFor="max-interest-rate">
-                        Max Interest Rate
-                      </label>
+                      <label htmlFor="max-interest-rate">Max Interest Rate</label>
                     </div>
                     <span className="input-group-text specific-w-75 px-0 justify-content-center bg-primary-subtle text-primary-emphasis fw-bold">
                       %

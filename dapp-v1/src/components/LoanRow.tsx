@@ -1,8 +1,6 @@
-import { PopupTransaction } from "@/components";
-import { useToastContext } from "@/helpers/CreateToast";
 import { calculateTimeInfo } from "@/helpers/utils";
 import { NavLink } from "react-router-dom";
-import { Loan } from "../../.graphclient";
+import type { Loan } from "../../.graphclient";
 import LoanDetails from "./loanDetails";
 
 // Interface
@@ -13,13 +11,7 @@ interface ILoanRowProps {
   liquidate?: boolean; // Whether or not loan card should have liquidate UI
 }
 
-export const LoanRow = ({
-  loans,
-  payback,
-  status,
-  liquidate,
-}: ILoanRowProps) => {
-  const { addToast, closeToast } = useToastContext();
+export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) => {
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan: Loan) => {
@@ -49,9 +41,9 @@ export const LoanRow = ({
       </div>
     );
   }
-  return loans.map((loan: Loan, index) => (
+  return loans.map((loan: Loan) => (
     <LoanDetails
-      key={index}
+      key={loan.id}
       loan={loan}
       payback={payback}
       liquidate={liquidate}

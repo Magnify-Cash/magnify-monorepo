@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface ErrorDetailsProps {
   error: string;
@@ -31,7 +31,7 @@ const getErrorText = (error: string) => {
     case error.includes("insufficient allowance"):
       return "Token allowance must be greater than 0";
     case error.includes("already approved"):
-      return "Token allowance has already been approved"
+      return "Token allowance has already been approved";
 
     // Contract Reverts
     case error.includes("AmountIsZero"):
@@ -100,8 +100,6 @@ const getErrorText = (error: string) => {
       return "Platform wallet address is zero";
     case error.includes("UnsupportedNFTCollection"):
       return "Unsupported NFT collection";
-    case error.includes("LoanPaymentExceedsDebt"):
-      return "Loan payment exceeds debt";
 
     // default
     default:

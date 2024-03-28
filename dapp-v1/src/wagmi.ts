@@ -1,14 +1,14 @@
 import { getDefaultConfig } from "connectkit";
 import { createConfig } from "wagmi";
-import { hardhat, sepolia, baseSepolia, base } from "wagmi/chains";
+import { base, baseSepolia, hardhat } from "wagmi/chains";
 
 const walletConnectProjectId = "6f26f99d86d880b561988f69808456d3";
-let chainlist: any = [
+const chainlist: any = [
   baseSepolia, // Note: First chain in list is default
   base,
-]
-if (import.meta.env.DEV){
-  chainlist.push(hardhat)
+];
+if (import.meta.env.DEV) {
+  chainlist.push(hardhat);
 }
 
 export const config = createConfig(

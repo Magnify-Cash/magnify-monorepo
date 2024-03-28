@@ -1,10 +1,12 @@
 import { PopupTokenList } from "@/components";
+import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
-import { calculateLoanInterest } from "@/helpers/LoanInterest";
-import { ITokenListItem } from "@/components/PopupTokenList";
-import { INFTListItem } from "@/components/PopupTokenList";
+import type { ITokenListItem } from "@/components/PopupTokenList";
+import type { INFTListItem } from "@/components/PopupTokenList";
+import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
+import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
@@ -18,8 +20,6 @@ import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransaction } from "wagmi";
 import { QuickLoanDocument } from "../../../.graphclient";
-import TransactionDetails from "@/components/TransactionDetails";
-import ErrorDetails from "@/components/ErrorDetails";
 
 export const QuickLoan = (props: any) => {
   const { addToast, closeToast } = useToastContext();
@@ -42,14 +42,13 @@ export const QuickLoan = (props: any) => {
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
 
-  const setSelectedLendingDesk = (e: string) =>
-    _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails(
       [selectedLendingDesk?.loanConfig?.nftCollection?.id],
-      chainId
-  );
+      chainId,
+    );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
 
@@ -85,11 +84,10 @@ export const QuickLoan = (props: any) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useErc721GetApproved({
-      address: nftCollection?.nft.address as `0x${string}`,
-      args: [BigInt(nftId || 0)],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
+    address: nftCollection?.nft.address as `0x${string}`,
+    args: [BigInt(nftId || 0)],
+  });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -105,7 +103,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -113,11 +111,7 @@ export const QuickLoan = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -126,9 +120,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -148,7 +140,7 @@ export const QuickLoan = (props: any) => {
             selectedLendingDesk?.loanConfig,
             amount,
             duration,
-            selectedLendingDesk?.erc20?.decimals || 18
+            selectedLendingDesk?.erc20?.decimals || 18,
           ) * 100,
       ],
     });
@@ -167,7 +159,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -175,11 +167,7 @@ export const QuickLoan = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -235,7 +223,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -250,7 +238,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -370,9 +358,7 @@ export const QuickLoan = (props: any) => {
                         name="desks"
                         id={item.lendingDesk.id}
                         onClick={(e) =>
-                          setSelectedLendingDesk(
-                            (e.target as HTMLInputElement).value
-                          )
+                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
                         }
                         value={JSON.stringify(item)}
                       />
@@ -401,7 +387,7 @@ export const QuickLoan = (props: any) => {
                                 <div className="fw-bold">
                                   {fromWei(
                                     item.loanConfig.maxAmount,
-                                    token?.token.decimals
+                                    token?.token.decimals,
                                   )}
                                 </div>
                                 <small className="fw-normal">max offer</small>

@@ -1,15 +1,8 @@
-import { ToastProps } from "@/components/ToastComponent";
+import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
-import { ConnectKitButton, ConnectKitProvider, Types } from "connectkit";
-import {
-  ReactElement,
-  cloneElement,
-  createContext,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { ConnectKitButton, ConnectKitProvider, type Types } from "connectkit";
+import { type ReactElement, cloneElement, createContext, useState } from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
@@ -21,7 +14,7 @@ type ToastContextType = {
     title: string,
     message: string | ReactElement,
     type: ToastProps["variant"],
-    hide?: boolean
+    hide?: boolean,
   ) => number;
   closeToast: (indexOfToast: number) => void;
 };
@@ -88,8 +81,8 @@ export const Base = () => {
       prevToasts.map((toast) =>
         toast && toast.props.index === indexOfToast
           ? cloneElement(toast, { hide: true })
-          : toast
-      )
+          : toast,
+      ),
     );
   };
 
@@ -357,12 +350,7 @@ export const Base = () => {
                   </button>
                 </div>
                 <NavLink to="/" className="d-lg-none me-auto">
-                  <img
-                    src="/theme/icon.svg"
-                    alt="Logo"
-                    width="28"
-                    height="28"
-                  />
+                  <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
                 </NavLink>
                 <ConnectKitButton.Custom>
                   {({
@@ -376,10 +364,7 @@ export const Base = () => {
                   }) => {
                     return (
                       <>
-                        <button
-                          onClick={show}
-                          className="btn btn-md btn-primary"
-                        >
+                        <button onClick={show} className="btn btn-md btn-primary">
                           {isConnected && <small>{truncatedAddress}</small>}
                           {!isConnected && <small>Connect</small>}
                           <i className="fa-solid fa-wallet ms-2"></i>
@@ -411,7 +396,7 @@ export const Base = () => {
             className="toast-container position-fixed top-0 end-0 p-3"
           >
             {/* {toasts.map((toast) => toast)} */}
-            {toasts.map((toast, index) => cloneElement(toast, { key: index }))}
+            {toasts.map((toast) => cloneElement(toast, { key: toast.key }))}
           </div>
           {/* Toasts end */}
         </Provider>

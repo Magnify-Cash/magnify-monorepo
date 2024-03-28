@@ -1,27 +1,21 @@
 import { PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
-import {
-  calculateTimeInfo,
-  formatTimeInfo,
-  fromWei,
-  toWei,
-} from "@/helpers/utils";
+import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
   useErc20Allowance,
   useErc20Approve,
+  useNftyFinanceV1GetLoanAmountDue,
   useNftyFinanceV1LiquidateDefaultedLoan,
   useNftyFinanceV1MakeLoanPayment,
   usePrepareNftyFinanceV1LiquidateDefaultedLoan,
   usePrepareNftyFinanceV1MakeLoanPayment,
-  useNftyFinanceV1GetLoanAmountDue,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
-import { Loan } from "../../.graphclient";
-import TransactionDetails from "./TransactionDetails";
+import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
+import TransactionDetails from "./TransactionDetails";
 
 interface LoanDetailsProps {
   loan: Loan;
@@ -31,12 +25,7 @@ interface LoanDetailsProps {
 }
 
 // LoanDetails component
-const LoanDetails = ({
-  loan,
-  payback,
-  liquidate,
-  status,
-}: LoanDetailsProps) => {
+const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => {
   // Set action based on payback or liquidate
   //If action is payback, then set action to payback, else set action to liquidate
   const action: "payback" | "liquidate" = payback ? "payback" : "liquidate";
@@ -44,7 +33,7 @@ const LoanDetails = ({
   const { addToast, closeToast } = useToastContext();
   // Date/Time info
   const [timeInfo, setTimeInfo] = useState(
-    calculateTimeInfo(loan?.startTime, loan?.duration)
+    calculateTimeInfo(loan?.startTime, loan?.duration),
   );
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -68,22 +57,21 @@ const LoanDetails = ({
   const { address } = useAccount();
 
   //get loan amount due for resolving the loan using GetLoanAmountDue hook
-  const { data: loanAmountDue, refetch: loanAmountDueRefetch, error: loanAmountDueError } =
-    useNftyFinanceV1GetLoanAmountDue({
-      args: [BigInt(loan?.id || 0)],
-      enabled: modalOpen,
-      onSuccess(data) {
-        console.log("data", data);
-      },
-      onError(error) {
-        console.error(error);
-        addToast(
-          "Transaction Failed",
-          <ErrorDetails error={error.message} />,
-          "error"
-        );
-      },
-    });
+  const {
+    data: loanAmountDue,
+    refetch: loanAmountDueRefetch,
+    error: loanAmountDueError,
+  } = useNftyFinanceV1GetLoanAmountDue({
+    args: [BigInt(loan?.id || 0)],
+    enabled: modalOpen,
+    onSuccess(data) {
+      console.log("data", data);
+    },
+    onError(error) {
+      console.error(error);
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
+    },
+  });
 
   //approveErc20 hook
   const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
@@ -96,13 +84,11 @@ const LoanDetails = ({
     });
 
   //approveErc20 hook for resolving loan
-  const {
-    data: approveErc20ResolveLoanData,
-    writeAsync: approveErc20ResolveLoan,
-  } = useErc20Approve({
-    address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
-  });
+  const { data: approveErc20ResolveLoanData, writeAsync: approveErc20ResolveLoan } =
+    useErc20Approve({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
+    });
 
   //On successful transaction of approveErc20ResolveLoanData hook, refetch the approval data
   //Also refetch resolveLoanPaymentConfig to update resolveLoanPaymentWrite hook
@@ -119,7 +105,7 @@ const LoanDetails = ({
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -128,18 +114,13 @@ const LoanDetails = ({
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useErc20Allowance({
-      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
+    address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+  });
 
   //On successful transaction of approveErc20 hook, refetch the approval data
   //Also refetch makeLoanPaymentConfig to update makeLoanPaymentWrite hook
@@ -155,7 +136,7 @@ const LoanDetails = ({
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -163,11 +144,7 @@ const LoanDetails = ({
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -188,9 +165,7 @@ const LoanDetails = ({
     }
     if (
       Number(fromWei(approvalData, loan?.lendingDesk?.erc20?.decimals)) >=
-      Number(
-        fromWei(loanAmountDue ?? BigInt(0), loan?.lendingDesk?.erc20?.decimals)
-      )
+      Number(fromWei(loanAmountDue ?? BigInt(0), loan?.lendingDesk?.erc20?.decimals))
     ) {
       setCheckedResolveLoan(true);
     } else {
@@ -200,15 +175,18 @@ const LoanDetails = ({
 
   // Make Loan Payment Hook
   // This is auto refetched by default when query args change
-  const { config: makeLoanPaymentConfig, refetch: makeLoanPaymentRefetch, error: makeLoanPaymentError } =
-    usePrepareNftyFinanceV1MakeLoanPayment({
-      args: [
-        BigInt(loan?.id || 0), // loan ID
-        toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
-        false,
-      ],
-      enabled: Number(payBackAmount) > 0 && checked,
-    });
+  const {
+    config: makeLoanPaymentConfig,
+    refetch: makeLoanPaymentRefetch,
+    error: makeLoanPaymentError,
+  } = usePrepareNftyFinanceV1MakeLoanPayment({
+    args: [
+      BigInt(loan?.id || 0), // loan ID
+      toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
+      false,
+    ],
+    enabled: Number(payBackAmount) > 0 && checked,
+  });
   const { data: makeLoanPaymentData, writeAsync: makeLoanPaymentWrite } =
     useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig);
 
@@ -217,7 +195,7 @@ const LoanDetails = ({
   const {
     config: resolveLoanPaymentConfig,
     refetch: resolveLoanPaymentRefetch,
-    error: resolveLoanPaymentError
+    error: resolveLoanPaymentError,
   } = usePrepareNftyFinanceV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
@@ -283,7 +261,8 @@ const LoanDetails = ({
       } else {
         makeLoanPaymentRefetch();
         throw new Error(
-          makeLoanPaymentError?.message || "makeLoanPaymentWrite is not defined or not a function"
+          makeLoanPaymentError?.message ||
+            "makeLoanPaymentWrite is not defined or not a function",
         );
       }
     } catch (error: any) {
@@ -326,7 +305,8 @@ const LoanDetails = ({
       } else {
         resolveLoanPaymentRefetch();
         throw new Error(
-          resolveLoanPaymentError?.message || "resolveLoanPaymentWrite is not defined or not a function"
+          resolveLoanPaymentError?.message ||
+            "resolveLoanPaymentWrite is not defined or not a function",
         );
       }
     } catch (error: any) {
@@ -358,7 +338,7 @@ const LoanDetails = ({
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -366,11 +346,7 @@ const LoanDetails = ({
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
   //This hook is used to display loading toast when the approve transaction is pending
@@ -380,7 +356,7 @@ const LoanDetails = ({
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -395,7 +371,7 @@ const LoanDetails = ({
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -410,7 +386,7 @@ const LoanDetails = ({
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -450,9 +426,7 @@ const LoanDetails = ({
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted"
-                      ? "bg-secondary-subtle"
-                      : "bg-info-subtle"
+                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-info-subtle"
                   } text-center`}
                 >
                   <div className="text-info-emphasis h3 mb-3">
@@ -468,23 +442,21 @@ const LoanDetails = ({
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted"
-                      ? "bg-secondary-subtle"
-                      : "bg-success-subtle"
+                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-success-subtle"
                   } text-center`}
                 >
                   <div className="text-success-emphasis h3 mb-3">
                     <i className="fa-light fa-calendar-lines"></i>
                   </div>
                   <div className="h6 mb-0">
-                    {parseInt(
-                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)
+                    {Number.parseInt(
+                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
                     ) -
-                      parseInt(
+                      Number.parseInt(
                         fromWei(
                           loan?.amountPaidBack,
-                          loan?.lendingDesk?.erc20.decimals
-                        )
+                          loan?.lendingDesk?.erc20.decimals,
+                        ),
                       )}{" "}
                     {loan?.lendingDesk?.erc20.symbol}
                   </div>
@@ -583,7 +555,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals
+                                  loan?.lendingDesk?.erc20.decimals,
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -599,26 +571,18 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">
-                                %
-                              </span>
+                              <span className="text-body-secondary ms-2">%</span>
                             </div>
-                            <div className="text-body-secondary">
-                              interest rate
-                            </div>
+                            <div className="text-body-secondary">interest rate</div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">
-                                {}
-                              </span>
+                              <span className="text-body-secondary ms-2">{}</span>
                             </div>
-                            <div className="text-body-secondary">
-                              loan duration
-                            </div>
+                            <div className="text-body-secondary">loan duration</div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
@@ -684,10 +648,7 @@ const LoanDetails = ({
                           id="flexCheckChecked"
                           style={{ transform: "scale(1.5)" }}
                         />
-                        <label
-                          className="form-check-label "
-                          htmlFor="flexCheckChecked"
-                        >
+                        <label className="form-check-label " htmlFor="flexCheckChecked">
                           {`Grant permission for ${
                             loan?.lendingDesk?.erc20.symbol || "USDT"
                           } transfer by checking this box.`}
@@ -739,7 +700,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals
+                                  loan?.lendingDesk?.erc20.decimals,
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -755,26 +716,18 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">
-                                %
-                              </span>
+                              <span className="text-body-secondary ms-2">%</span>
                             </div>
-                            <div className="text-body-secondary">
-                              interest rate
-                            </div>
+                            <div className="text-body-secondary">interest rate</div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">
-                                {}
-                              </span>
+                              <span className="text-body-secondary ms-2">{}</span>
                             </div>
-                            <div className="text-body-secondary">
-                              loan duration
-                            </div>
+                            <div className="text-body-secondary">loan duration</div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-6">
@@ -818,7 +771,7 @@ const LoanDetails = ({
                           placeholder="Enter Amount"
                           value={fromWei(
                             loanAmountDue ?? BigInt("0"),
-                            loan?.lendingDesk?.erc20?.decimals
+                            loan?.lendingDesk?.erc20?.decimals,
                           )}
                         />
                         {/* Fix image for currency */}
@@ -843,10 +796,7 @@ const LoanDetails = ({
                           id="flexCheckChecked"
                           style={{ transform: "scale(1.5)" }}
                         />
-                        <label
-                          className="form-check-label "
-                          htmlFor="flexCheckChecked"
-                        >
+                        <label className="form-check-label " htmlFor="flexCheckChecked">
                           {`Grant permission for ${
                             loan?.lendingDesk?.erc20.symbol || "USDT"
                           } transfer by checking this box.`}

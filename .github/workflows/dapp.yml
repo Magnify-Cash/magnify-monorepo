@@ -13,6 +13,12 @@ jobs:
     - name: Install node_modules
       working-directory: ./
       run: yarn dapp install
-    - name: Run Biome + TSC checks
+    - name: Run Biome
       working-directory: ./
-      run: yarn dapp format; yarn dapp lint; yarn dapp tsc;
+      run: yarn dapp format; yarn dapp lint;
+    - name: Build checks
+      env: # Or as an environment variable
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        VITE_GRAPHQL_ENDPOINT: https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-base-sepolia
+      working-directory: ./
+      run: yarn dapp build;

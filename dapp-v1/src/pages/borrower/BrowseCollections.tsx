@@ -1,12 +1,11 @@
 import fetchNFTDetails from "@/helpers/FetchNfts";
-import { INft } from "@/helpers/FetchNfts";
-import { IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
+import type { INft } from "@/helpers/FetchNfts";
+import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
-import { BrowseCollectionsDocument } from "../../../.graphclient";
 import { useChainId } from "wagmi";
-
+import { BrowseCollectionsDocument } from "../../../.graphclient";
 
 interface INftCollection extends INft {
   erc20s: IToken[];
@@ -33,18 +32,16 @@ export const BrowseCollections = (props: any) => {
     const resultArr: INftCollection[] = [];
 
     //An array of nft ids
-    const nftIdArr = data?.nftCollections.map(
-      (nftCollection) => nftCollection.id
-    );
+    const nftIdArr = data?.nftCollections.map((nftCollection) => nftCollection.id);
 
     if (nftIdArr?.length) {
-      const fetchedNftArr = await fetchNFTDetails(nftIdArr,chainId);
+      const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);
 
       //fetching tokens associated with each collection
       if (data?.nftCollections.length) {
         for (let i = 0; i < data.nftCollections.length; i++) {
           const nftCollection = data.nftCollections[i];
-          const tokens = await fetchTokensForCollection(nftCollection,chainId);
+          const tokens = await fetchTokensForCollection(nftCollection, chainId);
           resultArr[i] = { ...fetchedNftArr[i], erc20s: tokens };
         }
       }
@@ -64,10 +61,10 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-hexagon-vertical-nft h4 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.protocolInfo?.nftCollectionsCount}</h3>
-                  <p className="m-0 text-primary-emphasis">
-                    number of collections
-                  </p>
+                  <h3 className="m-0">
+                    {result.data?.protocolInfo?.nftCollectionsCount}
+                  </h3>
+                  <p className="m-0 text-primary-emphasis">number of collections</p>
                 </div>
               </div>
             </div>
@@ -78,9 +75,7 @@ export const BrowseCollections = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">{result.data?.protocolInfo?.erc20sCount}</h3>
-                  <p className="m-0 text-primary-emphasis">
-                    number of currencies
-                  </p>
+                  <p className="m-0 text-primary-emphasis">number of currencies</p>
                 </div>
               </div>
             </div>
@@ -109,13 +104,17 @@ export const BrowseCollections = (props: any) => {
             <tbody>
               {result.data?.nftCollections.map((nftCollection, index) => {
                 const currencies: string[] = nftCollection.loanConfigs.map(
-                  (x) => x.lendingDesk.erc20.symbol
+                  (x) => x.lendingDesk.erc20.symbol,
                 );
                 return (
                   <tr className="align-middle" key={nftCollection.id}>
                     <td className="py-3 ps-3">
                       <img
-                        src={nftArr[index]?.logoURI ? nftArr[index].logoURI : "/images/placeholder/images/image-12.png"}
+                        src={
+                          nftArr[index]?.logoURI
+                            ? nftArr[index].logoURI
+                            : "/images/placeholder/images/image-12.png"
+                        }
                         width="30"
                         className="d-block rounded-circle"
                         alt={nftArr[index]?.symbol}

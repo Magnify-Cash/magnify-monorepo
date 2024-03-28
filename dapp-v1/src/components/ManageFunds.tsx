@@ -13,8 +13,8 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
-import TransactionDetails from "./TransactionDetails";
 import ErrorDetails from "./ErrorDetails";
+import TransactionDetails from "./TransactionDetails";
 
 interface ManageFundsProps {
   lendingDesk: any;
@@ -75,11 +75,10 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       ],
     });
 
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useErc20Allowance({
-      address: lendingDesk?.erc20.id as `0x${string}`,
-      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
+    address: lendingDesk?.erc20.id as `0x${string}`,
+    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+  });
 
   //On successful transaction of approveErc20 hook, refetch the approval data
   useWaitForTransaction({
@@ -93,7 +92,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -101,11 +100,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -114,10 +109,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       setChecked(false);
       return;
     }
-    if (
-      Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >=
-      Number(amount)
-    ) {
+    if (Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >= Number(amount)) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -224,7 +216,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success"
+        "success",
       );
     },
     onError(error) {
@@ -232,11 +224,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={error.message} />,
-        "error"
-      );
+      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
 
@@ -262,7 +250,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -277,7 +265,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -336,9 +324,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
                 className="form-control form-control-lg py-2 mb-2 flex-grow-1"
               />
               <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                <div className="text-truncate ">
-                  {lendingDesk?.erc20.symbol}
-                </div>
+                <div className="text-truncate ">{lendingDesk?.erc20.symbol}</div>
               </div>
             </div>
           </div>

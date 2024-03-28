@@ -67,7 +67,9 @@ export const Home = (props) => {
                   <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.protocolInfo?.nftCollectionsCount}</h3>
+                  <h3 className="m-0">
+                    {result.data?.protocolInfo?.nftCollectionsCount}
+                  </h3>
                   <p className="m-0 text-primary-emphasis">collections supported</p>
                 </div>
               </div>

@@ -4,4 +4,4 @@ declare global {
     toggleDarkMode: function;
   }
 }
-export {};
+export type {};

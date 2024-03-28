@@ -99,9 +99,6 @@ export function formatTimeInfo(dateTime) {
   return dateTime.toLocaleString(undefined, options);
 }
 
-export const truncateAddress = (addr: string) =>
-  `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-
 type GetWalletNftsArgs = {
   chainId: number;
   wallet: string;
@@ -112,7 +109,6 @@ export type WalletNft = {
   tokenId: string;
   name?: string;
 };
-
 
 export const getWalletNfts = async ({
   chainId,
@@ -133,8 +129,8 @@ export const getWalletNfts = async ({
     5: Network.ETH_GOERLI,
     80001: Network.MATIC_MUMBAI,
     11155111: Network.ETH_SEPOLIA,
-    84532: Network.BASE_SEPOLIA
-  }
+    84532: Network.BASE_SEPOLIA,
+  };
   const alchemy = new Alchemy({
     apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
     network: chainIdToAlchemyNetwork[chainId],
@@ -142,10 +138,12 @@ export const getWalletNfts = async ({
   const response = await alchemy.nft.getNftsForOwner(wallet, {
     contractAddresses: [nftCollection],
   });
-  return response.ownedNfts.map((x) => ({
-    tokenId: x.tokenId,
-    name: x.name,
-  }));
+  if (response?.ownedNfts) {
+    return response.ownedNfts.map((x) => ({
+      tokenId: x.tokenId,
+      name: x.name,
+    }));
+  }
   return [];
 };
 

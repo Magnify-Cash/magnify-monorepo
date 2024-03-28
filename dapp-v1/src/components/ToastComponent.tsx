@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ReactElement } from "react";
+import type React from "react";
+import { type ReactElement, useEffect, useState } from "react";
 
 type ToastVariant = "success" | "error" | "warning" | "loading";
 
@@ -76,10 +77,7 @@ const ToastComponent: React.FC<ToastProps> = ({
           </div>
           <div className="mx-3">
             <div className="h5 mb-1">{title}</div>
-            <p
-              className="text-body-secondary mb-0"
-              style={{ fontSize: "12px" }}
-            >
+            <p className="text-body-secondary mb-0" style={{ fontSize: "12px" }}>
               {content}
             </p>
           </div>

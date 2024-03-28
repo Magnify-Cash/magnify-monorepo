@@ -1,11 +1,11 @@
 import { LoanRow } from "@/components";
-import fetchNFTDetails, { INft } from "@/helpers/FetchNfts";
+import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { fromWei } from "@/helpers/utils";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId } from "wagmi";
-import { LenderDashboardDocument, LendingDesk } from "../../../.graphclient";
+import { LenderDashboardDocument, type LendingDesk } from "../../../.graphclient";
 
 export const Dashboard = (props: any) => {
   // GraphQL

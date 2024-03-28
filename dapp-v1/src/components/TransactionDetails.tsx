@@ -1,17 +1,15 @@
-import React from "react";
+import type React from "react";
 import { useChainId } from "wagmi";
 
 interface TransactionDetailsProps {
   transactionHash: string;
 }
 
-const TransactionDetails: React.FC<TransactionDetailsProps> = ({
-  transactionHash,
-}) => {
+const TransactionDetails: React.FC<TransactionDetailsProps> = ({ transactionHash }) => {
   const chainId = useChainId();
 
   // Add the base url for the block explorer for different networks
-  let baseUrl: string = "";
+  let baseUrl = "";
 
   switch (chainId) {
     case 11155111:

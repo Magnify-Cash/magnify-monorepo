@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { useAccount } from "wagmi";
 
 interface PopupTransactionProps {
@@ -61,7 +61,7 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
             <div className="modal-header">
               <h1 className="modal-title fs-4 fw-medium">{props.modalTitle}</h1>
               <button
-              onClick={props.onClose}
+                onClick={props.onClose}
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"

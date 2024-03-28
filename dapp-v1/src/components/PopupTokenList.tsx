@@ -1,21 +1,21 @@
-import { NFTInfo } from "@nftylabs/nft-lists";
+import { useToastContext } from "@/helpers/CreateToast";
+import { formatAddress } from "@/helpers/formatAddress";
+import { getTokenListUrls } from "@/helpers/tokenUrls";
+import type { NFTInfo } from "@nftylabs/nft-lists";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { TokenInfo } from "@uniswap/token-lists";
+import type { TokenInfo } from "@uniswap/token-lists";
 import {
-  ButtonHTMLAttributes,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
+  type ButtonHTMLAttributes,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useChainId } from "wagmi";
 import { isAddress } from "viem";
-import { useToastContext } from "@/helpers/CreateToast";
-import { formatAddress } from "@/helpers/formatAddress";
-import { getTokenListUrls } from "@/helpers/tokenUrls";
+import { useChainId } from "wagmi";
 
 /*
 Component Props
@@ -83,7 +83,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         urls.map(async (url) => {
           const response = await fetch(url);
           return response.json();
-        })
+        }),
       );
       const jsonData = responses.map((response) => response);
       if (props.nft) {
@@ -131,7 +131,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 	Fetch list data
 	*/
   useEffect(() => {
-      fetchListData();
+    fetchListData();
   }, [chainId]);
 
   /*
@@ -148,7 +148,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: ITokenListItem) =>
           includesQuery(item.token.name) ||
           includesQuery(item.token.symbol) ||
-          includesQuery(item.token.address)
+          includesQuery(item.token.address),
       );
     }
     return [];
@@ -160,7 +160,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         (item: INFTListItem) =>
           includesQuery(item.nft.name) ||
           includesQuery(item.nft.symbol) ||
-          includesQuery(item.nft.address)
+          includesQuery(item.nft.address),
       );
     }
     return [];
@@ -170,9 +170,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
 	Handle TokenList virtualization
 	*/
   const parentRef = useRef<HTMLInputElement>(null);
-  const filteredItemsCount = props.token
-    ? filteredTokens.length
-    : filteredNfts.length;
+  const filteredItemsCount = props.token ? filteredTokens.length : filteredNfts.length;
   const rowVirtualizer = useVirtualizer({
     count: filteredItemsCount,
     getScrollElement: () => parentRef.current,
@@ -297,15 +295,11 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredTokens[virtualItem.index].token.logoURI}
-                          alt={`${
-                            filteredTokens[virtualItem.index].token.name
-                          } Logo`}
+                          alt={`${filteredTokens[virtualItem.index].token.name} Logo`}
                           height="48px"
                         />
                         <div className="text-start">
-                          <div>
-                            {filteredTokens[virtualItem.index].token.name}
-                          </div>
+                          <div>{filteredTokens[virtualItem.index].token.name}</div>
                           <div className="text-body-secondary fw-normal">
                             <small>
                               {filteredTokens[virtualItem.index].token.symbol}
@@ -329,17 +323,13 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                         <img
                           className="d-block w-auto me-2 rounded"
                           src={filteredNfts[virtualItem.index].nft.logoURI}
-                          alt={`${
-                            filteredNfts[virtualItem.index].nft.name
-                          } Logo`}
+                          alt={`${filteredNfts[virtualItem.index].nft.name} Logo`}
                           height="48px"
                         />
                         <div className="text-start">
                           <div>{filteredNfts[virtualItem.index].nft.name}</div>
                           <div className="text-body-secondary fw-normal">
-                            <small>
-                              {filteredNfts[virtualItem.index].nft.symbol}
-                            </small>
+                            <small>{filteredNfts[virtualItem.index].nft.symbol}</small>
                           </div>
                         </div>
                       </SelectButton>
@@ -356,8 +346,8 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                           {props.nft
                             ? "Use Custom NFT"
                             : props.token
-                            ? "Use Custom Token"
-                            : null}
+                              ? "Use Custom Token"
+                              : null}
                         </div>
                         <div className="text-body-secondary fw-normal">
                           <small>{searchQuery}</small>

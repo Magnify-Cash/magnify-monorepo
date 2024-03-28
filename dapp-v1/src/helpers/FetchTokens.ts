@@ -1,4 +1,3 @@
-import { format } from "util";
 import { formatAddress } from "./formatAddress";
 import { getTokenListUrls } from "./tokenUrls";
 
@@ -15,7 +14,7 @@ export interface IToken {
 }
 
 //Given an array of addresses, returns an array of token objects in order
-const fetchTokenDetails = async (addresses: string[],chainId:number) => {
+const fetchTokenDetails = async (addresses: string[], chainId: number) => {
   let jsonData: IJsonData = { tokens: [] };
   try {
     const urls = getTokenListUrls(chainId, false, true) || [];
@@ -25,7 +24,7 @@ const fetchTokenDetails = async (addresses: string[],chainId:number) => {
       urls.map(async (url) => {
         const response = await fetch(url);
         return await response.json();
-      })
+      }),
     );
     jsonData = { tokens: responses.flatMap((response) => response.tokens) };
   } catch (error: any) {
@@ -42,7 +41,7 @@ const fetchTokenDetails = async (addresses: string[],chainId:number) => {
     // This can be the case if the token is a custom token
     (address) =>
       TokenMap.get(address.toLowerCase()) ||
-      ({ name: formatAddress(address), address } as IToken)
+      ({ name: formatAddress(address), address } as IToken),
   );
 
   return result;
@@ -53,7 +52,7 @@ export default fetchTokenDetails;
 // Function to fetch tokens for a given collection
 export const fetchTokensForCollection = async (nftCollection, chainId) => {
   const tokenIdArr = nftCollection.loanConfigs.map(
-    (loanConfig) => loanConfig.lendingDesk.erc20.id
+    (loanConfig) => loanConfig.lendingDesk.erc20.id,
   );
 
   if (tokenIdArr?.length) {

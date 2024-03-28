@@ -20,8 +20,12 @@
 				"useButtonType": "off",
 				"useValidAnchor": "off"
 			},
+			"complexity": {
+				"noForEach": "off"
+			},
 			"correctness": {
-				"useExhaustiveDependencies": "off"
+				"useExhaustiveDependencies": "off",
+				"noUnusedImports": "error"
 			},
 			"style": {
 				"useSelfClosingElements": "off",
