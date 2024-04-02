@@ -2,7 +2,6 @@ import { useToastContext } from "@/helpers/CreateToast";
 import { formatAddress } from "@/helpers/formatAddress";
 import { getTokenListUrls } from "@/helpers/tokenUrls";
 import type { NFTInfo } from "@nftylabs/nft-lists";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import type { TokenInfo } from "@uniswap/token-lists";
 import {
   type ButtonHTMLAttributes,
@@ -11,7 +10,6 @@ import {
   type SetStateAction,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { isAddress } from "viem";
@@ -134,10 +132,6 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
     fetchListData();
   }, [chainId]);
 
-  /*
-	Handle Data Filtering
-	*/
-
   // Helper function to check if a field includes the search query
   const includesQuery = (field: string) =>
     field.toLowerCase().includes(searchQuery.toLowerCase());
@@ -166,16 +160,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
     return [];
   }, [nftLists, searchQuery]);
 
-  /*
-	Handle TokenList virtualization
-	*/
-  const parentRef = useRef<HTMLInputElement>(null);
   const filteredItemsCount = props.token ? filteredTokens.length : filteredNfts.length;
-  const rowVirtualizer = useVirtualizer({
-    count: filteredItemsCount,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 50,
-  });
 
   /*
 	On Click Callback
@@ -247,7 +232,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div className="modal-content">
+          <div className="modal-content" style={{ maxHeight: "70vh" }}>
             <div className="modal-header">
               <h5 className="modal-title text-center fs-4 fw-medium">
                 {props.token && "Select Token"}
@@ -260,7 +245,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                 aria-label="Close"
               ></button>
             </div>
-            <div className="modal-body">
+            <div className="px-3 pt-3">
               {/* Search bar */}
               <input
                 type="text"
@@ -269,97 +254,86 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-
+            </div>
+            <div className="modal-body">
               {/* List */}
-              <div
-                ref={parentRef}
-                style={{
-                  height: `400px`,
-                  overflow: "auto", // Make it scroll!
-                }}
-              >
-                {/* The large inner element to hold all of the items */}
-                <div className="mt-2">
-                  {/* Only the visible items in the virtualizer, manually positioned to be in view */}
-                  {props.token &&
-                    rowVirtualizer.getVirtualItems().map((virtualItem) => (
+              <div>
+                {props.token &&
+                  filteredTokens.map((item) => (
+                    <div>
                       <SelectButton
-                        key={
-                          virtualItem.index +
-                          filteredTokens[virtualItem.index].token.address
-                        }
+                        key={item.token.address}
                         clickFunction={onClickCallback}
-                        data={filteredTokens[virtualItem.index]}
+                        data={item}
                         className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                       >
                         <img
                           className="d-block w-auto me-2 rounded"
-                          src={filteredTokens[virtualItem.index].token.logoURI}
-                          alt={`${filteredTokens[virtualItem.index].token.name} Logo`}
-                          height="48px"
+                          src={item.token.logoURI}
+                          alt={`${item.token.name} Logo`}
+                          height="32px"
+                          width="32px"
                         />
                         <div className="text-start">
-                          <div>{filteredTokens[virtualItem.index].token.name}</div>
+                          <div>{item.token.name}</div>
                           <div className="text-body-secondary fw-normal">
-                            <small>
-                              {filteredTokens[virtualItem.index].token.symbol}
-                            </small>
+                            <small>{item.token.symbol}</small>
                           </div>
                         </div>
                       </SelectButton>
-                    ))}
-                  {props.nft &&
-                    rowVirtualizer.getVirtualItems().map((virtualItem) => (
+                    </div>
+                  ))}
+                {props.nft &&
+                  filteredNfts.map((item) => (
+                    <div>
                       <SelectButton
-                        key={
-                          virtualItem.index +
-                          filteredNfts[virtualItem.index].nft.address
-                        }
+                        key={item.nft.address}
                         clickFunction={onClickCallback}
-                        data={filteredNfts[virtualItem.index]}
+                        data={item}
                         className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                         type="button"
                       >
                         <img
                           className="d-block w-auto me-2 rounded"
-                          src={filteredNfts[virtualItem.index].nft.logoURI}
-                          alt={`${filteredNfts[virtualItem.index].nft.name} Logo`}
-                          height="48px"
+                          src={item.nft.logoURI}
+                          alt={`${item.nft.name} Logo`}
+                          height="32px"
+                          width="32px"
                         />
                         <div className="text-start">
-                          <div>{filteredNfts[virtualItem.index].nft.name}</div>
+                          <div>{item.nft.name}</div>
                           <div className="text-body-secondary fw-normal">
-                            <small>{filteredNfts[virtualItem.index].nft.symbol}</small>
+                            <small>{item.nft.symbol}</small>
                           </div>
                         </div>
                       </SelectButton>
-                    ))}
-                  {!filteredItemsCount && (
-                    <CustomTokenSelectionButton
-                      data={searchQuery}
-                      clickFunction={handleCustomTokenSelection}
-                      className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
-                      type="button"
-                    >
-                      <div className="text-start">
-                        <div>
-                          {props.nft
-                            ? "Use Custom NFT"
-                            : props.token
-                              ? "Use Custom Token"
-                              : null}
-                        </div>
-                        <div className="text-body-secondary fw-normal">
-                          <small>{searchQuery}</small>
-                        </div>
+                    </div>
+                  ))}
+                {!filteredItemsCount && (
+                  <CustomTokenSelectionButton
+                    data={searchQuery}
+                    clickFunction={handleCustomTokenSelection}
+                    className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
+                    type="button"
+                  >
+                    <div className="text-start">
+                      <div>
+                        {props.nft
+                          ? "Use Custom NFT"
+                          : props.token
+                            ? "Use Custom Token"
+                            : null}
                       </div>
-                    </CustomTokenSelectionButton>
-                  )}
-                </div>
+                      <div className="text-body-secondary fw-normal">
+                        <small>{searchQuery}</small>
+                      </div>
+                    </div>
+                  </CustomTokenSelectionButton>
+                )}
               </div>
-              {/* End List */}
             </div>
           </div>
+          {/* End List */}
         </div>
       </div>
       {/* End NFT modal */}
