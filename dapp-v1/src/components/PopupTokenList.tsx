@@ -12,6 +12,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { FixedSizeList } from "react-window";
 import { isAddress } from "viem";
 import { useChainId } from "wagmi";
 
@@ -232,7 +233,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div className="modal-content" style={{ maxHeight: "70vh" }}>
+          <div className="modal-content" style={{ maxHeight: "80vh" }}>
             <div className="modal-header">
               <h5 className="modal-title text-center fs-4 fw-medium">
                 {props.token && "Select Token"}
@@ -258,57 +259,79 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
             <div className="modal-body">
               {/* List */}
               <div>
-                {props.token &&
-                  filteredTokens.map((item) => (
-                    <div>
-                      <SelectButton
-                        key={item.token.address}
-                        clickFunction={onClickCallback}
-                        data={item}
-                        className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
-                      >
-                        <img
-                          className="d-block w-auto me-2 rounded"
-                          src={item.token.logoURI}
-                          alt={`${item.token.name} Logo`}
-                          height="32px"
-                          width="32px"
-                        />
-                        <div className="text-start">
-                          <div>{item.token.name}</div>
-                          <div className="text-body-secondary fw-normal">
-                            <small>{item.token.symbol}</small>
-                          </div>
+                {props.token && filteredItemsCount > 0 && (
+                  <FixedSizeList
+                    height={400}
+                    itemCount={filteredItemsCount}
+                    itemSize={64}
+                    width="100%"
+                  >
+                    {({ index, style }) => {
+                      const item = filteredTokens[index];
+                      return (
+                        <div style={style}>
+                          <SelectButton
+                            key={item.token.address}
+                            clickFunction={onClickCallback}
+                            data={item}
+                            className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
+                          >
+                            <img
+                              className="d-block w-auto me-2 rounded"
+                              src={item.token.logoURI}
+                              alt={`${item.token.name} Logo`}
+                              height="32px"
+                              width="32px"
+                            />
+                            <div className="text-start">
+                              <div>{item.token.name}</div>
+                              <div className="text-body-secondary fw-normal">
+                                <small>{item.token.symbol}</small>
+                              </div>
+                            </div>
+                          </SelectButton>
                         </div>
-                      </SelectButton>
-                    </div>
-                  ))}
-                {props.nft &&
-                  filteredNfts.map((item) => (
-                    <div>
-                      <SelectButton
-                        key={item.nft.address}
-                        clickFunction={onClickCallback}
-                        data={item}
-                        className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
-                        type="button"
-                      >
-                        <img
-                          className="d-block w-auto me-2 rounded"
-                          src={item.nft.logoURI}
-                          alt={`${item.nft.name} Logo`}
-                          height="32px"
-                          width="32px"
-                        />
-                        <div className="text-start">
-                          <div>{item.nft.name}</div>
-                          <div className="text-body-secondary fw-normal">
-                            <small>{item.nft.symbol}</small>
-                          </div>
+                      );
+                    }}
+                  </FixedSizeList>
+                )}
+
+                {props.nft && filteredItemsCount > 0 && (
+                  <FixedSizeList
+                    height={400}
+                    itemCount={filteredItemsCount}
+                    itemSize={64}
+                    width="100%"
+                  >
+                    {({ index, style }) => {
+                      const item = filteredNfts[index];
+                      return (
+                        <div style={style}>
+                          <SelectButton
+                            key={item.nft.address}
+                            clickFunction={onClickCallback}
+                            data={item}
+                            className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
+                          >
+                            <img
+                              className="d-block w-auto me-2 rounded"
+                              src={item.nft.logoURI}
+                              alt={`${item.nft.name} Logo`}
+                              height="32px"
+                              width="32px"
+                            />
+                            <div className="text-start">
+                              <div>{item.nft.name}</div>
+                              <div className="text-body-secondary fw-normal">
+                                <small>{item.nft.symbol}</small>
+                              </div>
+                            </div>
+                          </SelectButton>
                         </div>
-                      </SelectButton>
-                    </div>
-                  ))}
+                      );
+                    }}
+                  </FixedSizeList>
+                )}
                 {!filteredItemsCount && (
                   <CustomTokenSelectionButton
                     data={searchQuery}
