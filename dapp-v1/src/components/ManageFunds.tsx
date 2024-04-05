@@ -317,6 +317,13 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
         <div className="text-lg-start ">
           <div className="card-body">
             <h5 className="fw-medium text-body-secondary mb-4">{actionText}</h5>
+            <p className="text-body-secondary mb-4">
+              Available Liquidity:{" "}
+              <strong>
+                {fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals)}
+              </strong>{" "}
+              {lendingDesk?.erc20.symbol}
+            </p>
             <div className="input-group ">
               <input
                 {...register("amount")}

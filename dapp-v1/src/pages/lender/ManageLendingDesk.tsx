@@ -196,7 +196,7 @@ export const ManageLendingDesk = (props: any) => {
   Calls `setLendingDeskState` with relevant boolean status
   */
   const boolStatus = result.data?.lendingDesk?.status === "Frozen" ? false : true;
-  const boolString = boolStatus ? "Freeze Lending Desk" : "Un-Freeze Lending Desk";
+  const boolString = boolStatus ? "Freeze" : "Un-Freeze";
   const { config: freezeConfig, refetch: refetchFreezeConfig } =
     usePrepareNftyFinanceV1SetLendingDeskState({
       args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
@@ -461,14 +461,25 @@ export const ManageLendingDesk = (props: any) => {
                       lendingDesk={result?.data?.lendingDesk}
                       action="withdraw"
                     />
-                    <button
-                      className="btn btn-primary py-2 w-100 rounded-pill"
-                      onClick={() => freezeUnfreeze()}
-                      onKeyDown={() => freezeUnfreeze()}
-                      disabled={freezeUnfreezeIsLoading}
-                    >
-                      {boolString}
-                    </button>
+                    <div className=" form-check form-switch d-flex align-items-center justify-content-center space-x-4">
+                      <input
+                        className="form-check-input"
+                        style={{ width: "20%", height: "30px" }}
+                        type="checkbox"
+                        role="switch"
+                        aria-checked={!boolStatus}
+                        id="freeze-unfreeze-switch"
+                        checked={!boolStatus}
+                        onChange={() => freezeUnfreeze()}
+                        disabled={freezeUnfreezeIsLoading}
+                      />
+                      <label
+                        className="form-check-label fs-5 text-primary-emphasis fw-medium  text-end ms-2"
+                        htmlFor="freeze-unfreeze-switch"
+                      >
+                        {boolString}
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
