@@ -229,7 +229,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       await liquidateWrite();
     } catch (error: any) {
       console.error(error);
-      addToast;
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
     } finally {
       setActionIsLoading(false);
     }
@@ -256,15 +256,11 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
   async function makeLoanPayment(loanID: string) {
     setActionIsLoading(true);
     try {
-      if (typeof makeLoanPaymentWrite === "function") {
-        await makeLoanPaymentWrite();
-      } else {
-        makeLoanPaymentRefetch();
-        throw new Error(
-          makeLoanPaymentError?.message ||
-            "makeLoanPaymentWrite is not defined or not a function",
-        );
+      await makeLoanPaymentRefetch();
+      if (typeof makeLoanPaymentWrite !== "function") {
+        throw new Error("liquidateWrite is not a function");
       }
+      await makeLoanPaymentWrite();
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
@@ -531,13 +527,6 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                   <div className="modal-body">
                     <p className="text-body-secondary">Loan Details</p>
                     <div className="d-flex align-items-center">
-                      {/* Replace fixed image with proper image */}
-                      <img
-                        src="theme/images/image-1.png"
-                        className="img-fluid flex-shrink-0 me-3"
-                        width="32"
-                        alt={`${loan?.nftCollection.id} ${loan?.nftId}`}
-                      />
                       <h6 className="m-0">
                         {loan?.nftCollection.id} #{loan?.nftId}
                       </h6>
@@ -613,14 +602,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           value={payBackAmount}
                           onChange={(e) => setPayBackAmount(e.target.value)}
                         />
-                        {/* Fix image for currency */}
                         <div className="d-flex align-items-center flex-shrink-0 ms-3">
-                          <img
-                            src="theme/images/usdc.svg"
-                            className="img-fluid flex-shrink-0 me-2"
-                            width="32"
-                            alt={loan?.lendingDesk?.erc20.symbol}
-                          />
                           <span>{loan?.lendingDesk?.erc20.symbol}</span>
                         </div>
                       </div>
@@ -668,13 +650,6 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                   <div className="modal-body">
                     <p className="text-body-secondary">Loan Details</p>
                     <div className="d-flex align-items-center">
-                      {/* Replace fixed image with proper image */}
-                      <img
-                        src="theme/images/image-1.png"
-                        className="img-fluid flex-shrink-0 me-3"
-                        width="32"
-                        alt={`${loan?.nftCollection.id} ${loan?.nftId}`}
-                      />
                       <h6 className="m-0">
                         {loan?.nftCollection.id} #{loan?.nftId}
                       </h6>
@@ -753,14 +728,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                             loan?.lendingDesk?.erc20?.decimals,
                           )}
                         />
-                        {/* Fix image for currency */}
                         <div className="d-flex align-items-center flex-shrink-0 ms-3">
-                          <img
-                            src="theme/images/usdc.svg"
-                            className="img-fluid flex-shrink-0 me-2"
-                            width="32"
-                            alt={loan?.lendingDesk?.erc20.symbol}
-                          />
                           <span>{loan?.lendingDesk?.erc20.symbol}</span>
                         </div>
                       </div>
@@ -799,49 +767,86 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Liquidate Overdue Loan"
-                modalId={`liquidateModal${loan?.id}`}
+                btnOnClick={() => setModalOpen(true)}
+                onClose={() => setModalOpen(false)}
+                modalId={`liquidateModal2${loan?.id}`}
                 modalTitle="Liquidate Overdue Loan"
                 modalContent={
-                  <div>
-                    <small>Loan Details</small>
-                    <p>
-                      {loan?.nftCollection.id} #{loan?.nftId}
-                    </p>
-                    <div className="row g-4">
-                      <div className="col-6 bg-secondary">
-                        <h6>
-                          {loan?.amount} {loan?.lendingDesk?.erc20.symbol}
-                        </h6>
-                        <small>original borrow</small>
-                      </div>
-                      <div className="col-6 bg-secondary">
-                        <h6>{loan?.interest} %</h6>
-                        <small>interest date</small>
-                      </div>
-                      <div className="col-12 bg-info">
-                        <h6>{timeInfo.elapsedTime}</h6>
-                        <small>loan duration</small>
-                      </div>
-                      <div className="col-12 bg-success">
-                        <h6>
-                          {fromWei(
-                            loanAmountDue ?? BigInt("0"),
-                            loan?.lendingDesk?.erc20?.decimals,
-                          )}
-                          {loan?.lendingDesk?.erc20.symbol}
-                        </h6>
-                        <small>total remaining balance</small>
+                  <div className="modal-body">
+                    <p className="text-body-secondary">Loan Details</p>
+                    <div className="d-flex align-items-center">
+                      <h6 className="m-0">
+                        {loan?.nftCollection.id} #{loan?.nftId}
+                      </h6>
+                    </div>
+                    <div className="container-fluid g-0 mt-3">
+                      <div className="row g-3">
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">
+                                {fromWei(
+                                  loan?.amount,
+                                  loan?.lendingDesk?.erc20.decimals,
+                                )}
+                              </div>
+                              <span className="text-body-secondary ms-2">
+                                {loan?.lendingDesk?.erc20.symbol}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              original borrow amount
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6">
+                          <div className="h-100 rounded bg-secondary-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">{loan?.interest / 100}</div>
+                              <span className="text-body-secondary ms-2">%</span>
+                            </div>
+                            <div className="text-body-secondary">interest rate</div>
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <div className="h-100 rounded bg-info-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h5">{timeInfo.elapsedTime}</div>
+                              <span className="text-body-secondary ms-2">{}</span>
+                            </div>
+                            <div className="text-body-secondary">loan duration</div>
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <div className="h-100 rounded bg-success-subtle text-center p-2">
+                            <div className="d-flex align-items-center justify-content-center">
+                              <div className="h3">
+                                {fromWei(
+                                  loanAmountDue ?? BigInt("0"),
+                                  loan?.lendingDesk?.erc20?.decimals,
+                                )}
+                              </div>
+                              <span className="text-body-secondary ms-2">
+                                {loan?.lendingDesk?.erc20.symbol}
+                              </span>
+                            </div>
+                            <div className="text-body-secondary">
+                              total remaining balance
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <hr />
-                    <button
-                      disabled={actionIsLoading}
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => actionMap.liquidate(loan?.id)}
-                    >
-                      Liquidate Overdue Loan
-                    </button>
+                    <div className="mt-3 pt-3 border-top">
+                      <button
+                        type="button"
+                        disabled={actionIsLoading}
+                        className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
+                        onClick={() => actionMap.liquidate(loan?.id)}
+                      >
+                        Liquidate Overdue Loan
+                      </button>
+                    </div>
                   </div>
                 }
               />
