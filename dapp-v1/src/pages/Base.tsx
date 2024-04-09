@@ -127,20 +127,20 @@ export const Base = () => {
                 className="sidebar-brand d-flex align-items-center me-auto"
               >
                 <img
-                  src="/theme/icon.svg"
+                  src="/theme/magnify-cash-logo.jpeg"
                   alt="Logo"
                   width="28"
                   height="28"
-                  className="d-block flex-shrink-0 me-2"
+                  className="d-block rounded flex-shrink-0 me-2"
                 />
-                <strong>nfty.finance</strong>
+                <strong>Magnify.Cash</strong>
               </NavLink>
               <button
                 type="button"
-                className="btn btn-secondary rounded-pill me-2 d-none d-lg-inline-block"
+                className="btn btn-link rounded-pill me-2 d-none d-lg-inline-block"
                 aria-label="Toggle dark mode"
                 onClick={() => toggleDarkMode()}
-                style={{ width: "30px" }}
+                style={{ width: "33px" }}
               >
                 <i className="fa-solid fa-moon"></i>
               </button>
@@ -326,13 +326,13 @@ export const Base = () => {
           {/* Sidebar end */}
 
           {/* Navbar start */}
-          <div className="border-bottom py-2 py-lg-3">
+          <div className="py-2 py-lg-3">
             <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
               <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
                 <div className="btn-group me-3 d-lg-none">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-link"
                     aria-label="Toggle sidebar"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#sidebar"
@@ -341,10 +341,10 @@ export const Base = () => {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-link"
                     aria-label="Toggle dark mode"
                     onClick={() => toggleDarkMode()}
-                    style={{ width: "30px" }}
+                    style={{ width: "33px" }}
                   >
                     <i className="fa-solid fa-moon"></i>
                   </button>

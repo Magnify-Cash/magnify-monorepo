@@ -83,7 +83,7 @@
     --mc-blue: hsl(var(--mc-blue-hsl));
     --mc-blue-foreground-hsl: var(--bs-white-hsl);
     --mc-blue-foreground: hsl(var(--mc-blue-foreground-hsl));
-    --mc-blue-text-emphasis-hsl: var(--mc-blue-700-hsl);
+    --mc-blue-text-emphasis-hsl: var(--mc-blue-500-hsl);
     --mc-blue-text-emphasis: hsl(var(--mc-blue-text-emphasis-hsl));
     --mc-blue-hover-bg: var(--mc-blue-600);
     --mc-blue-active-bg: var(--mc-blue-700);
@@ -276,26 +276,26 @@
  */
 
 .btn {
-	font-weight: 600;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .btn-link,
 .btn-link:hover,
 .btn-link:active,
 .btn-link:focus-visible {
-	border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;
-	text-decoration: none;
+    border: var(--bs-border-width) solid hsla(var(--bs-primary-hsl), 0.25) !important;
+    text-decoration: none;
 }
 
 .btn-secondary {
-	--bs-btn-color: var(--bs-primary-text-emphasis);
-	--bs-btn-hover-color: var(--bs-primary-text-emphasis);
-	--bs-btn-active-color: var(--bs-primary-text-emphasis);
-	--bs-btn-border-color: var(--bs-primary-border-subtle);
-	--bs-btn-hover-border-color: var(--bs-primary-border-subtle);
-	--bs-btn-active-border-color: var(--bs-primary-border-subtle);
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-hover-color: var(--bs-primary);
+    --bs-btn-active-color: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-border-color: var(--bs-primary);
+    --bs-btn-active-border-color: var(--bs-primary);
 }
 
 /**
@@ -305,5 +305,23 @@
  */
 
 .dropdown-menu {
-	border: 0;
+    border: 0;
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * [ Sidebar ]
+ * ----------------------------------------------------------------------------
+ */
+
+.sidebar {
+    --bs-sidebar-bg: #fbfbff;
+}
+
+[data-bs-theme="dark"] .sidebar {
+    --bs-sidebar-bg: hsl(
+        var(--mc-pink-hue),
+        calc(var(--mc-pink-saturation) / 3),
+        12.5%
+    );
 }
