@@ -133,15 +133,17 @@ export const QuickLoan = (props: any) => {
         BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
         nftCollection?.nft.address as `0x${string}`,
         BigInt(nftId || 0),
-        (duration || 0) * 24,
+        Math.round((duration || 0) * 24),
         toWei(amount ? amount.toString() : "0", token?.token.decimals),
         selectedLendingDesk &&
-          calculateLoanInterest(
-            selectedLendingDesk?.loanConfig,
-            amount,
-            duration,
-            selectedLendingDesk?.erc20?.decimals || 18,
-          ) * 100,
+          Math.round(
+            calculateLoanInterest(
+              selectedLendingDesk?.loanConfig,
+              amount,
+              duration,
+              selectedLendingDesk?.erc20?.decimals || 18,
+            ) * 100,
+          ),
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =

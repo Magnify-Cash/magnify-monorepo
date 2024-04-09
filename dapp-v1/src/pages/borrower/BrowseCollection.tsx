@@ -166,16 +166,18 @@ export const BrowseCollection = (props) => {
         BigInt(selectedLendingDesk?.id ? selectedLendingDesk.id : 0),
         nft?.address as `0x${string}`,
         BigInt(nftId || 0),
-        (duration || 0) * 24,
+        Math.round((duration || 0) * 24),
         toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
         selectedLoanConfig &&
           selectedLendingDesk &&
-          calculateLoanInterest(
-            selectedLoanConfig,
-            amount,
-            duration,
-            selectedLendingDesk?.erc20?.decimals || 18,
-          ) * 100,
+          Math.round(
+            calculateLoanInterest(
+              selectedLoanConfig,
+              amount,
+              duration,
+              selectedLendingDesk?.erc20?.decimals || 18,
+            ) * 100,
+          ),
       ],
     });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =

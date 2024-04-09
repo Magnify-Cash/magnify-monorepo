@@ -48,7 +48,10 @@ export function calculateTimeInfo(startTime, durationInHours) {
     remainingTime = `${remainingWeeks} weeks and ${remainingDays} days`;
   } else if (remainingDurationInMillis > 24 * 3600 * 1000) {
     const remainingDays = Math.floor(remainingDurationInMillis / (24 * 3600 * 1000));
-    remainingTime = `${remainingDays} days`;
+    const remainingHours = Math.floor(
+      (remainingDurationInMillis % (24 * 3600 * 1000)) / (3600 * 1000),
+    );
+    remainingTime = `${remainingDays} days and ${remainingHours} hours`;
   } else if (remainingDurationInMillis > 3600 * 1000) {
     const remainingHours = Math.floor(remainingDurationInMillis / (3600 * 1000));
     const remainingMinutes = Math.floor(

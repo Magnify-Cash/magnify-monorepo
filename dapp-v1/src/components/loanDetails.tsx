@@ -26,9 +26,13 @@ interface LoanDetailsProps {
 
 // LoanDetails component
 const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => {
-  // Set action based on payback or liquidate
-  //If action is payback, then set action to payback, else set action to liquidate
-  const action: "payback" | "liquidate" = payback ? "payback" : "liquidate";
+  // Initial state can be payback or liquidate
+  const initialAction = payback ? "payback" : "liquidate";
+
+  //action can be set to resolve when the resolve loan button is clicked
+  const [action, setAction] = useState<"payback" | "liquidate" | "resolve">(
+    initialAction,
+  );
 
   const { addToast, closeToast } = useToastContext();
   // Date/Time info
@@ -45,6 +49,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
   }, [loan?.startTime, loan?.duration]);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [loanActiveForOneHour, setLoanActiveForOneHour] = useState(true);
   const [payBackAmount, setPayBackAmount] = useState("0");
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
@@ -62,13 +67,19 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
     refetch: loanAmountDueRefetch,
     error: loanAmountDueError,
   } = useNftyFinanceV1GetLoanAmountDue({
-    args: [BigInt(loan?.id || 0)],
-    enabled: modalOpen,
+    args: [BigInt(loan?.id)],
+    enabled: status === "Active",
     onSuccess(data) {
       console.log("data", data);
+      setLoanActiveForOneHour(true);
     },
     onError(error) {
       console.error(error);
+      if (error.message.includes("LoanMustBeActiveForMin1Hour")) {
+        setLoanActiveForOneHour(false);
+        return;
+      }
+      //Display error toast only if the error is not LoanMustBeActiveForMin1Hour
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
@@ -117,6 +128,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
   });
+
   const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
     address: loan?.lendingDesk?.erc20.id as `0x${string}`,
     args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
@@ -316,15 +328,17 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
   const actionMap = {
     payback: makeLoanPayment,
     liquidate: liquidateOverdueLoan,
+    resolve: resolveLoan,
   };
 
   //actionDataMap is used to aceess the action data based on the action
   const actionDataMap = {
     payback: makeLoanPaymentData,
     liquidate: liquidateData,
+    resolve: resolveLoanPaymentData,
   };
 
-  //On successful transaction of makeLoanPayment/liquidate hook, display respective toast
+  //On successful transaction of makeLoanPayment/liquidate/resolve hook, display respective toast
   useWaitForTransaction({
     hash: actionDataMap[action]?.hash as `0x${string}`,
     onSuccess(data) {
@@ -375,7 +389,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
     }
   }, [approveErc20ResolveLoanData?.hash]);
 
-  //This hook is used to display loading toast when the makeLoanPayment/liquidate transaction is pending
+  //This hook is used to display loading toast when the makeLoanPayment/liquidate/resolve transaction is pending
 
   useEffect(() => {
     if (actionDataMap[action]?.hash) {
@@ -521,6 +535,9 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Make Payment"
+                btnOnClick={() => setModalOpen(true)}
+                onClose={() => setModalOpen(false)}
+                disabled={!loanActiveForOneHour}
                 modalId={`paybackModal${loan?.id}`}
                 modalTitle="Make Loan Payment"
                 modalContent={
@@ -573,10 +590,12 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">
-                                {fromWei(
-                                  loanAmountDue ?? BigInt("0"),
-                                  loan?.lendingDesk?.erc20?.decimals,
-                                )}
+                                {loanAmountDue
+                                  ? fromWei(
+                                      loanAmountDue,
+                                      loan?.lendingDesk?.erc20?.decimals,
+                                    )
+                                  : "0"}
                               </div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
@@ -642,8 +661,15 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Resolve Loan"
-                btnOnClick={() => setModalOpen(true)}
-                onClose={() => setModalOpen(false)}
+                btnOnClick={() => {
+                  setAction("resolve");
+                  setModalOpen(true);
+                }}
+                onClose={() => {
+                  setAction(initialAction);
+                  setModalOpen(false);
+                }}
+                disabled={!loanActiveForOneHour}
                 modalId={`resolveLoanModal${loan?.id}`}
                 modalTitle="Resolve Loan"
                 modalContent={
@@ -696,10 +722,12 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">
-                                {fromWei(
-                                  loanAmountDue ?? BigInt("0"),
-                                  loan?.lendingDesk?.erc20?.decimals,
-                                )}
+                                {loanAmountDue
+                                  ? fromWei(
+                                      loanAmountDue,
+                                      loan?.lendingDesk?.erc20?.decimals,
+                                    )
+                                  : "0"}
                               </div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
@@ -723,10 +751,14 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           className="form-control form-control-lg flex-grow-1"
                           id="enter-amount"
                           placeholder="Enter Amount"
-                          value={fromWei(
-                            loanAmountDue ?? BigInt("0"),
-                            loan?.lendingDesk?.erc20?.decimals,
-                          )}
+                          value={
+                            loanAmountDue
+                              ? fromWei(
+                                  loanAmountDue,
+                                  loan?.lendingDesk?.erc20?.decimals,
+                                )
+                              : "0"
+                          }
                         />
                         <div className="d-flex align-items-center flex-shrink-0 ms-3">
                           <span>{loan?.lendingDesk?.erc20.symbol}</span>
@@ -753,7 +785,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         type="button"
                         disabled={!checkedResolveLoan || actionIsLoading}
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
-                        onClick={() => resolveLoan(loan?.id)}
+                        onClick={() => actionMap.resolve(loan?.id)}
                       >
                         Resolve Now
                       </button>
@@ -767,6 +799,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Liquidate Overdue Loan"
+                disabled={!loanActiveForOneHour}
                 btnOnClick={() => setModalOpen(true)}
                 onClose={() => setModalOpen(false)}
                 modalId={`liquidateModal2${loan?.id}`}
@@ -852,6 +885,9 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
               />
             ) : null}
           </div>
+          {!loanActiveForOneHour ? (
+            <p className="text-danger mt-1">{`Loan must be active for at least one hour for interaction.`}</p>
+          ) : null}
         </div>
         {status === "Defaulted" ? (
           <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
