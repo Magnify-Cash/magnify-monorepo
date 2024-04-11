@@ -33,8 +33,8 @@ task(
     baseuri: "ipfs://QmPMc4tcBsMqLRuCQtPmPe84bpSjrC3Ky7t3JWuHXYB4aS/",
   });
   const punks: Contract = await hre.run("deploy-nft-collection", {
-    name: "PolygonPunks",
-    symbol: "ρ",
+    name: "CryptoPunks",
+    symbol: "PUNK",
     baseuri: "https://api.polygonpunks.io/metadata/",
   });
   const unlistedpunks: Contract = await hre.run("deploy-nft-collection", {
@@ -128,6 +128,31 @@ task(
     JSON.stringify(deployments, undefined, 2),
     "utf8"
   );
+
+  // Write token addresses to dapp-v1/public/tokenlists
+  const tokenListFile = await readFile("../dapp-v1/public/tokenlists/tokens.json", "utf8");
+  const tokenList = JSON.parse(tokenListFile);
+  const nftListFile = await readFile("../dapp-v1/public/tokenlists/nfts.json", "utf8");
+  const nftList = JSON.parse(nftListFile);
+
+  const usdcItem = tokenList["tokens"].find((token) => token.symbol === "USDC");
+  usdcItem.address = usdc.target;
+  const daiItem = tokenList["tokens"].find((token) => token.symbol === "DAI");
+  daiItem.address = dai.target;
+  const punksItem = nftList["nfts"].find((token) => token.symbol === "PUNK");
+  punksItem.address = punks.target;
+  const doodlesItem = nftList["nfts"].find((token) => token.symbol === "DOODLE");
+  doodlesItem.address = doodles.target;
+
+  await writeFile(
+    "../dapp-v1/public/tokenlists/tokens.json",
+    JSON.stringify(tokenList, undefined, 2)
+  );
+  await writeFile(
+    "../dapp-v1/public/tokenlists/nfts.json",
+    JSON.stringify(nftList, undefined, 2)
+  );
+
 
   // Edit networks.json in subgraph repo
   const networksFile = await readFile("../subgraph/networks.json", "utf8");
