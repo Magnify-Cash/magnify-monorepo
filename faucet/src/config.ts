@@ -21,7 +21,7 @@ type Config = {
 };
 
 const allConfigs: { [key: string]: Config } = {
-  sepolia: {
+  11155111: {
     ethName: "Sepolia Ether",
     chainId: 11155111,
     ethFaucetUrl: "https://sepoliafaucet.com",
@@ -57,7 +57,7 @@ const allConfigs: { [key: string]: Config } = {
       ],
     },
   },
-  local: {
+  31337: {
     ethName: "Hardhat Ether",
     chainId: 31337,
     ethFaucetUrl: "https://faucet.polygon.technology",
@@ -93,6 +93,42 @@ const allConfigs: { [key: string]: Config } = {
       ],
     },
   },
+  84532: {
+    ethName: "Base Sepolia",
+    chainId: 84532,
+    ethFaucetUrl: "https://faucet.quicknode.com/base/sepolia",
+    blockscanUrl: "https://sepolia.basescan.org",
+    contracts: {
+      tokens: [
+        {
+          name: "USD Coin",
+          address: deployments.usdc.address,
+          symbol: "USDC",
+          mintAmount: 100,
+        },
+        {
+          name: "Dai Stablecoin",
+          address: deployments.dai.address,
+          symbol: "DAI",
+          mintAmount: 100,
+        },
+      ],
+      nftCollections: [
+        {
+          name: "Doodles",
+          address: deployments.doodles.address,
+          symbol: "DOODLE",
+          mintAmount: 10,
+        },
+        {
+          name: "PolygonPunks",
+          address: deployments.punks.address,
+          symbol: "ρ",
+          mintAmount: 10,
+        },
+      ],
+    },
+  },
 };
 
-export const config = allConfigs[import.meta.env.VITE_CHAIN_NAME];
+export const config = allConfigs;

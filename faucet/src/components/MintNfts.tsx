@@ -1,18 +1,20 @@
-import { useWaitForTransaction } from "wagmi";
+import { useWaitForTransaction, useChainId } from "wagmi";
 import { config } from "@/config";
 import { useForm } from "react-hook-form";
-import { usePrepareTestErc721Mint, useTestErc721Mint } from "@/wagmi-generated";
+import { usePrepareTestErc721Mint, useTestErc721Mint } from "../../../dapp-v1/src/wagmi-generated";
 
 type MintNftsForm = {
   nftAddress: string;
 };
 
 export const MintNfts = () => {
-  if (!config) throw new Error("Invalid config");
+  const chainId = useChainId();
+  const chainConfig = config[chainId];
+  if (!chainConfig) throw new Error("Invalid config");
 
   // Form
   const { register, watch } = useForm<MintNftsForm>();
-  const selectedNft = config.contracts.nftCollections.filter(
+  const selectedNft = chainConfig.contracts.nftCollections.filter(
     (x) => x.address == watch("nftAddress")
   )[0];
 
@@ -22,7 +24,7 @@ export const MintNfts = () => {
     error: prepareError,
     isError: isPrepareError,
   } = usePrepareTestErc721Mint({
-    chainId: config.chainId,
+    chainId: chainConfig.chainId,
     // @ts-ignore
     address: watch("nftAddress"),
     args: [selectedNft ? BigInt(selectedNft.mintAmount) : 0n],
@@ -49,7 +51,7 @@ export const MintNfts = () => {
         {...register("nftAddress")}
       >
         <option value="">Select NFT collection to mint</option>
-        {config.contracts?.nftCollections.map((x) => (
+        {chainConfig.contracts?.nftCollections.map((x) => (
           <option value={x.address} key={x.address}>
             {x?.name}
           </option>
@@ -71,7 +73,7 @@ export const MintNfts = () => {
         <div>
           Successfully claimed your testnet {selectedNft.name}!
           <div>
-            <a href={`${config.blockscanUrl}/tx/${data?.hash}`} target="_blank">
+            <a href={`${chainConfig.blockscanUrl}/tx/${data?.hash}`} target="_blank">
               Blockscan
             </a>
           </div>

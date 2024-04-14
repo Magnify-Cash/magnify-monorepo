@@ -1,5 +1,5 @@
-import { useWaitForTransaction } from "wagmi";
-import { usePrepareTestErc20Mint, useTestErc20Mint } from "@/wagmi-generated";
+import { useWaitForTransaction, useChainId } from "wagmi";
+import { usePrepareTestErc20Mint, useTestErc20Mint } from "../../../dapp-v1/src/wagmi-generated";
 import { useForm } from "react-hook-form";
 import { config } from "../config";
 import { ethers } from "ethers";
@@ -9,11 +9,13 @@ type MintTokensForm = {
 };
 
 export const MintTokens = () => {
-  if (!config) throw new Error("Invalid config");
+  const chainId = useChainId();
+  const chainConfig = config[chainId];
+  if (!chainConfig) throw new Error("Invalid config");
 
   // Form
   const { register, watch } = useForm<MintTokensForm>();
-  const selectedToken = config.contracts.tokens.filter(
+  const selectedToken = chainConfig.contracts.tokens.filter(
     (x) => x.address == watch("tokenAddress")
   )[0];
 
@@ -23,7 +25,7 @@ export const MintTokens = () => {
     error: prepareError,
     isError: isPrepareError,
   } = usePrepareTestErc20Mint({
-    chainId: config.chainId,
+    chainId: chainConfig.chainId,
     // @ts-ignore
     address: watch("tokenAddress"),
     args: [
@@ -51,7 +53,7 @@ export const MintTokens = () => {
         {...register("tokenAddress")}
       >
         <option value="">Select token to mint</option>
-        {config.contracts?.tokens.map((x) => (
+        {chainConfig.contracts?.tokens.map((x) => (
           <option value={x.address} key={x.address}>
             {x?.name}
           </option>
@@ -73,7 +75,7 @@ export const MintTokens = () => {
         <div>
           Successfully claimed your testnet ${selectedToken.symbol}!
           <div>
-            <a href={`${config.blockscanUrl}/tx/${data?.hash}`} target="_blank">
+            <a href={`${chainConfig.blockscanUrl}/tx/${data?.hash}`} target="_blank">
               Blockscan
             </a>
           </div>
