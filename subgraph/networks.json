@@ -19,16 +19,16 @@
   },
   "base-sepolia": {
     "NFTYFinance": {
-      "address": "0xf065Eb15c0a7EB2662d708Dc55A3BC7d899905D7",
-      "startBlock": 7859553
+      "address": "0xFB18a2c6671f3b56a9937726736D60ac13B49A86",
+      "startBlock": 8719727
     },
     "ObligationNotes": {
-      "address": "0x127e1883682cD5aAAA1311DA168F9983d8a4BD10",
-      "startBlock": 7859547
+      "address": "0xa7bC849e6daeD53877994Ea981229266e0e2714b",
+      "startBlock": 8719720
     },
     "LendingKeys": {
-      "address": "0xB696d76472FCe84893A5dBdc635cF88C18193316",
-      "startBlock": 7859550
+      "address": "0x72b06CdAA67EAB4471b4705029F0C252dA5260A2",
+      "startBlock": 8719723
     }
   },
   "mainnet": {

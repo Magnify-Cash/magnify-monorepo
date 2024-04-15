@@ -49,7 +49,7 @@ The environment is now ready for development. You can launch the faucet service 
 ### Steps:
 
 1. Run `yarn contracts deploy:<network>`.
-2. Change the addresses and block numbers in `subgraph/subgraph.yaml` and `dapp-v1/wagmi.config.ts` as needed by copying them from the new `deployments.json`.
+2. Change the addresses and block numbers in `subgraph/subgraph.yaml` and `dapp-v1/wagmi.config.ts` as needed by copying them from the new `deployments.json`. Note: For `subgraph/subgraph.yaml`, copy the values from "mainnet" into the desired network.
 3. Run `yarn subgraph deploy:<network>`.
 4. Make sure `yarn dapp build` is working locally with the production `.env`s, and without the local graph node running.
 5. Push changes to `staging` branch for them to be deployed.
