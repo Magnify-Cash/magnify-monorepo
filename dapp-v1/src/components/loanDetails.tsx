@@ -1,5 +1,6 @@
 import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
+import refetchData from "@/helpers/refetchData";
 import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -15,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
+import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
 
 interface LoanDetailsProps {
@@ -22,10 +24,17 @@ interface LoanDetailsProps {
   payback?: boolean;
   liquidate?: boolean;
   status: string;
+  reexecuteQuery?: () => void;
 }
 
 // LoanDetails component
-const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => {
+const LoanDetails = ({
+  loan,
+  payback,
+  liquidate,
+  status,
+  reexecuteQuery,
+}: LoanDetailsProps) => {
   // Initial state can be payback or liquidate
   const initialAction = payback ? "payback" : "liquidate";
 
@@ -70,7 +79,6 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
     args: [BigInt(loan?.id)],
     enabled: status === "Active",
     onSuccess(data) {
-      console.log("data", data);
       setLoanActiveForOneHour(true);
     },
     onError(error) {
@@ -342,6 +350,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
   useWaitForTransaction({
     hash: actionDataMap[action]?.hash as `0x${string}`,
     onSuccess(data) {
+      reexecuteQuery ? refetchData(reexecuteQuery) : null;
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display success toast
@@ -350,6 +359,8 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
         <TransactionDetails transactionHash={data.transactionHash} />,
         "success",
       );
+      // Close modal
+      setModalOpen(false);
     },
     onError(error) {
       console.error(error);
@@ -435,7 +446,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                   } text-center`}
                 >
                   <div className="text-info-emphasis h3 mb-3">
-                    <i className="fa-light fa-hand-holding-dollar"></i>
+                    <i className="fa-light fa-hand-holding-dollar" />
                   </div>
                   <div className="h6 mb-0">
                     {fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)}{" "}
@@ -451,13 +462,13 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                   } text-center`}
                 >
                   <div className="text-success-emphasis h3 mb-3">
-                    <i className="fa-light fa-calendar-lines"></i>
+                    <i className="fa-light fa-calendar-lines" />
                   </div>
                   <div className="h6 mb-0">
-                    {Number.parseInt(
+                    {Number.parseFloat(
                       fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
                     ) -
-                      Number.parseInt(
+                      Number.parseFloat(
                         fromWei(
                           loan?.amountPaidBack,
                           loan?.lendingDesk?.erc20.decimals,
@@ -472,16 +483,16 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                 {status === "Active" ? (
                   <div className="mt-2">
                     <strong className="fs-4">{timeInfo.remainingTime}</strong>
-                    <span className="text-body-secondary">{` left`}</span>
+                    <span className="text-body-secondary">{" left"}</span>
                   </div>
                 ) : status === "Defaulted" ? (
                   <div className="mt-2">
-                    <strong className="fs-4">{`0 days`}</strong>
-                    <span className="text-body-secondary">{` left`}</span>
+                    <strong className="fs-4">{"0 days"}</strong>
+                    <span className="text-body-secondary">{" left"}</span>
                   </div>
                 ) : status === "Resolved" ? (
                   <div className="mt-2">
-                    <strong className="fs-5">{`Complete`}</strong>
+                    <strong className="fs-5">{"Complete"}</strong>
                   </div>
                 ) : null}
                 <div className="progress mt-3 shadow-none">
@@ -503,7 +514,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                       aria-valuemin={0}
                       aria-valuemax={100}
                       style={{ width: "100%" }}
-                    ></div>
+                    />
                   ) : status === "Resolved" ? (
                     <div
                       className="progress-bar text-bg-success"
@@ -513,7 +524,7 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                       aria-valuemin={0}
                       aria-valuemax={100}
                       style={{ width: "100%" }}
-                    ></div>
+                    />
                   ) : null}
                 </div>
                 <div className="d-flex align-items-center mt-3">
@@ -635,8 +646,15 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           value=""
                           id="flexCheckChecked"
                           style={{ transform: "scale(1.5)" }}
+                          hidden={approvalIsLoading}
                         />
-                        <label className="form-check-label " htmlFor="flexCheckChecked">
+                        <Spinner show={approvalIsLoading} size="sm" />
+                        <label
+                          className={`form-check-label ${
+                            approvalIsLoading ? "ms-2" : ""
+                          }`}
+                          htmlFor="flexCheckChecked"
+                        >
                           {`Grant permission for ${
                             loan?.lendingDesk?.erc20.symbol || ""
                           } transfer by checking this box.`}
@@ -648,7 +666,11 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.payback(loan?.id)}
                       >
-                        Pay Now
+                        {actionIsLoading ? (
+                          <Spinner show={actionIsLoading} />
+                        ) : (
+                          " Pay Now"
+                        )}
                       </button>
                     </div>
                   </div>
@@ -774,8 +796,15 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                           value=""
                           id="flexCheckChecked"
                           style={{ transform: "scale(1.5)" }}
+                          hidden={approvalIsLoading}
                         />
-                        <label className="form-check-label " htmlFor="flexCheckChecked">
+                        <Spinner show={approvalIsLoading} size="sm" />
+                        <label
+                          className={`form-check-label ${
+                            approvalIsLoading ? "ms-2" : ""
+                          }`}
+                          htmlFor="flexCheckChecked"
+                        >
                           {`Grant permission for ${
                             loan?.lendingDesk?.erc20.symbol || ""
                           } transfer by checking this box.`}
@@ -787,7 +816,11 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.resolve(loan?.id)}
                       >
-                        Resolve Now
+                        {actionIsLoading ? (
+                          <Spinner show={actionIsLoading} />
+                        ) : (
+                          "Resolve Now"
+                        )}
                       </button>
                     </div>
                   </div>
@@ -877,7 +910,11 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.liquidate(loan?.id)}
                       >
-                        Liquidate Overdue Loan
+                        {actionIsLoading ? (
+                          <Spinner show={actionIsLoading} />
+                        ) : (
+                          "Liquidate Overdue Loan"
+                        )}
                       </button>
                     </div>
                   </div>
@@ -886,13 +923,15 @@ const LoanDetails = ({ loan, payback, liquidate, status }: LoanDetailsProps) => 
             ) : null}
           </div>
           {!loanActiveForOneHour ? (
-            <p className="text-danger mt-1">{`Loan must be active for at least one hour for interaction.`}</p>
+            <p className="text-danger mt-1">
+              {"Loan must be active for at least one hour for interaction."}
+            </p>
           ) : null}
         </div>
         {status === "Defaulted" ? (
-          <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
+          <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2" />
         ) : status === "Resolved" ? (
-          <i className="fa-solid fa-check-circle text-success-emphasis fs-4 position-absolute top-0 start-0 m-2"></i>
+          <i className="fa-solid fa-check-circle text-success-emphasis fs-4 position-absolute top-0 start-0 m-2" />
         ) : null}
       </div>
     </div>

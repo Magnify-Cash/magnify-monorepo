@@ -1,6 +1,7 @@
 import { Blockies } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
@@ -277,7 +278,7 @@ export const BrowseCollection = (props) => {
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="text-body-secondary position-relative mt-n3">
         <NavLink to="/explore" className="text-reset text-decoration-none">
-          <i className="fa-light fa-angle-left me-1"></i>
+          <i className="fa-light fa-angle-left me-1" />
           Explore Collections
         </NavLink>
       </div>
@@ -308,6 +309,7 @@ export const BrowseCollection = (props) => {
               </tr>
             </thead>
             <tbody>
+              {fetching && <LoadingIndicator />}
               {formattedData?.loanConfigs.map((loanConfig, index) => {
                 return (
                   <tr className="align-middle" key={loanConfig.lendingDesk.id}>

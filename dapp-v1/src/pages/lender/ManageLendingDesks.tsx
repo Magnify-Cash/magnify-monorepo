@@ -1,3 +1,4 @@
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { fromWei } from "@/helpers/utils";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "urql";
@@ -13,6 +14,8 @@ export const ManageLendingDesks = (props: any) => {
       walletAddress: address?.toLowerCase() || "",
     },
   });
+
+  const { data, fetching, error } = result;
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -53,34 +56,36 @@ export const ManageLendingDesks = (props: any) => {
           role="button"
           aria-label="Create"
         >
-          <i className="fa-solid fa-plus d-sm-none"></i>
+          <i className="fa-solid fa-plus d-sm-none" />
           <span className="d-none d-sm-inline">Create Lending Desk</span>
         </NavLink>
       </div>
+      {fetching && <LoadingIndicator />}
+      {data && (
+        <div className="tab-content" id="pills-tabContent">
+          {/* Active Row */}
+          <div
+            className="tab-pane fade show active"
+            id="pills-active"
+            role="tabpanel"
+            aria-labelledby="pills-active-tab"
+          >
+            <LendingDeskRow desks={data?.lendingDesks || []} status="Active" />
+          </div>
+          {/* End Active Row */}
 
-      <div className="tab-content" id="pills-tabContent">
-        {/* Active Row */}
-        <div
-          className="tab-pane fade show active"
-          id="pills-active"
-          role="tabpanel"
-          aria-labelledby="pills-active-tab"
-        >
-          <LendingDeskRow desks={result.data?.lendingDesks || []} status="Active" />
+          {/* Inactive Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-inactive"
+            role="tabpanel"
+            aria-labelledby="pills-inactive-tab"
+          >
+            <LendingDeskRow desks={data?.lendingDesks || []} status="Frozen" />
+          </div>
+          {/* End Inactive Row */}
         </div>
-        {/* End Active Row */}
-
-        {/* Inactive Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-inactive"
-          role="tabpanel"
-          aria-labelledby="pills-inactive-tab"
-        >
-          <LendingDeskRow desks={result.data?.lendingDesks || []} status="Frozen" />
-        </div>
-        {/* End Inactive Row */}
-      </div>
+      )}
     </div>
   );
 };
@@ -98,7 +103,7 @@ const LendingDeskRow = ({ desks, status }) => {
         />
         <div className="h3 text-center mt-5">Nothing found</div>
         <p className="text-body-secondary text-center mt-3">
-          {`Don’t know where to start? `}
+          {"Don’t know where to start? "}
           <NavLink to="/create-desk">Create a Lending Desk</NavLink>
         </p>
       </div>
@@ -167,12 +172,12 @@ const LendingDeskRow = ({ desks, status }) => {
                   to={`/manage-desks/${desk.id}`}
                   className="btn btn-lg py-2 px-3 focus-ring bg-primary-subtle rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100"
                 >
-                  Edit <i className="fa-regular fa-pencil"></i>
+                  Edit <i className="fa-regular fa-pencil" />
                 </NavLink>
               </div>
             </div>
           </div>
-          <div className="col-lg-4 d-flex align-items-center"></div>
+          <div className="col-lg-4 d-flex align-items-center" />
         </div>
       </div>
     );

@@ -8,6 +8,7 @@ import { type WalletNft, fromWei, getWalletNfts } from "@/helpers/utils";
 import type { LendingDesk, LoanConfig } from "dapp-v1/.graphclient";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
+import { Spinner } from "./LoadingIndicator";
 import PopupTransaction from "./PopupTransaction";
 
 type GetLoanModalProps = {
@@ -86,7 +87,7 @@ export default function GetLoanModal({
       modalFooter={
         <div className="modal-footer text-start">
           {selectedNftName && (
-            <div className="form-check mb-3 ms-2 ">
+            <div className={`form-check mb-3 w-100 ${approvalIsLoading ? "" : "ms-3"}`}>
               <input
                 name="check"
                 disabled={approvalIsLoading}
@@ -96,8 +97,12 @@ export default function GetLoanModal({
                 type="checkbox"
                 value=""
                 id="flexCheckChecked"
-                style={{ transform: "scale(1.5)" }}
+                hidden={approvalIsLoading}
+                style={{
+                  transform: "scale(1.5)",
+                }}
               />
+              <Spinner show={approvalIsLoading} size="sm" />
               <label
                 className="form-check-label ps-2 text-wrap"
                 htmlFor="flexCheckChecked"
@@ -112,7 +117,7 @@ export default function GetLoanModal({
             onClick={() => onSubmit()}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
           >
-            Request Loan
+            {newLoanIsLoading ? <Spinner show={newLoanIsLoading} /> : "Request Loan"}
           </button>
         </div>
       }
@@ -264,7 +269,7 @@ export default function GetLoanModal({
             </div>
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">
-                Interest Rate <i className="fa-light fa-info-circle ms-1"></i>
+                Interest Rate <i className="fa-light fa-info-circle ms-1" />
               </span>
               <span className="fw-medium ms-auto">
                 {loanConfig
@@ -286,10 +291,10 @@ export default function GetLoanModal({
             </div>
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">
-                2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1"></i>
+                2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1" />
               </span>
               <span className="fw-medium ms-auto">
-                {`- `}
+                {"- "}
                 {amount ? calculateLoanOriginationFee(amount) : "0"}{" "}
                 {lendingDesk.erc20.symbol}
               </span>

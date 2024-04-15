@@ -9,9 +9,16 @@ interface ILoanRowProps {
   status?: string; // Status of the loan row
   payback?: boolean; // Whether or not loan card should have payback UI
   liquidate?: boolean; // Whether or not loan card should have liquidate UI
+  reexecuteQuery?: () => void;
 }
 
-export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) => {
+export const LoanRow = ({
+  loans,
+  payback,
+  status,
+  liquidate,
+  reexecuteQuery,
+}: ILoanRowProps) => {
   // Setup loan data && handle empty state
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan: Loan) => {
@@ -35,7 +42,7 @@ export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) =>
         />
         <div className="h3 text-center mt-5">Nothing found</div>
         <p className="text-body-secondary text-center mt-3">
-          {`Don’t know where to start? `}
+          {"Don’t know where to start? "}
           <NavLink to="/quick-loan">Get Quick Loan</NavLink>
         </p>
       </div>
@@ -48,6 +55,7 @@ export const LoanRow = ({ loans, payback, status, liquidate }: ILoanRowProps) =>
       payback={payback}
       liquidate={liquidate}
       status={status!}
+      {...(reexecuteQuery ? { reexecuteQuery } : {})}
     />
   ));
 };

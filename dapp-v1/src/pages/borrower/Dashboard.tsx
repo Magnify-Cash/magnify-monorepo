@@ -1,4 +1,5 @@
 import { LoanRow } from "@/components";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
@@ -6,12 +7,15 @@ import { BorrowerDashboardDocument } from "../../../.graphclient";
 export const Dashboard = (props: any) => {
   // GraphQL
   const { address } = useAccount();
-  const [result] = useQuery({
+  const [result, reexecuteQuery] = useQuery({
     query: BorrowerDashboardDocument,
     variables: {
       walletAddress: address?.toLowerCase() || "",
     },
+    requestPolicy: "cache-and-network",
   });
+
+  const { data, fetching, error } = result;
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -61,47 +65,59 @@ export const Dashboard = (props: any) => {
           </li>
         </ul>
       </div>
+      {fetching && <LoadingIndicator />}
 
-      <div className="tab-content" id="pills-tabContent">
-        {/* active Row */}
-        <div
-          className="tab-pane fade show active"
-          id="pills-active"
-          role="tabpanel"
-          aria-labelledby="pills-active-tab"
-        >
-          <div className="row g-4 justify-content-start mt-0">
-            <LoanRow payback loans={result?.data?.loans || []} status="Active" />
+      {data && (
+        <div className="tab-content" id="pills-tabContent">
+          {/* active Row */}
+          <div
+            className="tab-pane fade show active"
+            id="pills-active"
+            role="tabpanel"
+            aria-labelledby="pills-active-tab"
+          >
+            <div className="row g-4 justify-content-start mt-0">
+              <LoanRow
+                payback
+                loans={data?.loans || []}
+                status="Active"
+                reexecuteQuery={reexecuteQuery}
+              />
+            </div>
           </div>
-        </div>
-        {/* End Active Row */}
+          {/* End Active Row */}
 
-        {/* completed Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-completed"
-          role="tabpanel"
-          aria-labelledby="pills-completed-tab"
-        >
-          <div className="row g-4 justify-content-start mt-0">
-            <LoanRow loans={result?.data?.loans || []} status="Resolved" />
+          {/* completed Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-completed"
+            role="tabpanel"
+            aria-labelledby="pills-completed-tab"
+          >
+            <div className="row g-4 justify-content-start mt-0">
+              <LoanRow loans={data?.loans || []} status="Resolved" />
+            </div>
           </div>
-        </div>
-        {/* End completed Row */}
+          {/* End completed Row */}
 
-        {/* defaulted Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-defaulted"
-          role="tabpanel"
-          aria-labelledby="pills-defaulted-tab"
-        >
-          <div className="row g-4 justify-content-start mt-0">
-            <LoanRow loans={result?.data?.loans || []} status="Defaulted" />
+          {/* defaulted Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-defaulted"
+            role="tabpanel"
+            aria-labelledby="pills-defaulted-tab"
+          >
+            <div className="row g-4 justify-content-start mt-0">
+              <LoanRow
+                loans={data?.loans || []}
+                status="Defaulted"
+                reexecuteQuery={reexecuteQuery}
+              />
+            </div>
           </div>
+          {/* End defaulted Row */}
         </div>
-        {/* End defaulted Row */}
-      </div>
+      )}
     </div>
   );
 };

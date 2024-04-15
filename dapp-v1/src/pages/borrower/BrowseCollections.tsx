@@ -1,4 +1,5 @@
 import { Blockies } from "@/components";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import fetchNFTDetails from "@/helpers/FetchNfts";
 import type { INft } from "@/helpers/FetchNfts";
 import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
@@ -59,7 +60,7 @@ export const BrowseCollections = (props: any) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-hexagon-vertical-nft h4 m-0"></i>
+                  <i className="fa-solid fa-hexagon-vertical-nft h4 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
@@ -72,7 +73,7 @@ export const BrowseCollections = (props: any) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-square-dollar h4 m-0"></i>
+                  <i className="fa-solid fa-square-dollar h4 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">{result.data?.protocolInfo?.erc20sCount}</h3>
@@ -103,6 +104,7 @@ export const BrowseCollections = (props: any) => {
               </tr>
             </thead>
             <tbody>
+              {fetching && <LoadingIndicator />}
               {result.data?.nftCollections.map((nftCollection, index) => {
                 const currencies: string[] = nftCollection.loanConfigs.map(
                   (x) => x.lendingDesk.erc20.symbol,

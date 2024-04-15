@@ -1,5 +1,6 @@
 import { PopupTokenList, PopupTransaction } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
+import { Spinner } from "@/components/LoadingIndicator";
 import type { INFTListItem, ITokenListItem } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
@@ -169,7 +170,7 @@ export const CreateLendingDesk = (props: any) => {
         setEditDesk(true);
         setEditDeskIndex(deskConfigs.length);
       } catch (error) {
-        console.error(`Nft collection is not selected`);
+        console.error("Nft collection is not selected");
       }
     }
   };
@@ -295,20 +296,7 @@ export const CreateLendingDesk = (props: any) => {
     setApprovalIsLoading(false);
   }
 
-  // Modal Submit function
-  async function initLendingDesk() {
-    setInitLendingDeskIsLoading(true);
-    try {
-      await initializeNewLendingDesk();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-    }
-    setInitLendingDeskIsLoading(false);
-  }
-
   //This hook is used to display loading toast when the approve transaction is pending
-
   useEffect(() => {
     if (approveErc20TransactionData?.hash) {
       const id = addToast(
@@ -323,7 +311,6 @@ export const CreateLendingDesk = (props: any) => {
   }, [approveErc20TransactionData?.hash]);
 
   //This hook is used to display loading toast when the initializeNewLendingDesk transaction is pending
-
   useEffect(() => {
     if (initializeNewLendingDeskData?.hash) {
       const id = addToast(
@@ -641,7 +628,7 @@ export const CreateLendingDesk = (props: any) => {
                                 className="text-reset text-decoration-none btn border-0 p-0"
                                 aria-label="Edit"
                               >
-                                <i className="fa-regular fa-edit"></i>
+                                <i className="fa-regular fa-edit" />
                               </button>
                             </span>
                             <span className="text-danger-emphasis">
@@ -650,14 +637,14 @@ export const CreateLendingDesk = (props: any) => {
                                 className="text-reset text-decoration-none btn border-0 p-0"
                                 aria-label="Delete"
                               >
-                                <i className="fa-regular fa-trash-can"></i>
+                                <i className="fa-regular fa-trash-can" />
                               </button>
                             </span>
                           </div>
                         </div>
                         <div className="mt-2 d-flex align-items-center">
                           <span className="flex-shrink-0 specific-w-25">
-                            <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
+                            <i className="fa-light fa-hand-holding-dollar text-success-emphasis" />
                           </span>
                           <div className="text-truncate">
                             <strong>Offer:</strong> {config.minOffer}-{config.maxOffer}{" "}
@@ -666,7 +653,7 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                         <div className="mt-1 d-flex align-items-center">
                           <span className="flex-shrink-0 specific-w-25">
-                            <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
+                            <i className="fa-light fa-calendar-clock text-info-emphasis" />
                           </span>
                           <div className="text-truncate">
                             <strong>Duration:</strong> {config.minDuration}-
@@ -675,7 +662,7 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                         <div className="mt-1 d-flex align-items-center">
                           <span className="flex-shrink-0 specific-w-25">
-                            <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
+                            <i className="fa-light fa-badge-percent text-primary-emphasis" />
                           </span>
                           <div className="text-truncate">
                             <strong>Interest Rate:</strong> {config.minInterest}-
@@ -744,7 +731,7 @@ export const CreateLendingDesk = (props: any) => {
                               </div>
                               <div className="mt-2 d-flex align-items-center">
                                 <span className="flex-shrink-0 specific-w-25">
-                                  <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
+                                  <i className="fa-light fa-hand-holding-dollar text-success-emphasis" />
                                 </span>
                                 <div className="text-truncate">
                                   <strong>Offer:</strong> {config.minOffer}-
@@ -753,7 +740,7 @@ export const CreateLendingDesk = (props: any) => {
                               </div>
                               <div className="mt-1 d-flex align-items-center">
                                 <span className="flex-shrink-0 specific-w-25">
-                                  <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
+                                  <i className="fa-light fa-calendar-clock text-info-emphasis" />
                                 </span>
                                 <div className="text-truncate">
                                   <strong>Duration:</strong> {config.minDuration}-
@@ -762,7 +749,7 @@ export const CreateLendingDesk = (props: any) => {
                               </div>
                               <div className="mt-1 d-flex align-items-center">
                                 <span className="flex-shrink-0 specific-w-25">
-                                  <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
+                                  <i className="fa-light fa-badge-percent text-primary-emphasis" />
                                 </span>
                                 <div className="text-truncate">
                                   <strong>Interest Rate:</strong> {config.minInterest}-
@@ -831,8 +818,15 @@ export const CreateLendingDesk = (props: any) => {
                         value=""
                         id="flexCheckChecked"
                         style={{ transform: "scale(1.5)" }}
+                        hidden={approvalIsLoading}
                       />
-                      <label className="form-check-label " htmlFor="flexCheckChecked">
+                      <Spinner show={approvalIsLoading} size="sm" />
+                      <label
+                        className={`form-check-label ${
+                          approvalIsLoading ? "ms-2" : ""
+                        }`}
+                        htmlFor="flexCheckChecked"
+                      >
                         {`Grant permission for ${
                           token?.token.symbol || ""
                         } transfer by checking this box.`}
@@ -841,10 +835,14 @@ export const CreateLendingDesk = (props: any) => {
                     <button
                       type="button"
                       disabled={!checked || initLendingDeskIsLoading}
-                      onClick={() => initLendingDesk()}
+                      onClick={() => initializeNewLendingDesk()}
                       className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
                     >
-                      Create Lending Desk
+                      {initLendingDeskIsLoading ? (
+                        <Spinner show={initLendingDeskIsLoading} />
+                      ) : (
+                        "Create Lending Desk"
+                      )}
                     </button>
                   </div>
                 </div>

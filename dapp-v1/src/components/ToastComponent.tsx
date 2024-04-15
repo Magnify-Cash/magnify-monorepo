@@ -73,7 +73,7 @@ const ToastComponent: React.FC<ToastProps> = ({
             className={`d-flex align-items-center justify-content-center rounded text-${toastContext}-emphasis bg-${toastContext}-subtle fs-5 flex-shrink-0 align-self-start`}
             style={{ width: "36px", height: "36px" }}
           >
-            <i className={`fa-solid ${toastIcon}`}></i>
+            <i className={`fa-solid ${toastIcon}`} />
           </div>
           <div className="mx-3">
             <div className="h5 mb-1">{title}</div>
@@ -88,13 +88,13 @@ const ToastComponent: React.FC<ToastProps> = ({
             onClick={() => {
               setShow(false);
             }}
-          ></button>
+          />
         </div>
       </div>
       <div
         className={`bg-${toastContext} w-100 mt-1 rounded-bottom`}
         style={{ height: "10px" }}
-      ></div>
+      />
     </div>
   );
 };

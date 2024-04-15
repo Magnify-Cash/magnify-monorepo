@@ -1,4 +1,5 @@
 import { LoanRow } from "@/components";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { fromWei } from "@/helpers/utils";
 import { useEffect, useState } from "react";
@@ -116,85 +117,87 @@ export const Dashboard = (props: any) => {
           </li>
         </ul>
       </div>
-
-      <div className="tab-content" id="pills-tabContent">
-        {/* Active Row */}
-        <div
-          className="tab-pane fade show active"
-          id="pills-active"
-          role="tabpanel"
-          aria-labelledby="pills-active-tab"
-        >
-          <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-12">
-              <LoanCardParent
-                desks={result?.data?.lendingDesks || []}
-                nfts={nftTwoDimArr}
-                status="Active"
-              />
+      {fetching && <LoadingIndicator />}
+      {data && (
+        <div className="tab-content" id="pills-tabContent">
+          {/* Active Row */}
+          <div
+            className="tab-pane fade show active"
+            id="pills-active"
+            role="tabpanel"
+            aria-labelledby="pills-active-tab"
+          >
+            <div className="row g-4 mt-n2 mb-4">
+              <div className="col-xl-12">
+                <LoanCardParent
+                  desks={result?.data?.lendingDesks || []}
+                  nfts={nftTwoDimArr}
+                  status="Active"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        {/* End Active Row */}
+          {/* End Active Row */}
 
-        {/* Pending Default Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-pending-default"
-          role="tabpanel"
-          aria-labelledby="pills-pending-default-tab"
-        >
-          <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-12">
-              <LoanCardParent
-                desks={result?.data?.lendingDesks || []}
-                nfts={nftTwoDimArr}
-                status="PendingDefault"
-                liquidate
-              />
+          {/* Pending Default Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-pending-default"
+            role="tabpanel"
+            aria-labelledby="pills-pending-default-tab"
+          >
+            <div className="row g-4 mt-n2 mb-4">
+              <div className="col-xl-12">
+                <LoanCardParent
+                  desks={result?.data?.lendingDesks || []}
+                  nfts={nftTwoDimArr}
+                  status="PendingDefault"
+                  liquidate
+                />
+              </div>
             </div>
           </div>
-        </div>
-        {/* End Pending Default Row */}
+          {/* End Pending Default Row */}
 
-        {/* Defaulted Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-defaulted"
-          role="tabpanel"
-          aria-labelledby="pills-defaulted-tab"
-        >
-          <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-12">
-              <LoanCardParent
-                desks={result?.data?.lendingDesks || []}
-                nfts={nftTwoDimArr}
-                status="Defaulted"
-              />
+          {/* Defaulted Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-defaulted"
+            role="tabpanel"
+            aria-labelledby="pills-defaulted-tab"
+          >
+            <div className="row g-4 mt-n2 mb-4">
+              <div className="col-xl-12">
+                <LoanCardParent
+                  desks={result?.data?.lendingDesks || []}
+                  nfts={nftTwoDimArr}
+                  status="Defaulted"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        {/* End Defaulted Row */}
+          {/* End Defaulted Row */}
 
-        {/* Resolved Row */}
-        <div
-          className="tab-pane fade"
-          id="pills-completed"
-          role="tabpanel"
-          aria-labelledby="pills-completed-tab"
-        >
-          <div className="row g-4 mt-n2 mb-4">
-            <div className="col-xl-12">
-              <LoanCardParent
-                desks={result?.data?.lendingDesks || []}
-                nfts={nftTwoDimArr}
-                status="Resolved"
-              />
+          {/* Resolved Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-completed"
+            role="tabpanel"
+            aria-labelledby="pills-completed-tab"
+          >
+            <div className="row g-4 mt-n2 mb-4">
+              <div className="col-xl-12">
+                <LoanCardParent
+                  desks={result?.data?.lendingDesks || []}
+                  nfts={nftTwoDimArr}
+                  status="Resolved"
+                />
+              </div>
             </div>
           </div>
+          {/* End Resolved Row */}
         </div>
-        {/* End Resolved Row */}
-      </div>
+      )}
     </div>
   );
 };
@@ -211,7 +214,7 @@ const LoanCardParent = (props) => {
         />
         <div className="h3 text-center mt-5">Nothing found</div>
         <p className="text-body-secondary text-center mt-3">
-          {`Don’t know where to start? `}
+          {"Don’t know where to start? "}
           <NavLink to="/create-desk">Create a Lending Desk</NavLink>
         </p>
       </div>
@@ -248,7 +251,7 @@ const LoanCardParent = (props) => {
               <div className="col-sm-6">
                 <div className="d-flex align-items-center">
                   <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                    <i className="fa-solid fa-user h4 m-0"></i>
+                    <i className="fa-solid fa-user h4 m-0" />
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">
@@ -261,7 +264,7 @@ const LoanCardParent = (props) => {
               <div className="col-sm-6">
                 <div className="d-flex align-items-center">
                   <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-info-subtle text-info-emphasis rounded-circle flex-shrink-0">
-                    <i className="fa-solid fa-coins h4 m-0"></i>
+                    <i className="fa-solid fa-coins h4 m-0" />
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">{desk.erc20.symbol}</h3>
@@ -272,7 +275,7 @@ const LoanCardParent = (props) => {
               <div className="col-sm-6">
                 <div className="d-flex align-items-center">
                   <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-warning-subtle text-warning-emphasis rounded-circle flex-shrink-0">
-                    <i className="fa-solid fa-circle-minus h4 m-0"></i>
+                    <i className="fa-solid fa-circle-minus h4 m-0" />
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">
@@ -286,7 +289,7 @@ const LoanCardParent = (props) => {
               <div className="col-sm-6">
                 <div className="d-flex align-items-center">
                   <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-success-subtle text-success-emphasis rounded-circle flex-shrink-0">
-                    <i className="fa-solid fa-sack-dollar h4 m-0"></i>
+                    <i className="fa-solid fa-sack-dollar h4 m-0" />
                   </div>
                   <div className="ps-3">
                     <h3 className="m-0">

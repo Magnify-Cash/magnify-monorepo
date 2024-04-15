@@ -1,5 +1,6 @@
 import { PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
+import refetchData from "@/helpers/refetchData";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -14,11 +15,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
 import ErrorDetails from "./ErrorDetails";
+import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
 
 interface ManageFundsProps {
   lendingDesk: any;
   action: "deposit" | "withdraw";
+  reexecuteQuery: () => void;
 }
 
 interface ManageFundForm {
@@ -26,7 +29,11 @@ interface ManageFundForm {
 }
 
 //ManageFunds component is used to deposit or withdraw liquidity from a lending desk
-export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
+export const ManageFunds = ({
+  lendingDesk,
+  action,
+  reexecuteQuery,
+}: ManageFundsProps) => {
   const {
     register,
     watch,
@@ -209,6 +216,10 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
   useWaitForTransaction({
     hash: actionDataMap[action]?.hash as `0x${string}`,
     onSuccess(data) {
+      reexecuteQuery
+        ? refetchData(reexecuteQuery)
+        : console.log("reexecuteQuery not provided");
+
       refetchApprovalData();
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
@@ -292,7 +303,9 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
                 value=""
                 id="flexCheckChecked"
                 style={{ transform: "scale(1.5)" }}
+                hidden={approvalIsLoading}
               />
+              <Spinner show={approvalIsLoading} size="sm" />
               <label
                 className="form-check-label ps-2 text-wrap "
                 htmlFor="flexCheckChecked"
@@ -309,7 +322,7 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
           >
-            {actionText}
+            {actionIsLoading ? <Spinner show={actionIsLoading} /> : actionText}
           </button>
         </div>
       }

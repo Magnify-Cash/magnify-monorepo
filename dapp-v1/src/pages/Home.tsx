@@ -15,7 +15,7 @@ export const Home = (props) => {
           <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">
-                <i className="fa-solid fa-hand-holding-dollar h1 m-0"></i>
+                <i className="fa-solid fa-hand-holding-dollar h1 m-0" />
               </div>
               <div className="text-center mt-3">
                 <h5>Borrow</h5>
@@ -29,7 +29,7 @@ export const Home = (props) => {
           <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">
-                <i className="fa-solid fa-piggy-bank h1 m-0"></i>
+                <i className="fa-solid fa-piggy-bank h1 m-0" />
               </div>
               <div className="text-center mt-3">
                 <h5>Lend</h5>
@@ -43,7 +43,7 @@ export const Home = (props) => {
           <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">
-                <i className="fa-solid fa-lock h1 m-0"></i>
+                <i className="fa-solid fa-lock h1 m-0" />
               </div>
               <div className="text-center mt-3">
                 <h5>Stake</h5>
@@ -60,7 +60,7 @@ export const Home = (props) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
+                  <i className="fa-solid fa-hexagon-vertical-nft h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
@@ -73,7 +73,7 @@ export const Home = (props) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-paper-plane h2 m-0"></i>
+                  <i className="fa-solid fa-paper-plane h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">{result.data?.protocolInfo?.loansCount}</h3>
@@ -84,7 +84,7 @@ export const Home = (props) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-sack-dollar h2 m-0"></i>
+                  <i className="fa-solid fa-sack-dollar h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">

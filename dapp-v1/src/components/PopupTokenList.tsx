@@ -244,7 +244,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
-              ></button>
+              />
             </div>
             <div className="px-3 pt-3">
               {/* Search bar */}

@@ -384,7 +384,7 @@ export const QuickLoan = (props: any) => {
                             <div className="col">
                               <div className="p-2 rounded-3 bg-success-subtle text-center">
                                 <div className="text-success-emphasis h3 mb-3">
-                                  <i className="fa-light fa-hand-holding-dollar"></i>
+                                  <i className="fa-light fa-hand-holding-dollar" />
                                 </div>
                                 <div className="fw-bold">
                                   {fromWei(
@@ -398,7 +398,7 @@ export const QuickLoan = (props: any) => {
                             <div className="col">
                               <div className="p-2 rounded-3 bg-info-subtle text-center">
                                 <div className="text-info-emphasis h3 mb-3">
-                                  <i className="fa-light fa-calendar-clock"></i>
+                                  <i className="fa-light fa-calendar-clock" />
                                 </div>
                                 <div className="fw-bold">
                                   {item.loanConfig.maxDuration / 24} days
@@ -409,7 +409,7 @@ export const QuickLoan = (props: any) => {
                             <div className="col">
                               <div className="p-2 rounded-3 bg-primary bg-opacity-10 text-center">
                                 <div className="text-primary-emphasis h3 mb-3">
-                                  <i className="fa-light fa-badge-percent"></i>
+                                  <i className="fa-light fa-badge-percent" />
                                 </div>
                                 <div className="fw-bold">
                                   {item.loanConfig.maxInterest / 100} %

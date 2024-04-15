@@ -142,7 +142,7 @@ export const Base = () => {
                 onClick={() => toggleDarkMode()}
                 style={{ width: "33px" }}
               >
-                <i className="fa-solid fa-moon"></i>
+                <i className="fa-solid fa-moon" />
               </button>
               <button
                 type="button"
@@ -150,7 +150,7 @@ export const Base = () => {
                 data-bs-dismiss="offcanvas"
                 data-bs-target="#sidebar"
                 aria-label="Close"
-              ></button>
+              />
             </div>
             <div className="offcanvas-body">
               <NavLink
@@ -158,7 +158,7 @@ export const Base = () => {
                 onClick={() => closeSidebar()}
                 className="btn btn-link d-block w-100 text-start bg-primary-subtle text-primary-emphasis"
               >
-                <i className="fa-light fa-home me-1"></i>
+                <i className="fa-light fa-home me-1" />
                 Home
               </NavLink>
 
@@ -178,7 +178,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-grid-2"></i>
+                      <i className="fa-light fa-grid-2" />
                     </span>
                     Dashboard
                   </NavLink>
@@ -192,7 +192,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-bolt"></i>
+                      <i className="fa-light fa-bolt" />
                     </span>
                     Get Quick Loan
                   </NavLink>
@@ -206,7 +206,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-folders"></i>
+                      <i className="fa-light fa-folders" />
                     </span>
                     Browse Collections
                   </NavLink>
@@ -230,7 +230,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-grid-2"></i>
+                      <i className="fa-light fa-grid-2" />
                     </span>
                     Dashboard
                   </NavLink>
@@ -244,7 +244,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-circle-plus"></i>
+                      <i className="fa-light fa-circle-plus" />
                     </span>
                     Create Lending Desk
                   </NavLink>
@@ -258,7 +258,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-bank"></i>
+                      <i className="fa-light fa-bank" />
                     </span>
                     Manage Lending Desks
                   </NavLink>
@@ -298,7 +298,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-square-list"></i>
+                      <i className="fa-light fa-square-list" />
                     </span>
                     Docs
                   </NavLink>
@@ -314,7 +314,7 @@ export const Base = () => {
                     }
                   >
                     <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
-                      <i className="fa-light fa-city"></i>
+                      <i className="fa-light fa-city" />
                     </span>
                     Community
                   </NavLink>
@@ -337,7 +337,7 @@ export const Base = () => {
                     data-bs-toggle="offcanvas"
                     data-bs-target="#sidebar"
                   >
-                    <i className="fa-solid fa-bars"></i>
+                    <i className="fa-solid fa-bars" />
                   </button>
                   <button
                     type="button"
@@ -346,7 +346,7 @@ export const Base = () => {
                     onClick={() => toggleDarkMode()}
                     style={{ width: "33px" }}
                   >
-                    <i className="fa-solid fa-moon"></i>
+                    <i className="fa-solid fa-moon" />
                   </button>
                 </div>
                 <NavLink to="/" className="d-lg-none me-auto">
@@ -367,7 +367,7 @@ export const Base = () => {
                         <button onClick={show} className="btn btn-md btn-primary">
                           {isConnected && <small>{truncatedAddress}</small>}
                           {!isConnected && <small>Connect</small>}
-                          <i className="fa-solid fa-wallet ms-2"></i>
+                          <i className="fa-solid fa-wallet ms-2" />
                         </button>
                       </>
                     );

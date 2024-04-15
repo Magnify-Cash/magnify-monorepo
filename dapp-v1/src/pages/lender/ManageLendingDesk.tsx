@@ -1,9 +1,11 @@
 import { ManageFunds } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
+import { Spinner } from "@/components/LoadingIndicator";
 import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
+import refetchData from "@/helpers/refetchData";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   useNftyFinanceV1RemoveLendingDeskLoanConfig,
@@ -53,12 +55,13 @@ export const ManageLendingDesk = (props: any) => {
   GraphQL Query
   */
   const { id } = useParams();
-  const [result] = useQuery({
+  const [result, reexecuteQuery] = useQuery({
     query: ManageLendingDeskDocument,
     variables: {
       // @ts-ignore
       deskId: id,
     },
+    requestPolicy: "cache-and-network",
   });
 
   const token = result.data?.lendingDesk?.erc20?.decimals;
@@ -223,6 +226,7 @@ export const ManageLendingDesk = (props: any) => {
   useWaitForTransaction({
     hash: freezeData?.hash as `0x${string}`,
     onSuccess(data) {
+      refetchData(reexecuteQuery);
       refetchFreezeConfig();
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
@@ -291,6 +295,8 @@ export const ManageLendingDesk = (props: any) => {
   useWaitForTransaction({
     hash: updateLendingDeskData?.hash as `0x${string}`,
     onSuccess(data) {
+      // Refetch the data
+      refetchData(reexecuteQuery);
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display success toast
@@ -335,7 +341,7 @@ export const ManageLendingDesk = (props: any) => {
         data.selectedNftCollection = nftCollection;
         setDeskConfig(data);
       } catch (error: any) {
-        console.error(`Nft collection is not selected`);
+        console.error("Nft collection is not selected");
       }
     }
   };
@@ -377,6 +383,8 @@ export const ManageLendingDesk = (props: any) => {
   useWaitForTransaction({
     hash: deleteCollectionData?.hash as `0x${string}`,
     onSuccess(data) {
+      // Refetch the data
+      refetchData(reexecuteQuery);
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display success toast
@@ -416,7 +424,7 @@ export const ManageLendingDesk = (props: any) => {
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="text-body-secondary position-relative">
         <NavLink to="/manage-desks" className="text-reset text-decoration-none">
-          <i className="fa-light fa-angle-left me-1"></i>
+          <i className="fa-light fa-angle-left me-1" />
           Manage Lending Desks
         </NavLink>
       </div>
@@ -456,10 +464,12 @@ export const ManageLendingDesk = (props: any) => {
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="deposit"
+                      reexecuteQuery={reexecuteQuery}
                     />
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="withdraw"
+                      reexecuteQuery={reexecuteQuery}
                     />
                     <div className=" form-check form-switch d-flex align-items-center justify-content-center space-x-4">
                       <input
@@ -472,7 +482,9 @@ export const ManageLendingDesk = (props: any) => {
                         checked={!boolStatus}
                         onChange={() => freezeUnfreeze()}
                         disabled={freezeUnfreezeIsLoading}
+                        hidden={freezeUnfreezeIsLoading}
                       />
+                      <Spinner show={freezeUnfreezeIsLoading} size="sm" />
                       <label
                         className="form-check-label fs-5 text-primary-emphasis fw-medium  text-end ms-2"
                         htmlFor="freeze-unfreeze-switch"
@@ -518,7 +530,7 @@ export const ManageLendingDesk = (props: any) => {
                             className="text-reset text-decoration-none btn border-0 p-0"
                             aria-label="Edit"
                           >
-                            <i className="fa-regular fa-edit"></i>
+                            <i className="fa-regular fa-edit" />
                           </button>
                         </span>
                         <span className="text-danger-emphasis">
@@ -527,14 +539,14 @@ export const ManageLendingDesk = (props: any) => {
                             className="text-reset text-decoration-none btn border-0 p-0"
                             aria-label="Edit"
                           >
-                            <i className="fa-regular fa-trash-can"></i>
+                            <i className="fa-regular fa-trash-can" />
                           </button>
                         </span>
                       </div>
                     </div>
                     <div className="mt-2 d-flex align-items-center">
                       <span className="flex-shrink-0 specific-w-25">
-                        <i className="fa-light fa-hand-holding-dollar text-success-emphasis"></i>
+                        <i className="fa-light fa-hand-holding-dollar text-success-emphasis" />
                       </span>
                       <div className="text-truncate">
                         <strong>Offer:</strong>{" "}
@@ -552,7 +564,7 @@ export const ManageLendingDesk = (props: any) => {
                     </div>
                     <div className="mt-1 d-flex align-items-center">
                       <span className="flex-shrink-0 specific-w-25">
-                        <i className="fa-light fa-calendar-clock text-info-emphasis"></i>
+                        <i className="fa-light fa-calendar-clock text-info-emphasis" />
                       </span>
                       <div className="text-truncate">
                         <strong>Duration:</strong> {config.minDuration / 24}-
@@ -561,7 +573,7 @@ export const ManageLendingDesk = (props: any) => {
                     </div>
                     <div className="mt-1 d-flex align-items-center">
                       <span className="flex-shrink-0 specific-w-25">
-                        <i className="fa-light fa-badge-percent text-primary-emphasis"></i>
+                        <i className="fa-light fa-badge-percent text-primary-emphasis" />
                       </span>
                       <div className="text-truncate">
                         <strong>Interest Rate:</strong> {config.minInterest / 100}-
@@ -581,7 +593,7 @@ export const ManageLendingDesk = (props: any) => {
                 <h5 className="fw-medium text-primary-emphasis">
                   {editDesk
                     ? `Edit Collection ${editDeskIndex + 1} & Paramaters`
-                    : `Collection Paramaters`}
+                    : "Collection Paramaters"}
                 </h5>
                 <div
                   className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4 w-lg-75"
@@ -761,7 +773,13 @@ export const ManageLendingDesk = (props: any) => {
                   onClick={handleSubmit(onSubmit)} //update deskconfig state
                   className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
                 >
-                  {editDesk ? "Update Collection" : "Add to Desk"}
+                  {updateDeskIsLoading ? (
+                    <Spinner show={updateDeskIsLoading} />
+                  ) : editDesk ? (
+                    "Update Collection"
+                  ) : (
+                    "Add to Desk"
+                  )}
                 </button>
               </div>
             </div>

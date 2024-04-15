@@ -61,12 +61,13 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
             <div className="modal-header">
               <h1 className="modal-title fs-4 fw-medium">{props.modalTitle}</h1>
               <button
+                id="closeButton"
                 onClick={props.onClose}
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
-              ></button>
+              />
             </div>
             <div className="modal-body">{props.modalContent}</div>
             {props.modalFooter}

@@ -7,7 +7,7 @@ export const Demo = (props: any) => {
           <div className="card border-0 shadow rounded-4 h-100">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
-                <i className="fa-solid fa-hand-holding-dollar h1 m-0"></i>
+                <i className="fa-solid fa-hand-holding-dollar h1 m-0" />
               </div>
               <div className="text-center mt-3">
                 <h5>Demo Card</h5>
@@ -29,7 +29,7 @@ export const Demo = (props: any) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-hexagon-vertical-nft h2 m-0"></i>
+                  <i className="fa-solid fa-hexagon-vertical-nft h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">30</h3>
@@ -40,7 +40,7 @@ export const Demo = (props: any) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-square-dollar h2 m-0"></i>
+                  <i className="fa-solid fa-square-dollar h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
@@ -53,7 +53,7 @@ export const Demo = (props: any) => {
             <div className="col-sm-6 col-xl-4">
               <div className="d-flex align-items-center">
                 <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
-                  <i className="fa-solid fa-sack-dollar h2 m-0"></i>
+                  <i className="fa-solid fa-sack-dollar h2 m-0" />
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
