@@ -11,7 +11,7 @@ export const Home = (props) => {
   return (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="row g-4 g-xl-5 justify-content-center">
-        <div className="col-6">
+        <div className="col-md-6">
           <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">
@@ -25,7 +25,7 @@ export const Home = (props) => {
             </div>
           </div>
         </div>
-        <div className="col-6">
+        <div className="col-md-6">
           <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">

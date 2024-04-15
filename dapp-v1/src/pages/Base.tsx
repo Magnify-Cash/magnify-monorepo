@@ -350,7 +350,7 @@ export const Base = () => {
                   </button>
                 </div>
                 <NavLink to="/" className="d-lg-none me-auto">
-                  <img src="/theme/icon.svg" alt="Logo" width="28" height="28" />
+                  <img src="/theme/magnify-cash-logo.jpeg" alt="Logo" width="28" height="28" />
                 </NavLink>
                 <ConnectKitButton.Custom>
                   {({
