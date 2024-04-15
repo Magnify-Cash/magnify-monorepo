@@ -289,7 +289,7 @@ export const Base = () => {
               </li> */}
                 <li className="nav-item">
                   <NavLink
-                    to="https://docs.nfty.finance/"
+                    to="https://magnify.gitbook.io/magnify.cash/"
                     target="_blank" // Opens the link in a new tab
                     rel="noopener noreferrer" // Recommended for security
                     onClick={() => closeSidebar()}
