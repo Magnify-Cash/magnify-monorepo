@@ -33,16 +33,16 @@
   },
   "mainnet": {
     "NFTYFinance": {
-      "address": "0x394774a7523bb711C64DEb4f393355016ca51ab3",
-      "startBlock": 8689858
+      "address": "0xFB18a2c6671f3b56a9937726736D60ac13B49A86",
+      "startBlock": 8719727
     },
     "ObligationNotes": {
-      "address": "0x16Db5E13340FbD2da17A7d922153Dd39f9a2dD19",
-      "startBlock": 8689851
+      "address": "0xa7bC849e6daeD53877994Ea981229266e0e2714b",
+      "startBlock": 8719720
     },
     "LendingKeys": {
-      "address": "0xe72B1319E5CcA50ff33760A7B103F3269f60AC82",
-      "startBlock": 8689854
+      "address": "0x72b06CdAA67EAB4471b4705029F0C252dA5260A2",
+      "startBlock": 8719723
     }
   }
 }
