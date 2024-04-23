@@ -11,6 +11,7 @@ enum LoanStatus {
 
 type LoanConfig @entity {
   id: ID!
+  active: Boolean!
   lendingDesk: LendingDesk!
   nftCollection: NftCollection!
   minAmount: BigInt!
@@ -57,12 +58,20 @@ type Erc20 @entity {
   symbol: String!
   decimals: Int!
   lendingDesks: [LendingDesk!]! @derivedFrom(field: "erc20")
+  nftCollections: [NftCollectionErc20!]! @derivedFrom(field: "erc20")
 }
 
 type NftCollection @entity {
   id: ID!
-  isErc1155: Boolean!
+  activeLoanConfigsCount: BigInt!
   loanConfigs: [LoanConfig!]! @derivedFrom(field: "nftCollection")
+  erc20s: [NftCollectionErc20!]! @derivedFrom(field: "nftCollection")
+}
+
+type NftCollectionErc20 @entity {
+  id: ID!
+  nftCollection: NftCollection!
+  erc20: Erc20!
 }
 
 type Loan @entity {

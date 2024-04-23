@@ -24,6 +24,7 @@ import {
   NftCollection,
   ProtocolInfo,
   User,
+  NftCollectionErc20,
 } from "../generated/schema";
 import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 
@@ -65,7 +66,7 @@ export function handleNewLendingDeskInitialized(
     user.save();
   }
 
-  // Create LiquidityShop instance
+  // Create LendingDesk instance
   const lendingDesk = new LendingDesk(event.params.lendingDeskId.toString());
 
   lendingDesk.erc20 = event.params.erc20.toHex();
@@ -80,6 +81,19 @@ export function handleNewLendingDeskInitialized(
   lendingDesk.amountBorrowed = BigInt.fromI32(0);
 
   lendingDesk.save();
+
+  // Create NftCollectionErc20 instances
+  for (let i = 0; i < event.params.loanConfigs.length; i++) {
+    const loanConfigStruct = event.params.loanConfigs[i];
+
+    // Create NftCollectionErc20 instance
+    const nftCollectionErc20 = new NftCollectionErc20(
+      loanConfigStruct.nftCollection.toHex() + "-" + event.params.erc20.toHex()
+    );
+    nftCollectionErc20.nftCollection = loanConfigStruct.nftCollection.toHex();
+    nftCollectionErc20.erc20 = event.params.erc20.toHex();
+    nftCollectionErc20.save();
+  }
 
   // Increment LendingDesk count
   protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
@@ -97,21 +111,6 @@ export function handleLendingDeskLoanConfigsSet(
   for (let i = 0; i < event.params.loanConfigs.length; i++) {
     const loanConfigStruct = event.params.loanConfigs[i];
 
-    // Increment NftCollection count if doesn't exist
-    if (!NftCollection.load(loanConfigStruct.nftCollection.toHex())) {
-      protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.plus(
-        BigInt.fromI32(1)
-      );
-      protocolInfo.save();
-    }
-
-    // Create NftCollection instance
-    const nftCollection = new NftCollection(
-      loanConfigStruct.nftCollection.toHex()
-    );
-    nftCollection.isErc1155 = loanConfigStruct.nftCollectionIsErc1155;
-    nftCollection.save();
-
     // Create LoanConfig instance
     const loanConfig = new LoanConfig(
       event.params.lendingDeskId.toString() +
@@ -119,6 +118,7 @@ export function handleLendingDeskLoanConfigsSet(
         loanConfigStruct.nftCollection.toHex()
     );
 
+    loanConfig.active = true;
     loanConfig.lendingDesk = event.params.lendingDeskId.toString();
     loanConfig.nftCollection = loanConfigStruct.nftCollection.toHex();
     loanConfig.minAmount = loanConfigStruct.minAmount;
@@ -129,6 +129,35 @@ export function handleLendingDeskLoanConfigsSet(
     loanConfig.maxInterest = loanConfigStruct.maxInterest;
 
     loanConfig.save();
+
+    let nftCollection = NftCollection.load(
+      loanConfigStruct.nftCollection.toHex()
+    );
+    if (!nftCollection) {
+      // Create NftCollection instance
+      nftCollection = new NftCollection(loanConfigStruct.nftCollection.toHex());
+      nftCollection.activeLoanConfigsCount = BigInt.fromI32(1);
+
+      // Increment NftCollection count
+      protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.plus(
+        BigInt.fromI32(1)
+      );
+      protocolInfo.save();
+    } else {
+      // Increase nftCollectionCount in protocolInfo if activeLoanConfigsCount was 0
+      if (nftCollection.activeLoanConfigsCount.lt(BigInt.fromI32(1))) {
+        protocolInfo.nftCollectionsCount =
+          protocolInfo.nftCollectionsCount.plus(BigInt.fromI32(1));
+        protocolInfo.save();
+      }
+
+      nftCollection.activeLoanConfigsCount = BigInt.fromU64(
+        nftCollection.loanConfigs
+          .load()
+          .filter((loanConfig) => loanConfig.active).length
+      );
+    }
+    nftCollection.save();
   }
 }
 
@@ -137,17 +166,29 @@ export function handleLendingDeskLoanConfigRemoved(
 ): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
-  
+  const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
+  if (!lendingDesk) return;
+  const nftCollection = NftCollection.load(event.params.nftCollection.toHex());
+  if (!nftCollection) return;
+
   store.remove(
     "LoanConfig",
     event.params.lendingDeskId.toString() +
       "-" +
       event.params.nftCollection.toHex()
   );
-  protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.minus(
-    BigInt.fromI32(1)
-  );
-  protocolInfo.save();
+
+  // Update nftCollection's activeLoanConfigsCount
+  nftCollection.activeLoanConfigsCount =
+    nftCollection.activeLoanConfigsCount.minus(BigInt.fromI32(1));
+  nftCollection.save();
+
+  if (nftCollection.activeLoanConfigsCount.lt(BigInt.fromI32(1))) {
+    protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.minus(
+      BigInt.fromI32(1)
+    );
+    protocolInfo.save();
+  }
 }
 
 export function handleLendingDeskLiquidityDeposited(
@@ -171,12 +212,73 @@ export function handleLendingDeskLiquidityWithdrawn(
 }
 
 export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
+  const protocolInfo = ProtocolInfo.load("0");
+  if (!protocolInfo) return;
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
+  const erc20 = Erc20.load(lendingDesk.erc20);
+  if (!erc20) return;
 
-  if (event.params.freeze) lendingDesk.status = "Frozen";
-  else lendingDesk.status = "Active";
+  if (event.params.freeze) {
+    lendingDesk.status = "Frozen";
+    protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.minus(
+      BigInt.fromI32(1)
+    );
+
+    const loanConfigs = lendingDesk.loanConfigs.load();
+    // Set all loanConfigs to inactive
+    for (let i = 0; i < loanConfigs.length; i++) {
+      const loanConfig = loanConfigs[i];
+      loanConfig.active = false;
+      loanConfig.save();
+
+      const nftCollection = NftCollection.load(loanConfig.nftCollection);
+      if (!nftCollection) continue;
+
+      nftCollection.activeLoanConfigsCount =
+        nftCollection.activeLoanConfigsCount.minus(BigInt.fromI32(1));
+      nftCollection.save();
+
+      if (nftCollection.activeLoanConfigsCount.lt(BigInt.fromI32(1)))
+        protocolInfo.nftCollectionsCount =
+          protocolInfo.nftCollectionsCount.minus(BigInt.fromI32(1));
+    }
+  } else {
+    lendingDesk.status = "Active";
+    protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
+      BigInt.fromI32(1)
+    );
+
+    const loanConfigs = lendingDesk.loanConfigs.load();
+
+    // Set all loanConfigs to active
+    for (let i = 0; i < loanConfigs.length; i++) {
+      const loanConfig = loanConfigs[i];
+      loanConfig.active = true;
+      loanConfig.save();
+
+      const nftCollection = NftCollection.load(loanConfigs[i].nftCollection);
+      if (!nftCollection) continue;
+
+      // Increase nftCollectionCount in protocolInfo if it was 0
+      if (nftCollection.activeLoanConfigsCount.lt(BigInt.fromI32(1)))
+        protocolInfo.nftCollectionsCount =
+          protocolInfo.nftCollectionsCount.plus(BigInt.fromI32(1));
+
+      // Update nftCollection's activeLoanConfigsCount
+      nftCollection.activeLoanConfigsCount =
+        nftCollection.activeLoanConfigsCount.plus(BigInt.fromI32(1));
+      nftCollection.save();
+    }
+  }
+
+  if (
+    !erc20.lendingDesks.load().filter((desk) => desk.status == "Active").length
+  )
+    protocolInfo.erc20sCount = protocolInfo.erc20sCount.plus(BigInt.fromI32(1));
+
   lendingDesk.save();
+  protocolInfo.save();
 }
 
 // Loan related events

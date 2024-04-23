@@ -124,7 +124,8 @@ contract NFTYFinanceV1 is
         uint256 lendingDeskId,
         address owner,
         address erc20,
-        uint256 initialBalance
+        uint256 initialBalance,
+        LoanConfig[] loanConfigs
     );
 
     /**
@@ -221,10 +222,7 @@ contract NFTYFinanceV1 is
      * @param obligationNotes The address of the ERC721 to generate obligation notes for borrowers
      * @param lendingKeys The address of the lending desk ownership ERC721
      */
-    event ProtocolInitialized(
-        address obligationNotes,
-        address lendingKeys
-    );
+    event ProtocolInitialized(address obligationNotes, address lendingKeys);
 
     /**
      * @notice Event that will be emitted every time an admin updates loan origination fee
@@ -264,10 +262,7 @@ contract NFTYFinanceV1 is
         setPlatformWallet(_platformWallet);
 
         // Emit event
-        emit ProtocolInitialized(
-            _obligationNotes,
-            _lendingKeys
-        );
+        emit ProtocolInitialized(_obligationNotes, _lendingKeys);
     }
 
     /* ******************** */
@@ -311,7 +306,8 @@ contract NFTYFinanceV1 is
             lendingDeskId,
             msg.sender,
             lendingDesk.erc20,
-            _depositAmount
+            _depositAmount,
+            _loanConfigs
         );
     }
 
@@ -812,8 +808,9 @@ contract NFTYFinanceV1 is
         Loan storage loan = loans[_loanId];
         if (loan.nftCollection == address(0)) revert InvalidLoanId();
         if (loan.status != LoanStatus.Active) revert LoanIsNotActive();
-        if (INFTYERC721V1(lendingKeys).ownerOf(loan.lendingDeskId) != msg.sender)
-            revert CallerIsNotLender();
+        if (
+            INFTYERC721V1(lendingKeys).ownerOf(loan.lendingDeskId) != msg.sender
+        ) revert CallerIsNotLender();
 
         // Check loan is expired / in default
         if (block.timestamp < loan.startTime + (loan.duration * 1 hours))

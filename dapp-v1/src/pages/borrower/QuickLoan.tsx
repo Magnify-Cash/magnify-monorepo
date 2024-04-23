@@ -19,7 +19,10 @@ import {
 import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransaction } from "wagmi";
-import { QuickLoanDocument } from "../../../.graphclient";
+import {
+  GetErc20sForNftCollectionDocument,
+  QuickLoanDocument,
+} from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
   const { addToast, closeToast } = useToastContext();
@@ -51,6 +54,17 @@ export const QuickLoan = (props: any) => {
     );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
+
+  // GraphQL query for getting ERC20s for selected NFT
+  const [erc20sResult] = useQuery({
+    query: GetErc20sForNftCollectionDocument,
+    variables: {
+      nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
+    },
+  });
+  const erc20s = (erc20sResult.data?.nftCollection?.erc20s ?? []).map(
+    (erc20) => erc20.erc20.id,
+  );
 
   // GraphQL query
   const flatResult: any[] = [];
@@ -280,11 +294,9 @@ export const QuickLoan = (props: any) => {
               </div>
               <PopupTokenList
                 nft
-                urls={[
-                  "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-                ]}
                 modalId="nftModal"
                 onClick={setNftCollection}
+                restrictTo={result?.data?.nftCollections?.map((x) => x?.id)}
               />
             </div>
           </div>
@@ -321,9 +333,9 @@ export const QuickLoan = (props: any) => {
                 </div>
                 <PopupTokenList
                   token
-                  urls={["https://tokens.coingecko.com/uniswap/all.json"]}
                   modalId="tokenModal"
                   onClick={setToken}
+                  restrictTo={erc20s}
                 />
               </div>
             ) : (

@@ -23,7 +23,7 @@ export interface BaseListProps {
   nft?: boolean;
   token?: boolean;
   modalId: string;
-  urls: Array<string>;
+  restrictTo?: Array<string>;
 }
 export interface NFTListProps extends BaseListProps {
   nft: boolean;
@@ -141,25 +141,29 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
     if (tokenLists.length > 0) {
       return tokenLists.filter(
         (item: ITokenListItem) =>
-          includesQuery(item.token.name) ||
-          includesQuery(item.token.symbol) ||
-          includesQuery(item.token.address),
+          (includesQuery(item.token.name) ||
+            includesQuery(item.token.symbol) ||
+            includesQuery(item.token.address)) &&
+          (props.restrictTo === undefined ||
+            props.restrictTo?.includes(item.token.address.toLowerCase())),
       );
     }
     return [];
-  }, [tokenLists, searchQuery]);
+  }, [tokenLists, searchQuery, props.restrictTo]);
 
   const filteredNfts = useMemo(() => {
     if (nftLists.length > 0) {
       return nftLists.filter(
         (item: INFTListItem) =>
-          includesQuery(item.nft.name) ||
-          includesQuery(item.nft.symbol) ||
-          includesQuery(item.nft.address),
+          (includesQuery(item.nft.name) ||
+            includesQuery(item.nft.symbol) ||
+            includesQuery(item.nft.address)) &&
+          (props.restrictTo === undefined ||
+            props.restrictTo?.includes(item.nft.address.toLowerCase())),
       );
     }
     return [];
-  }, [nftLists, searchQuery]);
+  }, [nftLists, searchQuery, props.restrictTo]);
 
   const filteredItemsCount = props.token ? filteredTokens.length : filteredNfts.length;
 

@@ -30,7 +30,7 @@ query ManageLendingDesks($walletAddress: String!) {
       symbol
       decimals
     }
-    loanConfigs {
+    loanConfigs(where: { active: true }) {
       id
     }
     loans {
@@ -79,7 +79,7 @@ query ManageLendingDesk($deskId: ID!) {
 }
 
 query BrowseCollections {
-  nftCollections {
+  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
     id
     loanConfigs {
       lendingDesk {
@@ -90,9 +90,6 @@ query BrowseCollections {
         }
       }
     }
-  }
-  erc20S {
-    symbol
   }
   protocolInfo(id: "0") {
     erc20sCount
@@ -145,6 +142,19 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
       minInterest
       maxInterest
       nftCollection {
+        id
+      }
+    }
+  }
+  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
+    id
+  }
+}
+
+query GetErc20sForNftCollection($nftCollectionId: ID!) {
+  nftCollection(id: $nftCollectionId) {
+    erc20s {
+      erc20 {
         id
       }
     }
