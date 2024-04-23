@@ -616,9 +616,6 @@ export const ManageLendingDesk = (props: any) => {
                 </div>
                 <PopupTokenList
                   nft
-                  urls={[
-                    "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-                  ]}
                   modalId="nftModal"
                   onClick={setNftCollection}
                 />

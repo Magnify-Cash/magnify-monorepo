@@ -370,7 +370,6 @@ export const CreateLendingDesk = (props: any) => {
                       </div>
                       <PopupTokenList
                         token
-                        urls={["https://tokens.coingecko.com/uniswap/all.json"]}
                         modalId="tokenModal"
                         onClick={setToken}
                       />
@@ -409,9 +408,6 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                         <PopupTokenList
                           nft
-                          urls={[
-                            "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
-                          ]}
                           modalId="nftModal"
                           onClick={setNftCollection}
                         />
