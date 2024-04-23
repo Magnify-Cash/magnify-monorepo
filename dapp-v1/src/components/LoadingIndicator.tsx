@@ -17,7 +17,7 @@ interface SpinnerProps {
 }
 
 export const Spinner: React.FC<SpinnerProps> = ({ size = "md", show = false }) => {
-  let style;
+  let style: any;
 
   switch (size) {
     case "sm":

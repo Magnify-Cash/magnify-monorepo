@@ -296,6 +296,18 @@ export const CreateLendingDesk = (props: any) => {
     setApprovalIsLoading(false);
   }
 
+  // create lending desk button click function
+  async function initDesk() {
+    setInitLendingDeskIsLoading(true);
+    try {
+      await initializeNewLendingDesk();
+    } catch (error: any) {
+      console.error(error);
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
+    }
+    setInitLendingDeskIsLoading(false);
+  }
+
   //This hook is used to display loading toast when the approve transaction is pending
   useEffect(() => {
     if (approveErc20TransactionData?.hash) {
@@ -835,7 +847,7 @@ export const CreateLendingDesk = (props: any) => {
                     <button
                       type="button"
                       disabled={!checked || initLendingDeskIsLoading}
-                      onClick={() => initializeNewLendingDesk()}
+                      onClick={() => initDesk()}
                       className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
                     >
                       {initLendingDeskIsLoading ? (
