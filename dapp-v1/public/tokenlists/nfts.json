@@ -14,7 +14,7 @@
   "nfts": [
     {
       "chainId": 31337,
-      "address": "0x30441940f955FB462F7257D777Fe16ED0979aA98",
+      "address": "0x821c7be938200F359864c0c80eEF93c95E0D06c7",
       "nftType": "ERC721",
       "name": "CryptoPunks",
       "symbol": "PUNK",
@@ -22,7 +22,7 @@
     },
     {
       "chainId": 31337,
-      "address": "0xbd9590a976eb8Afc332c40DAf2Cc56eE0397ED85",
+      "address": "0x54D328D53F3C11F4Ab319dd3292Bb16B64364B08",
       "nftType": "ERC721",
       "name": "Doodles",
       "symbol": "DOODLE",

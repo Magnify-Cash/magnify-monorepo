@@ -1,30 +1,30 @@
 {
   "nftyFinance": {
-    "address": "0xFB18a2c6671f3b56a9937726736D60ac13B49A86",
-    "startBlock": 8719727
+    "address": "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f",
+    "startBlock": 9062856
   },
   "obligationNotes": {
-    "address": "0xa7bC849e6daeD53877994Ea981229266e0e2714b",
-    "startBlock": 8719720
+    "address": "0xB9c25987c5Fa19214b27743C22480FEa2734b88c",
+    "startBlock": 9062851
   },
   "lendingKeys": {
-    "address": "0x72b06CdAA67EAB4471b4705029F0C252dA5260A2",
-    "startBlock": 8719723
+    "address": "0x00cB7654463392E0E430699A607D07eAD5C04246",
+    "startBlock": 9062854
   },
   "punks": {
-    "address": "0x30441940f955FB462F7257D777Fe16ED0979aA98",
-    "startBlock": 8719705
+    "address": "0x821c7be938200F359864c0c80eEF93c95E0D06c7",
+    "startBlock": 9062838
   },
   "doodles": {
-    "address": "0xbd9590a976eb8Afc332c40DAf2Cc56eE0397ED85",
-    "startBlock": 8719702
+    "address": "0x54D328D53F3C11F4Ab319dd3292Bb16B64364B08",
+    "startBlock": 9062835
   },
   "usdc": {
-    "address": "0xE5d7a04E54d654997332Dd7553742b537A4179B8",
-    "startBlock": 8719695
+    "address": "0xD2bA1C651429C0C798c9D2351d16c64f16e05dBF",
+    "startBlock": 9062821
   },
   "dai": {
-    "address": "0xc6A686EA00130f9D8a813be8aD27751Fdc177ECc",
-    "startBlock": 8719696
+    "address": "0xbEC8ab89b34835F6b99fFc29c088426E8e708ceA",
+    "startBlock": 9062822
   }
 }
