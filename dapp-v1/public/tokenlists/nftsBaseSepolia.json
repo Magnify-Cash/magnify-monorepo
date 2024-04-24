@@ -1,0 +1,64 @@
+{
+  "name": "NFT List Big Example",
+  "timestamp": "2024-01-01T12:34:56Z",
+  "version": {
+	"major": 1,
+	"minor": 0,
+	"patch": 0
+  },
+  "keywords": [
+	"nftylabs",
+	"default",
+	"list"
+  ],
+  "nfts": [
+	{
+	  "chainId": 84532,
+	  "address": "0x8ac25497917bA8c517A9B6f13A79e154B128749f",
+	  "nftType": "ERC721",
+	  "name": "CryptoPunks - 1st Deployment",
+	  "symbol": "PUNK",
+	  "logoURI": "https://etherscan.io/token/images/cryptopunks_28.png"
+	},
+	{
+	  "chainId": 84532,
+	  "address": "0x0B9Ca063234b7C81C8Ba4de3F6905A0018a6E15D",
+	  "nftType": "ERC721",
+	  "name": "Doodles - 1st Deployment",
+	  "symbol": "DOODLE",
+	  "logoURI": "https://etherscan.io/token/images/doodlenft_32.png"
+	},
+	{
+	  "chainId": 84532,
+	  "address": "0x30441940f955FB462F7257D777Fe16ED0979aA98",
+	  "nftType": "ERC721",
+	  "name": "CryptoPunks - 2nd Deployment",
+	  "symbol": "PUNK",
+	  "logoURI": "https://etherscan.io/token/images/cryptopunks_28.png"
+	},
+	{
+	  "chainId": 84532,
+	  "address": "0xbd9590a976eb8Afc332c40DAf2Cc56eE0397ED85",
+	  "nftType": "ERC721",
+	  "name": "Doodles - 2nd Deployment",
+	  "symbol": "DOODLE",
+	  "logoURI": "https://etherscan.io/token/images/doodlenft_32.png"
+	},
+	{
+	  "chainId": 84532,
+	  "address": "0xa20F5166fBD80bff5073B72a75DFe846071B3D68",
+	  "nftType": "ERC721",
+	  "name": "CryptoPunks - 3rd Deployment",
+	  "symbol": "PUNK",
+	  "logoURI": "https://etherscan.io/token/images/cryptopunks_28.png"
+	},
+	{
+	  "chainId": 84532,
+	  "address": "0x4DEA7d8eCbAA004d0dB69FD2243353cd74f962D3",
+	  "nftType": "ERC721",
+	  "name": "Doodles - 3rd Deployment",
+	  "symbol": "DOODLE",
+	  "logoURI": "https://etherscan.io/token/images/doodlenft_32.png"
+	}
+  ]
+}
