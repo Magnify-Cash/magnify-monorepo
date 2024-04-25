@@ -326,6 +326,20 @@ export const Base = () => {
           {/* Sidebar end */}
 
           {/* Navbar start */}
+          <div className="alert alert-secondary text-bg-secondary alert-dismissible fade show rounded-0 d-flex align-items-center pe-3"
+               role="alert">
+              <div className="me-3 d-flex align-items-center">
+                  <i className="fa-solid fa-newspaper me-1"></i>
+                  <span className="alert-text">Alert: What's New — Improved Currency and NFT support.&nbsp;</span>
+                  <a target="_blank" href="https://blog.magnify.cash/april-25th-release-notes/">Read more here...</a>
+              </div>
+              <a role="button"
+                 className="text-reset ms-auto text-decoration-none fs-5 flex-shrink-0"
+                 data-bs-dismiss="alert"
+                 aria-label="Close">
+                  <i className="fa-solid fa-times"></i>
+              </a>
+          </div>
           <div className="py-2 py-lg-3">
             <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
               <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
