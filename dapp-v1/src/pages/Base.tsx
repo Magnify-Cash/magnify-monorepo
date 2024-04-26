@@ -319,6 +319,22 @@ export const Base = () => {
                     Community
                   </NavLink>
                 </li>
+                <li className="nav-item bold">
+                  <NavLink
+                    to="https://faucet.magnify.cash"
+                    target="_blank" // Opens the link in a new tab
+                    rel="noopener noreferrer" // Recommended for security
+                    onClick={() => closeSidebar()}
+                    className={({ isActive }) =>
+                      isActive ? activeClass : inactiveClass
+                    }
+                  >
+                    <span className="ws-25 flex-shrink-0 fs-base-p2 me-2">
+                      <i className="fa-light fa-faucet" />
+                    </span>
+                    Testnet Faucet
+                  </NavLink>
+                </li>
               </ul>
               {/* End Support */}
             </div>
