@@ -219,6 +219,10 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
   const erc20 = Erc20.load(lendingDesk.erc20);
   if (!erc20) return;
 
+  const activeLendingDesksCount = erc20.lendingDesks
+    .load()
+    .filter((desk) => desk.status == "Active").length;
+
   if (event.params.freeze) {
     lendingDesk.status = "Frozen";
     protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.minus(
@@ -243,6 +247,12 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
         protocolInfo.nftCollectionsCount =
           protocolInfo.nftCollectionsCount.minus(BigInt.fromI32(1));
     }
+
+    // If there was only 1 active lending desk for this ERC20 before, decrement erc20sCount
+    if (activeLendingDesksCount == 1)
+      protocolInfo.erc20sCount = protocolInfo.erc20sCount.minus(
+        BigInt.fromI32(1)
+      );
   } else {
     lendingDesk.status = "Active";
     protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
@@ -270,12 +280,13 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
         nftCollection.activeLoanConfigsCount.plus(BigInt.fromI32(1));
       nftCollection.save();
     }
-  }
 
-  if (
-    !erc20.lendingDesks.load().filter((desk) => desk.status == "Active").length
-  )
-    protocolInfo.erc20sCount = protocolInfo.erc20sCount.plus(BigInt.fromI32(1));
+    // If there were no active lending desks for this ERC20 before, increment erc20sCount
+    if (!activeLendingDesksCount)
+      protocolInfo.erc20sCount = protocolInfo.erc20sCount.plus(
+        BigInt.fromI32(1)
+      );
+  }
 
   lendingDesk.save();
   protocolInfo.save();
