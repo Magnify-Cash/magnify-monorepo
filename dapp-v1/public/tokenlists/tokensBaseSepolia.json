@@ -8,48 +8,16 @@
   "tokens": [
 	{
 	  "chainId": 84532,
-	  "address": "0x363472d6Becb3254a7F804A5447E0848c3E69673",
-	  "name": "USD Coin - 1st Deployment",
+	  "address": "0xd2ba1c651429c0c798c9d2351d16c64f16e05dbf",
+	  "name": "USD Coin",
 	  "symbol": "USDC",
 	  "decimals": 18,
 	  "logoURI": "https://cryptologos.cc/logos/usd-coin-usdc-logo.png"
 	},
 	{
 	  "chainId": 84532,
-	  "address": "0xA576d88F04AA61E5d270fD3A7bcBC80957a993b8",
-	  "name": "Dai Stablecoin - 1st Deployment",
-	  "symbol": "DAI",
-	  "decimals": 18,
-	  "logoURI": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"
-	},
-	{
-	  "chainId": 84532,
-	  "address": "0x39a2E49FD88763f330dF5095b1eD42fc2b6b6B13",
-	  "name": "USD Coin - 2nd Deployment",
-	  "symbol": "USDC",
-	  "decimals": 18,
-	  "logoURI": "https://cryptologos.cc/logos/usd-coin-usdc-logo.png"
-	},
-	{
-	  "chainId": 84532,
-	  "address": "0x4830A8082242806899EcE96553019D239dA08573",
-	  "name": "Dai Stablecoin - 2nd Deployment",
-	  "symbol": "DAI",
-	  "decimals": 18,
-	  "logoURI": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"
-	},
-	{
-	  "chainId": 84532,
-	  "address": "0xE5d7a04E54d654997332Dd7553742b537A4179B8",
-	  "name": "USD Coin - 3rd Deployment",
-	  "symbol": "USDC",
-	  "decimals": 18,
-	  "logoURI": "https://cryptologos.cc/logos/usd-coin-usdc-logo.png"
-	},
-	{
-	  "chainId": 84532,
-	  "address": "0xc6A686EA00130f9D8a813be8aD27751Fdc177ECc",
-	  "name": "Dai Stablecoin - 3rd Deployment",
+	  "address": "0xbec8ab89b34835f6b99ffc29c088426e8e708cea",
+	  "name": "Dai Stablecoin",
 	  "symbol": "DAI",
 	  "decimals": 18,
 	  "logoURI": "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png"
