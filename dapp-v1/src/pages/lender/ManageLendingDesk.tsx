@@ -614,11 +614,7 @@ export const ManageLendingDesk = (props: any) => {
                     "Choose NFT Collection..."
                   )}
                 </div>
-                <PopupTokenList
-                  nft
-                  modalId="nftModal"
-                  onClick={setNftCollection}
-                />
+                <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} />
               </div>
               <h6 className="fw-medium text-primary-emphasis mt-4">Min/Max Offer</h6>
               <div className="row g-4">

@@ -1,3 +1,4 @@
+import { getBlockExplorerURL } from "@/helpers/utils";
 import type React from "react";
 import { useChainId } from "wagmi";
 
@@ -7,26 +8,9 @@ interface TransactionDetailsProps {
 
 const TransactionDetails: React.FC<TransactionDetailsProps> = ({ transactionHash }) => {
   const chainId = useChainId();
+  const explorer = getBlockExplorerURL(chainId);
 
-  // Add the base url for the block explorer for different networks
-  let baseUrl = "";
-
-  switch (chainId) {
-    case 11155111:
-      baseUrl = "https://sepolia.etherscan.io/tx/";
-      break;
-    case 8453:
-      baseUrl = "https://basescan.org/tx/";
-      break;
-    case 84532:
-      baseUrl = "https://sepolia.basescan.org/tx/";
-      break;
-    default:
-      baseUrl = "https://etherscan.io/tx/";
-      break;
-  }
-
-  const url = `${baseUrl}${transactionHash}`;
+  const url = `${explorer}/tx/${transactionHash}`;
 
   return (
     <>

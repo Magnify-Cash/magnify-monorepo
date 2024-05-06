@@ -1,6 +1,7 @@
 import { useToastContext } from "@/helpers/CreateToast";
 import { formatAddress } from "@/helpers/formatAddress";
 import { getTokenListUrls } from "@/helpers/tokenUrls";
+import { getBlockExplorerURL } from "@/helpers/utils";
 import type { NFTInfo } from "@nftylabs/nft-lists";
 import type { TokenInfo } from "@uniswap/token-lists";
 import {
@@ -67,6 +68,7 @@ PopupTokenList Component
 */
 export const PopupTokenList = (props: PopupTokenListProps) => {
   const chainId = useChainId();
+  const explorer = getBlockExplorerURL(chainId);
   const { addToast, closeToast } = useToastContext();
 
   // Handle TokenList Logic
@@ -81,7 +83,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
       const responses = await Promise.all(
         urls.map(async (url) => {
           const response = await fetch(url, {
-            headers:{'Content-Type': 'application/json','Accept': 'application/json'}
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
           });
           return response.json();
         }),
@@ -289,10 +291,22 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                               height="32px"
                               width="32px"
                             />
-                            <div className="text-start">
+                            <div className="text-start w-100">
                               <div>{item.token.name}</div>
-                              <div className="text-body-secondary fw-normal">
+                              <div className="text-body-secondary fw-normal d-flex">
                                 <small>{item.token.symbol}</small>
+                                <small className="ms-3">
+                                  <a
+                                    href={`${explorer}/token/${item.token.address}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {`${item.token.address.slice(
+                                      0,
+                                      6,
+                                    )}...${item.token.address.slice(-6)}`}
+                                  </a>
+                                </small>
                               </div>
                             </div>
                           </SelectButton>
@@ -328,8 +342,20 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                             />
                             <div className="text-start">
                               <div>{item.nft.name}</div>
-                              <div className="text-body-secondary fw-normal">
+                              <div className="text-body-secondary fw-normal d-flex">
                                 <small>{item.nft.symbol}</small>
+                                <small className="ms-3">
+                                  <a
+                                    href={`${explorer}/token/${item.nft.address}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {`${item.nft.address.slice(
+                                      0,
+                                      6,
+                                    )}...${item.nft.address.slice(-6)}`}
+                                  </a>
+                                </small>
                               </div>
                             </div>
                           </SelectButton>

@@ -368,11 +368,7 @@ export const CreateLendingDesk = (props: any) => {
                           "Choose Currency..."
                         )}
                       </div>
-                      <PopupTokenList
-                        token
-                        modalId="tokenModal"
-                        onClick={setToken}
-                      />
+                      <PopupTokenList token modalId="tokenModal" onClick={setToken} />
                     </div>
                   </div>
                 </div>
