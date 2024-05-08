@@ -14,7 +14,7 @@ if (import.meta.env.DEV) {
 export const config = createConfig(
   getDefaultConfig({
     autoConnect: true,
-    appName: "NFTY.Finance",
+    appName: "Magnify.Cash",
     walletConnectProjectId,
     chains: chainlist,
   }),
