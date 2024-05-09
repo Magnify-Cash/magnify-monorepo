@@ -349,13 +349,15 @@ export const Base = () => {
             <div className="me-3 d-flex align-items-center">
               <i className="fa-solid fa-newspaper me-1"></i>
               <span className="alert-text">
-                Alert: What's New — Improved Currency and NFT support.&nbsp;
+                Alert: What's New — Improved Token / NFT Lists, Lending Desk Creation & Management
               </span>
+              &nbsp;
               <a
                 target="_blank"
-                href="https://blog.magnify.cash/april-25th-release-notes/"
+                href="https://blog.magnify.cash/may-9th-release-notes/"
                 rel="noreferrer"
               >
+
                 Read more here...
               </a>
             </div>
