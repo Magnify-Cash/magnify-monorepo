@@ -164,6 +164,9 @@ export const ManageFunds = ({
   const withdrawLiquidity = async () => {
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
     try {
+      if (amount > parseInt(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))){
+        throw new Error("InsufficientLendingDeskBalance")
+      }
       if (typeof withdrawWrite !== "function") {
         throw new Error("withdrawWrite is not a function");
       }
@@ -295,7 +298,7 @@ export const ManageFunds = ({
           {action === "deposit" && (
             <div className="form-check mb-3 ms-3 w-100 ">
               <input
-                disabled={approvalIsLoading}
+                disabled={approvalIsLoading || amount <= 0}
                 checked={checked}
                 onChange={() => approveERC20TokenTransfer()}
                 className="form-check-input "
@@ -318,7 +321,11 @@ export const ManageFunds = ({
           )}
           <button
             type="button"
-            disabled={actionIsLoading || (!checked && action === "deposit")}
+            disabled={actionIsLoading || (
+              !checked && action === "deposit"
+              ||
+              amount <= 0
+            )}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
           >
