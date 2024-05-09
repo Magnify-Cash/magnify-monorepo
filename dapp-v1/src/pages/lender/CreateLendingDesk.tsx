@@ -66,10 +66,14 @@ export const CreateLendingDesk = (props: any) => {
     },
   });
 
-  //handle deleting the lending desk config given the index
+  // handle deleting the lending desk config given the index
+  // if deleted desk matches selected, than set edit desk to false
   const handleDeleteConfig = (index: number) => {
     const newDeskConfigs = deskConfigs.filter((_, i) => i !== index);
     setDeskConfigs(newDeskConfigs);
+    if (nftCollection?.nft.address === deskConfigs[index].selectedNftCollection?.nft.address){
+      setEditDesk(false);
+    }
   };
 
   //handle loading the form for editing the lending desk config given the index
@@ -156,6 +160,18 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Invalid Input",
         "Please ensure that the min values are less than or equal to the max values",
+        "error",
+      );
+      return;
+    }
+    if (
+     Number.parseFloat(data.minDuration) <= 0 ||
+     Number.parseFloat(data.minInterest) <= 0 ||
+     Number.parseFloat(data.minOffer) <= 0
+    ) {
+      addToast(
+        "Invalid Input",
+        "Please ensure that the min values are all greater than 0",
         "error",
       );
       return;
@@ -380,8 +396,8 @@ export const CreateLendingDesk = (props: any) => {
                       <div>
                         <h5 className="fw-medium text-primary-emphasis">
                           {editDesk
-                            ? `Edit Collection ${editDeskIndex + 1} Paramaters`
-                            : " Choose Collection(s) & Paramaters"}
+                            ? `Edit Collection ${editDeskIndex + 1} Parameters`
+                            : " Choose Collection(s) & Parameters"}
                         </h5>
                         <div
                           className="form-select form-select-lg py-2 border-primary-subtle bg-primary-subtle fs-5 mt-4 w-lg-75"
