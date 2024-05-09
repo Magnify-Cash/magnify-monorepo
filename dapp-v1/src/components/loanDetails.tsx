@@ -359,8 +359,6 @@ const LoanDetails = ({
         <TransactionDetails transactionHash={data.transactionHash} />,
         "success",
       );
-      // Close modal
-      setModalOpen(false);
     },
     onError(error) {
       console.error(error);
