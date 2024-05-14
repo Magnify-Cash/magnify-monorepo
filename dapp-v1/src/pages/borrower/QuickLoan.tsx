@@ -29,6 +29,8 @@ export const QuickLoan = (props: any) => {
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
+  const [prepareContractError, setPrepareContractError] = useState({});
+  //This state is used to display error message if there is an error while using UsePrepareContractWriteConfig hooks
 
   // constants
   const chainId = useChainId();
@@ -45,12 +47,13 @@ export const QuickLoan = (props: any) => {
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
 
-  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) =>
+    _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails(
       [selectedLendingDesk?.loanConfig?.nftCollection?.id],
-      chainId,
+      chainId
     );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
@@ -63,7 +66,7 @@ export const QuickLoan = (props: any) => {
     },
   });
   const erc20s = (erc20sResult.data?.nftCollection?.erc20s ?? []).map(
-    (erc20) => erc20.erc20.id,
+    (erc20) => erc20.erc20.id
   );
 
   // GraphQL query
@@ -98,10 +101,11 @@ export const QuickLoan = (props: any) => {
     });
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } = useErc721GetApproved({
-    address: nftCollection?.nft.address as `0x${string}`,
-    args: [BigInt(nftId || 0)],
-  });
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useErc721GetApproved({
+      address: nftCollection?.nft.address as `0x${string}`,
+      args: [BigInt(nftId || 0)],
+    });
 
   //On successful transaction of approveErc721 hook, refetch the approval data
   //Also refetch newLoanConfig to update the newLoanWrite function
@@ -117,7 +121,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        "success"
       );
     },
     onError(error) {
@@ -125,8 +129,15 @@ export const QuickLoan = (props: any) => {
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
+      addToast(
+        "Transaction Failed",
+        <ErrorDetails error={error.message} />,
+        "error"
+      );
     },
+    onSettled() {
+      setApprovalIsLoading(false);
+    }
   });
 
   useEffect(() => {
@@ -134,32 +145,38 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
+    if (
+      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
+    ) {
       setChecked(true);
     } else {
       setChecked(false);
     }
   }, [nftId, approvalData]);
 
-  const { config: newLoanConfig, refetch: refetchNewLoanConfig } =
-    usePrepareNftyFinanceV1InitializeNewLoan({
-      args: [
-        BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
-        nftCollection?.nft.address as `0x${string}`,
-        BigInt(nftId || 0),
-        Math.round((duration || 0) * 24),
-        toWei(amount ? amount.toString() : "0", token?.token.decimals),
-        selectedLendingDesk &&
-          Math.round(
-            calculateLoanInterest(
-              selectedLendingDesk?.loanConfig,
-              amount,
-              duration,
-              selectedLendingDesk?.erc20?.decimals || 18,
-            ) * 100,
-          ),
-      ],
-    });
+  const {
+    config: newLoanConfig,
+    refetch: refetchNewLoanConfig,
+    error: newLoanConfigError,
+    isLoading: newLoanConfigIsLoading,
+  } = usePrepareNftyFinanceV1InitializeNewLoan({
+    args: [
+      BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
+      nftCollection?.nft.address as `0x${string}`,
+      BigInt(nftId || 0),
+      Math.round((duration || 0) * 24),
+      toWei(amount ? amount.toString() : "0", token?.token.decimals),
+      selectedLendingDesk &&
+        Math.round(
+          calculateLoanInterest(
+            selectedLendingDesk?.loanConfig,
+            amount,
+            duration,
+            selectedLendingDesk?.erc20?.decimals || 18
+          ) * 100
+        ),
+    ],
+  });
   const { data: newLoanWriteTransactionData, writeAsync: newLoanWrite } =
     useNftyFinanceV1InitializeNewLoan(newLoanConfig);
 
@@ -175,22 +192,33 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        "success"
       );
     },
     onError(error) {
-      console.error(error);
+      console.error(error.message);
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
+      addToast(
+        "Transaction Failed",
+        <ErrorDetails error={error.message} />,
+        "error"
+      );
     },
+    onSettled() {
+      setNewLoanIsLoading(false);
+    }
   });
 
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      addToast(
+        "Warning",
+        <ErrorDetails error={"already approved"} />,
+        "warning"
+      );
       return;
     }
     setApprovalIsLoading(true);
@@ -199,8 +227,8 @@ export const QuickLoan = (props: any) => {
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setApprovalIsLoading(false);
     }
-    setApprovalIsLoading(false);
   }
 
   // Modal submit
@@ -222,14 +250,19 @@ export const QuickLoan = (props: any) => {
     setNewLoanIsLoading(true);
     try {
       if (typeof newLoanWrite !== "function") {
-        throw new Error("newLoanWrite is not a function");
+        await refetchNewLoanConfig();
+        if (newLoanConfigError) {
+          throw new Error(newLoanConfigError.message);
+        } else {
+          throw new Error("newLoanWrite is not a function");
+        }
       }
       await newLoanWrite();
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setNewLoanIsLoading(false);
     }
-    setNewLoanIsLoading(false);
   }
 
   //This hook is used to display loading toast when the approve transaction is pending
@@ -239,7 +272,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -254,7 +287,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading",
+        "loading"
       );
       if (id) {
         setLoadingToastId(id);
@@ -372,7 +405,9 @@ export const QuickLoan = (props: any) => {
                         name="desks"
                         id={item.lendingDesk.id}
                         onClick={(e) =>
-                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
+                          setSelectedLendingDesk(
+                            (e.target as HTMLInputElement).value
+                          )
                         }
                         value={JSON.stringify(item)}
                       />
@@ -401,7 +436,7 @@ export const QuickLoan = (props: any) => {
                                 <div className="fw-bold">
                                   {fromWei(
                                     item.loanConfig.maxAmount,
-                                    token?.token.decimals,
+                                    token?.token.decimals
                                   )}
                                 </div>
                                 <small className="fw-normal">max offer</small>

@@ -146,6 +146,9 @@ export const BrowseCollection = (props) => {
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setApprovalIsLoading(false);
+    }
   });
 
   useEffect(() => {
@@ -206,6 +209,9 @@ export const BrowseCollection = (props) => {
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setNewLoanIsLoading(false);
+    }
   });
 
   // Checkbox click function
@@ -220,8 +226,8 @@ export const BrowseCollection = (props) => {
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setApprovalIsLoading(false);
     }
-    setApprovalIsLoading(false);
   }
   // Modal submit
   async function requestLoan(index: number) {
@@ -240,8 +246,9 @@ export const BrowseCollection = (props) => {
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setNewLoanIsLoading(false);
     }
-    setNewLoanIsLoading(false);
+
   }
 
   //This hook is used to display loading toast when the approve transaction is pending

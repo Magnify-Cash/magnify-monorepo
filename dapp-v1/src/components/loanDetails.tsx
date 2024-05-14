@@ -166,6 +166,9 @@ const LoanDetails = ({
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setApprovalIsLoading(false);
+    }
   });
 
   //update checked state on approvalData change and payBackAmount change
@@ -250,7 +253,6 @@ const LoanDetails = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
-    } finally {
       setActionIsLoading(false);
     }
   }
@@ -268,8 +270,10 @@ const LoanDetails = ({
     setApprovalIsLoading(true);
     try {
       await approveErc20();
-    } catch (error: any) {}
-    setApprovalIsLoading(false);
+    } catch (error: any) {
+      setApprovalIsLoading(false);
+    }
+
   }
 
   //modal submit function
@@ -284,8 +288,8 @@ const LoanDetails = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setActionIsLoading(false);
     }
-    setActionIsLoading(false);
   }
 
   //loan resolve function
@@ -328,8 +332,9 @@ const LoanDetails = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setActionIsLoading(false);
     }
-    setActionIsLoading(false);
+
   }
 
   //actionMap is used to call the respective function based on the type of action
@@ -367,6 +372,9 @@ const LoanDetails = ({
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setActionIsLoading(false);
+    }
   });
   //This hook is used to display loading toast when the approve transaction is pending
 

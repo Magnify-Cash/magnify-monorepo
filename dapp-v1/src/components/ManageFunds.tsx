@@ -109,6 +109,9 @@ export const ManageFunds = ({
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setApprovalIsLoading(false);
+    }
   });
 
   useEffect(() => {
@@ -142,7 +145,7 @@ export const ManageFunds = ({
       await depositWrite();
     } catch (error: any) {
       console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
+      throw new Error(error);
     }
   };
 
@@ -173,7 +176,7 @@ export const ManageFunds = ({
       await withdrawWrite();
     } catch (error: any) {
       console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
+      throw new Error(error);
     }
   };
 
@@ -186,8 +189,8 @@ export const ManageFunds = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setActionIsLoading(false);
     }
-    setActionIsLoading(false);
   }
   //Withdraw function is used to withdraw liquidity
   //This function is called when the user clicks on the withdraw button
@@ -198,8 +201,8 @@ export const ManageFunds = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setActionIsLoading(false);
     }
-    setActionIsLoading(false);
   }
 
   //actionMap is used to call the respective function based on the action
@@ -240,6 +243,9 @@ export const ManageFunds = ({
       // Display error toast
       addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
     },
+    onSettled() {
+      setActionIsLoading(false);
+    }
   });
 
   // Checkbox click function
@@ -254,8 +260,9 @@ export const ManageFunds = ({
     } catch (error: any) {
       console.error(error);
       addToast("Error", <ErrorDetails error={error.message} />, "error");
+      setApprovalIsLoading(false);
     }
-    setApprovalIsLoading(false);
+
   }
   //This hook is used to display loading toast when the approve transaction is pending
 
