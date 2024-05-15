@@ -111,7 +111,7 @@ export const ManageFunds = ({
     },
     onSettled() {
       setApprovalIsLoading(false);
-    }
+    },
   });
 
   useEffect(() => {
@@ -167,8 +167,11 @@ export const ManageFunds = ({
   const withdrawLiquidity = async () => {
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
     try {
-      if (amount > parseInt(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))){
-        throw new Error("InsufficientLendingDeskBalance")
+      if (
+        amount >
+        Number.parseInt(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
+      ) {
+        throw new Error("InsufficientLendingDeskBalance");
       }
       if (typeof withdrawWrite !== "function") {
         throw new Error("withdrawWrite is not a function");
@@ -245,7 +248,7 @@ export const ManageFunds = ({
     },
     onSettled() {
       setActionIsLoading(false);
-    }
+    },
   });
 
   // Checkbox click function
@@ -262,7 +265,6 @@ export const ManageFunds = ({
       addToast("Error", <ErrorDetails error={error.message} />, "error");
       setApprovalIsLoading(false);
     }
-
   }
   //This hook is used to display loading toast when the approve transaction is pending
 
@@ -328,11 +330,9 @@ export const ManageFunds = ({
           )}
           <button
             type="button"
-            disabled={actionIsLoading || (
-              !checked && action === "deposit"
-              ||
-              amount <= 0
-            )}
+            disabled={
+              actionIsLoading || (!checked && action === "deposit") || amount <= 0
+            }
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
           >

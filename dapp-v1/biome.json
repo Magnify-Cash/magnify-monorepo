@@ -30,7 +30,8 @@
 			"style": {
 				"useSelfClosingElements": "off",
 				"noUnusedTemplateLiteral": "off",
-				"noNonNullAssertion": "off"
+				"noNonNullAssertion": "off",
+				"noUselessElse": "off"
 			},
 			"suspicious": {
 				"noExplicitAny": "off"

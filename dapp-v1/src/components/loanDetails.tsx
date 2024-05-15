@@ -168,7 +168,7 @@ const LoanDetails = ({
     },
     onSettled() {
       setApprovalIsLoading(false);
-    }
+    },
   });
 
   //update checked state on approvalData change and payBackAmount change
@@ -273,7 +273,6 @@ const LoanDetails = ({
     } catch (error: any) {
       setApprovalIsLoading(false);
     }
-
   }
 
   //modal submit function
@@ -334,7 +333,6 @@ const LoanDetails = ({
       addToast("Error", <ErrorDetails error={error.message} />, "error");
       setActionIsLoading(false);
     }
-
   }
 
   //actionMap is used to call the respective function based on the type of action
@@ -374,7 +372,7 @@ const LoanDetails = ({
     },
     onSettled() {
       setActionIsLoading(false);
-    }
+    },
   });
   //This hook is used to display loading toast when the approve transaction is pending
 

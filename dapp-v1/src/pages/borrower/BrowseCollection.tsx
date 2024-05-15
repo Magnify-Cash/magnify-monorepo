@@ -148,7 +148,7 @@ export const BrowseCollection = (props) => {
     },
     onSettled() {
       setApprovalIsLoading(false);
-    }
+    },
   });
 
   useEffect(() => {
@@ -211,7 +211,7 @@ export const BrowseCollection = (props) => {
     },
     onSettled() {
       setNewLoanIsLoading(false);
-    }
+    },
   });
 
   // Checkbox click function
@@ -248,7 +248,6 @@ export const BrowseCollection = (props) => {
       addToast("Error", <ErrorDetails error={error.message} />, "error");
       setNewLoanIsLoading(false);
     }
-
   }
 
   //This hook is used to display loading toast when the approve transaction is pending

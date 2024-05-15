@@ -128,21 +128,21 @@ export const ManageLendingDesk = (props: any) => {
   };
 
   //set deleting collection variable to true
- const handleDeleteCollection = async (index) => {
-   const selectedNft = nftArr[index];
-   setNftCollection({ nft: selectedNft as NFTInfo });
-   try {
-     await deleteCollection({
-       args: [
-         BigInt(result.data?.lendingDesk?.id || 0),
-         selectedNft?.address as `0x${string}`,
-       ],
-     });
-   } catch (error: any) {
-     console.error(error);
-     addToast("Error", <ErrorDetails error={error.message} />, "error");
-   }
- };
+  const handleDeleteCollection = async (index) => {
+    const selectedNft = nftArr[index];
+    setNftCollection({ nft: selectedNft as NFTInfo });
+    try {
+      await deleteCollection({
+        args: [
+          BigInt(result.data?.lendingDesk?.id || 0),
+          selectedNft?.address as `0x${string}`,
+        ],
+      });
+    } catch (error: any) {
+      console.error(error);
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
+    }
+  };
 
   // Whenever an nft collection is selected, first check if
   // the collection is already present in result loan configs
@@ -215,7 +215,6 @@ export const ManageLendingDesk = (props: any) => {
       addToast("Error", <ErrorDetails error={error.message} />, "error");
       setFreezeUnfreezeIsLoading(false);
     }
-
   };
 
   //On successful transaction of freeze/unfreeze hook, refetch approval data and display relevant toast
@@ -242,7 +241,7 @@ export const ManageLendingDesk = (props: any) => {
     },
     onSettled() {
       setFreezeUnfreezeIsLoading(false);
-    }
+    },
   });
 
   //This hook is used to display loading toast when the freeze/unfreeze transaction is pending
@@ -316,7 +315,7 @@ export const ManageLendingDesk = (props: any) => {
     },
     onSettled() {
       setUpdateDeskIsLoading(false);
-    }
+    },
   });
 
   //This hook is used to display loading toast when the update lending desk transaction is pending
@@ -367,7 +366,6 @@ export const ManageLendingDesk = (props: any) => {
       addToast("Error", <ErrorDetails error={error.message} />, "error");
       setUpdateDeskIsLoading(false);
     }
-
   }
 
   // Delete Lending Desk Hook
