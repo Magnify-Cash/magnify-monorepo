@@ -233,7 +233,7 @@ const LoanDetails = ({
   // Liquidate Overdue loan Hook
   const { config: liquidateConfig, refetch: liquidateRefetch } =
     usePrepareNftyFinanceV1LiquidateDefaultedLoan({
-      enabled: false,
+      enabled: !timeInfo.isTimeLeft,
       args: [
         BigInt(loan?.id || 0), // loan ID
       ],

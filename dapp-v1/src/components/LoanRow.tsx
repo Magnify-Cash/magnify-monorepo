@@ -19,18 +19,23 @@ export const LoanRow = ({
   liquidate,
   reexecuteQuery,
 }: ILoanRowProps) => {
-  // Setup loan data && handle empty state
+  // Setup loan data and handle empty state
   // Note: Handle "Pending Default" manually
   loans = loans.filter((loan: Loan) => {
-    if (loan.status === "Active" && status === "PendingDefault") {
-      const { isTimeLeft } = calculateTimeInfo(loan.startTime, loan.duration);
-      if (!isTimeLeft) {
-        return loan;
-      }
-    }
-    if (loan.status === status) {
+    // Calculate time information for the loan
+    const { isTimeLeft } = calculateTimeInfo(loan.startTime, loan.duration);
+
+    // Check if status is "PendingDefault" and there's no time left
+    if (status === "PendingDefault" && !isTimeLeft) {
       return loan;
     }
+
+    // Check if loan status matches the provided status and there's time left
+    if (loan.status === status && isTimeLeft) {
+      return loan;
+    }
+
+    // If neither condition is met, the loan is filtered out
   });
   if (loans.length === 0) {
     return (

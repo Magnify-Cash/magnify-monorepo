@@ -38,6 +38,20 @@ export const Dashboard = (props: any) => {
           <li className="nav-item" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-pending-default-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-pending-default"
+              type="button"
+              role="tab"
+              aria-controls="pills-pending-default"
+              aria-selected="true"
+            >
+              Pending Default
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-defaulted-tab"
               data-bs-toggle="pill"
               data-bs-target="#pills-defaulted"
@@ -86,6 +100,23 @@ export const Dashboard = (props: any) => {
             </div>
           </div>
           {/* End Active Row */}
+
+          {/* Pending Default Row */}
+          <div
+            className="tab-pane fade"
+            id="pills-pending-default"
+            role="tabpanel"
+            aria-labelledby="pills-active-tab"
+          >
+            <div className="row g-4 justify-content-start mt-0">
+              <LoanRow
+                loans={data?.loans || []}
+                status="PendingDefault"
+                reexecuteQuery={reexecuteQuery}
+              />
+            </div>
+          </div>
+          {/* End Pending Default Row */}
 
           {/* completed Row */}
           <div
