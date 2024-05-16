@@ -349,13 +349,12 @@ export const Base = () => {
             <div className="me-3 d-flex align-items-center">
               <i className="fa-solid fa-newspaper me-1"></i>
               <span className="alert-text">
-                Alert: What's New — Improved Token / NFT Lists, Lending Desk Creation &
-                Management
+                Alert: What's New — Improved Quick Loan Experience, Borrower & Lender Dashboards
               </span>
               &nbsp;
               <a
                 target="_blank"
-                href="https://blog.magnify.cash/may-9th-release-notes/"
+                href="https://blog.magnify.cash/may-16th-release-notes/"
                 rel="noreferrer"
               >
                 Read more here...
