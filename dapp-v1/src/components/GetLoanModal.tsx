@@ -257,6 +257,15 @@ export default function GetLoanModal({
                   />
                   <span className="input-group-text">{lendingDesk.erc20.symbol}</span>
                 </div>
+                <div className="d-flex align-items-center justify-content-start pt-2">
+                  <span className="text-body-secondary">Available Balance: </span>
+                  <div className="h4 text-primary fw-medium ms-2">
+                    {fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals)}
+                  </div>
+                  <span className="text-body-secondary ms-2">
+                    {lendingDesk.erc20.symbol}
+                  </span>
+                </div>
               </div>
             </div>
             <p className="text-body-secondary">Loan Overview</p>

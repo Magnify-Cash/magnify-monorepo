@@ -223,6 +223,22 @@ export const QuickLoan = (props: any) => {
       form.reportValidity();
       return;
     }
+
+    const lendingDeskBalance = fromWei(
+      selectedLendingDesk?.lendingDesk?.balance,
+      selectedLendingDesk?.lendingDesk?.erc20?.decimals,
+    );
+
+    // Check if the user has enough balance in the lending desk
+    if (amount && amount > Number(lendingDeskBalance)) {
+      addToast(
+        "Error",
+        <ErrorDetails error="InsufficientLendingDeskBalance" />,
+        "error",
+      );
+      return;
+    }
+
     console.log("token", token);
     console.log("nftCollection", nftCollection);
     console.log("selectedLendingDesk", selectedLendingDesk);
@@ -231,10 +247,10 @@ export const QuickLoan = (props: any) => {
     console.log("amount", amount);
     console.log("form is valid, wagmi functions with above data.....");
     console.log(newLoanConfig);
+    console.log(newLoanWrite);
     setNewLoanIsLoading(true);
     try {
       if (typeof newLoanWrite !== "function") {
-        await refetchNewLoanConfig();
         if (newLoanConfigError) {
           throw new Error(newLoanConfigError.message);
         } else {

@@ -98,7 +98,7 @@ query BrowseCollections {
 }
 
 query BrowseCollection($nftCollectionId: String) {
-  lendingDesks(where: { status: Active }) {
+  lendingDesks(where: { status: Active, balance_gt: 0 }) {
     id
     balance
     status
@@ -125,7 +125,7 @@ query BrowseCollection($nftCollectionId: String) {
 }
 
 query QuickLoan($erc20Id: String, $nftCollectionId: String) {
-  lendingDesks(where: { erc20: $erc20Id, status: Active }) {
+  lendingDesks(where: { erc20: $erc20Id, status: Active, balance_gt: 0}) {
     id
     balance
     status

@@ -237,6 +237,21 @@ export const BrowseCollection = (props) => {
       form.reportValidity();
       return;
     }
+    const lendingDeskBalance = fromWei(
+      selectedLendingDesk?.balance,
+      selectedLendingDesk?.erc20?.decimals,
+    );
+
+    // Check if the user has enough balance in the lending desk
+    if (amount && amount > Number(lendingDeskBalance)) {
+      addToast(
+        "Error",
+        <ErrorDetails error="InsufficientLendingDeskBalance" />,
+        "error",
+      );
+      return;
+    }
+
     setNewLoanIsLoading(true);
     try {
       if (typeof newLoanWrite !== "function") {
