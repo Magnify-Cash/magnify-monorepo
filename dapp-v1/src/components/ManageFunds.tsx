@@ -169,7 +169,7 @@ export const ManageFunds = ({
     try {
       if (
         amount >
-        Number.parseInt(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
+        Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
       ) {
         throw new Error("InsufficientLendingDeskBalance");
       }
