@@ -4,18 +4,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/dapp-v1"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "daily"
     labels: []
   - package-ecosystem: "npm"
     directory: "/subgraph"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "daily"
     labels: []
   - package-ecosystem: "npm"
     directory: "/contracts"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "daily"
     labels: []
