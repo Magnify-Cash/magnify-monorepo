@@ -168,8 +168,7 @@ export const ManageFunds = ({
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
     try {
       if (
-        amount >
-        Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
+        amount > Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
       ) {
         throw new Error("InsufficientLendingDeskBalance");
       }

@@ -349,7 +349,8 @@ export const Base = () => {
             <div className="me-3 d-flex align-items-center">
               <i className="fa-solid fa-newspaper me-1"></i>
               <span className="alert-text">
-                Alert: What's New — Improved Quick Loan Experience, Borrower & Lender Dashboards
+                Alert: What's New — Improved Quick Loan Experience, Borrower & Lender
+                Dashboards
               </span>
               &nbsp;
               <a
