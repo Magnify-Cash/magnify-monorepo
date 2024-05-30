@@ -354,7 +354,7 @@ export const Base = () => {
               &nbsp;
               <a
                 target="_blank"
-                href="https://blog.magnify.cash/may-16th-release-notes/"
+                href="https://blog.magnify.cash/may-30th-release-notes/"
                 rel="noreferrer"
               >
                 Read more here...
