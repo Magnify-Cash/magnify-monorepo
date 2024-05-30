@@ -23,6 +23,15 @@
     "dapp-v1"
   ],
   "devDependencies": {
+    "@biomejs/biome": "1.6.3",
+    "@types/bootstrap": "5.2.10",
+    "@types/react": "18.3.2",
+    "@types/react-dom": "18.3.0",
+    "@types/react-window": "1.8.8",
+    "@vitejs/plugin-react": "4.2.1",
+    "@wagmi/cli": "2.1.7",
+    "dotenv": "^16.3.1",
+    "vite": "5.2.11",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.3"
   }

@@ -1,23 +1,29 @@
 import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
 import refetchData from "@/helpers/refetchData";
-import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
+import {
+  calculateTimeInfo,
+  formatTimeInfo,
+  fromWei,
+  toWei,
+} from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
-  useErc20Allowance,
-  useErc20Approve,
-  useNftyFinanceV1GetLoanAmountDue,
-  useNftyFinanceV1LiquidateDefaultedLoan,
-  useNftyFinanceV1MakeLoanPayment,
-  usePrepareNftyFinanceV1LiquidateDefaultedLoan,
-  usePrepareNftyFinanceV1MakeLoanPayment,
+  useReadErc20Allowance,
+  useWriteErc20Approve,
+  useReadNftyFinanceV1GetLoanAmountDue,
+  useWriteNftyFinanceV1LiquidateDefaultedLoan,
+  useWriteNftyFinanceV1MakeLoanPayment,
+  useSimulateNftyFinanceV1LiquidateDefaultedLoan,
+  useSimulateNftyFinanceV1MakeLoanPayment,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
-import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
 import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
+import { set } from "react-hook-form";
 
 interface LoanDetailsProps {
   loan: Loan;
@@ -35,19 +41,36 @@ const LoanDetails = ({
   status,
   reexecuteQuery,
 }: LoanDetailsProps) => {
-  // Initial state can be payback or liquidate
+  /*
+  wagmi hooks
+  */
+  const chainId = useChainId();
+  const { address } = useAccount();
+
+  /*
+  form hooks / functions
+  */
+  const [payBackAmount, setPayBackAmount] = useState("0");
+  const [loanActiveForOneHour, setLoanActiveForOneHour] = useState(true);
+  //checked state for the checkbox on make payment modal
+  const [checked, setChecked] = useState(false);
+  //checked state for the checkbox on resolve loan modal
+  const [checkedResolveLoan, setCheckedResolveLoan] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Initial state can be payback or liquidate based on the props
   const initialAction = payback ? "payback" : "liquidate";
 
   //action can be set to resolve when the resolve loan button is clicked
   const [action, setAction] = useState<"payback" | "liquidate" | "resolve">(
-    initialAction,
+    initialAction
   );
 
-  const { addToast, closeToast } = useToastContext();
   // Date/Time info
   const [timeInfo, setTimeInfo] = useState(
-    calculateTimeInfo(loan?.startTime, loan?.duration),
+    calculateTimeInfo(loan?.startTime, loan?.duration)
   );
+  //Time information is updated every second
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimeInfo(calculateTimeInfo(loan?.startTime, loan?.duration));
@@ -57,119 +80,175 @@ const LoanDetails = ({
     };
   }, [loan?.startTime, loan?.duration]);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [loanActiveForOneHour, setLoanActiveForOneHour] = useState(true);
-  const [payBackAmount, setPayBackAmount] = useState("0");
+  /*
+  toast hooks
+  */
+  const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
-  //checked state for the checkbox on make payment modal
-  const [checked, setChecked] = useState(false);
-  //checked state for the checkbox on resolve loan modal
-  const [checkedResolveLoan, setCheckedResolveLoan] = useState(false);
-  const chainId = useChainId();
-  const { address } = useAccount();
 
   //get loan amount due for resolving the loan using GetLoanAmountDue hook
   const {
     data: loanAmountDue,
     refetch: loanAmountDueRefetch,
     error: loanAmountDueError,
-  } = useNftyFinanceV1GetLoanAmountDue({
+    isLoading: loanAmountDueIsLoading,
+    isFetched: loanAmountDueIsFetched,
+  } = useReadNftyFinanceV1GetLoanAmountDue({
     args: [BigInt(loan?.id)],
-    enabled: status === "Active",
-    onSuccess(data) {
-      setLoanActiveForOneHour(true);
+    query: {
+      enabled: status === "Active",
     },
-    onError(error) {
-      console.error(error);
-      if (error.message.includes("LoanMustBeActiveForMin1Hour")) {
+  });
+
+  useEffect(() => {
+    if (loanAmountDueError) {
+      if (loanAmountDueError.message.includes("LoanMustBeActiveForMin1Hour")) {
         setLoanActiveForOneHour(false);
         return;
       }
       //Display error toast only if the error is not LoanMustBeActiveForMin1Hour
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-  });
+      addToast(
+        "Error",
+        <ErrorDetails error={loanAmountDueError.message} />,
+        "error"
+      );
+    }
+    if (loanAmountDueIsFetched) {
+      setLoanActiveForOneHour(true);
+    }
+  }, [loanAmountDueError, loanAmountDueIsFetched]);
 
   //approveErc20 hook
-  const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
-    useErc20Approve({
-      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-      args: [
-        nftyFinanceV1Address[chainId],
-        toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals),
-      ],
-    });
+  const {
+    data: approveErc20TransactionData,
+    writeContractAsync: approveErc20,
+    error: approveErc20Error,
+  } = useWriteErc20Approve();
 
   //approveErc20 hook for resolving loan
-  const { data: approveErc20ResolveLoanData, writeAsync: approveErc20ResolveLoan } =
-    useErc20Approve({
-      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-      args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
-    });
+  const {
+    data: approveErc20ResolveLoanData,
+    writeContractAsync: approveErc20ResolveLoan,
+    error: approveErc20ResolveLoanError,
+  } = useWriteErc20Approve();
 
-  //On successful transaction of approveErc20ResolveLoanData hook, refetch the approval data
-  //Also refetch resolveLoanPaymentConfig to update resolveLoanPaymentWrite hook
-  //and call the resolve loan function
-  useWaitForTransaction({
-    hash: approveErc20ResolveLoanData?.hash as `0x${string}`,
-    onSuccess(data) {
-      refetchApprovalData();
-      makeLoanPaymentRefetch();
-      resolveLoanPaymentRefetch();
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
-      );
-    },
-    onError(error) {
-      console.error(error);
-
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
+  const {
+    isLoading: approveIsConfirming,
+    isSuccess: approveIsConfirmed,
+    error: approveConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: approveErc20TransactionData as `0x${string}`,
   });
 
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-  });
-
-  //On successful transaction of approveErc20 hook, refetch the approval data
-  //Also refetch makeLoanPaymentConfig to update makeLoanPaymentWrite hook
-  useWaitForTransaction({
-    hash: approveErc20TransactionData?.hash as `0x${string}`,
-    onSuccess(data) {
-      refetchApprovalData();
-      makeLoanPaymentRefetch();
-      resolveLoanPaymentRefetch();
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
+  useEffect(() => {
+    if (approveErc20Error) {
+      console.error(approveErc20Error);
       addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        "Error",
+        <ErrorDetails error={approveErc20Error.message} />,
+        "error"
       );
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
       setApprovalIsLoading(false);
-    },
+    }
+    if (approveConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={approveConfirmError?.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (approveIsConfirmed) {
+      refetchApprovalData();
+      makeLoanPaymentRefetch();
+      resolveLoanPaymentRefetch();
+      loadingToastId ? closeToast(loadingToastId) : null;
+      addToast(
+        "Transaction Successful",
+        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+        "success"
+      );
+      setApprovalIsLoading(false);
+    }
+  }, [
+    approveErc20Error,
+    approveConfirmError,
+    approveIsConfirmed,
+    approveIsConfirming,
+  ]);
+
+  const {
+    isLoading: approveResolveIsConfirming,
+    isSuccess: approveResolveIsConfirmed,
+    error: approveResolveConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: approveErc20ResolveLoanData as `0x${string}`,
   });
+
+  useEffect(() => {
+    if (approveErc20ResolveLoanError) {
+      console.error(approveErc20ResolveLoanError);
+      addToast(
+        "Error",
+        <ErrorDetails error={approveErc20ResolveLoanError.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveResolveConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={approveResolveConfirmError?.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveResolveIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (approveResolveIsConfirmed) {
+      refetchApprovalData();
+      makeLoanPaymentRefetch();
+      resolveLoanPaymentRefetch();
+      loadingToastId ? closeToast(loadingToastId) : null;
+      addToast(
+        "Transaction Successful",
+        <TransactionDetails transactionHash={approveErc20ResolveLoanData!} />,
+        "success"
+      );
+      setApprovalIsLoading(false);
+    }
+  }, [
+    approveErc20ResolveLoanError,
+    approveResolveConfirmError,
+    approveResolveIsConfirmed,
+    approveResolveIsConfirming,
+  ]);
+
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useReadErc20Allowance({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    });
 
   //update checked state on approvalData change and payBackAmount change
   useEffect(() => {
@@ -188,7 +267,9 @@ const LoanDetails = ({
     }
     if (
       Number(fromWei(approvalData, loan?.lendingDesk?.erc20?.decimals)) >=
-      Number(fromWei(loanAmountDue ?? BigInt(0), loan?.lendingDesk?.erc20?.decimals))
+      Number(
+        fromWei(loanAmountDue ?? BigInt(0), loan?.lendingDesk?.erc20?.decimals)
+      )
     ) {
       setCheckedResolveLoan(true);
     } else {
@@ -199,96 +280,143 @@ const LoanDetails = ({
   // Make Loan Payment Hook
   // This is auto refetched by default when query args change
   const {
-    config: makeLoanPaymentConfig,
+    data: makeLoanPaymentConfig,
+    isLoading: makeLoanPaymentConfigIsLoading,
+    error: makeLoanPaymentConfigError,
     refetch: makeLoanPaymentRefetch,
-    error: makeLoanPaymentError,
-  } = usePrepareNftyFinanceV1MakeLoanPayment({
+  } = useSimulateNftyFinanceV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
       toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
       false,
     ],
-    enabled: Number(payBackAmount) > 0 && checked,
+    query: {
+      enabled: Number(payBackAmount) > 0 && checked,
+    },
   });
-  const { data: makeLoanPaymentData, writeAsync: makeLoanPaymentWrite } =
-    useNftyFinanceV1MakeLoanPayment(makeLoanPaymentConfig);
+  const {
+    data: makeLoanPaymentData,
+    writeContractAsync: makeLoanPaymentWrite,
+    error: makeLoanPaymentError,
+  } = useWriteNftyFinanceV1MakeLoanPayment();
 
   // Resolve Loan Hook
   //This is enabled when resolve is set to true
   const {
-    config: resolveLoanPaymentConfig,
+    data: resolveLoanPaymentConfig,
+    isLoading: resolveLoanPaymentConfigIsLoading,
+    error: resolveLoanPaymentConfigError,
     refetch: resolveLoanPaymentRefetch,
-    error: resolveLoanPaymentError,
-  } = usePrepareNftyFinanceV1MakeLoanPayment({
+  } = useSimulateNftyFinanceV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
       BigInt(0), // amount doesn't matter when resolving loan
       true, // set to true to resolve loan
     ],
-    enabled: checkedResolveLoan,
+    query: {
+      enabled: checkedResolveLoan,
+    },
   });
-  const { data: resolveLoanPaymentData, writeAsync: resolveLoanPaymentWrite } =
-    useNftyFinanceV1MakeLoanPayment(resolveLoanPaymentConfig);
+  const {
+    data: resolveLoanPaymentData,
+    writeContractAsync: resolveLoanPaymentWrite,
+    error: resolveLoanPaymentError,
+  } = useWriteNftyFinanceV1MakeLoanPayment();
 
   // Liquidate Overdue loan Hook
-  const { config: liquidateConfig, refetch: liquidateRefetch } =
-    usePrepareNftyFinanceV1LiquidateDefaultedLoan({
+  const {
+    data: liquidateConfig,
+    isLoading: liquidateConfigIsLoading,
+    error: liquidateConfigError,
+    refetch: liquidateRefetch,
+  } = useSimulateNftyFinanceV1LiquidateDefaultedLoan({
+    query: {
       enabled: !timeInfo.isTimeLeft,
-      args: [
-        BigInt(loan?.id || 0), // loan ID
-      ],
-    });
+    },
+    args: [
+      BigInt(loan?.id || 0), // loan ID
+    ],
+  });
 
-  const { data: liquidateData, writeAsync: liquidateWrite } =
-    useNftyFinanceV1LiquidateDefaultedLoan(liquidateConfig);
+  const {
+    data: liquidateData,
+    writeContractAsync: liquidateWrite,
+    error: liquidateError,
+  } = useWriteNftyFinanceV1LiquidateDefaultedLoan();
 
   async function liquidateOverdueLoan(loanID: string) {
-    setActionIsLoading(true);
-    try {
-      await liquidateRefetch();
-      if (typeof liquidateWrite !== "function") {
-        throw new Error("liquidateWrite is not a function");
-      }
-      await liquidateWrite();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setActionIsLoading(false);
+    //Check if liquidateConfig is undefined or liquidateConfigError is not null
+    if (!liquidateConfig || liquidateConfigError) {
+      console.error("liquidateConfigError", liquidateConfigError?.message);
+      addToast(
+        "Error",
+        <ErrorDetails
+          error={
+            liquidateConfigError
+              ? liquidateConfigError.message
+              : "Error initiating liquidation"
+          }
+        />,
+        "error"
+      );
+      return;
     }
+    setActionIsLoading(true);
+    await liquidateWrite(liquidateConfig!.request);
   }
 
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (Number(payBackAmount) <= 0) {
-      addToast("Error", <ErrorDetails error={"insufficient allowance"} />, "error");
+      addToast(
+        "Error",
+        <ErrorDetails error={"insufficient allowance"} />,
+        "error"
+      );
       return;
     }
     if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      addToast(
+        "Warning",
+        <ErrorDetails error={"already approved"} />,
+        "warning"
+      );
       return;
     }
     setApprovalIsLoading(true);
-    try {
-      await approveErc20();
-    } catch (error: any) {
-      setApprovalIsLoading(false);
-    }
+
+    await approveErc20({
+      address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+      args: [
+        nftyFinanceV1Address[chainId],
+        toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals),
+      ],
+    });
   }
 
   //modal submit function
   async function makeLoanPayment(loanID: string) {
-    setActionIsLoading(true);
-    try {
-      await makeLoanPaymentRefetch();
-      if (typeof makeLoanPaymentWrite !== "function") {
-        throw new Error("liquidateWrite is not a function");
-      }
-      await makeLoanPaymentWrite();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setActionIsLoading(false);
+    //Check if makeLoanPaymentConfig is undefined or makeLoanPaymentConfigError is not null
+    if (!makeLoanPaymentConfig || makeLoanPaymentConfigError) {
+      console.error(
+        "makeLoanPaymentConfigError",
+        makeLoanPaymentConfigError?.message
+      );
+      addToast(
+        "Error",
+        <ErrorDetails
+          error={
+            makeLoanPaymentConfigError
+              ? makeLoanPaymentConfigError.message
+              : "Error initiating loan repayment"
+          }
+        />,
+        "error"
+      );
+      return;
     }
+    setActionIsLoading(true);
+    await makeLoanPaymentWrite(makeLoanPaymentConfig!.request);
   }
 
   //loan resolve function
@@ -297,43 +425,62 @@ const LoanDetails = ({
   //checkbox click function on resolve loan popup modal
   async function approveTokenTransferResolveLoan() {
     if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      addToast(
+        "Warning",
+        <ErrorDetails error={"already approved"} />,
+        "warning"
+      );
       return;
     }
     setApprovalIsLoading(true);
-    try {
-      //calling approveErc20ResolveLoan hook to approve the token transfer
-      if (loanAmountDue) {
-        await approveErc20ResolveLoan();
-      } else {
-        loanAmountDueRefetch();
-        throw new Error(loanAmountDueError?.message || "loanAmountDue is not defined");
-      }
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
+
+    //calling approveErc20ResolveLoan hook to approve the token transfer
+    if (loanAmountDue) {
+      await approveErc20ResolveLoan({
+        address: loan?.lendingDesk?.erc20.id as `0x${string}`,
+        args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
+      });
+    } else {
+      loanAmountDueRefetch();
+      addToast(
+        "Error",
+        <ErrorDetails error={"loanAmountDue is not defined"} />,
+        "error"
+      );
     }
     setApprovalIsLoading(false);
   }
 
   async function resolveLoan(loanID: string) {
-    setActionIsLoading(true);
-    try {
-      if (typeof resolveLoanPaymentWrite === "function") {
-        await resolveLoanPaymentWrite();
-      } else {
-        resolveLoanPaymentRefetch();
-        throw new Error(
-          resolveLoanPaymentError?.message ||
-            "resolveLoanPaymentWrite is not defined or not a function",
-        );
-      }
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setActionIsLoading(false);
+    //Check if resolveLoanPaymentConfig is undefined or resolveLoanPaymentConfigError is not null
+    if (!resolveLoanPaymentConfig || resolveLoanPaymentConfigError) {
+      console.error(
+        "resolveLoanPaymentConfigError",
+        resolveLoanPaymentConfigError?.message
+      );
+      addToast(
+        "Error",
+        <ErrorDetails
+          error={
+            resolveLoanPaymentConfigError
+              ? resolveLoanPaymentConfigError.message
+              : "Error initiating loan repayment"
+          }
+        />,
+        "error"
+      );
+      return;
     }
+    setActionIsLoading(true);
+    await resolveLoanPaymentWrite(resolveLoanPaymentConfig!.request);
   }
+
+  //actionConfigLoadingMap is used to check if the action config is loading
+  const actionConfigLoadingMap = {
+    payback: makeLoanPaymentConfigIsLoading,
+    liquidate: liquidateConfigIsLoading,
+    resolve: resolveLoanPaymentConfigIsLoading,
+  };
 
   //actionMap is used to call the respective function based on the type of action
   const actionMap = {
@@ -349,82 +496,74 @@ const LoanDetails = ({
     resolve: resolveLoanPaymentData,
   };
 
-  //On successful transaction of makeLoanPayment/liquidate/resolve hook, display respective toast
-  useWaitForTransaction({
-    hash: actionDataMap[action]?.hash as `0x${string}`,
-    onSuccess(data) {
+  const actionErrorMap = {
+    payback: makeLoanPaymentError,
+    liquidate: liquidateError,
+    resolve: resolveLoanPaymentError,
+  };
+
+  const {
+    isLoading: actionIsConfirming,
+    isSuccess: actionIsConfirmed,
+    error: actionConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: actionDataMap[action] as `0x${string}`,
+  });
+
+  useEffect(() => {
+    if (actionErrorMap[action]) {
+      console.error(actionErrorMap[action]);
+      addToast(
+        "Error",
+        <ErrorDetails error={actionErrorMap[action]?.message as string} />,
+        "error"
+      );
+      setActionIsLoading(false);
+    }
+    if (actionConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={actionConfirmError?.message} />,
+        "error"
+      );
+      setActionIsLoading(false);
+    }
+    if (actionIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (actionIsConfirmed) {
       reexecuteQuery ? refetchData(reexecuteQuery) : null;
-      // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
       addToast(
         "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        <TransactionDetails transactionHash={actionDataMap[action]!} />,
+        "success"
       );
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
       setActionIsLoading(false);
-    },
-  });
-  //This hook is used to display loading toast when the approve transaction is pending
-
-  useEffect(() => {
-    if (approveErc20TransactionData?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
     }
-  }, [approveErc20TransactionData?.hash]);
-
-  //This hook is used to display loading toast when the approve transaction for resolve loan is pending
-
-  useEffect(() => {
-    if (approveErc20ResolveLoanData?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [approveErc20ResolveLoanData?.hash]);
-
-  //This hook is used to display loading toast when the makeLoanPayment/liquidate/resolve transaction is pending
-
-  useEffect(() => {
-    if (actionDataMap[action]?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [actionDataMap[action]?.hash]);
+  }, [
+    actionErrorMap[action],
+    actionConfirmError,
+    actionIsConfirmed,
+    actionIsConfirming,
+  ]);
 
   return (
     <div className="col-md-6 col-xl-4 mb-4" key={loan?.id}>
       <div className="card border-0 shadow rounded-4 h-100">
         <div className="card-body p-4">
           <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
-            <Blockies seed={`${loan?.nftId}-${loan?.nftCollection.id}`} size={32} />
+            <Blockies
+              seed={`${loan?.nftId}-${loan?.nftCollection.id}`}
+              size={32}
+            />
             {status === "Defaulted" ? (
               <div
                 className="position-absolute top-50 start-50 translate-middle z-1 w-100 h-100 d-flex align-items-center justify-content-center"
@@ -446,7 +585,9 @@ const LoanDetails = ({
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-info-subtle"
+                    status === "Defaulted"
+                      ? "bg-secondary-subtle"
+                      : "bg-info-subtle"
                   } text-center`}
                 >
                   <div className="text-info-emphasis h3 mb-3">
@@ -462,7 +603,9 @@ const LoanDetails = ({
               <div className="col-sm">
                 <div
                   className={`p-2 rounded-3 ${
-                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-success-subtle"
+                    status === "Defaulted"
+                      ? "bg-secondary-subtle"
+                      : "bg-success-subtle"
                   } text-center`}
                 >
                   <div className="text-success-emphasis h3 mb-3">
@@ -470,13 +613,13 @@ const LoanDetails = ({
                   </div>
                   <div className="h6 mb-0">
                     {Number.parseFloat(
-                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
+                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals)
                     ) -
                       Number.parseFloat(
                         fromWei(
                           loan?.amountPaidBack,
-                          loan?.lendingDesk?.erc20.decimals,
-                        ),
+                          loan?.lendingDesk?.erc20.decimals
+                        )
                       )}{" "}
                     {loan?.lendingDesk?.erc20.symbol}
                   </div>
@@ -571,7 +714,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals,
+                                  loan?.lendingDesk?.erc20.decimals
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -587,18 +730,26 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">%</span>
+                              <span className="text-body-secondary ms-2">
+                                %
+                              </span>
                             </div>
-                            <div className="text-body-secondary">interest rate</div>
+                            <div className="text-body-secondary">
+                              interest rate
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
                           <div className="h-100 rounded bg-info-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">{}</span>
+                              <span className="text-body-secondary ms-2">
+                                {}
+                              </span>
                             </div>
-                            <div className="text-body-secondary">loan duration</div>
+                            <div className="text-body-secondary">
+                              loan duration
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
@@ -608,7 +759,7 @@ const LoanDetails = ({
                                 {loanAmountDue
                                   ? fromWei(
                                       loanAmountDue,
-                                      loan?.lendingDesk?.erc20?.decimals,
+                                      loan?.lendingDesk?.erc20?.decimals
                                     )
                                   : "0"}
                               </div>
@@ -666,7 +817,7 @@ const LoanDetails = ({
                       </div>
                       <button
                         type="button"
-                        disabled={!checked || actionIsLoading}
+                        disabled={!checked || actionIsLoading||actionConfigLoadingMap[action]}
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.payback(loan?.id)}
                       >
@@ -714,7 +865,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals,
+                                  loan?.lendingDesk?.erc20.decimals
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -730,18 +881,26 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">%</span>
+                              <span className="text-body-secondary ms-2">
+                                %
+                              </span>
                             </div>
-                            <div className="text-body-secondary">interest rate</div>
+                            <div className="text-body-secondary">
+                              interest rate
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
                           <div className="h-100 rounded bg-info-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">{}</span>
+                              <span className="text-body-secondary ms-2">
+                                {}
+                              </span>
                             </div>
-                            <div className="text-body-secondary">loan duration</div>
+                            <div className="text-body-secondary">
+                              loan duration
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
@@ -751,7 +910,7 @@ const LoanDetails = ({
                                 {loanAmountDue
                                   ? fromWei(
                                       loanAmountDue,
-                                      loan?.lendingDesk?.erc20?.decimals,
+                                      loan?.lendingDesk?.erc20?.decimals
                                     )
                                   : "0"}
                               </div>
@@ -781,7 +940,7 @@ const LoanDetails = ({
                             loanAmountDue
                               ? fromWei(
                                   loanAmountDue,
-                                  loan?.lendingDesk?.erc20?.decimals,
+                                  loan?.lendingDesk?.erc20?.decimals
                                 )
                               : "0"
                           }
@@ -816,7 +975,7 @@ const LoanDetails = ({
                       </div>
                       <button
                         type="button"
-                        disabled={!checkedResolveLoan || actionIsLoading}
+                        disabled={!checkedResolveLoan || actionIsLoading || actionConfigLoadingMap[action]}
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.resolve(loan?.id)}
                       >
@@ -857,7 +1016,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loan?.amount,
-                                  loan?.lendingDesk?.erc20.decimals,
+                                  loan?.lendingDesk?.erc20.decimals
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -873,18 +1032,26 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">{loan?.interest / 100}</div>
-                              <span className="text-body-secondary ms-2">%</span>
+                              <span className="text-body-secondary ms-2">
+                                %
+                              </span>
                             </div>
-                            <div className="text-body-secondary">interest rate</div>
+                            <div className="text-body-secondary">
+                              interest rate
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
                           <div className="h-100 rounded bg-info-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h5">{timeInfo.elapsedTime}</div>
-                              <span className="text-body-secondary ms-2">{}</span>
+                              <span className="text-body-secondary ms-2">
+                                {}
+                              </span>
                             </div>
-                            <div className="text-body-secondary">loan duration</div>
+                            <div className="text-body-secondary">
+                              loan duration
+                            </div>
                           </div>
                         </div>
                         <div className="col-12">
@@ -893,7 +1060,7 @@ const LoanDetails = ({
                               <div className="h3">
                                 {fromWei(
                                   loanAmountDue ?? BigInt("0"),
-                                  loan?.lendingDesk?.erc20?.decimals,
+                                  loan?.lendingDesk?.erc20?.decimals
                                 )}
                               </div>
                               <span className="text-body-secondary ms-2">
@@ -910,7 +1077,7 @@ const LoanDetails = ({
                     <div className="mt-3 pt-3 border-top">
                       <button
                         type="button"
-                        disabled={actionIsLoading}
+                        disabled={actionIsLoading || actionConfigLoadingMap[action]}
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.liquidate(loan?.id)}
                       >

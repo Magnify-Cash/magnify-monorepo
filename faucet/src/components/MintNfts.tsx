@@ -1,7 +1,7 @@
-import { useWaitForTransaction, useChainId } from "wagmi";
+import { useWaitForTransactionReceipt, useChainId } from "wagmi";
 import { config } from "@/config";
 import { useForm } from "react-hook-form";
-import { usePrepareTestErc721Mint, useTestErc721Mint } from "../../../dapp-v1/src/wagmi-generated";
+import { useSimulateTestErc721Mint, useWriteTestErc721Mint } from "../../../dapp-v1/src/wagmi-generated";
 
 type MintNftsForm = {
   nftAddress: string;
@@ -20,10 +20,10 @@ export const MintNfts = () => {
 
   // WAGMI hooks
   const {
-    config: testErc721MintConfig,
+    data: testErc721MintConfig,
     error: prepareError,
     isError: isPrepareError,
-  } = usePrepareTestErc721Mint({
+  } = useSimulateTestErc721Mint({
     chainId: chainConfig.chainId,
     // @ts-ignore
     address: watch("nftAddress"),
@@ -35,13 +35,13 @@ export const MintNfts = () => {
 
   const {
     data,
-    write,
+    writeContract,
     error: writeError,
     isError: isWriteError,
-  } = useTestErc721Mint(testErc721MintConfig);
+  } = useWriteTestErc721Mint();
 
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash: data,
   });
 
   return (
@@ -59,8 +59,8 @@ export const MintNfts = () => {
       </select>
       <button
         className="btn btn-light fw-bold w-100 d-block"
-        disabled={!write || isLoading || isPrepareError || !selectedNft}
-        onClick={() => (write ? write() : null)}
+        disabled={!writeContract || isLoading || isPrepareError || !selectedNft}
+        onClick={() => (writeContract ? writeContract(testErc721MintConfig!.request) : null)}
       >
         {isLoading
           ? "Claiming..."
@@ -73,7 +73,7 @@ export const MintNfts = () => {
         <div>
           Successfully claimed your testnet {selectedNft.name}!
           <div>
-            <a href={`${chainConfig.blockscanUrl}/tx/${data?.hash}`} target="_blank">
+            <a href={`${chainConfig.blockscanUrl}/tx/${data}`} target="_blank">
               Blockscan
             </a>
           </div>

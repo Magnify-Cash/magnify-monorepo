@@ -4,16 +4,16 @@ import refetchData from "@/helpers/refetchData";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
-  useErc20Allowance,
-  useErc20Approve,
-  useNftyFinanceV1DepositLendingDeskLiquidity,
-  useNftyFinanceV1WithdrawLendingDeskLiquidity,
-  usePrepareNftyFinanceV1DepositLendingDeskLiquidity,
-  usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity,
+  useReadErc20Allowance,
+  useWriteErc20Approve,
+  useWriteNftyFinanceV1DepositLendingDeskLiquidity,
+  useWriteNftyFinanceV1WithdrawLendingDeskLiquidity,
+  useSimulateNftyFinanceV1DepositLendingDeskLiquidity,
+  useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import ErrorDetails from "./ErrorDetails";
 import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
@@ -34,19 +34,21 @@ export const ManageFunds = ({
   action,
   reexecuteQuery,
 }: ManageFundsProps) => {
+  /*
+  wagmi hooks
+  */
+  const { address } = useAccount();
+  const chainId = useChainId();
+
+  /*
+  form hooks / functions
+  */
   const {
     register,
     watch,
     formState: { errors },
   } = useForm<ManageFundForm>();
 
-  const { address } = useAccount();
-  const chainId = useChainId();
-  const { addToast, closeToast } = useToastContext();
-
-  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
-  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
-  const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState(false);
   //use watch to get the value of the input field as it changes
   const amount = watch("amount", 0);
@@ -69,142 +71,210 @@ export const ManageFunds = ({
   }
 
   /*
+  toast hooks
+  */
+  const { addToast, closeToast } = useToastContext();
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
+  const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
+
+  /*
   Deposit Liquidity
   Calls `depositLendingDeskLiquidity`
   Note: Requires token approval
   */
-  const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
-    useErc20Approve({
+  const {
+    data: approveErc20TransactionData,
+    writeContractAsync: approveErc20,
+    error: approveErc20Error,
+  } = useWriteErc20Approve();
+
+  const { data: approvalData, refetch: refetchApprovalData } =
+    useReadErc20Allowance({
       address: lendingDesk?.erc20.id as `0x${string}`,
-      args: [
-        nftyFinanceV1Address[chainId],
-        toWei(amount.toString(), lendingDesk?.erc20?.decimals),
-      ],
+      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
     });
 
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+  const {
+    isLoading: approveIsConfirming,
+    isSuccess: approveIsConfirmed,
+    error: approveConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: approveErc20TransactionData as `0x${string}`,
   });
 
-  //On successful transaction of approveErc20 hook, refetch the approval data
-  useWaitForTransaction({
-    hash: approveErc20TransactionData?.hash as `0x${string}`,
-    onSuccess(data) {
+  useEffect(() => {
+    if (approveErc20Error) {
+      console.error(approveErc20Error);
+      addToast(
+        "Error",
+        <ErrorDetails error={approveErc20Error.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={approveConfirmError?.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (approveIsConfirmed) {
       refetchApprovalData();
       refetchDepositConfig();
-      // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
       addToast(
         "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+        "success"
       );
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
       setApprovalIsLoading(false);
-    },
-  });
+    }
+  }, [
+    approveErc20Error,
+    approveConfirmError,
+    approveIsConfirmed,
+    approveIsConfirming,
+  ]);
 
   useEffect(() => {
     if (!approvalData) {
       setChecked(false);
       return;
     }
-    if (Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >= Number(amount)) {
+    if (
+      Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >=
+      Number(amount)
+    ) {
       setChecked(true);
     } else {
       setChecked(false);
     }
   }, [amount, approvalData]);
 
-  const { config: depositConfig, refetch: refetchDepositConfig } =
-    usePrepareNftyFinanceV1DepositLendingDeskLiquidity({
-      args: [
-        BigInt(lendingDesk?.id || 0),
-        toWei(amount.toString(), lendingDesk?.erc20?.decimals),
-      ],
+  const {
+    data: depositConfig,
+    isLoading: depositConfigIsLoading,
+    error: depositConfigError,
+    refetch: refetchDepositConfig,
+  } = useSimulateNftyFinanceV1DepositLendingDeskLiquidity({
+    args: [
+      BigInt(lendingDesk?.id || 0),
+      toWei(amount.toString(), lendingDesk?.erc20?.decimals),
+    ],
+    query: {
       enabled: amount > 0 && checked,
-    });
-  const { data: depositWriteData, writeAsync: depositWrite } =
-    useNftyFinanceV1DepositLendingDeskLiquidity(depositConfig);
+    },
+  });
+  const {
+    data: depositWriteData,
+    writeContractAsync: depositWrite,
+    error: depositWriteError,
+  } = useWriteNftyFinanceV1DepositLendingDeskLiquidity();
   const depositLiquidity = async () => {
-    // Check if depositWrite is a function i.e. if the depositWrite function is defined
-    try {
-      if (typeof depositWrite !== "function") {
-        throw new Error("depositWrite is not a function");
-      }
-      await depositWrite();
-    } catch (error: any) {
-      console.error(error);
-      throw new Error(error);
-    }
+    await depositWrite(depositConfig!.request);
   };
 
   /*
   Withdraw Liquidity
   Calls `withdrawLendingDeskLiquidity`
   */
-  const { config: withdrawConfig } =
-    usePrepareNftyFinanceV1WithdrawLendingDeskLiquidity({
-      args: [
-        BigInt(lendingDesk?.id || 0),
-        toWei(amount?.toString(), lendingDesk?.erc20?.decimals),
-      ],
+  const {
+    data: withdrawConfig,
+    isLoading: withdrawConfigIsLoading,
+    error: withdrawConfigError,
+  } = useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity({
+    args: [
+      BigInt(lendingDesk?.id || 0),
+      toWei(amount?.toString(), lendingDesk?.erc20?.decimals),
+    ],
+    query: {
       enabled: amount > 0,
-    });
-  const { data: withdrawWriteData, writeAsync: withdrawWrite } =
-    useNftyFinanceV1WithdrawLendingDeskLiquidity(withdrawConfig);
+    },
+  });
+  const {
+    data: withdrawWriteData,
+    writeContractAsync: withdrawWrite,
+    error: withdrawWriteError,
+  } = useWriteNftyFinanceV1WithdrawLendingDeskLiquidity();
 
   const withdrawLiquidity = async () => {
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
     try {
       if (
-        amount > Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
+        amount >
+        Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
       ) {
-        throw new Error("InsufficientLendingDeskBalance");
+        addToast(
+          "Error",
+          <ErrorDetails error={"InsufficientLendingDeskBalance"} />,
+          "error"
+        );
+        setActionIsLoading(false);
+        return;
       }
-      if (typeof withdrawWrite !== "function") {
-        throw new Error("withdrawWrite is not a function");
-      }
-      await withdrawWrite();
+
+      await withdrawWrite(withdrawConfig!.request);
     } catch (error: any) {
       console.error(error);
-      throw new Error(error);
     }
   };
 
   //Deposit function is used to deposit liquidity
   //This function is called when the user clicks on the deposit button
   async function deposit() {
-    setActionIsLoading(true);
-    try {
-      await depositLiquidity();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setActionIsLoading(false);
+    //check if depositConfig is undefined or depositConfigError is not null
+    if(!depositConfig || depositConfigError){
+      console.error("depositConfigError", depositConfigError?.message);
+      addToast(
+        "Error",
+        <ErrorDetails
+          error={
+            depositConfigError
+              ? depositConfigError.message
+              : "Error initializing deposit"
+          }
+        />,
+        "error"
+      );
+      return;
     }
+    setActionIsLoading(true);
+    await depositLiquidity();
   }
   //Withdraw function is used to withdraw liquidity
   //This function is called when the user clicks on the withdraw button
   async function withdraw() {
-    setActionIsLoading(true);
-    try {
-      await withdrawLiquidity();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setActionIsLoading(false);
+    //check if withdrawConfig is undefined or withdrawConfigError is not null
+    if(!withdrawConfig || withdrawConfigError){
+      console.error("withdrawConfigError", withdrawConfigError?.message);
+      addToast(
+        "Error",
+        <ErrorDetails
+          error={
+            withdrawConfigError
+              ? withdrawConfigError.message
+              : "Error initializing withdraw"
+          }
+        />,
+        "error"
+      );
+      return;
     }
+    setActionIsLoading(true);
+    await withdrawLiquidity();
   }
 
   //actionMap is used to call the respective function based on the action
@@ -219,81 +289,93 @@ export const ManageFunds = ({
     withdraw: withdrawWriteData,
   };
 
-  //on successful transaction of deposit/withdraw hook, refetch approval data and display relevant toast
+  //actionConfigLoadingMap is used to access the loading state of actionConfig based on the action
+  const actionConfigLoadingMap = {
+    deposit: depositConfigIsLoading,
+    withdraw: withdrawConfigIsLoading,
+  };
 
-  useWaitForTransaction({
-    hash: actionDataMap[action]?.hash as `0x${string}`,
-    onSuccess(data) {
+  //actionErrorMap is used to aceess the action error based on the action
+  const actionErrorMap = {
+    deposit: depositWriteError,
+    withdraw: withdrawWriteError,
+  };
+  const {
+    isLoading: actionIsConfirming,
+    isSuccess: actionIsConfirmed,
+    error: actionConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: actionDataMap[action] as `0x${string}`,
+  });
+
+  useEffect(() => {
+    if (actionErrorMap[action]) {
+      console.error(actionErrorMap[action]);
+      addToast(
+        "Error",
+        <ErrorDetails error={actionErrorMap[action]?.message as string} />,
+        "error"
+      );
+      setActionIsLoading(false);
+    }
+    if (actionConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={actionConfirmError?.message} />,
+        "error"
+      );
+      setActionIsLoading(false);
+    }
+    if (actionIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (actionIsConfirmed) {
       reexecuteQuery
         ? refetchData(reexecuteQuery)
         : console.log("reexecuteQuery not provided");
-
       refetchApprovalData();
-      // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
       addToast(
         "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        <TransactionDetails transactionHash={actionDataMap[action]!} />,
+        "success"
       );
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
       setActionIsLoading(false);
-    },
-  });
+    }
+  }, [
+    actionErrorMap[action],
+    actionConfirmError,
+    actionIsConfirmed,
+    actionIsConfirming,
+  ]);
 
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      addToast(
+        "Warning",
+        <ErrorDetails error={"already approved"} />,
+        "warning"
+      );
       return;
     }
     setApprovalIsLoading(true);
-    try {
-      await approveErc20();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setApprovalIsLoading(false);
-    }
+
+    await approveErc20({
+      address: lendingDesk?.erc20.id as `0x${string}`,
+      args: [
+        nftyFinanceV1Address[chainId],
+        toWei(amount.toString(), lendingDesk?.erc20?.decimals),
+      ],
+    });
   }
-  //This hook is used to display loading toast when the approve transaction is pending
-
-  useEffect(() => {
-    if (approveErc20TransactionData?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [approveErc20TransactionData?.hash]);
-
-  //This hook is used to display loading toast when the deposit/withdraw transaction is pending
-
-  useEffect(() => {
-    if (actionDataMap[action]?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [actionDataMap[action]?.hash]);
 
   return (
     <PopupTransaction
@@ -330,7 +412,10 @@ export const ManageFunds = ({
           <button
             type="button"
             disabled={
-              actionIsLoading || (!checked && action === "deposit") || amount <= 0
+              actionIsLoading ||
+              actionConfigLoadingMap[action] ||
+              (!checked && action === "deposit") ||
+              amount <= 0
             }
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
@@ -357,7 +442,9 @@ export const ManageFunds = ({
                 className="form-control form-control-lg py-2 mb-2 flex-grow-1"
               />
               <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                <div className="text-truncate ">{lendingDesk?.erc20.symbol}</div>
+                <div className="text-truncate ">
+                  {lendingDesk?.erc20.symbol}
+                </div>
               </div>
             </div>
           </div>

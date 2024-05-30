@@ -7,15 +7,13 @@ import { useToastContext } from "@/helpers/CreateToast";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
-  useErc20Allowance,
-  useErc20Approve,
-  useNftyFinanceV1InitializeNewLendingDesk,
+  useReadErc20Allowance,
+  useWriteErc20Approve,
+  useWriteNftyFinanceV1InitializeNewLendingDesk,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useQuery } from "urql";
-import { useAccount, useChainId, useWaitForTransaction } from "wagmi";
-import { CreateLendingDeskDocument } from "../../../.graphclient";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 
 export interface IConfigForm {
   selectedNftCollection?: INFTListItem;
@@ -28,28 +26,15 @@ export interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IConfigForm>();
+  /*
+  wagmi hooks
+  */
+  const { address } = useAccount();
+  const chainId = useChainId();
 
-  //Loads the supplied values into the add to desk/edit desk form
-  const loadValuesIntoForm = (values: IConfigForm) => {
-    for (const key in values) {
-      //@ts-ignore
-      setValue(key, values[key]);
-    }
-  };
-
-  const { addToast, closeToast } = useToastContext();
-  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
-  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
-  const [initLendingDeskIsLoading, setInitLendingDeskIsLoading] =
-    useState<boolean>(false);
-
-  // Data Hooks
+  /*
+  form hooks / functions
+  */
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [deskConfigs, setDeskConfigs] = useState<Array<IConfigForm>>([]);
@@ -57,15 +42,19 @@ export const CreateLendingDesk = (props: any) => {
   const [editDeskIndex, setEditDeskIndex] = useState<number>(0);
   const [deskFundingAmount, setDeskFundingAmount] = useState("0");
   const [checked, setChecked] = useState(false);
-  const { address } = useAccount();
-  const chainId = useChainId();
-  const [result] = useQuery({
-    query: CreateLendingDeskDocument,
-    variables: {
-      walletAddress: address?.toLowerCase() || "",
-    },
-  });
-
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IConfigForm>();
+  // Loads the supplied values into the add to desk/edit desk form
+  const loadValuesIntoForm = (values: IConfigForm) => {
+    for (const key in values) {
+      //@ts-ignore
+      setValue(key, values[key]);
+    }
+  };
   // handle deleting the lending desk config given the index
   // if deleted desk matches selected, than set edit desk to false
   const handleDeleteConfig = (index: number) => {
@@ -78,7 +67,6 @@ export const CreateLendingDesk = (props: any) => {
       setEditDesk(false);
     }
   };
-
   //handle loading the form for editing the lending desk config given the index
   const handleEditConfig = (index: number) => {
     setEditDesk(true);
@@ -89,7 +77,6 @@ export const CreateLendingDesk = (props: any) => {
     });
     setNftCollection(exisitingConfig.selectedNftCollection);
   };
-
   //handle updating the lending desk config given the index and the new config
   const onUpdate: SubmitHandler<IConfigForm> = (newConfig) => {
     if (
@@ -117,7 +104,6 @@ export const CreateLendingDesk = (props: any) => {
       //Don't switch to add desk mode because this collection is already added
     }
   };
-
   // Whenever an nft collection is selected, first check if
   // the collection is already present in result loan configs
   // If it is present then auto load the present values in the add to desk form
@@ -152,7 +138,6 @@ export const CreateLendingDesk = (props: any) => {
       }
     }
   }, [nftCollection]);
-
   //On submit of the lending desk form, add the form data to the deskConfigs state variable
   const onSubmit: SubmitHandler<IConfigForm> = (data) => {
     if (
@@ -194,48 +179,54 @@ export const CreateLendingDesk = (props: any) => {
     }
   };
 
-  // ERC20 Token Allowance Hook
-  // Note: UseEffect check for existing token allowance to auto check the checkbox
-  const { data: approveErc20TransactionData, writeAsync: approveErc20 } =
-    useErc20Approve({
+  /*
+  toast hooks
+  */
+  const { addToast, closeToast } = useToastContext();
+  const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
+  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
+  const [initLendingDeskIsLoading, setInitLendingDeskIsLoading] = useState<boolean>(false);
+
+  /*
+  ERC20 Token Allowance
+  */
+  const {
+    data: approvalData,
+    refetch: refetchApprovalData
+  } = useReadErc20Allowance({
+    address: token?.token?.address as `0x${string}`,
+    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+  });
+  const {
+    data: approveErc20TransactionData,
+    writeContractAsync: approveErc20,
+    error:approveErc20Error
+  } = useWriteErc20Approve();
+  const {
+    isLoading: approveIsConfirming,
+    isSuccess: approveIsConfirmed,
+    error:approveConfirmError
+  } = useWaitForTransactionReceipt({
+    hash: approveErc20TransactionData as `0x${string}`,
+  });
+  async function approveERC20TokenTransfer() {
+    if (Number(deskFundingAmount) <= 0) {
+      addToast("Error", <ErrorDetails error={"insufficient allowance"} />, "error");
+      return;
+    }
+    if (checked) {
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      return;
+    }
+    setApprovalIsLoading(true);
+    await approveErc20({
       address: token?.token?.address as `0x${string}`,
       args: [
         nftyFinanceV1Address[chainId],
         toWei(deskFundingAmount, token?.token?.decimals),
       ],
     });
-
-  const { data: approvalData, refetch: refetchApprovalData } = useErc20Allowance({
-    address: token?.token?.address as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-  });
-
-  //On successful transaction of approveErc20 hook, refetch the approval data
-  useWaitForTransaction({
-    hash: approveErc20TransactionData?.hash as `0x${string}`,
-    onSuccess(data) {
-      refetchApprovalData();
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
-      );
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
-      setApprovalIsLoading(false);
-    },
-  });
-
+  }
   useEffect(() => {
     if (!approvalData) {
       setChecked(false);
@@ -249,11 +240,70 @@ export const CreateLendingDesk = (props: any) => {
       setChecked(false);
     }
   }, [deskFundingAmount, approvalData]);
+  useEffect(() => {
+    if (approveErc20Error) {
+      console.log("ERROR");
+      console.error(approveErc20Error);
+      addToast(
+        "Error",
+        <ErrorDetails error={approveErc20Error.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveConfirmError) {
+      addToast(
+        "Error",
+        <ErrorDetails error={approveConfirmError?.message} />,
+        "error"
+      );
+      setApprovalIsLoading(false);
+    }
+    if (approveIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (approveIsConfirmed) {
+      refetchApprovalData();
+      loadingToastId ? closeToast(loadingToastId) : null;
+      addToast(
+        "Transaction Successful",
+        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+        "success"
+      );
+      setApprovalIsLoading(false);
+    }
+  }, [
+    approveErc20Error,
+    approveConfirmError,
+    approveIsConfirmed,
+    approveIsConfirming,
+  ]);
 
-  // Create Lending Desk Hook
-
-  const { data: initializeNewLendingDeskData, writeAsync: initializeNewLendingDesk } =
-    useNftyFinanceV1InitializeNewLendingDesk({
+  /*
+   Create Lending Desk
+  */
+  const {
+    data: initializeNewLendingDeskData,
+    writeContractAsync: initializeNewLendingDesk,
+    error:initializeNewLendingDeskError
+  } = useWriteNftyFinanceV1InitializeNewLendingDesk();
+  const {
+    isLoading: initDeskIsConfirming,
+    isSuccess: initDeskIsConfirmed,
+    error:initDeskConfirmError
+  } = useWaitForTransactionReceipt({
+      hash: initializeNewLendingDeskData as `0x${string}`,
+  })
+  async function initDesk() {
+    setInitLendingDeskIsLoading(true);
+    await initializeNewLendingDesk({
       args: [
         token?.token?.address as `0x${string}`,
         toWei(deskFundingAmount, token?.token?.decimals),
@@ -271,95 +321,54 @@ export const CreateLendingDesk = (props: any) => {
         })),
       ],
     });
-
-  //On successful transaction of initializeNewLendingDesk hook, display success toast
-  //On failure display error toast
-  useWaitForTransaction({
-    hash: initializeNewLendingDeskData?.hash as `0x${string}`,
-    onSuccess(data) {
+  }
+  useEffect(() => {
+    if (initializeNewLendingDeskError) {
+      console.error(initializeNewLendingDeskError);
+      addToast(
+        "Error",
+        <ErrorDetails error={initializeNewLendingDeskError.message} />,
+        "error"
+      );
+      setInitLendingDeskIsLoading(false);
+    }
+    if (initDeskConfirmError) {
+      console.error(initDeskConfirmError);
+      addToast(
+        "Error",
+        <ErrorDetails error={initDeskConfirmError.message} />,
+        "error"
+      );
+      setInitLendingDeskIsLoading(false);
+    }
+    if (initDeskIsConfirming) {
+      const id = addToast(
+        "Transaction Pending",
+        "Please wait for the transaction to be confirmed.",
+        "loading"
+      );
+      if (id) {
+        setLoadingToastId(id);
+      }
+    }
+    if (initDeskIsConfirmed) {
+      refetchApprovalData();
       // Close loading toast
       loadingToastId ? closeToast(loadingToastId) : null;
       // Display success toast
       addToast(
         "Transaction Successful",
-        <TransactionDetails transactionHash={data.transactionHash} />,
-        "success",
+        <TransactionDetails transactionHash={initializeNewLendingDeskData!} />,
+        "success"
       );
-      refetchApprovalData();
-      // reset the desk funding amount
-      setDeskFundingAmount("0");
-    },
-    onError(error) {
-      console.error(error);
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display error toast
-      addToast("Transaction Failed", <ErrorDetails error={error.message} />, "error");
-    },
-    onSettled() {
-      setInitLendingDeskIsLoading(false);
-    },
-  });
-
-  // Checkbox click function
-  async function approveERC20TokenTransfer() {
-    if (Number(deskFundingAmount) <= 0) {
-      addToast("Error", <ErrorDetails error={"insufficient allowance"} />, "error");
-      return;
-    }
-    if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
-      return;
-    }
-    setApprovalIsLoading(true);
-    try {
-      await approveErc20();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
-      setApprovalIsLoading(false);
-    }
-  }
-
-  // create lending desk button click function
-  async function initDesk() {
-    setInitLendingDeskIsLoading(true);
-    try {
-      await initializeNewLendingDesk();
-    } catch (error: any) {
-      console.error(error);
-      addToast("Error", <ErrorDetails error={error.message} />, "error");
       setInitLendingDeskIsLoading(false);
     }
-  }
-
-  //This hook is used to display loading toast when the approve transaction is pending
-  useEffect(() => {
-    if (approveErc20TransactionData?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [approveErc20TransactionData?.hash]);
-
-  //This hook is used to display loading toast when the initializeNewLendingDesk transaction is pending
-  useEffect(() => {
-    if (initializeNewLendingDeskData?.hash) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-  }, [initializeNewLendingDeskData?.hash]);
+  }, [
+    initializeNewLendingDeskError,
+    initDeskConfirmError,
+    initDeskIsConfirming,
+    initDeskIsConfirmed,
+  ]);
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">

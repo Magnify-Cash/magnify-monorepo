@@ -1,13 +1,17 @@
-import * as Pages from "@/pages";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { WagmiConfig } from "wagmi";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider } from "wagmi";
 import { config } from "./wagmi";
+import * as Pages from "@/pages";
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <WagmiConfig config={config}>
+    <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Pages.Base />}>
@@ -61,6 +65,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </Route>
         </Routes>
       </BrowserRouter>
-    </WagmiConfig>
+    </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>,
 );

@@ -31,6 +31,7 @@ type GetLoanModalProps = {
   index?: number;
   approvalIsLoading: boolean;
   newLoanIsLoading: boolean;
+  newLoanConfigIsLoading:boolean;
 };
 
 export default function GetLoanModal({
@@ -53,6 +54,7 @@ export default function GetLoanModal({
   index,
   approvalIsLoading,
   newLoanIsLoading,
+  newLoanConfigIsLoading,
 }: GetLoanModalProps) {
   // Wallet NFTs
   const { address } = useAccount();
@@ -87,7 +89,9 @@ export default function GetLoanModal({
       modalFooter={
         <div className="modal-footer text-start">
           {selectedNftName && (
-            <div className={`form-check mb-3 w-100 ${approvalIsLoading ? "" : "ms-3"}`}>
+            <div
+              className={`form-check mb-3 w-100 ${approvalIsLoading ? "" : "ms-3"}`}
+            >
               <input
                 name="check"
                 disabled={approvalIsLoading}
@@ -107,17 +111,22 @@ export default function GetLoanModal({
                 className="form-check-label ps-2 text-wrap"
                 htmlFor="flexCheckChecked"
               >
-                Grant permission for {selectedNftName} transfer by checking this box.
+                Grant permission for {selectedNftName} transfer by checking this
+                box.
               </label>
             </div>
           )}
           <button
             type="button"
-            disabled={!checked || newLoanIsLoading}
+            disabled={!checked || newLoanIsLoading || newLoanConfigIsLoading}
             onClick={() => onSubmit()}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
           >
-            {newLoanIsLoading ? <Spinner show={newLoanIsLoading} /> : "Request Loan"}
+            {newLoanIsLoading ? (
+              <Spinner show={newLoanIsLoading} />
+            ) : (
+              "Request Loan"
+            )}
           </button>
         </div>
       }
@@ -152,8 +161,15 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}-
-                        {fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
+                        {fromWei(
+                          loanConfig?.minAmount,
+                          lendingDesk?.erc20?.decimals
+                        )}
+                        -
+                        {fromWei(
+                          loanConfig?.maxAmount,
+                          lendingDesk?.erc20?.decimals
+                        )}
                       </div>
                       <span className="text-body-secondary ms-2">
                         {lendingDesk.erc20.symbol}
@@ -166,7 +182,8 @@ export default function GetLoanModal({
                   <div className="h-100 rounded bg-secondary-subtle text-center p-2">
                     <div className="d-flex align-items-center justify-content-center">
                       <div className="h4 fw-medium">
-                        {loanConfig?.minDuration / 24}-{loanConfig?.maxDuration / 24}
+                        {loanConfig?.minDuration / 24}-
+                        {loanConfig?.maxDuration / 24}
                       </div>
                       <span className="text-body-secondary ms-2">Days</span>
                     </div>
@@ -182,7 +199,9 @@ export default function GetLoanModal({
                       </div>
                       <span className="text-body-secondary ms-2">%</span>
                     </div>
-                    <div className="text-body-secondary">Min/Max Interest Rate</div>
+                    <div className="text-body-secondary">
+                      Min/Max Interest Rate
+                    </div>
                   </div>
                 </div>
               </div>
@@ -198,7 +217,9 @@ export default function GetLoanModal({
                   onChange={(e) =>
                     setNftId(
                       // @ts-ignore
-                      e.target.value ? Number.parseInt(e.target.value) : undefined,
+                      e.target.value
+                        ? Number.parseInt(e.target.value)
+                        : undefined
                     )
                   }
                 >
@@ -248,19 +269,32 @@ export default function GetLoanModal({
                     id="set-amount"
                     placeholder="Amount"
                     step="any"
-                    min={fromWei(loanConfig?.minAmount, lendingDesk?.erc20?.decimals)}
-                    max={fromWei(loanConfig?.maxAmount, lendingDesk?.erc20?.decimals)}
+                    min={fromWei(
+                      loanConfig?.minAmount,
+                      lendingDesk?.erc20?.decimals
+                    )}
+                    max={fromWei(
+                      loanConfig?.maxAmount,
+                      lendingDesk?.erc20?.decimals
+                    )}
                     value={amount}
                     // @ts-ignore
                     onChange={(e) => setAmount(e.target.value)}
                     required
                   />
-                  <span className="input-group-text">{lendingDesk.erc20.symbol}</span>
+                  <span className="input-group-text">
+                    {lendingDesk.erc20.symbol}
+                  </span>
                 </div>
                 <div className="d-flex align-items-center justify-content-start pt-2">
-                  <span className="text-body-secondary">Available Balance: </span>
+                  <span className="text-body-secondary">
+                    Available Balance:{" "}
+                  </span>
                   <div className="h4 text-primary fw-medium ms-2">
-                    {fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals)}
+                    {fromWei(
+                      lendingDesk?.balance,
+                      lendingDesk?.erc20?.decimals
+                    )}
                   </div>
                   <span className="text-body-secondary ms-2">
                     {lendingDesk.erc20.symbol}
@@ -286,7 +320,7 @@ export default function GetLoanModal({
                       loanConfig,
                       amount,
                       duration,
-                      lendingDesk.erc20?.decimals,
+                      lendingDesk.erc20?.decimals
                     )
                   : null}
                 %
@@ -300,7 +334,8 @@ export default function GetLoanModal({
             </div>
             <div className="my-2 d-flex align-items-center">
               <span className="text-body-secondary">
-                2% Loan Origination Fee <i className="fa-light fa-info-circle ms-1" />
+                2% Loan Origination Fee{" "}
+                <i className="fa-light fa-info-circle ms-1" />
               </span>
               <span className="fw-medium ms-auto">
                 {"- "}

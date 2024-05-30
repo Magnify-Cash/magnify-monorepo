@@ -1,5 +1,5 @@
-import { useWaitForTransaction, useChainId } from "wagmi";
-import { usePrepareTestErc20Mint, useTestErc20Mint } from "../../../dapp-v1/src/wagmi-generated";
+import { useWaitForTransactionReceipt, useChainId } from "wagmi";
+import { useSimulateTestErc20Mint, useWriteTestErc20Mint } from "../../../dapp-v1/src/wagmi-generated";
 import { useForm } from "react-hook-form";
 import { config } from "../config";
 import { ethers } from "ethers";
@@ -21,10 +21,10 @@ export const MintTokens = () => {
 
   // WAGMI hooks
   const {
-    config: testErc20MintConfig,
+    data: testErc20MintConfig,
     error: prepareError,
     isError: isPrepareError,
-  } = usePrepareTestErc20Mint({
+  } = useSimulateTestErc20Mint({
     chainId: chainConfig.chainId,
     // @ts-ignore
     address: watch("tokenAddress"),
@@ -37,13 +37,13 @@ export const MintTokens = () => {
 
   const {
     data,
-    write,
+    writeContract,
     error: writeError,
     isError: isWriteError,
-  } = useTestErc20Mint(testErc20MintConfig);
+  } = useWriteTestErc20Mint();
 
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash: data,
   });
 
   return (
@@ -61,8 +61,8 @@ export const MintTokens = () => {
       </select>
       <button
         className="btn btn-light fw-bold w-100 d-block"
-        disabled={!write || isLoading || isPrepareError}
-        onClick={() => (write ? write() : null)}
+        disabled={!writeContract || isLoading || isPrepareError}
+        onClick={() => (writeContract ? writeContract(testErc20MintConfig!.request) : null)}
       >
         {isLoading
           ? "Claiming..."
@@ -75,7 +75,7 @@ export const MintTokens = () => {
         <div>
           Successfully claimed your testnet ${selectedToken.symbol}!
           <div>
-            <a href={`${chainConfig.blockscanUrl}/tx/${data?.hash}`} target="_blank">
+            <a href={`${chainConfig.blockscanUrl}/tx/${data}`} target="_blank">
               Blockscan
             </a>
           </div>
