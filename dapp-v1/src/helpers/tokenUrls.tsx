@@ -5,7 +5,7 @@ const nftListUrlsMap = {
   8453: [],
   84532: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/nftsBaseSepolia.json"]
-    : ["https://magnify.cash/tokenlists/nftsBaseSepolia.json"],
+    : ["https://early.magnify.cash/tokenlists/nftsBaseSepolia.json"],
   31337: ["http://localhost:5173/tokenlists/nfts.json"],
 };
 
@@ -14,7 +14,7 @@ const tokenListUrlsMap = {
   8453: ["https://tokens.coingecko.com/base/all.json"],
   84532: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/tokensBaseSepolia.json"]
-    : ["https://magnify.cash/tokenlists/tokensBaseSepolia.json"],
+    : ["https://early.magnify.cash/tokenlists/tokensBaseSepolia.json"],
   31337: ["http://localhost:5173/tokenlists/tokens.json"],
 };
 
