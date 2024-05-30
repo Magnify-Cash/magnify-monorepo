@@ -185,27 +185,25 @@ export const CreateLendingDesk = (props: any) => {
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
-  const [initLendingDeskIsLoading, setInitLendingDeskIsLoading] = useState<boolean>(false);
+  const [initLendingDeskIsLoading, setInitLendingDeskIsLoading] =
+    useState<boolean>(false);
 
   /*
   ERC20 Token Allowance
   */
-  const {
-    data: approvalData,
-    refetch: refetchApprovalData
-  } = useReadErc20Allowance({
+  const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
     address: token?.token?.address as `0x${string}`,
     args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
   });
   const {
     data: approveErc20TransactionData,
     writeContractAsync: approveErc20,
-    error:approveErc20Error
+    error: approveErc20Error,
   } = useWriteErc20Approve();
   const {
     isLoading: approveIsConfirming,
     isSuccess: approveIsConfirmed,
-    error:approveConfirmError
+    error: approveConfirmError,
   } = useWaitForTransactionReceipt({
     hash: approveErc20TransactionData as `0x${string}`,
   });
@@ -244,26 +242,18 @@ export const CreateLendingDesk = (props: any) => {
     if (approveErc20Error) {
       console.log("ERROR");
       console.error(approveErc20Error);
-      addToast(
-        "Error",
-        <ErrorDetails error={approveErc20Error.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={approveErc20Error.message} />, "error");
       setApprovalIsLoading(false);
     }
     if (approveConfirmError) {
-      addToast(
-        "Error",
-        <ErrorDetails error={approveConfirmError?.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={approveConfirmError?.message} />, "error");
       setApprovalIsLoading(false);
     }
     if (approveIsConfirming) {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -275,16 +265,11 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={approveErc20TransactionData!} />,
-        "success"
+        "success",
       );
       setApprovalIsLoading(false);
     }
-  }, [
-    approveErc20Error,
-    approveConfirmError,
-    approveIsConfirmed,
-    approveIsConfirming,
-  ]);
+  }, [approveErc20Error, approveConfirmError, approveIsConfirmed, approveIsConfirming]);
 
   /*
    Create Lending Desk
@@ -292,15 +277,15 @@ export const CreateLendingDesk = (props: any) => {
   const {
     data: initializeNewLendingDeskData,
     writeContractAsync: initializeNewLendingDesk,
-    error:initializeNewLendingDeskError
+    error: initializeNewLendingDeskError,
   } = useWriteNftyFinanceV1InitializeNewLendingDesk();
   const {
     isLoading: initDeskIsConfirming,
     isSuccess: initDeskIsConfirmed,
-    error:initDeskConfirmError
+    error: initDeskConfirmError,
   } = useWaitForTransactionReceipt({
-      hash: initializeNewLendingDeskData as `0x${string}`,
-  })
+    hash: initializeNewLendingDeskData as `0x${string}`,
+  });
   async function initDesk() {
     setInitLendingDeskIsLoading(true);
     await initializeNewLendingDesk({
@@ -328,24 +313,20 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Error",
         <ErrorDetails error={initializeNewLendingDeskError.message} />,
-        "error"
+        "error",
       );
       setInitLendingDeskIsLoading(false);
     }
     if (initDeskConfirmError) {
       console.error(initDeskConfirmError);
-      addToast(
-        "Error",
-        <ErrorDetails error={initDeskConfirmError.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={initDeskConfirmError.message} />, "error");
       setInitLendingDeskIsLoading(false);
     }
     if (initDeskIsConfirming) {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -359,7 +340,7 @@ export const CreateLendingDesk = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={initializeNewLendingDeskData!} />,
-        "success"
+        "success",
       );
       setInitLendingDeskIsLoading(false);
     }

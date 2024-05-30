@@ -5,11 +5,11 @@ import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
   useReadErc20Allowance,
+  useSimulateNftyFinanceV1DepositLendingDeskLiquidity,
+  useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity,
   useWriteErc20Approve,
   useWriteNftyFinanceV1DepositLendingDeskLiquidity,
   useWriteNftyFinanceV1WithdrawLendingDeskLiquidity,
-  useSimulateNftyFinanceV1DepositLendingDeskLiquidity,
-  useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -89,11 +89,10 @@ export const ManageFunds = ({
     error: approveErc20Error,
   } = useWriteErc20Approve();
 
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useReadErc20Allowance({
-      address: lendingDesk?.erc20.id as `0x${string}`,
-      args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
-    });
+  const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
+    address: lendingDesk?.erc20.id as `0x${string}`,
+    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+  });
 
   const {
     isLoading: approveIsConfirming,
@@ -106,26 +105,18 @@ export const ManageFunds = ({
   useEffect(() => {
     if (approveErc20Error) {
       console.error(approveErc20Error);
-      addToast(
-        "Error",
-        <ErrorDetails error={approveErc20Error.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={approveErc20Error.message} />, "error");
       setApprovalIsLoading(false);
     }
     if (approveConfirmError) {
-      addToast(
-        "Error",
-        <ErrorDetails error={approveConfirmError?.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={approveConfirmError?.message} />, "error");
       setApprovalIsLoading(false);
     }
     if (approveIsConfirming) {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -138,26 +129,18 @@ export const ManageFunds = ({
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={approveErc20TransactionData!} />,
-        "success"
+        "success",
       );
       setApprovalIsLoading(false);
     }
-  }, [
-    approveErc20Error,
-    approveConfirmError,
-    approveIsConfirmed,
-    approveIsConfirming,
-  ]);
+  }, [approveErc20Error, approveConfirmError, approveIsConfirmed, approveIsConfirming]);
 
   useEffect(() => {
     if (!approvalData) {
       setChecked(false);
       return;
     }
-    if (
-      Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >=
-      Number(amount)
-    ) {
+    if (Number(fromWei(approvalData, lendingDesk?.erc20?.decimals)) >= Number(amount)) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -214,13 +197,12 @@ export const ManageFunds = ({
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
     try {
       if (
-        amount >
-        Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
+        amount > Number(fromWei(lendingDesk?.balance, lendingDesk?.erc20?.decimals))
       ) {
         addToast(
           "Error",
           <ErrorDetails error={"InsufficientLendingDeskBalance"} />,
-          "error"
+          "error",
         );
         setActionIsLoading(false);
         return;
@@ -236,7 +218,7 @@ export const ManageFunds = ({
   //This function is called when the user clicks on the deposit button
   async function deposit() {
     //check if depositConfig is undefined or depositConfigError is not null
-    if(!depositConfig || depositConfigError){
+    if (!depositConfig || depositConfigError) {
       console.error("depositConfigError", depositConfigError?.message);
       addToast(
         "Error",
@@ -247,7 +229,7 @@ export const ManageFunds = ({
               : "Error initializing deposit"
           }
         />,
-        "error"
+        "error",
       );
       return;
     }
@@ -258,7 +240,7 @@ export const ManageFunds = ({
   //This function is called when the user clicks on the withdraw button
   async function withdraw() {
     //check if withdrawConfig is undefined or withdrawConfigError is not null
-    if(!withdrawConfig || withdrawConfigError){
+    if (!withdrawConfig || withdrawConfigError) {
       console.error("withdrawConfigError", withdrawConfigError?.message);
       addToast(
         "Error",
@@ -269,7 +251,7 @@ export const ManageFunds = ({
               : "Error initializing withdraw"
           }
         />,
-        "error"
+        "error",
       );
       return;
     }
@@ -314,23 +296,19 @@ export const ManageFunds = ({
       addToast(
         "Error",
         <ErrorDetails error={actionErrorMap[action]?.message as string} />,
-        "error"
+        "error",
       );
       setActionIsLoading(false);
     }
     if (actionConfirmError) {
-      addToast(
-        "Error",
-        <ErrorDetails error={actionConfirmError?.message} />,
-        "error"
-      );
+      addToast("Error", <ErrorDetails error={actionConfirmError?.message} />, "error");
       setActionIsLoading(false);
     }
     if (actionIsConfirming) {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -345,7 +323,7 @@ export const ManageFunds = ({
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={actionDataMap[action]!} />,
-        "success"
+        "success",
       );
       setActionIsLoading(false);
     }
@@ -359,11 +337,7 @@ export const ManageFunds = ({
   // Checkbox click function
   async function approveERC20TokenTransfer() {
     if (checked) {
-      addToast(
-        "Warning",
-        <ErrorDetails error={"already approved"} />,
-        "warning"
-      );
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
@@ -442,9 +416,7 @@ export const ManageFunds = ({
                 className="form-control form-control-lg py-2 mb-2 flex-grow-1"
               />
               <div className="flex-shrink-0 fs-5 d-flex  ms-3">
-                <div className="text-truncate ">
-                  {lendingDesk?.erc20.symbol}
-                </div>
+                <div className="text-truncate ">{lendingDesk?.erc20.symbol}</div>
               </div>
             </div>
           </div>

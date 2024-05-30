@@ -11,10 +11,10 @@ import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
-  useWriteErc721Approve,
   useReadErc721GetApproved,
-  useWriteNftyFinanceV1InitializeNewLoan,
   useSimulateNftyFinanceV1InitializeNewLoan,
+  useWriteErc721Approve,
+  useWriteNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { useQuery } from "urql";
@@ -46,7 +46,7 @@ export const QuickLoan = (props: any) => {
     },
   });
   const erc20s = (erc20sResult.data?.nftCollection?.erc20s ?? []).map(
-    (erc20) => erc20.erc20.id
+    (erc20) => erc20.erc20.id,
   );
 
   // GraphQL query
@@ -71,13 +71,12 @@ export const QuickLoan = (props: any) => {
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
 
-  const setSelectedLendingDesk = (e: string) =>
-    _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
 
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails(
       [selectedLendingDesk?.loanConfig?.nftCollection?.id],
-      chainId
+      chainId,
     );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
@@ -114,11 +113,12 @@ export const QuickLoan = (props: any) => {
   } = useWriteErc721Approve();
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useReadErc721GetApproved({
+  const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
+    {
       address: nftCollection?.nft.address as `0x${string}`,
       args: [BigInt(nftId || 0)],
-    });
+    },
+  );
 
   const {
     isLoading: approveIsConfirming,
@@ -136,7 +136,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveErc721Error.message} />,
-        "error"
+        "error",
       );
       setApprovalIsLoading(false);
     }
@@ -147,7 +147,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveConfirmError.message} />,
-        "error"
+        "error",
       );
       setApprovalIsLoading(false);
     }
@@ -155,7 +155,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -167,7 +167,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={approvalData!} />,
-        "success"
+        "success",
       );
       setApprovalIsLoading(false);
     }
@@ -183,9 +183,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -209,8 +207,8 @@ export const QuickLoan = (props: any) => {
             selectedLendingDesk?.loanConfig,
             amount,
             duration,
-            selectedLendingDesk?.erc20?.decimals || 18
-          ) * 100
+            selectedLendingDesk?.erc20?.decimals || 18,
+          ) * 100,
         ),
     ],
     query: {
@@ -238,7 +236,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={newLoanWriteError.message} />,
-        "error"
+        "error",
       );
       setNewLoanIsLoading(false);
     }
@@ -248,7 +246,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={newLoanConfirmError.message} />,
-        "error"
+        "error",
       );
       setNewLoanIsLoading(false);
     }
@@ -256,7 +254,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -268,25 +266,16 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
-        "success"
+        "success",
       );
       setNewLoanIsLoading(false);
     }
-  }, [
-    newLoanWriteError,
-    newLoanConfirmError,
-    newLoanIsConfirming,
-    newLoanIsConfirmed,
-  ]);
+  }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      addToast(
-        "Warning",
-        <ErrorDetails error={"already approved"} />,
-        "warning"
-      );
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
@@ -308,7 +297,7 @@ export const QuickLoan = (props: any) => {
 
     const lendingDeskBalance = fromWei(
       selectedLendingDesk?.lendingDesk?.balance,
-      selectedLendingDesk?.lendingDesk?.erc20?.decimals
+      selectedLendingDesk?.lendingDesk?.erc20?.decimals,
     );
 
     // Check if the user has enough balance in the lending desk
@@ -316,7 +305,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Error",
         <ErrorDetails error="InsufficientLendingDeskBalance" />,
-        "error"
+        "error",
       );
       return;
     }
@@ -337,20 +326,16 @@ export const QuickLoan = (props: any) => {
         "Error",
         <ErrorDetails
           error={
-            newLoanConfigError
-              ? newLoanConfigError.message
-              : "Error initializing loan"
+            newLoanConfigError ? newLoanConfigError.message : "Error initializing loan"
           }
         />,
-        "error"
+        "error",
       );
       return;
     }
     setNewLoanIsLoading(true);
     await newLoanWrite(newLoanConfig!.request);
   }
-
-
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5 overflow-hidden">
@@ -440,9 +425,7 @@ export const QuickLoan = (props: any) => {
                         name="desks"
                         id={item.lendingDesk.id}
                         onClick={(e) =>
-                          setSelectedLendingDesk(
-                            (e.target as HTMLInputElement).value
-                          )
+                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
                         }
                         value={JSON.stringify(item)}
                       />
@@ -471,7 +454,7 @@ export const QuickLoan = (props: any) => {
                                 <div className="fw-bold">
                                   {fromWei(
                                     item.loanConfig.maxAmount,
-                                    token?.token.decimals
+                                    token?.token.decimals,
                                   )}
                                 </div>
                                 <small className="fw-normal">max offer</small>
@@ -524,8 +507,7 @@ export const QuickLoan = (props: any) => {
       <div className="my-4 specific-w-600 mw-100 mx-auto">
         <GetLoanModal
           {...{
-            btnClass:
-              "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
+            btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
             disabled: !token || !nftCollection || !selectedLendingDesk,
             checked,
             onCheck: approveERC721TokenTransfer,

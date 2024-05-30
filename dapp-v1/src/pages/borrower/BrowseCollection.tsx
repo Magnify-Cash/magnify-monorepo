@@ -11,10 +11,10 @@ import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
-  useWriteErc721Approve,
   useReadErc721GetApproved,
-  useWriteNftyFinanceV1InitializeNewLoan,
   useSimulateNftyFinanceV1InitializeNewLoan,
+  useWriteErc721Approve,
+  useWriteNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
@@ -51,7 +51,7 @@ export const BrowseCollection = (props) => {
       if (!fetching && collection_address) {
         const fetchedNftArr: INft[] = await fetchNFTDetails(
           [collection_address],
-          chainId
+          chainId,
         );
         if (title) {
           title.innerHTML = `${fetchedNftArr[0].name} Liquidity Desks`;
@@ -109,10 +109,7 @@ export const BrowseCollection = (props) => {
   const [checked, setChecked] = useState(false);
 
   const getTokenDetails = async () => {
-    const fetchedTokens = await fetchTokensForCollection(
-      formattedData,
-      chainId
-    );
+    const fetchedTokens = await fetchTokensForCollection(formattedData, chainId);
     setTokens(fetchedTokens);
   };
 
@@ -137,11 +134,12 @@ export const BrowseCollection = (props) => {
   } = useWriteErc721Approve();
 
   //Fetch Approval Data for the NFT
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useReadErc721GetApproved({
+  const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
+    {
       address: nft?.address as `0x${string}`,
       args: [BigInt(nftId || 0)],
-    });
+    },
+  );
 
   const {
     isLoading: approveIsConfirming,
@@ -159,7 +157,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveErc721Error.message} />,
-        "error"
+        "error",
       );
       setApprovalIsLoading(false);
     }
@@ -170,7 +168,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveConfirmError.message} />,
-        "error"
+        "error",
       );
       setApprovalIsLoading(false);
     }
@@ -178,7 +176,7 @@ export const BrowseCollection = (props) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -190,7 +188,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={approvalData!} />,
-        "success"
+        "success",
       );
       setApprovalIsLoading(false);
     }
@@ -206,15 +204,12 @@ export const BrowseCollection = (props) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
     }
   }, [nftId, approvalData]);
-
 
   // Initialize New Loan Hook
   const {
@@ -227,10 +222,7 @@ export const BrowseCollection = (props) => {
       nft?.address as `0x${string}`,
       BigInt(nftId || 0),
       Math.round((duration || 0) * 24),
-      toWei(
-        amount ? amount.toString() : "0",
-        selectedLendingDesk?.erc20.decimals
-      ),
+      toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
       selectedLoanConfig &&
         selectedLendingDesk &&
         Math.round(
@@ -238,8 +230,8 @@ export const BrowseCollection = (props) => {
             selectedLoanConfig,
             amount,
             duration,
-            selectedLendingDesk?.erc20?.decimals || 18
-          ) * 100
+            selectedLendingDesk?.erc20?.decimals || 18,
+          ) * 100,
         ),
     ],
     query: {
@@ -267,7 +259,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={newLoanWriteError.message} />,
-        "error"
+        "error",
       );
       setNewLoanIsLoading(false);
     }
@@ -277,7 +269,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={newLoanConfirmError.message} />,
-        "error"
+        "error",
       );
       setNewLoanIsLoading(false);
     }
@@ -285,7 +277,7 @@ export const BrowseCollection = (props) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -297,25 +289,16 @@ export const BrowseCollection = (props) => {
       addToast(
         "Transaction Successful",
         <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
-        "success"
+        "success",
       );
       setNewLoanIsLoading(false);
     }
-  }, [
-    newLoanWriteError,
-    newLoanConfirmError,
-    newLoanIsConfirming,
-    newLoanIsConfirmed,
-  ]);
+  }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      addToast(
-        "Warning",
-        <ErrorDetails error={"already approved"} />,
-        "warning"
-      );
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
@@ -327,9 +310,7 @@ export const BrowseCollection = (props) => {
   }
   // Modal submit
   async function requestLoan(index: number) {
-    const form = document.getElementById(
-      `quickLoanForm${index}`
-    ) as HTMLFormElement;
+    const form = document.getElementById(`quickLoanForm${index}`) as HTMLFormElement;
     const isValid = form.checkValidity();
     if (!isValid) {
       form.reportValidity();
@@ -337,7 +318,7 @@ export const BrowseCollection = (props) => {
     }
     const lendingDeskBalance = fromWei(
       selectedLendingDesk?.balance,
-      selectedLendingDesk?.erc20?.decimals
+      selectedLendingDesk?.erc20?.decimals,
     );
 
     // Check if the user has enough balance in the lending desk
@@ -345,7 +326,7 @@ export const BrowseCollection = (props) => {
       addToast(
         "Error",
         <ErrorDetails error="InsufficientLendingDeskBalance" />,
-        "error"
+        "error",
       );
       return;
     }
@@ -354,8 +335,12 @@ export const BrowseCollection = (props) => {
       console.log("newLoanConfigError", newLoanConfigError?.message);
       addToast(
         "Error",
-        <ErrorDetails error={newLoanConfigError?newLoanConfigError.message:"Error initializing loan"} />,
-        "error"
+        <ErrorDetails
+          error={
+            newLoanConfigError ? newLoanConfigError.message : "Error initializing loan"
+          }
+        />,
+        "error",
       );
       return;
     }
@@ -387,18 +372,14 @@ export const BrowseCollection = (props) => {
                 <th className="py-3 bg-primary-subtle text-primary-emphasis">
                   Currency
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis">
-                  Offer
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis">Offer</th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Duration
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
                   Interest Rate
                 </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3">
-                  {" "}
-                </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
               </tr>
             </thead>
             <tbody>
@@ -407,10 +388,7 @@ export const BrowseCollection = (props) => {
                 return (
                   <tr className="align-middle" key={loanConfig.lendingDesk.id}>
                     <td className="py-3 ps-3">
-                      <Blockies
-                        seed={loanConfig.lendingDesk.owner.id}
-                        size={16}
-                      />
+                      <Blockies seed={loanConfig.lendingDesk.owner.id} size={16} />
                     </td>
                     <td className="py-3">
                       {formatAddress(loanConfig.lendingDesk.owner.id)}
@@ -430,21 +408,19 @@ export const BrowseCollection = (props) => {
                     <td className="py-3">
                       {fromWei(
                         loanConfig.minAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals
+                        loanConfig.lendingDesk?.erc20?.decimals,
                       )}{" "}
                       -{" "}
                       {fromWei(
                         loanConfig.maxAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals
+                        loanConfig.lendingDesk?.erc20?.decimals,
                       )}
                     </td>
                     <td className="py-3">
-                      {loanConfig.minDuration / 24}-
-                      {loanConfig.maxDuration / 24} days
+                      {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
                     </td>
                     <td className="py-3">
-                      {loanConfig.minInterest / 100}-
-                      {loanConfig.maxInterest / 100}%
+                      {loanConfig.minInterest / 100}-{loanConfig.maxInterest / 100}%
                     </td>
                     <td className="py-3 pe-3">
                       <GetLoanModal
