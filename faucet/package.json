@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.37.1",
-    "connectkit": "1.7.3",
+    "connectkit": "file:../temp/packages/connectkit",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "7.51.4",
     "viem": "2.x",
-    "wagmi": "2.9.2"
+    "wagmi": "2.9.8"
   }
 }
