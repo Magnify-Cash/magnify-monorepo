@@ -305,7 +305,7 @@ export const Base = () => {
                 </li>
                 <li className="nav-item">
                   <NavLink
-                    to="https://discord.gg/nfty-finance"
+                    to="https://discord.gg/magnifycash"
                     target="_blank" // Opens the link in a new tab
                     rel="noopener noreferrer" // Recommended for security
                     onClick={() => closeSidebar()}
@@ -349,8 +349,7 @@ export const Base = () => {
             <div className="me-3 d-flex align-items-center">
               <i className="fa-solid fa-newspaper me-1"></i>
               <span className="alert-text">
-                Alert: What's New — Improved Quick Loan Experience, Borrower & Lender
-                Dashboards
+                Alert: What's New — Added Coinbase Smart Wallet, WAGMI V2
               </span>
               &nbsp;
               <a
