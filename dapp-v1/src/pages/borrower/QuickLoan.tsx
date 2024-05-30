@@ -338,7 +338,7 @@ export const QuickLoan = (props: any) => {
   }
 
   return (
-    <div className="container-md px-3 px-sm-4 px-lg-5 overflow-hidden">
+    <div className="container-md px-3 px-sm-4 px-lg-5" style={{"overflow":"clip"}}>
       <div className="card shadow border-0 rounded-4 specific-w-600 mw-100 mx-auto">
         <div className="card-body">
           <div className="mb-3">
