@@ -50,7 +50,11 @@ const LoanDetails = ({
   const [checked, setChecked] = useState(false);
   //checked state for the checkbox on resolve loan modal
   const [checkedResolveLoan, setCheckedResolveLoan] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+
+  //reset the form when the make payment modal is closed
+  const resetForm = () => {
+    setPayBackAmount("0");
+  };
 
   // Initial state can be payback or liquidate based on the props
   const initialAction = payback ? "payback" : "liquidate";
@@ -641,8 +645,7 @@ const LoanDetails = ({
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Make Payment"
-                btnOnClick={() => setModalOpen(true)}
-                onClose={() => setModalOpen(false)}
+                onClose={resetForm}
                 disabled={!loanActiveForOneHour}
                 modalId={`paybackModal${loan?.id}`}
                 modalTitle="Make Loan Payment"
@@ -782,11 +785,9 @@ const LoanDetails = ({
                 btnText="Resolve Loan"
                 btnOnClick={() => {
                   setAction("resolve");
-                  setModalOpen(true);
                 }}
                 onClose={() => {
                   setAction(initialAction);
-                  setModalOpen(false);
                 }}
                 disabled={!loanActiveForOneHour}
                 modalId={`resolveLoanModal${loan?.id}`}
@@ -934,8 +935,6 @@ const LoanDetails = ({
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Liquidate Overdue Loan"
                 disabled={!loanActiveForOneHour}
-                btnOnClick={() => setModalOpen(true)}
-                onClose={() => setModalOpen(false)}
                 modalId={`liquidateModal2${loan?.id}`}
                 modalTitle="Liquidate Overdue Loan"
                 modalContent={

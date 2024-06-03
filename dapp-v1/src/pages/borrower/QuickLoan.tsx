@@ -94,6 +94,22 @@ export const QuickLoan = (props: any) => {
     }
   }
 
+  //This resets the data in the form
+  const resetForm = () => {
+    setNftId(undefined);
+    setDuration(undefined);
+    setAmount(undefined);
+    setChecked(false);
+    _setSelectedLendingDesk(undefined);
+    //This resets the styling of lending desk selection form
+    const button = document.querySelector(
+      ".nfty-check .btn-check:checked",
+    ) as HTMLInputElement;
+    if (button) {
+      button.checked = false;
+    }
+  };
+
   /*
   toast hooks
   */
@@ -512,6 +528,7 @@ export const QuickLoan = (props: any) => {
             checked,
             onCheck: approveERC721TokenTransfer,
             onSubmit: requestLoan,
+            onModalClose: resetForm,
             nft,
             duration,
             setDuration,

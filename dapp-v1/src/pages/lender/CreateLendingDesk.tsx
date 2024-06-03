@@ -179,6 +179,10 @@ export const CreateLendingDesk = (props: any) => {
     }
   };
 
+  //Reset form on closing the confirm lending desk modal
+  const resetForm = () => {
+    setDeskFundingAmount("0");
+  };
   /*
   toast hooks
   */
@@ -710,6 +714,7 @@ export const CreateLendingDesk = (props: any) => {
               btnText="Finalize Lending Desk"
               modalId="txModal"
               modalTitle="Confirm Lending Desk"
+              onClose={resetForm}
               modalContent={
                 <div>
                   <div className="card-body">

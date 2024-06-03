@@ -46,12 +46,18 @@ export const ManageFunds = ({
   const {
     register,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ManageFundForm>();
 
   const [checked, setChecked] = useState(false);
   //use watch to get the value of the input field as it changes
   const amount = watch("amount", 0);
+
+  //reset the form when modal is closed
+  const resetForm = () => {
+    reset({ amount: 0 });
+  };
 
   let btnText: string;
   let modalId: string;
@@ -357,6 +363,7 @@ export const ManageFunds = ({
       btnText={btnText}
       modalId={modalId}
       modalTitle={modalTitle}
+      onClose={resetForm}
       modalFooter={
         <div className="modal-footer text-start">
           {action === "deposit" && (

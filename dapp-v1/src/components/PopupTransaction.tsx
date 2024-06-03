@@ -1,4 +1,5 @@
 import type React from "react";
+import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 interface PopupTransactionProps {
@@ -49,6 +50,25 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
     );
   }
 
+  //Run onClose function when modal is closed
+  useEffect(() => {
+    const modal = document.getElementById(props.modalId);
+    const handler = () => {
+      if (props.onClose) {
+        props.onClose();
+      }
+    };
+    if (modal) {
+      modal.addEventListener("hidden.bs.modal", handler);
+    }
+    // Cleanup function
+    return () => {
+      if (modal) {
+        modal.removeEventListener("hidden.bs.modal", handler);
+      }
+    };
+  }, [props.modalId, props.onClose]);
+
   return (
     <div className={props.divClass}>
       {snippet}
@@ -62,7 +82,6 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
               <h1 className="modal-title fs-4 fw-medium">{props.modalTitle}</h1>
               <button
                 id="closeButton"
-                onClick={props.onClose}
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"

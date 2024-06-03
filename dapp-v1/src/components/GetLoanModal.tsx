@@ -15,6 +15,7 @@ type GetLoanModalProps = {
   onCheck: () => void;
   checked: boolean;
   onSubmit: () => void;
+  onModalClose: () => void;
   loanConfig?: LoanConfig;
   lendingDesk?: LendingDesk;
   nft?: INft;
@@ -49,6 +50,7 @@ export default function GetLoanModal({
   disabled,
   btnClass,
   btnOnClick,
+  onModalClose,
   onCheck,
   checked,
   index,
@@ -81,6 +83,7 @@ export default function GetLoanModal({
   return (
     <PopupTransaction
       btnOnClick={btnOnClick}
+      onClose={onModalClose}
       btnClass={btnClass}
       btnText="Get a Loan"
       modalId={`txModal${index || ""}`}

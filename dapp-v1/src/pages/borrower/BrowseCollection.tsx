@@ -118,6 +118,16 @@ export const BrowseCollection = (props) => {
     setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
 
+  //This resets the data in the form
+  const resetForm = () => {
+    setDuration(undefined);
+    setAmount(undefined);
+    setNftId(undefined);
+    setChecked(false);
+    setSelectedLendingDesk(null);
+    setSelectedLoanConfig(null);
+  };
+
   /*
   toast hooks
   */
@@ -432,6 +442,7 @@ export const BrowseCollection = (props) => {
                             setSelectedLoanConfig(loanConfig);
                           },
                           onSubmit: () => requestLoan(index),
+                          onModalClose: resetForm,
                           approvalIsLoading,
                           newLoanIsLoading,
                           newLoanConfigIsLoading,
