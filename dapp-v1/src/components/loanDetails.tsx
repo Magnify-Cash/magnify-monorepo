@@ -519,7 +519,7 @@ const LoanDetails = ({
       <div className="card border-0 shadow rounded-4 h-100">
         <div className="card-body p-4">
           <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
-            <Blockies seed={`${loan?.nftId}-${loan?.nftCollection.id}`} size={32} />
+            <Blockies seed={`${loan?.nftId}-${loan?.nftCollection.id}`} size={16} />
             {status === "Defaulted" ? (
               <div
                 className="position-absolute top-50 start-50 translate-middle z-1 w-100 h-100 d-flex align-items-center justify-content-center"

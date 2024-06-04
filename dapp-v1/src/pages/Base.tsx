@@ -87,7 +87,7 @@ export const Base = () => {
   };
 
   // theme
-  const activeClass = "nav-link d-flex align-items-center active";
+  const activeClass = "nav-link d-flex align-items-center active fw-bold fs-5";
   const inactiveClass = "nav-link d-flex align-items-center";
   const cookie = getCookie("colorMode");
   const initialMode: Types.Mode =
@@ -153,21 +153,10 @@ export const Base = () => {
               />
             </div>
             <div className="offcanvas-body">
-              <NavLink
-                to="/"
-                onClick={() => closeSidebar()}
-                className="btn btn-link d-block w-100 text-start bg-primary-subtle text-primary-emphasis"
-              >
-                <i className="fa-light fa-home me-1" />
-                Home
-              </NavLink>
-
               {/* Borrow */}
-              <ul className="sidebar-nav mt-3">
+              <ul className="sidebar-nav">
                 <li>
-                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                    Borrow
-                  </h6>
+                  <h6 className="sidebar-header fw-bold">Borrower</h6>
                 </li>
                 <li className="nav-item">
                   <NavLink
@@ -217,9 +206,7 @@ export const Base = () => {
               {/* Lend */}
               <ul className="sidebar-nav mt-3">
                 <li>
-                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                    Lend
-                  </h6>
+                  <h6 className="sidebar-header fw-bold">Lender</h6>
                 </li>
                 <li className="nav-item">
                   <NavLink
@@ -264,14 +251,12 @@ export const Base = () => {
                   </NavLink>
                 </li>
               </ul>
-              {/* Borrow */}
+              {/* End Lend */}
 
               {/* Support */}
               <ul className="sidebar-nav mt-3">
                 <li>
-                  <h6 className="sidebar-header fw-normal text-body-secondary opacity-75">
-                    Support
-                  </h6>
+                  <h6 className="sidebar-header fw-bold">Support</h6>
                 </li>
                 {/* <li className="nav-item">
                 <NavLink
@@ -319,7 +304,7 @@ export const Base = () => {
                     Community
                   </NavLink>
                 </li>
-                <li className="nav-item bold">
+                <li className="nav-item">
                   <NavLink
                     to="https://faucet.magnify.cash"
                     target="_blank" // Opens the link in a new tab
@@ -412,11 +397,23 @@ export const Base = () => {
                   }) => {
                     return (
                       <>
-                        <button onClick={show} className="btn btn-md btn-primary">
-                          {isConnected && <small>{truncatedAddress}</small>}
-                          {!isConnected && <small>Connect</small>}
-                          <i className="fa-solid fa-wallet ms-2" />
-                        </button>
+                        <div>
+                          <button
+                            onClick={show}
+                            className="btn btn-md btn-primary d-sm-none"
+                          >
+                            {!isConnected && <small>Connect</small>}
+                            <i className="fa-solid fa-wallet" />
+                          </button>
+                          <button
+                            onClick={show}
+                            className="btn btn-md btn-primary d-none d-sm-inline"
+                          >
+                            {isConnected && <small>{truncatedAddress}</small>}
+                            {!isConnected && <small>Connect</small>}
+                            <i className="fa-solid fa-wallet ms-2" />
+                          </button>
+                        </div>
                       </>
                     );
                   }}

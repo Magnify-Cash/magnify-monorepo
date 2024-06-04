@@ -19,8 +19,17 @@ export const ManageLendingDesks = (props: any) => {
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
+      <NavLink
+        to="/create-desk"
+        className="btn btn-primary btn-sm mb-3 py-2 px-3 rounded-pill me-auto d-sm-none"
+        role="button"
+        aria-label="Create"
+      >
+        <i className="fa-solid fa-plus" />
+        <span className="d-none d-sm-inline">Create Lending Desk</span>
+      </NavLink>
       <div className="d-flex align-items-center">
-        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
           <li className="nav-item" role="presentation">
             <button
               className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
@@ -52,7 +61,7 @@ export const ManageLendingDesks = (props: any) => {
         </ul>
         <NavLink
           to="/create-desk"
-          className="btn btn-primary py-2 px-3 rounded-pill ms-auto"
+          className="btn btn-primary mb-3 py-2 px-3 rounded-pill ms-auto d-none d-sm-inline"
           role="button"
           aria-label="Create"
         >

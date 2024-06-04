@@ -398,7 +398,7 @@ export const BrowseCollection = (props) => {
                 return (
                   <tr className="align-middle" key={loanConfig.lendingDesk.id}>
                     <td className="py-3 ps-3">
-                      <Blockies seed={loanConfig.lendingDesk.owner.id} size={16} />
+                      <Blockies seed={loanConfig.lendingDesk.owner.id} size={8} />
                     </td>
                     <td className="py-3">
                       {formatAddress(loanConfig.lendingDesk.owner.id)}
@@ -435,7 +435,7 @@ export const BrowseCollection = (props) => {
                     <td className="py-3 pe-3">
                       <GetLoanModal
                         {...{
-                          btnClass: "btn btn-primary rounded-pill px-4",
+                          btnClass: "btn btn-outline-primary rounded-pill px-4",
                           disabled: false,
                           btnOnClick: () => {
                             setSelectedLendingDesk(loanConfig?.lendingDesk);

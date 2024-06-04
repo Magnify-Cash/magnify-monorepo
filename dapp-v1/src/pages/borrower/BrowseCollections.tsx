@@ -94,12 +94,9 @@ export const BrowseCollections = (props: any) => {
               <tr>
                 <th
                   className="py-3 bg-primary-subtle text-primary-emphasis ps-3"
-                  colSpan={2}
+                  colSpan={3}
                 >
                   Collection
-                </th>
-                <th className="py-3 bg-primary-subtle text-primary-emphasis  text-end">
-                  {""}
                 </th>
               </tr>
             </thead>
@@ -120,18 +117,19 @@ export const BrowseCollections = (props: any) => {
                           alt={nftArr[index]?.symbol}
                         />
                       ) : (
-                        <Blockies seed={nftArr[index]?.address} size={16} />
+                        <Blockies seed={nftArr[index]?.address} size={8} />
                       )}
                     </td>
                     <td className="py-3">
                       {nftArr.length ? nftArr[index].name : null}
                     </td>
-                    <td className="py-3 pe-5 text-end">
+                    <td className="py-3">
                       <NavLink
                         to={`/explore/${nftCollection.id}`}
-                        className="btn btn-primary rounded-pill px-4"
+                        className="btn btn-outline-primary rounded-pill px-4"
                       >
-                        Find a Loan
+                        <i className="fa-solid fa-link" />
+                        <span className="d-none d-sm-inline ms-3">Find a Loan</span>
                       </NavLink>
                     </td>
                   </tr>
