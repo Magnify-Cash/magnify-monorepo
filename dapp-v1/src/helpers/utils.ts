@@ -76,7 +76,8 @@ export function calculateTimeInfo(startTime, durationInHours) {
   );
   const elapsedSeconds = Math.floor((elapsedDurationInMillis % (60 * 1000)) / 1000);
   const elapsedTime = `${elapsedDays}D ${elapsedHours}HR ${elapsedMinutes}MIN ${elapsedSeconds}SEC`;
-
+  // Check if the loan is active i.e. min 1 hour has passed
+  const isLoanActive = Math.floor(elapsedDurationInMillis / (3600 * 1000)) >= 1;
   // Check if there is any time left
   const isTimeLeft = remainingDurationInMillis > 0;
 
@@ -86,8 +87,10 @@ export function calculateTimeInfo(startTime, durationInHours) {
     endDate,
     remainingTime,
     elapsedTime,
+    elapsedHours,
     isTimeLeft,
     calculateProgress,
+    isLoanActive,
   };
 }
 

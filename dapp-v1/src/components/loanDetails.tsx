@@ -45,7 +45,6 @@ const LoanDetails = ({
   form hooks / functions
   */
   const [payBackAmount, setPayBackAmount] = useState("0");
-  const [loanActiveForOneHour, setLoanActiveForOneHour] = useState(true);
   //checked state for the checkbox on make payment modal
   const [checked, setChecked] = useState(false);
   //checked state for the checkbox on resolve loan modal
@@ -103,16 +102,12 @@ const LoanDetails = ({
   useEffect(() => {
     if (loanAmountDueError) {
       if (loanAmountDueError.message.includes("LoanMustBeActiveForMin1Hour")) {
-        setLoanActiveForOneHour(false);
         return;
       }
       //Display error toast only if the error is not LoanMustBeActiveForMin1Hour
       addToast("Error", <ErrorDetails error={loanAmountDueError.message} />, "error");
     }
-    if (loanAmountDueIsFetched) {
-      setLoanActiveForOneHour(true);
-    }
-  }, [loanAmountDueError, loanAmountDueIsFetched]);
+  }, [loanAmountDueError]);
 
   //approveErc20 hook
   const {
@@ -646,7 +641,7 @@ const LoanDetails = ({
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Make Payment"
                 onClose={resetForm}
-                disabled={!loanActiveForOneHour}
+                disabled={!timeInfo.isLoanActive}
                 modalId={`paybackModal${loan?.id}`}
                 modalTitle="Make Loan Payment"
                 modalContent={
@@ -789,7 +784,7 @@ const LoanDetails = ({
                 onClose={() => {
                   setAction(initialAction);
                 }}
-                disabled={!loanActiveForOneHour}
+                disabled={!timeInfo.isLoanActive}
                 modalId={`resolveLoanModal${loan?.id}`}
                 modalTitle="Resolve Loan"
                 modalContent={
@@ -934,7 +929,7 @@ const LoanDetails = ({
               <PopupTransaction
                 btnClass="btn btn-primary btn-lg rounded-pill w-100 d-block mt-3"
                 btnText="Liquidate Overdue Loan"
-                disabled={!loanActiveForOneHour}
+                disabled={!timeInfo.isLoanActive}
                 modalId={`liquidateModal2${loan?.id}`}
                 modalTitle="Liquidate Overdue Loan"
                 modalContent={
@@ -1022,7 +1017,7 @@ const LoanDetails = ({
               />
             ) : null}
           </div>
-          {!loanActiveForOneHour ? (
+          {!timeInfo.isLoanActive ? (
             <p className="text-danger mt-1">
               {"Loan must be active for at least one hour for interaction."}
             </p>
