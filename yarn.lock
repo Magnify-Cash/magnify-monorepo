@@ -5373,6 +5373,20 @@ confbox@^0.1.7:
   resolved "https://registry.yarnpkg.com/confbox/-/confbox-0.1.7.tgz#ccfc0a2bcae36a84838e83a3b7f770fb17d6c579"
   integrity sha512-uJcB/FKZtBMCJpK8MQji6bJHgu1tixKPxRLeGkNzBoOZzpnZUJm0jm2/sBDWcuBx1dYgxV4JU+g5hmNxCyAmdA==
 
+connectkit@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/connectkit/-/connectkit-1.8.0.tgz#c1a4850ac56d96552c661dcc81f121e4171b543c"
+  integrity sha512-3QxGpeBhU4k+cDiUZhhzNxDOx0g4tBa99M2LJP2QT+D2Cu/IkQK32qSe+Gn68mNAqrm+n5CYfqELUnXNL+QfAw==
+  dependencies:
+    buffer "^6.0.3"
+    detect-browser "^5.3.0"
+    framer-motion "^6.3.11"
+    qrcode "^1.5.0"
+    react-transition-state "^1.1.4"
+    react-use-measure "^2.1.1"
+    resize-observer-polyfill "^1.5.1"
+    styled-components "^5.3.5"
+
 "connectkit@file:temp/packages/connectkit":
   version "1.7.3"
   dependencies:
