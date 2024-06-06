@@ -334,12 +334,12 @@ export const Base = () => {
             <div className="me-3 d-flex align-items-center">
               <i className="fa-solid fa-newspaper me-1"></i>
               <span className="alert-text">
-                Alert: What's New — Added Coinbase Smart Wallet, WAGMI V2
+                Alert: What's New — Enhanced UI and responsiveness, fixed stats for borrowers and lenders.
               </span>
               &nbsp;
               <a
                 target="_blank"
-                href="https://blog.magnify.cash/may-30th-release-notes/"
+                href="https://blog.magnify.cash/june-6th-release-notes/"
                 rel="noreferrer"
               >
                 Read more here...
