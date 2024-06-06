@@ -13,6 +13,7 @@ import {
   useWriteNftyFinanceV1MakeLoanPayment,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
@@ -23,6 +24,7 @@ interface LoanDetailsProps {
   loan: Loan;
   payback?: boolean;
   liquidate?: boolean;
+  isLender?: boolean;
   status: string;
   reexecuteQuery?: () => void;
 }
@@ -34,6 +36,7 @@ const LoanDetails = ({
   liquidate,
   status,
   reexecuteQuery,
+  isLender,
 }: LoanDetailsProps) => {
   /*
   wagmi hooks
@@ -509,11 +512,44 @@ const LoanDetails = ({
     actionIsConfirming,
   ]);
 
+  // get amount due
+  // if still active, use getLoanAmountDue
+  // if not, calculate manually
+  let loanPaymentAmountDue: number;
+  if (status === "Active" && loanAmountDue) {
+    const _ = fromWei(loanAmountDue, loan?.lendingDesk?.erc20?.decimals);
+    loanPaymentAmountDue = Number.parseFloat(_);
+  } else {
+    loanPaymentAmountDue =
+      Number.parseFloat(fromWei(loan?.amount, loan?.lendingDesk?.erc20?.decimals)) -
+      Number.parseFloat(
+        fromWei(loan?.amountPaidBack, loan?.lendingDesk?.erc20?.decimals),
+      );
+  }
+
   return (
-    <div className="col-md-6 col-xl-4 mb-4" key={loan?.id}>
+    <div className="col-sm-6 col-xl-4 mb-4" key={loan?.id}>
       <div className="card border-0 shadow rounded-4 h-100">
-        <div className="card-body p-4">
-          <div className="specific-w-100 specific-h-100 d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative">
+        {isLender ? (
+          <div className="card-header p-0">
+            <NavLink
+              className="btn btn-lg py-2 w-100 focus-ring bg-primary-subtle"
+              to={`/manage-desks/${loan.lendingDesk?.id}`}
+            >
+              Lending Desk #{loan.lendingDesk?.id}
+            </NavLink>
+          </div>
+        ) : null}
+        <div className="card-body px-4">
+          {status === "Defaulted" ? (
+            <i className="fa-solid fa-times-circle text-danger-emphasis fs-4" />
+          ) : status === "Resolved" ? (
+            <i className="fa-solid fa-check-circle text-success-emphasis fs-4" />
+          ) : null}
+          <div
+            style={{ height: "60px", width: "60px" }}
+            className="d-flex align-items-center justify-content-center rounded-circle overflow-hidden mx-auto position-relative"
+          >
             <Blockies seed={`${loan?.nftId}-${loan?.nftCollection.id}`} size={16} />
             {status === "Defaulted" ? (
               <div
@@ -528,18 +564,20 @@ const LoanDetails = ({
               </div>
             ) : null}
           </div>
-          <div className="h5 text-center mt-3">
+          <div className="h5 text-center mt-3 mb-0">
             {loan?.nftCollection.id} #{loan?.nftId}
           </div>
           <div className="container-fluid g-0 mt-4">
             <div className="row g-3">
-              <div className="col-sm">
+              <div
+                className={status !== "Resolved" ? "col-xs-12 col-sm-6" : "col-12 px-3"}
+              >
                 <div
                   className={`p-2 rounded-3 ${
                     status === "Defaulted" ? "bg-secondary-subtle" : "bg-info-subtle"
                   } text-center`}
                 >
-                  <div className="text-info-emphasis h3 mb-3">
+                  <div className="text-info-emphasis h3">
                     <i className="fa-light fa-hand-holding-dollar" />
                   </div>
                   <div className="h6 mb-0">
@@ -549,30 +587,28 @@ const LoanDetails = ({
                   <div>borrowed</div>
                 </div>
               </div>
-              <div className="col-sm">
-                <div
-                  className={`p-2 rounded-3 ${
-                    status === "Defaulted" ? "bg-secondary-subtle" : "bg-success-subtle"
-                  } text-center`}
-                >
-                  <div className="text-success-emphasis h3 mb-3">
-                    <i className="fa-light fa-calendar-lines" />
+              {status !== "Resolved" ? (
+                <div className="col-xs-12 col-sm-6">
+                  <div
+                    className={`p-2 rounded-3 ${
+                      status === "Defaulted"
+                        ? "bg-secondary-subtle"
+                        : "bg-success-subtle"
+                    } text-center`}
+                  >
+                    <div className="text-success-emphasis h3">
+                      <i className="fa-light fa-calendar-lines" />
+                    </div>
+                    <div className="h6 mb-0">
+                      ~
+                      {`${loanPaymentAmountDue.toFixed(4)} ${
+                        loan?.lendingDesk?.erc20.symbol
+                      }`}
+                    </div>
+                    <div>unpaid</div>
                   </div>
-                  <div className="h6 mb-0">
-                    {Number.parseFloat(
-                      fromWei(loan?.amount, loan?.lendingDesk?.erc20.decimals),
-                    ) -
-                      Number.parseFloat(
-                        fromWei(
-                          loan?.amountPaidBack,
-                          loan?.lendingDesk?.erc20.decimals,
-                        ),
-                      )}{" "}
-                    {loan?.lendingDesk?.erc20.symbol}
-                  </div>
-                  <div>unpaid</div>
                 </div>
-              </div>
+              ) : null}
               <div className="mt-2">
                 {status === "Active" ? (
                   <div className="mt-2">
@@ -693,14 +729,7 @@ const LoanDetails = ({
                         <div className="col-12">
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">
-                                {loanAmountDue
-                                  ? fromWei(
-                                      loanAmountDue,
-                                      loan?.lendingDesk?.erc20?.decimals,
-                                    )
-                                  : "0"}
-                              </div>
+                              <div className="h3">{loanPaymentAmountDue}</div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
                               </span>
@@ -836,14 +865,7 @@ const LoanDetails = ({
                         <div className="col-12">
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
-                              <div className="h3">
-                                {loanAmountDue
-                                  ? fromWei(
-                                      loanAmountDue,
-                                      loan?.lendingDesk?.erc20?.decimals,
-                                    )
-                                  : "0"}
-                              </div>
+                              <div className="h3">{loanPaymentAmountDue}</div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
                               </span>
@@ -866,14 +888,7 @@ const LoanDetails = ({
                           className="form-control form-control-lg flex-grow-1"
                           id="enter-amount"
                           placeholder="Enter Amount"
-                          value={
-                            loanAmountDue
-                              ? fromWei(
-                                  loanAmountDue,
-                                  loan?.lendingDesk?.erc20?.decimals,
-                                )
-                              : "0"
-                          }
+                          value={loanPaymentAmountDue}
                         />
                         <div className="d-flex align-items-center flex-shrink-0 ms-3">
                           <span>{loan?.lendingDesk?.erc20.symbol}</span>
@@ -982,10 +997,7 @@ const LoanDetails = ({
                           <div className="h-100 rounded bg-success-subtle text-center p-2">
                             <div className="d-flex align-items-center justify-content-center">
                               <div className="h3">
-                                {fromWei(
-                                  loanAmountDue ?? BigInt("0"),
-                                  loan?.lendingDesk?.erc20?.decimals,
-                                )}
+                                {`${loanPaymentAmountDue} ${loan?.lendingDesk?.erc20.symbol}`}
                               </div>
                               <span className="text-body-secondary ms-2">
                                 {loan?.lendingDesk?.erc20.symbol}
@@ -1023,11 +1035,6 @@ const LoanDetails = ({
             </p>
           ) : null}
         </div>
-        {status === "Defaulted" ? (
-          <i className="fa-solid fa-times-circle text-danger-emphasis fs-4 position-absolute top-0 start-0 m-2" />
-        ) : status === "Resolved" ? (
-          <i className="fa-solid fa-check-circle text-success-emphasis fs-4 position-absolute top-0 start-0 m-2" />
-        ) : null}
       </div>
     </div>
   );

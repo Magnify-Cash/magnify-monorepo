@@ -416,9 +416,12 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
   borrower.save();
 
   // Update lending desk stats
-  lendingDesk.loansResolvedCount = lendingDesk.loansResolvedCount.plus(
-    BigInt.fromI32(1)
-  );
+  if (event.params.resolved){
+    lendingDesk.loansResolvedCount = lendingDesk.loansResolvedCount.plus(
+      BigInt.fromI32(1)
+    )
+  }
+  lendingDesk.balance = lendingDesk.balance.plus(event.params.amountPaid);
   lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.minus(
     event.params.amountPaid
   );

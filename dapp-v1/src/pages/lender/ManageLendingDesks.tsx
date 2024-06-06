@@ -136,11 +136,6 @@ const LendingDeskRow = ({ desks, status }) => {
                 <h6 className="fw-medium text-body-secondary">Collections</h6>
                 <p className="m-0">{desk.loanConfigs.length}</p>
                 <br />
-                <h6 className="fw-medium text-body-secondary">Available Liquidity</h6>
-                <div className="text-body-secondary">
-                  {fromWei(desk.balance, desk?.erc20?.decimals)} {desk?.erc20?.symbol}
-                </div>
-                <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
                 <h6 className="fw-medium text-body-secondary">Total Loans</h6>
@@ -160,6 +155,12 @@ const LendingDeskRow = ({ desks, status }) => {
                 <hr className="d-xl-none" />
               </div>
               <div className="col-xl-3">
+                <h6 className="fw-medium text-body-secondary">Available Liquidity</h6>
+                <div className="text-body-secondary">
+                  <strong>{fromWei(desk.balance, desk?.erc20?.decimals)}</strong>
+                  {` ${desk?.erc20?.symbol}`}
+                </div>
+                <br />
                 <h6 className="fw-medium text-body-secondary">Net Liquidity Issued</h6>
                 <div className="text-body-secondary" style={{ height: "24px" }}>
                   <strong>

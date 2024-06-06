@@ -188,37 +188,28 @@ query BorrowerDashboard($walletAddress: String!) {
 }
 
 query LenderDashboard($walletAddress: String!) {
-  lendingDesks(where: { owner: $walletAddress }) {
+   loans(where: { lender: $walletAddress }) {
     id
-    balance
-    erc20 {
+    amount
+    amountPaidBack
+    duration
+    startTime
+    nftCollection {
       id
-      symbol
-      decimals
     }
-    loanConfigs {
-      nftCollection {
-        id
-      }
-    }
-    loans(where: { lender: $walletAddress }) {
+    lendingDesk {
       id
-      amount
-      amountPaidBack
-      duration
-      startTime
-      nftCollection {
+      erc20 {
         id
+        symbol
+        decimals
       }
-      nftId
-      interest
-      status
-      lender {
-        id
-      }
-      borrower {
-        id
-      }
+    }
+    nftId
+    interest
+    status
+    lender {
+      id
     }
   }
 }

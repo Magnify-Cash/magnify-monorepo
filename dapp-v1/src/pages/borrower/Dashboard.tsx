@@ -21,7 +21,7 @@ export const Dashboard = (props: any) => {
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="d-flex align-items-center">
         <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
-          <li className="nav-item" role="presentation">
+          <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-active-tab"
@@ -35,7 +35,7 @@ export const Dashboard = (props: any) => {
               Active Loans
             </button>
           </li>
-          <li className="nav-item" role="presentation">
+          <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-pending-default-tab"
@@ -49,7 +49,7 @@ export const Dashboard = (props: any) => {
               Pending Default
             </button>
           </li>
-          <li className="nav-item" role="presentation">
+          <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-defaulted-tab"
@@ -63,7 +63,7 @@ export const Dashboard = (props: any) => {
               Defaulted Loans
             </button>
           </li>
-          <li className="nav-item" role="presentation">
+          <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-completed-tab"
