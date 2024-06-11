@@ -91,7 +91,7 @@ query ManageLendingDesk($deskId: String!) {
 }
 
 query BrowseCollections {
-  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
     items {
       id
       loanConfigs {
@@ -114,7 +114,7 @@ query BrowseCollections {
 }
 
 query BrowseCollection($nftCollectionId: String) {
-  lendingDesks(where: { status: Active, balance_gt: 0 }) {
+  lendingDesks(where: { status: Active, balance_gt: "0" }) {
     items {
       id
       balance
@@ -145,7 +145,7 @@ query BrowseCollection($nftCollectionId: String) {
 }
 
 query QuickLoan($erc20Id: String, $nftCollectionId: String) {
-  lendingDesks(where: { erc20Id: $erc20Id, status: Active, balance_gt: 0 }) {
+  lendingDesks(where: { erc20Id: $erc20Id, status: Active, balance_gt: "0" }) {
     items {
       id
       balance
@@ -170,7 +170,7 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
       }
     }
   }
-  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
     items {
       id
     }

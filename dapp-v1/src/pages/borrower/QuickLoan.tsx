@@ -45,7 +45,7 @@ export const QuickLoan = (props: any) => {
       nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
     },
   });
-  const erc20s = (erc20sResult.data?.nftCollection?.erc20s ?? []).map(
+  const erc20s = (erc20sResult.data?.nftCollection?.erc20s?.items ?? []).map(
     (erc20) => erc20.erc20.id,
   );
 
@@ -88,8 +88,8 @@ export const QuickLoan = (props: any) => {
     }
   }, [selectedLendingDesk]);
 
-  for (const lendingDesk of result.data?.lendingDesks ?? []) {
-    for (const loanConfig of lendingDesk.loanConfigs) {
+  for (const lendingDesk of result.data?.lendingDesks.items ?? []) {
+    for (const loanConfig of lendingDesk.loanConfigs?.items ?? []) {
       flatResult.push({ lendingDesk, loanConfig });
     }
   }
@@ -388,7 +388,7 @@ export const QuickLoan = (props: any) => {
               nft
               modalId="nftModal"
               onClick={setNftCollection}
-              restrictTo={result?.data?.nftCollections?.map((x) => x?.id)}
+              restrictTo={result?.data?.nftCollections?.items.map((x) => x?.id)}
             />
           </div>
           <div className="mb-3">
