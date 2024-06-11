@@ -153,10 +153,10 @@ export const ManageLendingDesk = (props: any) => {
     if (nftCollection) {
       const selectedNftAddress = nftCollection.nft.address;
       const loanConfigs = result?.data?.lendingDesk?.loanConfigs;
-      const filteredLoans = loanConfigs?.filter((loan) => {
+      const filteredLoans = loanConfigs?.items?.filter((loan) => {
         return loan.nftCollection.id.toLowerCase() === selectedNftAddress.toLowerCase();
       });
-      const loanIndex = loanConfigs?.findIndex((loan) => {
+      const loanIndex = loanConfigs?.items?.findIndex((loan) => {
         return loan.nftCollection.id.toLowerCase() === selectedNftAddress.toLowerCase();
       });
       if (filteredLoans?.length) {

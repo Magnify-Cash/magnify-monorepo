@@ -72,7 +72,7 @@ export const BrowseCollection = (props) => {
   useEffect(() => {
     const formatData = (data:BrowseCollectionQuery) => ({
       loanConfigs: data.lendingDesks.items
-        .filter((lendingDesk) => lendingDesk?.loanConfigs?.items?.length > 0)
+        .filter((lendingDesk) => (lendingDesk?.loanConfigs?.items?.length || 0) > 0)
         .map((lendingDesk) => ({
           lendingDesk: {
             id: lendingDesk.id,
