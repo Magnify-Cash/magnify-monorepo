@@ -15,7 +15,7 @@ query Home {
 }
 
 query ManageLendingDesks($walletAddress: String!) {
-  lendingDesks(where: { ownerId: $walletAddress, status:Active }) {
+  lendingDesks(where: { ownerId: $walletAddress }) {
     items {
       id
       balance
