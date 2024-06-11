@@ -88,7 +88,7 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-active-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data.loans} status="Active" isLender />
+              <LoanRow loans={data.loans.items} status="Active" isLender />
             </div>
           </div>
           {/* End Active Row */}
@@ -101,7 +101,7 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-pending-default-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data.loans} status="PendingDefault" isLender liquidate />
+              <LoanRow loans={data.loans.items} status="PendingDefault" isLender liquidate />
             </div>
           </div>
           {/* End Pending Default Row */}
@@ -114,7 +114,7 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-defaulted-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data.loans} status="Defaulted" isLender />
+              <LoanRow loans={data.loans.items} status="Defaulted" isLender />
             </div>
           </div>
           {/* End Defaulted Row */}
@@ -127,7 +127,7 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-completed-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data.loans} status="Resolved" isLender />
+              <LoanRow loans={data.loans.items} status="Resolved" isLender />
             </div>
           </div>
           {/* End Resolved Row */}

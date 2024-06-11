@@ -26,7 +26,11 @@ query ManageLendingDesks($walletAddress: String!) {
       amountBorrowed
       netLiquidityIssued
       netProfit
-      erc20Id
+      erc20 {
+          id
+          symbol
+          decimals
+      }
       loanConfigs {
         items {
           id

@@ -14,8 +14,8 @@ export const ManageLendingDesks = (props: any) => {
       walletAddress: address?.toLowerCase() || "",
     },
   });
-
   const { data, fetching, error } = result;
+  console.log(data)
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -79,7 +79,7 @@ export const ManageLendingDesks = (props: any) => {
             role="tabpanel"
             aria-labelledby="pills-active-tab"
           >
-            <LendingDeskRow desks={data?.lendingDesks || []} status="Active" />
+            <LendingDeskRow desks={data?.lendingDesks.items || []} status="Active" />
           </div>
           {/* End Active Row */}
 
@@ -90,7 +90,7 @@ export const ManageLendingDesks = (props: any) => {
             role="tabpanel"
             aria-labelledby="pills-inactive-tab"
           >
-            <LendingDeskRow desks={data?.lendingDesks || []} status="Frozen" />
+            <LendingDeskRow desks={data?.lendingDesks.items || []} status="Frozen" />
           </div>
           {/* End Inactive Row */}
         </div>

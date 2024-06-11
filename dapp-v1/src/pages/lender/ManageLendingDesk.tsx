@@ -111,7 +111,7 @@ export const ManageLendingDesk = (props: any) => {
 
   const handleEditCollection = (index: number) => {
     // Extract loanConfigs from result.data.lendingDesk
-    const loanConfigs = result.data?.lendingDesk?.loanConfigs;
+    const loanConfigs = result.data?.lendingDesk?.loanConfigs?.items;
     const selectedConfig = loanConfigs?.[index];
     const selectedNft = nftArr[index];
 
@@ -187,7 +187,7 @@ export const ManageLendingDesk = (props: any) => {
   */
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs.map(
+    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs?.items.map(
       (loan) => loan.nftCollection.id,
     );
     if (nftIds?.length) {
@@ -541,11 +541,11 @@ export const ManageLendingDesk = (props: any) => {
             <div className="card-body p-4 specific-h-75">
               <h5 className="fw-medium text-primary-emphasis">
                 {/* Total number of collections */}
-                Collections | {result.data?.lendingDesk?.loanConfigs.length}
+                Collections | {result.data?.lendingDesk?.loanConfigs?.items.length}
               </h5>
             </div>
             <div className="card-body p-4 pt-0 specific-h-xxl-450 overflow-y-auto">
-              {result.data?.lendingDesk?.loanConfigs.map((config, index) => {
+              {result.data?.lendingDesk?.loanConfigs?.items.map((config, index) => {
                 return (
                   <div key={config.id} className="pb-2 mb-2 border-bottom">
                     <div className="d-flex align-items-center">
