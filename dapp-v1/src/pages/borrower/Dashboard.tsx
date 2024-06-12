@@ -81,7 +81,7 @@ export const Dashboard = (props: any) => {
       </div>
       {fetching && <LoadingIndicator />}
 
-      {data && (
+      {!fetching && (
         <div className="tab-content" id="pills-tabContent">
           {/* active Row */}
           <div
