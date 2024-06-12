@@ -14,8 +14,7 @@ export const ManageLendingDesks = (props: any) => {
       walletAddress: address?.toLowerCase() || "",
     },
   });
-  const { data, fetching, error } = result;
-  console.log(data)
+  const { data, fetching } = result;
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -70,7 +69,7 @@ export const ManageLendingDesks = (props: any) => {
         </NavLink>
       </div>
       {fetching && <LoadingIndicator />}
-      {data && (
+      {!fetching && (
         <div className="tab-content" id="pills-tabContent">
           {/* Active Row */}
           <div
