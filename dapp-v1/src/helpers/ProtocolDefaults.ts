@@ -5,7 +5,7 @@ export const NFTY_FINANCE_GOERLI_GRAPH: string =
 export const NFTY_FINANCE_MUMBAI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44194/nftyfinance-mumbai/0.0.7";
 export const NFTY_FINANCE_BASE_SEPOLIA_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/1c7fc5dd-6de2-40fd-8e95-ffd71fb69e07/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/197bcbbb-5ad1-4bb9-a74d-bb5aeafcbd58/ghostgraph";
 export const NFTY_FINANCE_SEPOLIA_GRAPH: string =
   "https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-sepolia";
 export const NFTY_FINANCE_HARDHAT_GRAPH: string =
