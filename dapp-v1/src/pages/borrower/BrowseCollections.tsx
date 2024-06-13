@@ -34,7 +34,9 @@ export const BrowseCollections = (props: any) => {
     const resultArr: INftCollection[] = [];
 
     //An array of nft ids
-    const nftIdArr = data?.nftCollections.items.map((nftCollection) => nftCollection.id);
+    const nftIdArr = data?.nftCollections.items.map(
+      (nftCollection) => nftCollection.id,
+    );
 
     if (nftIdArr?.length) {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);

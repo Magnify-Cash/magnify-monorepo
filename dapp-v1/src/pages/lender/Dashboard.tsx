@@ -101,7 +101,12 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-pending-default-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data?.loans?.items || []} status="PendingDefault" isLender liquidate />
+              <LoanRow
+                loans={data?.loans?.items || []}
+                status="PendingDefault"
+                isLender
+                liquidate
+              />
             </div>
           </div>
           {/* End Pending Default Row */}

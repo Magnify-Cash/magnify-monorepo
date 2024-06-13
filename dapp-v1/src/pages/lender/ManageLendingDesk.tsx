@@ -187,9 +187,8 @@ export const ManageLendingDesk = (props: any) => {
   */
   const [nftArr, setNftArr] = useState<INft[]>([]);
   const getNFTs = async () => {
-    const nftIds: string[] | undefined = result.data?.lendingDesk?.loanConfigs?.items.map(
-      (loan) => loan.nftCollection.id,
-    );
+    const nftIds: string[] | undefined =
+      result.data?.lendingDesk?.loanConfigs?.items.map((loan) => loan.nftCollection.id);
     if (nftIds?.length) {
       const resultArr = await fetchNFTDetails(nftIds, chainId);
       setNftArr(resultArr);
