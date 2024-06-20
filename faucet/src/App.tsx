@@ -39,7 +39,7 @@ export function App() {
           src={logo}
           width="200"
           className="d-block"
-          alt="Magnify.Cash Finance Logo"
+          alt="Magnify Cash Finance Logo"
         />
       </div>
       <div className="py-3 px-3 px-sm-5">

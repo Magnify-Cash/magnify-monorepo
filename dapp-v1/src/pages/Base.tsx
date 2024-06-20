@@ -133,7 +133,7 @@ export const Base = () => {
                   height="28"
                   className="d-block rounded flex-shrink-0 me-2"
                 />
-                <strong>Magnify.Cash</strong>
+                <strong>Magnify Cash</strong>
               </NavLink>
               <button
                 type="button"

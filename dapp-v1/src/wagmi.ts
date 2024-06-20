@@ -21,7 +21,7 @@ export const config = createConfig(
     walletConnectProjectId: "6f26f99d86d880b561988f69808456d3",
 
     // App Info
-    appName: "Magnify.Cash",
+    appName: "Magnify Cash",
     appDescription: "Decentralized Credit Markets",
     appUrl: "https://magnify.cash",
     appIcon: "https://early.magnify.cash/theme/magnify-cash-logo.jpeg",
