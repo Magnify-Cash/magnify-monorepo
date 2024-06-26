@@ -34,15 +34,17 @@ export const BrowseCollections = (props: any) => {
     const resultArr: INftCollection[] = [];
 
     //An array of nft ids
-    const nftIdArr = data?.nftCollections.map((nftCollection) => nftCollection.id);
+    const nftIdArr = data?.nftCollections.items.map(
+      (nftCollection) => nftCollection.id,
+    );
 
     if (nftIdArr?.length) {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);
 
       //fetching tokens associated with each collection
-      if (data?.nftCollections.length) {
-        for (let i = 0; i < data.nftCollections.length; i++) {
-          const nftCollection = data.nftCollections[i];
+      if (data?.nftCollections.items.length) {
+        for (let i = 0; i < data.nftCollections.items.length; i++) {
+          const nftCollection = data.nftCollections.items[i];
           const tokens = await fetchTokensForCollection(nftCollection, chainId);
           resultArr[i] = { ...fetchedNftArr[i], erc20s: tokens };
         }
@@ -102,8 +104,8 @@ export const BrowseCollections = (props: any) => {
             </thead>
             <tbody>
               {fetching && <LoadingIndicator />}
-              {result.data?.nftCollections.map((nftCollection, index) => {
-                const currencies: string[] = nftCollection.loanConfigs.map(
+              {result.data?.nftCollections.items.map((nftCollection, index) => {
+                const currencies = nftCollection.loanConfigs?.items.map(
                   (x) => x.lendingDesk.erc20.symbol,
                 );
                 return (

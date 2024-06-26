@@ -15,39 +15,47 @@ query Home {
 }
 
 query ManageLendingDesks($walletAddress: String!) {
-  lendingDesks(where: { owner: $walletAddress }) {
-    id
-    balance
-    status
-    loansCount
-    loansDefaultedCount
-    loansResolvedCount
-    amountBorrowed
-    netLiquidityIssued
-    netProfit
-    erc20 {
+  lendingDesks(where: { ownerId: $walletAddress }) {
+    items {
       id
-      symbol
-      decimals
-    }
-    loanConfigs(where: { active: true }) {
-      id
-    }
-    loans {
+      balance
       status
+      loansCount
+      loansDefaultedCount
+      loansResolvedCount
+      amountBorrowed
+      netLiquidityIssued
+      netProfit
+      erc20 {
+          id
+          symbol
+          decimals
+      }
+      loanConfigs {
+        items {
+          id
+        }
+      }
+      loans {
+        items {
+          status
+        }
+      }
     }
   }
 }
 
 query CreateLendingDesk($walletAddress: String!) {
-  lendingDesks(where: { owner: $walletAddress }) {
-    id
-    balance
-    status
+  lendingDesks(where: { ownerId: $walletAddress }) {
+    items {
+      id
+      balance
+      status
+    }
   }
 }
 
-query ManageLendingDesk($deskId: ID!) {
+query ManageLendingDesk($deskId: String!) {
   lendingDesk(id: $deskId) {
     id
     owner {
@@ -61,32 +69,40 @@ query ManageLendingDesk($deskId: ID!) {
     balance
     status
     loanConfigs {
-      nftCollection {
+      items {
+        nftCollection {
+          id
+        }
         id
+        minAmount
+        maxAmount
+        minInterest
+        maxInterest
+        minDuration
+        maxDuration
       }
-      id
-      minAmount
-      maxAmount
-      minInterest
-      maxInterest
-      minDuration
-      maxDuration
     }
     loans {
-      status
+      items {
+        status
+      }
     }
   }
 }
 
 query BrowseCollections {
-  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
-    id
-    loanConfigs {
-      lendingDesk {
-        erc20 {
-          id
-          symbol
-          decimals
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
+    items {
+      id
+      loanConfigs {
+        items {
+          lendingDesk {
+            erc20 {
+              id
+              symbol
+              decimals
+            }
+          }
         }
       }
     }
@@ -98,118 +114,134 @@ query BrowseCollections {
 }
 
 query BrowseCollection($nftCollectionId: String) {
-  lendingDesks(where: { status: Active, balance_gt: 0 }) {
-    id
-    balance
-    status
-    owner {
+  lendingDesks(where: { status: Active, balance_gt: "0" }) {
+    items {
       id
-    }
-    erc20 {
-      id
-      symbol
-      decimals
-    }
-    loanConfigs(where: { nftCollection_contains: $nftCollectionId }) {
-      nftCollection {
+      balance
+      status
+      owner {
         id
       }
-      minAmount
-      maxAmount
-      minInterest
-      maxInterest
-      minDuration
-      maxDuration
+      erc20 {
+        id
+        symbol
+        decimals
+      }
+      loanConfigs(where: { nftCollectionId: $nftCollectionId }) {
+        items {
+          nftCollection {
+            id
+          }
+          minAmount
+          maxAmount
+          minInterest
+          maxInterest
+          minDuration
+          maxDuration
+        }
+      }
     }
   }
 }
 
 query QuickLoan($erc20Id: String, $nftCollectionId: String) {
-  lendingDesks(where: { erc20: $erc20Id, status: Active, balance_gt: 0}) {
-    id
-    balance
-    status
-    erc20 {
+  lendingDesks(where: { erc20Id: $erc20Id, status: Active, balance_gt: "0" }) {
+    items {
       id
-      symbol
-      decimals
-    }
-    loanConfigs(where: { nftCollection: $nftCollectionId }) {
-      minAmount
-      maxAmount
-      minDuration
-      maxDuration
-      minInterest
-      maxInterest
-      nftCollection {
+      balance
+      status
+      erc20 {
         id
+        symbol
+        decimals
+      }
+      loanConfigs(where: { nftCollectionId: $nftCollectionId }) {
+        items {
+          minAmount
+          maxAmount
+          minDuration
+          maxDuration
+          minInterest
+          maxInterest
+          nftCollection {
+            id
+          }
+        }
       }
     }
   }
-  nftCollections(where: { activeLoanConfigsCount_gt: 0 }) {
-    id
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
+    items {
+      id
+    }
   }
 }
 
-query GetErc20sForNftCollection($nftCollectionId: ID!) {
+query GetErc20sForNftCollection($nftCollectionId: String!) {
   nftCollection(id: $nftCollectionId) {
     erc20s {
-      erc20 {
-        id
+      items {
+        erc20 {
+          id
+        }
       }
     }
   }
 }
 
 query BorrowerDashboard($walletAddress: String!) {
-  loans(where: { borrower: $walletAddress }) {
-    id
-    amount
-    amountPaidBack
-    duration
-    startTime
-    nftCollection {
+  loans(where: { borrowerId: $walletAddress }) {
+    items {
       id
-    }
-    lendingDesk {
-      erc20 {
+      amount
+      amountPaidBack
+      duration
+      startTime
+      nftCollection {
         id
-        symbol
-        decimals
       }
-    }
-    nftId
-    interest
-    status
-    lender {
-      id
+      lendingDesk {
+        erc20 {
+          id
+          symbol
+          decimals
+        }
+      }
+      nftId
+      interest
+      status
+      lender {
+        id
+      }
     }
   }
 }
 
 query LenderDashboard($walletAddress: String!) {
-   loans(where: { lender: $walletAddress }) {
-    id
-    amount
-    amountPaidBack
-    duration
-    startTime
-    nftCollection {
+   loans(where: { lenderId: $walletAddress }) {
+    items {
       id
-    }
-    lendingDesk {
-      id
-      erc20 {
+      amount
+      amountPaidBack
+      duration
+      startTime
+      nftCollection {
         id
-        symbol
-        decimals
       }
-    }
-    nftId
-    interest
-    status
-    lender {
-      id
+      lendingDesk {
+        id
+        erc20 {
+          id
+          symbol
+          decimals
+        }
+      }
+      nftId
+      interest
+      status
+      lender {
+        id
+      }
     }
   }
 }

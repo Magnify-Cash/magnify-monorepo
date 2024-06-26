@@ -20,7 +20,10 @@ import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { useChainId, useWaitForTransactionReceipt } from "wagmi";
-import { BrowseCollectionDocument } from "../../../.graphclient";
+import {
+  BrowseCollectionDocument,
+  type BrowseCollectionQuery,
+} from "../../../.graphclient";
 
 export const BrowseCollection = (props) => {
   /*
@@ -70,9 +73,9 @@ export const BrowseCollection = (props) => {
   // Initial data is an array of active lending desks with loan configs property
   // We are formatting the data to be an array of loanConfigs with lendingDesk property
   useEffect(() => {
-    const formatData = (data) => ({
-      loanConfigs: data.lendingDesks
-        .filter((lendingDesk) => lendingDesk.loanConfigs.length > 0)
+    const formatData = (data: BrowseCollectionQuery) => ({
+      loanConfigs: data.lendingDesks.items
+        .filter((lendingDesk) => (lendingDesk?.loanConfigs?.items?.length || 0) > 0)
         .map((lendingDesk) => ({
           lendingDesk: {
             id: lendingDesk.id,
@@ -81,7 +84,7 @@ export const BrowseCollection = (props) => {
             status: lendingDesk.status,
             erc20: lendingDesk.erc20,
           },
-          ...lendingDesk.loanConfigs[0],
+          ...lendingDesk?.loanConfigs?.items[0],
         })),
     });
     if (data && !fetching && !error) {
