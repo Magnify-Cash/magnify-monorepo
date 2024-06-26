@@ -22,6 +22,6 @@ jobs:
     - name: Build checks
       env: # Or as an environment variable
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        VITE_GRAPHQL_ENDPOINT: https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-base-sepolia
+        VITE_GRAPHQL_ENDPOINT: https://api.ghostlogs.xyz/gg/pub/197bcbbb-5ad1-4bb9-a74d-bb5aeafcbd58/ghostgraph
       working-directory: ./
       run: yarn dapp build;
