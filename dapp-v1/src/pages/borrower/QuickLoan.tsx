@@ -57,10 +57,11 @@ export const QuickLoan = (props: any) => {
   const [result] = useQuery({
     query: QuickLoanDocument,
     variables: {
-      nftCollectionId: nftCollection?.nft?.address?.toLowerCase(),
-      erc20Id: token?.token?.address?.toLowerCase(),
+      nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
+      erc20Id: token?.token?.address?.toLowerCase() || "",
     },
   });
+
   const { data, fetching, error } = result;
 
   /*
