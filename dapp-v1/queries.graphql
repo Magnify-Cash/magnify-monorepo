@@ -27,9 +27,9 @@ query ManageLendingDesks($walletAddress: String!) {
       netLiquidityIssued
       netProfit
       erc20 {
-          id
-          symbol
-          decimals
+        id
+        symbol
+        decimals
       }
       loanConfigs {
         items {
@@ -114,7 +114,11 @@ query BrowseCollections {
 }
 
 query BrowseCollection($nftCollectionId: String) {
-  lendingDesks(where: { status: Active, balance_gt: "0" }) {
+  lendingDesks(
+    where: { status: Active, balance_gt: "0" }
+    orderBy: "balance"
+    orderDirection: "desc"
+  ) {
     items {
       id
       balance
@@ -145,7 +149,11 @@ query BrowseCollection($nftCollectionId: String) {
 }
 
 query QuickLoan($erc20Id: String, $nftCollectionId: String) {
-  lendingDesks(where: { erc20Id: $erc20Id, status: Active, balance_gt: "0" }) {
+  lendingDesks(
+    where: { erc20Id: $erc20Id, status: Active, balance_gt: "0" }
+    orderBy: "balance"
+    orderDirection: "desc"
+  ) {
     items {
       id
       balance
@@ -218,7 +226,7 @@ query BorrowerDashboard($walletAddress: String!) {
 }
 
 query LenderDashboard($walletAddress: String!) {
-   loans(where: { lenderId: $walletAddress }) {
+  loans(where: { lenderId: $walletAddress }) {
     items {
       id
       amount

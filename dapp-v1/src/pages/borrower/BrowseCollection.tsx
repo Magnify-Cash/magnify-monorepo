@@ -76,6 +76,11 @@ export const BrowseCollection = (props) => {
     const formatData = (data: BrowseCollectionQuery) => ({
       loanConfigs: data.lendingDesks.items
         .filter((lendingDesk) => (lendingDesk?.loanConfigs?.items?.length || 0) > 0)
+        .filter(
+          (lendingDesk) =>
+            Number(lendingDesk?.balance) >=
+            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount)
+        )
         .map((lendingDesk) => ({
           lendingDesk: {
             id: lendingDesk.id,

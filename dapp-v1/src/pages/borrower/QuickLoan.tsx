@@ -22,6 +22,7 @@ import { useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   GetErc20sForNftCollectionDocument,
   QuickLoanDocument,
+  QuickLoanQuery,
 } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
@@ -50,7 +51,9 @@ export const QuickLoan = (props: any) => {
   );
 
   // GraphQL query
-  const flatResult: any[] = [];
+
+    const [flatResult, setFlatResult] = useState<any>([]);
+
   const [result] = useQuery({
     query: QuickLoanDocument,
     variables: {
@@ -88,11 +91,32 @@ export const QuickLoan = (props: any) => {
     }
   }, [selectedLendingDesk]);
 
-  for (const lendingDesk of result.data?.lendingDesks.items ?? []) {
-    for (const loanConfig of lendingDesk.loanConfigs?.items ?? []) {
-      flatResult.push({ lendingDesk, loanConfig });
+//This function formats the data received from the graphql query
+//It filters out lending desks with no loanConfig items and balance less than minAmount
+ useEffect(() => {
+  const formatData = (data: QuickLoanQuery) =>
+    data.lendingDesks.items
+      .filter(({ loanConfigs }) => loanConfigs?.items?.length ?? 0 > 0)
+      .filter(
+        (lendingDesk) =>
+          Number(lendingDesk?.balance) >=
+          Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount)
+      )
+      .map(({ id, balance, status, erc20, loanConfigs }) => ({
+        lendingDesk: {
+          id,
+          balance,
+          status,
+          erc20: { ...erc20 },
+        },
+        loanConfig: { ...loanConfigs?.items[0] },
+      }));
+
+    if (data && !fetching && !error) {
+      const formatted = formatData(data);
+      setFlatResult(formatted);
     }
-  }
+  }, [data, fetching, error]);
 
   //This resets the data in the form
   const resetForm = () => {
