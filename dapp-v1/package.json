@@ -24,7 +24,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "7.51.4",
-    "react-router-dom": "6.23.0",
+    "react-router-dom": "6.24.1",
     "react-window": "1.8.10",
     "urql": "4.1.0",
     "viem": "2.x",
