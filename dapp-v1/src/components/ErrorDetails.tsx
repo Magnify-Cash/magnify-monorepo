@@ -32,6 +32,8 @@ const getErrorText = (error: string) => {
       return "Token allowance must be greater than 0";
     case error.includes("already approved"):
       return "Token allowance has already been approved";
+    case error.includes("No changes detected"):
+      return "No changes detected";
 
     // Contract Reverts
     case error.includes("AmountIsZero"):

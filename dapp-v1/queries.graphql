@@ -68,7 +68,7 @@ query ManageLendingDesk($deskId: String!) {
     }
     balance
     status
-    loanConfigs {
+    loanConfigs(where: { active: true }) {
       items {
         nftCollection {
           id

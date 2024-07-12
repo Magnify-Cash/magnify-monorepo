@@ -5,7 +5,6 @@ import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
-import refetchData from "@/helpers/refetchData";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   useSimulateNftyFinanceV1SetLendingDeskState,
@@ -14,7 +13,7 @@ import {
   useWriteNftyFinanceV1SetLendingDeskState,
 } from "@/wagmi-generated";
 import type { NFTInfo } from "@nftylabs/nft-lists";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -39,7 +38,7 @@ export const ManageLendingDesk = (props: any) => {
       // @ts-ignore
       deskId: id,
     },
-    requestPolicy: "cache-and-network",
+    requestPolicy: "network-only",
   });
   const token = result.data?.lendingDesk?.erc20?.decimals;
 
@@ -79,12 +78,12 @@ export const ManageLendingDesk = (props: any) => {
       selectedLoan;
     const decimals = result?.data?.lendingDesk?.erc20?.decimals;
     const formValues: IConfigForm = {
-      maxOffer: fromWei(maxAmount, decimals),
       minOffer: fromWei(minAmount, decimals),
-      maxDuration: (maxDuration / 24).toString(),
+      maxOffer: fromWei(maxAmount, decimals),
       minDuration: (minDuration / 24).toString(),
-      maxInterest: (maxInterest / 100).toString(),
+      maxDuration: (maxDuration / 24).toString(),
       minInterest: (minInterest / 100).toString(),
+      maxInterest: (maxInterest / 100).toString(),
     };
     return formValues;
   };
@@ -182,6 +181,40 @@ export const ManageLendingDesk = (props: any) => {
   const [updateDeskIsLoading, setUpdateDeskIsLoading] = useState<boolean>(false);
 
   /*
+  Hook to check if the query data has changed
+  */
+
+  // Ref to store the initial freeze status when the component is mounted
+  const initLendingDeskStatusRef = useRef(result.data?.lendingDesk?.status);
+
+  useEffect(() => {
+    // Checking if freeze status has changed
+    if (
+      JSON.stringify(result?.data?.lendingDesk?.status) !==
+      JSON.stringify(initLendingDeskStatusRef.current)
+    ) {
+      // If freeze status has changed, close the loading indicator
+      setFreezeUnfreezeIsLoading(false);
+    }
+    // Updating the initLendingDeskStatusRef with the latest lendingDesk status
+    initLendingDeskStatusRef.current = result?.data?.lendingDesk?.status;
+  }, [result?.data?.lendingDesk?.status]);
+
+  // Ref to store the initial loanConfigs when the component is mounted
+  const initLendingDeskConfigRef = useRef(result.data?.lendingDesk?.loanConfigs);
+  useEffect(() => {
+    if (
+      JSON.stringify(result.data?.lendingDesk?.loanConfigs) !==
+      JSON.stringify(initLendingDeskConfigRef.current)
+    ) {
+      // If loanConfigs has changed, close the loading indicator
+      setUpdateDeskIsLoading(false);
+    }
+    // Updating the initLendingDeskConfig with the latest loanConfigs
+    initLendingDeskConfigRef.current = result.data?.lendingDesk?.loanConfigs;
+  }, [result.data?.lendingDesk?.loanConfigs]);
+
+  /*
   Fetch NFT Details
   This is used to lookup a list of NFTs off chain
   */
@@ -251,22 +284,28 @@ export const ManageLendingDesk = (props: any) => {
   useEffect(() => {
     if (freezeError) {
       console.error(freezeError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={freezeError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={freezeError.message} />,
+          "error",
+        );
+      }
       setFreezeUnfreezeIsLoading(false);
     }
     if (freezeConfirmError) {
       console.error(freezeConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={freezeConfirmError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={freezeConfirmError.message} />,
+          "error",
+        );
+      }
       setFreezeUnfreezeIsLoading(false);
     }
     if (freezeIsConfirming) {
@@ -280,15 +319,17 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (freezeIsConfirmed) {
-      refetchData(reexecuteQuery);
+      reexecuteQuery();
       refetchFreezeConfig();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={freezeData!} />,
-        "success",
-      );
-      setFreezeUnfreezeIsLoading(false);
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={freezeData!} />,
+          "success",
+        );
+      }
     }
   }, [freezeError, freezeConfirmError, freezeIsConfirming, freezeIsConfirmed]);
 
@@ -338,22 +379,28 @@ export const ManageLendingDesk = (props: any) => {
   useEffect(() => {
     if (updateLendingDeskError) {
       console.error(updateLendingDeskError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={updateLendingDeskError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={updateLendingDeskError.message} />,
+          "error",
+        );
+      }
       setUpdateDeskIsLoading(false);
     }
     if (updateLendingDeskConfirmError) {
       console.error(updateLendingDeskConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={updateLendingDeskConfirmError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={updateLendingDeskConfirmError.message} />,
+          "error",
+        );
+      }
       setUpdateDeskIsLoading(false);
     }
     if (updateLendingDeskIsConfirming) {
@@ -367,16 +414,17 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (updateLendingDeskIsConfirmed) {
-      refetchData(reexecuteQuery);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={updateLendingDeskData!} />,
-        "success",
-      );
+      reexecuteQuery();
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={updateLendingDeskData!} />,
+          "success",
+        );
+      }
       setEditDesk(false);
-      setEditDeskIndex(0);
-      setUpdateDeskIsLoading(false);
     }
   }, [
     updateLendingDeskError,
@@ -384,12 +432,29 @@ export const ManageLendingDesk = (props: any) => {
     updateLendingDeskIsConfirming,
     updateLendingDeskIsConfirmed,
   ]);
+
   useEffect(() => {
     //Call update desk hook when deskconfig is updated i.e. when new deskconfig is submitted via the form
     // Check if nftCollection is selected from the drop down selection list before calling update desk hook
     //This stops the update desk hook from being called when the page is first loaded as nftCollection is null
     if (nftCollection?.nft?.address) {
-      updateDesk();
+      const { loanConfigs } = result.data?.lendingDesk || {};
+      const selectedConfig = loanConfigs?.[editDeskIndex];
+      const areSameNFTCollection =
+        selectedConfig?.nftCollection.id.toLowerCase() ===
+        nftCollection?.nft?.address.toLowerCase();
+      if (areSameNFTCollection) {
+        const currentValue = getFormValues(selectedConfig);
+        currentValue.selectedNftCollection = nftCollection;
+        //check if currentvalue is different from the deskconfig state
+        if (JSON.stringify(currentValue) !== JSON.stringify(deskConfig)) {
+          updateDesk();
+        } else {
+          addToast("Error", <ErrorDetails error={"No changes detected"} />, "error");
+        }
+      } else {
+        updateDesk();
+      }
     }
   }, [deskConfig]);
 
@@ -410,22 +475,27 @@ export const ManageLendingDesk = (props: any) => {
   });
   useEffect(() => {
     if (deleteCollectionError) {
-      console.error(deleteCollectionError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={deleteCollectionError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={deleteCollectionError.message} />,
+          "error",
+        );
+      }
     }
     if (deleteCollectionConfirmError) {
       console.error(deleteCollectionConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={deleteCollectionConfirmError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={deleteCollectionConfirmError.message} />,
+          "error",
+        );
+      }
     }
     if (deleteCollectionIsConfirming) {
       const id = addToast(
@@ -438,13 +508,16 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (deleteCollectionIsConfirmed) {
-      refetchData(reexecuteQuery);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={deleteCollectionData!} />,
-        "success",
-      );
+      reexecuteQuery();
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={deleteCollectionData!} />,
+          "success",
+        );
+      }
     }
   }, [
     deleteCollectionError,

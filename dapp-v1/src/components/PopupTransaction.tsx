@@ -15,6 +15,7 @@ interface PopupTransactionProps {
   modalTitle: string; // Title of the modal
   modalFooter?: React.ReactNode; // Modal footer
 }
+
 const customStyles = {
   "--bs-modal-width": "500px",
 };
@@ -50,21 +51,19 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
     );
   }
 
-  //Run onClose function when modal is closed
   useEffect(() => {
     const modal = document.getElementById(props.modalId);
-    const handler = () => {
+    const handleHidden = () => {
       if (props.onClose) {
         props.onClose();
       }
     };
     if (modal) {
-      modal.addEventListener("hidden.bs.modal", handler);
+      modal.addEventListener("hidden.bs.modal", handleHidden);
     }
-    // Cleanup function
     return () => {
       if (modal) {
-        modal.removeEventListener("hidden.bs.modal", handler);
+        modal.removeEventListener("hidden.bs.modal", handleHidden);
       }
     };
   }, [props.modalId, props.onClose]);

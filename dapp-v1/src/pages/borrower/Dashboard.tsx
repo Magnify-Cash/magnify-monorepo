@@ -1,10 +1,14 @@
 import { LoanRow } from "@/components";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { useQuery } from "urql";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
 
 export const Dashboard = (props: any) => {
+  /*
+  Wagmi Hooks
+  */
+  const chainId = useChainId();
   // GraphQL
   const { address } = useAccount();
   const [result, reexecuteQuery] = useQuery({
@@ -14,7 +18,6 @@ export const Dashboard = (props: any) => {
     },
     requestPolicy: "cache-and-network",
   });
-
   const { data, fetching, error } = result;
 
   return (
@@ -79,9 +82,9 @@ export const Dashboard = (props: any) => {
           </li>
         </ul>
       </div>
-      {fetching && <LoadingIndicator />}
+      {fetching && !data && <LoadingIndicator />}
 
-      {!fetching && (
+      {data && (
         <div className="tab-content" id="pills-tabContent">
           {/* active Row */}
           <div
@@ -93,7 +96,7 @@ export const Dashboard = (props: any) => {
             <div className="row g-4 justify-content-start mt-0">
               <LoanRow
                 payback
-                loans={data?.loans.items || []}
+                loans={data?.loans.items}
                 status="Active"
                 reexecuteQuery={reexecuteQuery}
               />
@@ -110,7 +113,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 justify-content-start mt-0">
               <LoanRow
-                loans={data?.loans.items || []}
+                loans={data?.loans.items}
                 status="PendingDefault"
                 reexecuteQuery={reexecuteQuery}
               />
@@ -126,7 +129,7 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-completed-tab"
           >
             <div className="row g-4 justify-content-start mt-0">
-              <LoanRow loans={data?.loans.items || []} status="Resolved" />
+              <LoanRow loans={data?.loans.items} status="Resolved" />
             </div>
           </div>
           {/* End completed Row */}
@@ -140,7 +143,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 justify-content-start mt-0">
               <LoanRow
-                loans={data?.loans.items || []}
+                loans={data?.loans.items}
                 status="Defaulted"
                 reexecuteQuery={reexecuteQuery}
               />

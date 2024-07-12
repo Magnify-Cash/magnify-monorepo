@@ -6,7 +6,7 @@ import LoanDetails from "./loanDetails";
 // Interface
 interface ILoanRowProps {
   loans: Array<Loan> | any; // Loan array
-  status?: string; // Status of the loan row
+  status: string; // Status of the loan row
   payback?: boolean; // Whether or not loan card should have payback UI
   liquidate?: boolean; // Whether or not loan card should have liquidate UI
   isLender?: boolean;
@@ -35,7 +35,8 @@ export const LoanRow = ({
       return loan.status === status;
     }
   });
-  if (loans.length === 0) {
+
+  if (!loans) {
     return (
       <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
@@ -61,7 +62,7 @@ export const LoanRow = ({
       loan={loan}
       payback={payback}
       liquidate={liquidate}
-      status={status!}
+      status={status}
       isLender={isLender}
       {...(reexecuteQuery ? { reexecuteQuery } : {})}
     />

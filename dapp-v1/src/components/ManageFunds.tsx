@@ -1,6 +1,5 @@
 import { PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
-import refetchData from "@/helpers/refetchData";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -11,7 +10,7 @@ import {
   useWriteNftyFinanceV1DepositLendingDeskLiquidity,
   useWriteNftyFinanceV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import ErrorDetails from "./ErrorDetails";
@@ -85,6 +84,27 @@ export const ManageFunds = ({
   const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
 
   /*
+  Hook to check if the query data has changed
+  */
+
+  // Ref to store the initial lendingDesk balance when the component is mounted
+  const initLendingDeskBalanceRef = useRef(lendingDesk.balance);
+
+  useEffect(() => {
+    // Checking if lendingDesk balance has changed
+    if (
+      JSON.stringify(lendingDesk.balance) !==
+      JSON.stringify(initLendingDeskBalanceRef.current)
+    ) {
+      // If lendingDesk balance has changed, close the modal
+      setActionIsLoading(false);
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
+    }
+    // Updating the initLendingDeskBalanceRef with the latest lendingDesk balance
+    initLendingDeskBalanceRef.current = lendingDesk.balance;
+  }, [lendingDesk.balance]);
+  /*
   Deposit Liquidity
   Calls `depositLendingDeskLiquidity`
   Note: Requires token approval
@@ -131,12 +151,15 @@ export const ManageFunds = ({
     if (approveIsConfirmed) {
       refetchApprovalData();
       refetchDepositConfig();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [approveErc20Error, approveConfirmError, approveIsConfirmed, approveIsConfirming]);
@@ -321,17 +344,17 @@ export const ManageFunds = ({
       }
     }
     if (actionIsConfirmed) {
-      reexecuteQuery
-        ? refetchData(reexecuteQuery)
-        : console.log("reexecuteQuery not provided");
+      reexecuteQuery ? reexecuteQuery() : null;
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={actionDataMap[action]!} />,
-        "success",
-      );
-      setActionIsLoading(false);
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={actionDataMap[action]!} />,
+          "success",
+        );
+      }
     }
   }, [
     actionErrorMap[action],

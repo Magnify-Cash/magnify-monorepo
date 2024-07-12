@@ -8,7 +8,8 @@ import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { formatAddress } from "@/helpers/formatAddress";
-import { fromWei, toWei } from "@/helpers/utils";
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
+import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
   useReadErc721GetApproved,
@@ -17,19 +18,26 @@ import {
   useWriteNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
-import { useChainId, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   GetErc20sForNftCollectionDocument,
   QuickLoanDocument,
-  QuickLoanQuery,
+  type QuickLoanQuery,
 } from "../../../.graphclient";
 
 export const QuickLoan = (props: any) => {
   /*
+  react-router hooks
+  */
+  const navigate = useNavigate();
+  /*
   wagmi hooks
   */
   // constants
+  const { address } = useAccount();
+
   const chainId = useChainId();
 
   /*
@@ -52,7 +60,7 @@ export const QuickLoan = (props: any) => {
 
   // GraphQL query
 
-    const [flatResult, setFlatResult] = useState<any>([]);
+  const [flatResult, setFlatResult] = useState<any>([]);
 
   const [result] = useQuery({
     query: QuickLoanDocument,
@@ -64,6 +72,23 @@ export const QuickLoan = (props: any) => {
 
   const { data, fetching, error } = result;
 
+  /*
+  Alchemy hooks
+  */
+  const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
+
+  // Get the available NFTs from the wallet
+  useEffect(() => {
+    const fetchWalletNfts = async () => {
+      const walletNfts = await getWalletNfts({
+        chainId: chainId,
+        wallet: address?.toLowerCase()!,
+        nftCollection: nftCollection?.nft.address!,
+      });
+      setWalletNfts(walletNfts);
+    };
+    fetchWalletNfts();
+  }, [address, nftCollection?.nft.address]);
   /*
   form hooks / functions
   */
@@ -92,26 +117,26 @@ export const QuickLoan = (props: any) => {
     }
   }, [selectedLendingDesk]);
 
-//This function formats the data received from the graphql query
-//It filters out lending desks with no loanConfig items and balance less than minAmount
- useEffect(() => {
-  const formatData = (data: QuickLoanQuery) =>
-    data.lendingDesks.items
-      .filter(({ loanConfigs }) => loanConfigs?.items?.length ?? 0 > 0)
-      .filter(
-        (lendingDesk) =>
-          Number(lendingDesk?.balance) >=
-          Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount)
-      )
-      .map(({ id, balance, status, erc20, loanConfigs }) => ({
-        lendingDesk: {
-          id,
-          balance,
-          status,
-          erc20: { ...erc20 },
-        },
-        loanConfig: { ...loanConfigs?.items[0] },
-      }));
+  //This function formats the data received from the graphql query
+  //It filters out lending desks with no loanConfig items and balance less than minAmount
+  useEffect(() => {
+    const formatData = (data: QuickLoanQuery) =>
+      data.lendingDesks.items
+        .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
+        .filter(
+          (lendingDesk) =>
+            Number(lendingDesk?.balance) >=
+            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount),
+        )
+        .map(({ id, balance, status, erc20, loanConfigs }) => ({
+          lendingDesk: {
+            id,
+            balance,
+            status,
+            erc20: { ...erc20 },
+          },
+          loanConfig: { ...loanConfigs?.items[0] },
+        }));
 
     if (data && !fetching && !error) {
       const formatted = formatData(data);
@@ -143,8 +168,21 @@ export const QuickLoan = (props: any) => {
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
-  const [prepareContractError, setPrepareContractError] = useState({});
-  //This state is used to display error message if there is an error while using UsePrepareContractWriteConfig hooks
+  /*
+  Hook to watch for contract events
+  */
+  useCustomWatchContractEvent({
+    eventName: "NewLoanInitialized",
+    onLogs(logs) {
+      // Close modal
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
+      // Redirect to borrower-dashboard page after 1 second
+      setTimeout(() => {
+        navigate("/borrower-dashboard");
+      }, 100);
+    },
+  });
 
   //Initialize Approve Erc721 Hook
   const {
@@ -173,7 +211,10 @@ export const QuickLoan = (props: any) => {
     if (approveErc721Error) {
       console.log("approveErc721Error", approveErc721Error);
       console.error(approveErc721Error);
-      loadingToastId ? closeToast(loadingToastId) : null;
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+      }
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveErc721Error.message} />,
@@ -184,12 +225,15 @@ export const QuickLoan = (props: any) => {
     if (approveConfirmError) {
       console.log("approveConfirmError", approveConfirmError);
       console.error(approveConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={approveConfirmError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={approveConfirmError.message} />,
+          "error",
+        );
+      }
       setApprovalIsLoading(false);
     }
     if (approveIsConfirming) {
@@ -204,12 +248,15 @@ export const QuickLoan = (props: any) => {
     }
     if (approveIsConfirmed) {
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approvalData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approvalData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [
@@ -273,22 +320,28 @@ export const QuickLoan = (props: any) => {
   useEffect(() => {
     if (newLoanWriteError) {
       console.error(newLoanWriteError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={newLoanWriteError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={newLoanWriteError.message} />,
+          "error",
+        );
+      }
       setNewLoanIsLoading(false);
     }
     if (newLoanConfirmError) {
       console.error(newLoanConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={newLoanConfirmError.message} />,
-        "error",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={newLoanConfirmError.message} />,
+          "error",
+        );
+      }
       setNewLoanIsLoading(false);
     }
     if (newLoanIsConfirming) {
@@ -303,13 +356,15 @@ export const QuickLoan = (props: any) => {
     }
     if (newLoanIsConfirmed) {
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
-        "success",
-      );
-      setNewLoanIsLoading(false);
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
+          "success",
+        );
+      }
     }
   }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
@@ -563,7 +618,7 @@ export const QuickLoan = (props: any) => {
             lendingDesk: selectedLendingDesk?.lendingDesk,
             nftId,
             setNftId,
-            nftCollectionAddress: nftCollection?.nft.address,
+            walletNfts,
             approvalIsLoading,
             newLoanIsLoading,
             newLoanConfigIsLoading,

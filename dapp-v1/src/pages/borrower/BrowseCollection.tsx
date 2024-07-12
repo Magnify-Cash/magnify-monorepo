@@ -8,7 +8,8 @@ import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { formatAddress } from "@/helpers/formatAddress";
-import { fromWei, toWei } from "@/helpers/utils";
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
+import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
   useReadErc721GetApproved,
@@ -17,15 +18,20 @@ import {
   useWriteNftyFinanceV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { useChainId, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   BrowseCollectionDocument,
   type BrowseCollectionQuery,
 } from "../../../.graphclient";
 
 export const BrowseCollection = (props) => {
+  /*
+  react-router hooks
+  */
+  const navigate = useNavigate();
+  /*
   /*
   wagmi hooks
   */
@@ -34,7 +40,9 @@ export const BrowseCollection = (props) => {
   /*
   graphql hooks
   */
+  const { address } = useAccount();
   const { collection_address } = useParams();
+
   const [result] = useQuery({
     query: BrowseCollectionDocument,
     variables: {
@@ -65,6 +73,24 @@ export const BrowseCollection = (props) => {
   }, [formattedData]);
 
   /*
+  Alchemy hooks
+  */
+  const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
+
+  // Get the available NFTs from the wallet
+  useEffect(() => {
+    const fetchWalletNfts = async () => {
+      const walletNfts = await getWalletNfts({
+        chainId: chainId,
+        wallet: address?.toLowerCase()!,
+        nftCollection: collection_address!,
+      });
+      setWalletNfts(walletNfts);
+    };
+    fetchWalletNfts();
+  }, [address, collection_address]);
+
+  /*
   form hooks / functions
   */
 
@@ -79,7 +105,7 @@ export const BrowseCollection = (props) => {
         .filter(
           (lendingDesk) =>
             Number(lendingDesk?.balance) >=
-            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount)
+            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount),
         )
         .map((lendingDesk) => ({
           lendingDesk: {
@@ -144,6 +170,23 @@ export const BrowseCollection = (props) => {
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
 
+  /*
+  Hook to watch for contract events
+  */
+  useCustomWatchContractEvent({
+    eventName: "NewLoanInitialized",
+    onLogs: (logs) => {
+      console.log("New Loan Initialized Event", logs);
+      // Close modal
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
+      // Redirect to borrower-dashboard page after 1 second
+      setTimeout(() => {
+        navigate("/borrower-dashboard");
+      }, 100);
+    },
+  });
+
   //Initialize Approve Erc721 Hook
   const {
     data: approveErc721TransactionData,
@@ -171,23 +214,31 @@ export const BrowseCollection = (props) => {
     if (approveErc721Error) {
       console.log("approveErc721Error", approveErc721Error);
       console.error(approveErc721Error);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={approveErc721Error.message} />,
-        "error",
-      );
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={approveErc721Error.message} />,
+          "error",
+        );
+      }
       setApprovalIsLoading(false);
     }
     if (approveConfirmError) {
       console.log("approveConfirmError", approveConfirmError);
       console.error(approveConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={approveConfirmError.message} />,
-        "error",
-      );
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={approveConfirmError.message} />,
+          "error",
+        );
+      }
       setApprovalIsLoading(false);
     }
     if (approveIsConfirming) {
@@ -202,12 +253,15 @@ export const BrowseCollection = (props) => {
     }
     if (approveIsConfirmed) {
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approvalData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approvalData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [
@@ -273,22 +327,30 @@ export const BrowseCollection = (props) => {
   useEffect(() => {
     if (newLoanWriteError) {
       console.error(newLoanWriteError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={newLoanWriteError.message} />,
-        "error",
-      );
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={newLoanWriteError.message} />,
+          "error",
+        );
+      }
       setNewLoanIsLoading(false);
     }
     if (newLoanConfirmError) {
       console.error(newLoanConfirmError);
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={newLoanConfirmError.message} />,
-        "error",
-      );
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={newLoanConfirmError.message} />,
+          "error",
+        );
+      }
       setNewLoanIsLoading(false);
     }
     if (newLoanIsConfirming) {
@@ -303,13 +365,16 @@ export const BrowseCollection = (props) => {
     }
     if (newLoanIsConfirmed) {
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
-        "success",
-      );
-      setNewLoanIsLoading(false);
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
+          "success",
+        );
+      }
     }
   }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
@@ -465,7 +530,7 @@ export const BrowseCollection = (props) => {
                           lendingDesk: selectedLendingDesk,
                           nftId,
                           setNftId,
-                          nftCollectionAddress: collection_address,
+                          walletNfts,
                           index,
                         }}
                       />

@@ -1,5 +1,5 @@
 import { getDefaultConfig } from "connectkit";
-import { createConfig } from "wagmi";
+import { http, createConfig } from "wagmi";
 import { base, baseSepolia, hardhat } from "wagmi/chains";
 
 // Chains
@@ -19,6 +19,20 @@ export const config = createConfig(
 
     // Required API Keys
     walletConnectProjectId: "6f26f99d86d880b561988f69808456d3",
+
+    //Alchemy RPC URL transports
+    transports: {
+      [base.id]: http(
+        `https://base-mainnet.g.alchemy.com/v2/${
+          import.meta.env.VITE_ALCHEMY_API_KEY
+        }/`,
+      ),
+      [baseSepolia.id]: http(
+        `https://base-sepolia.g.alchemy.com/v2/${
+          import.meta.env.VITE_ALCHEMY_API_KEY
+        }/`,
+      ),
+    },
 
     // App Info
     appName: "Magnify Cash",

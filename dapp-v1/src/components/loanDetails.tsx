@@ -1,6 +1,5 @@
 import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
-import refetchData from "@/helpers/refetchData";
 import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -12,7 +11,7 @@ import {
   useWriteNftyFinanceV1LiquidateDefaultedLoan,
   useWriteNftyFinanceV1MakeLoanPayment,
 } from "@/wagmi-generated";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
@@ -102,6 +101,22 @@ const LoanDetails = ({
     },
   });
 
+  /*
+   Hook to check if the query data has changed
+  */
+
+  const initAmountDueRef = useRef(loanAmountDue);
+  useEffect(() => {
+    if (initAmountDueRef.current === null && loanAmountDue !== null) {
+      initAmountDueRef.current = loanAmountDue;
+    }
+    //close the modal if the loan amount due has changed
+    if (initAmountDueRef.current !== loanAmountDue) {
+      setActionIsLoading(false);
+    }
+    initAmountDueRef.current = loanAmountDue;
+  }, [loanAmountDue]);
+
   useEffect(() => {
     if (loanAmountDueError) {
       if (loanAmountDueError.message.includes("LoanMustBeActiveForMin1Hour")) {
@@ -158,12 +173,15 @@ const LoanDetails = ({
       refetchApprovalData();
       makeLoanPaymentRefetch();
       resolveLoanPaymentRefetch();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [approveErc20Error, approveConfirmError, approveIsConfirmed, approveIsConfirming]);
@@ -208,12 +226,15 @@ const LoanDetails = ({
       refetchApprovalData();
       makeLoanPaymentRefetch();
       resolveLoanPaymentRefetch();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approveErc20ResolveLoanData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approveErc20ResolveLoanData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [
@@ -389,7 +410,7 @@ const LoanDetails = ({
 
   //checkbox click function on resolve loan popup modal
   async function approveTokenTransferResolveLoan() {
-    if (checked) {
+    if (checkedResolveLoan) {
       addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
@@ -496,14 +517,26 @@ const LoanDetails = ({
       }
     }
     if (actionIsConfirmed) {
-      reexecuteQuery ? refetchData(reexecuteQuery) : null;
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={actionDataMap[action]!} />,
-        "success",
-      );
-      setActionIsLoading(false);
+      // Close the loading toast and show success toast
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={actionDataMap[action]!} />,
+          "success",
+        );
+      }
+      // Refetch data based on the action type
+      if (action === "payback") {
+        loanAmountDueRefetch(); // Refetch loan amount due after successful payment
+      } else {
+        setActionIsLoading(false);
+        reexecuteQuery ? reexecuteQuery() : null;
+      }
+      // Close modal
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
     }
   }, [
     actionErrorMap[action],

@@ -4,10 +4,8 @@ import {
   calculateLoanInterest,
   calculateLoanOriginationFee,
 } from "@/helpers/LoanInterest";
-import { type WalletNft, fromWei, getWalletNfts } from "@/helpers/utils";
+import { type WalletNft, fromWei } from "@/helpers/utils";
 import type { LendingDesk, LoanConfig } from "dapp-v1/.graphclient";
-import { useEffect, useState } from "react";
-import { useAccount, useChainId } from "wagmi";
 import { Spinner } from "./LoadingIndicator";
 import PopupTransaction from "./PopupTransaction";
 
@@ -25,7 +23,7 @@ type GetLoanModalProps = {
   setAmount: (amount: number) => void;
   nftId?: number;
   setNftId: (nftId: number) => void;
-  nftCollectionAddress?: string;
+  walletNfts: WalletNft[];
   disabled: boolean;
   btnClass: string;
   btnOnClick?: () => void;
@@ -46,7 +44,7 @@ export default function GetLoanModal({
   setAmount,
   nftId,
   setNftId,
-  nftCollectionAddress,
+  walletNfts,
   disabled,
   btnClass,
   btnOnClick,
@@ -59,26 +57,10 @@ export default function GetLoanModal({
   newLoanConfigIsLoading,
 }: GetLoanModalProps) {
   // Wallet NFTs
-  const { address } = useAccount();
-  const chainId = useChainId();
-  const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
 
   const selectedNft = walletNfts.find((x) => x.tokenId === nftId?.toString());
   const selectedNftName =
     nftId !== undefined ? selectedNft?.name || `${nft?.name} #${nftId}` : null;
-
-  // Get the available NFTs from the wallet
-  useEffect(() => {
-    const fetchWalletNfts = async () => {
-      const walletNfts = await getWalletNfts({
-        chainId: chainId,
-        wallet: address?.toLowerCase()!,
-        nftCollection: nftCollectionAddress!,
-      });
-      setWalletNfts(walletNfts);
-    };
-    fetchWalletNfts();
-  }, [address, nftCollectionAddress]);
 
   return (
     <PopupTransaction

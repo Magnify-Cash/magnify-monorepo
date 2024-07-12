@@ -1,19 +1,40 @@
 import { LoanRow } from "@/components";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import { useEffect, useState } from "react";
 import { useQuery } from "urql";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { LenderDashboardDocument } from "../../../.graphclient";
 
 export const Dashboard = (props: any) => {
+  /*
+  Wagmi Hooks
+  */
+  const chainId = useChainId();
   // GraphQL
   const { address } = useAccount();
-  const [result] = useQuery({
+  const [paused, setPaused] = useState(false);
+  const [result, reexecuteQuery] = useQuery({
     query: LenderDashboardDocument,
     variables: {
       walletAddress: address?.toLowerCase() || "",
     },
+    pause: paused,
+    requestPolicy: "cache-and-network",
   });
   const { data, fetching } = result;
+
+  useEffect(() => {
+    if (data) {
+      setPaused(true); // Correctly sets the query to be paused when data is fetched
+    }
+  }, [data]);
+
+  const refetchData = () => {
+    setPaused(false);
+    reexecuteQuery({
+      requestPolicy: "network-only",
+    });
+  };
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -88,7 +109,12 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-active-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data?.loans?.items || []} status="Active" isLender />
+              <LoanRow
+                loans={data?.loans?.items}
+                status="Active"
+                isLender
+                reexecuteQuery={refetchData}
+              />
             </div>
           </div>
           {/* End Active Row */}
@@ -102,10 +128,11 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 mt-n2 mb-4">
               <LoanRow
-                loans={data?.loans?.items || []}
+                loans={data?.loans?.items}
                 status="PendingDefault"
                 isLender
                 liquidate
+                reexecuteQuery={refetchData}
               />
             </div>
           </div>
@@ -119,7 +146,12 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-defaulted-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data?.loans?.items || []} status="Defaulted" isLender />
+              <LoanRow
+                loans={data?.loans?.items}
+                status="Defaulted"
+                isLender
+                reexecuteQuery={refetchData}
+              />
             </div>
           </div>
           {/* End Defaulted Row */}
@@ -132,7 +164,12 @@ export const Dashboard = (props: any) => {
             aria-labelledby="pills-completed-tab"
           >
             <div className="row g-4 mt-n2 mb-4">
-              <LoanRow loans={data?.loans?.items || []} status="Resolved" isLender />
+              <LoanRow
+                loans={data?.loans?.items}
+                status="Resolved"
+                isLender
+                reexecuteQuery={refetchData}
+              />
             </div>
           </div>
           {/* End Resolved Row */}

@@ -4,6 +4,7 @@ import { Spinner } from "@/components/LoadingIndicator";
 import type { INFTListItem, ITokenListItem } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   nftyFinanceV1Address,
@@ -13,6 +14,7 @@ import {
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 
 export interface IConfigForm {
@@ -26,6 +28,11 @@ export interface IConfigForm {
 }
 
 export const CreateLendingDesk = (props: any) => {
+  /*
+  react-router hooks
+  */
+  const navigate = useNavigate();
+
   /*
   wagmi hooks
   */
@@ -193,6 +200,22 @@ export const CreateLendingDesk = (props: any) => {
     useState<boolean>(false);
 
   /*
+  Hook to watch for contract events
+  */
+  useCustomWatchContractEvent({
+    eventName: "NewLendingDeskInitialized",
+    onLogs(logs) {
+      // Close modal
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
+      // Redirect to manage desk page after 1 second
+      setTimeout(() => {
+        navigate(`/manage-desks/${logs[0].args.lendingDeskId?.toString()}`);
+      }, 1000);
+    },
+  });
+
+  /*
   ERC20 Token Allowance
   */
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
@@ -265,12 +288,15 @@ export const CreateLendingDesk = (props: any) => {
     }
     if (approveIsConfirmed) {
       refetchApprovalData();
-      loadingToastId ? closeToast(loadingToastId) : null;
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={approveErc20TransactionData!} />,
-        "success",
-      );
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={approveErc20TransactionData!} />,
+          "success",
+        );
+      }
       setApprovalIsLoading(false);
     }
   }, [approveErc20Error, approveConfirmError, approveIsConfirmed, approveIsConfirming]);
@@ -338,15 +364,17 @@ export const CreateLendingDesk = (props: any) => {
     }
     if (initDeskIsConfirmed) {
       refetchApprovalData();
-      // Close loading toast
-      loadingToastId ? closeToast(loadingToastId) : null;
-      // Display success toast
-      addToast(
-        "Transaction Successful",
-        <TransactionDetails transactionHash={initializeNewLendingDeskData!} />,
-        "success",
-      );
-      setInitLendingDeskIsLoading(false);
+      if (loadingToastId) {
+        // Close loading toast
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        // Display success toast
+        addToast(
+          "Transaction Successful",
+          <TransactionDetails transactionHash={initializeNewLendingDeskData!} />,
+          "success",
+        );
+      }
     }
   }, [
     initializeNewLendingDeskError,
