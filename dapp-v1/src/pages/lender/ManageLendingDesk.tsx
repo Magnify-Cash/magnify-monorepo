@@ -12,7 +12,7 @@ import {
   useWriteMagnifyCashV1SetLendingDeskLoanConfigs,
   useWriteMagnifyCashV1SetLendingDeskState,
 } from "@/wagmi-generated";
-import type { NFTInfo } from "@nftylabs/nft-lists";
+import type { NFTInfo } from "@magnify-cash/nft-lists";
 import { useEffect, useRef, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";

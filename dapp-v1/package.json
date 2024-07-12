@@ -15,7 +15,7 @@
   "dependencies": {
     "@graphprotocol/client-cli": "3.0.3",
     "@graphprotocol/client-urql": "2.0.3",
-    "@nftylabs/nft-lists": "0.0.3",
+    "@magnify-cash/nft-lists": "0.0.1",
     "@tanstack/react-query": "5.37.1",
     "@uniswap/token-lists": "1.0.0-beta.34",
     "alchemy-sdk": "3.3.1",

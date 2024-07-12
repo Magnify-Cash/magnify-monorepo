@@ -1,6 +1,6 @@
 const nftListUrlsMap = {
   1: [
-    "https://raw.githubusercontent.com/NFTYLabs/nft-lists/master/test/schema/bigexample.nftlist.json",
+    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json?token=GHSAT0AAAAAACFG2BS3CVGA2FTJWHAHSUBQZURQOOA",
   ],
   8453: [],
   84532: import.meta.env.DEV

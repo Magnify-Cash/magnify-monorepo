@@ -2,7 +2,7 @@ import { useToastContext } from "@/helpers/CreateToast";
 import { formatAddress } from "@/helpers/formatAddress";
 import { getTokenListUrls } from "@/helpers/tokenUrls";
 import { getBlockExplorerURL } from "@/helpers/utils";
-import type { NFTInfo } from "@nftylabs/nft-lists";
+import type { NFTInfo } from "@magnify-cash/nft-lists";
 import type { TokenInfo } from "@uniswap/token-lists";
 import {
   type ButtonHTMLAttributes,
