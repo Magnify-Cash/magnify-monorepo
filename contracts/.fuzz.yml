@@ -3,13 +3,13 @@ analyze:
   # remappings:
     #   - "@openzeppelin=./node_modules/@openzeppelin"
     #   - "@ozUpgradesV3=OpenZeppelin/openzeppelin-contracts-upgradeable@3.3.0"
-  
+
 
   # Sometimes you want to enforce a specific solidity version
   # solc-version: "0.6.12"
-  
-  
-  
+
+
+
 
 fuzz:
   ide: hardhat
@@ -24,14 +24,14 @@ fuzz:
   smart_mode: False
 
   # Tell the CLI where to find the compiled contracts and compilation artifacts
-  
-  build_directory: /Users/kvn/_/Code/NFTYFINANCE/nftyfinance-monorepo/contracts/artifacts
-  
+
+  build_directory:
+
 
   # Tell the CLI where to find the contracts source
-  
-  sources_directory: /Users/kvn/_/Code/NFTYFINANCE/nftyfinance-monorepo/contracts/contracts
-  
+
+  sources_directory:
+
 
   # The following address is going to be the main target for the fuzzing campaign
   # deployed_contract_address: "0x48b8050b4174f7871ce53AaF76BEAcA765037BFf"
@@ -56,4 +56,4 @@ fuzz:
   # This is the contract that the campaign will show coverage for, map issues to, etc.
   # It's a list of all the relevant contracts (don't worry about dependencies, we'll get those automatically 🙌)
   targets:
-    - "/Users/kvn/_/Code/NFTYFINANCE/nftyfinance-monorepo/contracts/contracts"
+    - ""

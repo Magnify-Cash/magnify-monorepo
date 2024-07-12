@@ -1,14 +1,14 @@
-# Advanced Integration with NFTY Finance
+# Advanced Integration with Magnify Cash
 
-In this section, we will extend the basic integration to fetch and display data from the NFTY Finance protocol using the NFTY Finance subgraph. Similar to the previous example, we will use React for the web interface and Apollo Client to send queries to the subgraph. Let's get started!
+In this section, we will extend the basic integration to fetch and display data from the Magnify Cash protocol using the Magnify Cash subgraph. Similar to the previous example, we will use React for the web interface and Apollo Client to send queries to the subgraph. Let's get started!
 
 ## Setting Up the Environment
 
 First, ensure you have set up your React application as shown in the previous section. If you haven't done that yet, follow the steps mentioned there to create a new React app and set up Apollo Client.
 
-## GraphQL Client for NFTY Finance
+## GraphQL Client for Magnify Cash
 
-Just like before, we need to set up a middleware to make requests to the NFTY Finance subgraph. Replace the existing imports in your `App.js` file with the following code:
+Just like before, we need to set up a middleware to make requests to the Magnify Cash subgraph. Replace the existing imports in your `App.js` file with the following code:
 
 ```jsx
 import React from 'react';
@@ -31,11 +31,11 @@ function App() {
 export default App;
 ```
 
-Here, we have updated the `uri` to point to the NFTY Finance subgraph instead of the NFTY Finance subgraph.
+Here, we have updated the `uri` to point to the Magnify Cash subgraph instead of the Magnify Cash subgraph.
 
-## Writing the Queries for NFTY Finance
+## Writing the Queries for Magnify Cash
 
-Next, let's define the queries to fetch data from the NFTY Finance protocol. We will retrieve information about NFTY Finance contracts, lending desks, and active loans. Add the following code below the imports in `App.js`:
+Next, let's define the queries to fetch data from the Magnify Cash protocol. We will retrieve information about Magnify Cash contracts, lending desks, and active loans. Add the following code below the imports in `App.js`:
 
 ```jsx
 import gql from 'graphql-tag';
@@ -74,7 +74,7 @@ const ACTIVE_LOANS_QUERY = gql`
 `;
 ```
 
-These queries will fetch data about all lending desks and active loans in the NFTY Finance protocol.
+These queries will fetch data about all lending desks and active loans in the Magnify Cash protocol.
 
 ## Fetching and Displaying Data
 

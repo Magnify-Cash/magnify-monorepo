@@ -1,5 +1,5 @@
 import { config } from "@/wagmi";
-import { nftyFinanceV1Abi, nftyFinanceV1Address } from "@/wagmi-generated";
+import { magnifyCashV1Abi, magnifyCashV1Address } from "@/wagmi-generated";
 import { watchContractEvent } from "@wagmi/core";
 import { useEffect } from "react";
 import { useChainId } from "wagmi";
@@ -19,8 +19,8 @@ const useCustomWatchContractEvent = ({ eventName, onLogs }) => {
     // Start watching the specified contract event using the watchContractEvent function from @wagmi/core.
     // This function requires the contract configuration, including the address, ABI, event name, and a callback function.
     const unwatch = watchContractEvent(config, {
-      address: nftyFinanceV1Address[chainId],
-      abi: nftyFinanceV1Abi,
+      address: magnifyCashV1Address[chainId],
+      abi: magnifyCashV1Abi,
       eventName, // Name of the event to watch.
       onLogs, // Callback function to handle the event logs.
     });

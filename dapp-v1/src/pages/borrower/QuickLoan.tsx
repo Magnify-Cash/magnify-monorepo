@@ -11,11 +11,11 @@ import { formatAddress } from "@/helpers/formatAddress";
 import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
 import {
-  nftyFinanceV1Address,
+  magnifyCashV1Address,
   useReadErc721GetApproved,
-  useSimulateNftyFinanceV1InitializeNewLoan,
+  useSimulateMagnifyCashV1InitializeNewLoan,
   useWriteErc721Approve,
-  useWriteNftyFinanceV1InitializeNewLoan,
+  useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -153,7 +153,7 @@ export const QuickLoan = (props: any) => {
     _setSelectedLendingDesk(undefined);
     //This resets the styling of lending desk selection form
     const button = document.querySelector(
-      ".nfty-check .btn-check:checked",
+      ".magnify-check .btn-check:checked",
     ) as HTMLInputElement;
     if (button) {
       button.checked = false;
@@ -271,7 +271,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
+    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -282,7 +282,7 @@ export const QuickLoan = (props: any) => {
     data: newLoanConfig,
     isLoading: newLoanConfigIsLoading,
     error: newLoanConfigError,
-  } = useSimulateNftyFinanceV1InitializeNewLoan({
+  } = useSimulateMagnifyCashV1InitializeNewLoan({
     args: [
       BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
@@ -307,7 +307,7 @@ export const QuickLoan = (props: any) => {
     data: newLoanWriteTransactionData,
     writeContractAsync: newLoanWrite,
     error: newLoanWriteError,
-  } = useWriteNftyFinanceV1InitializeNewLoan();
+  } = useWriteMagnifyCashV1InitializeNewLoan();
 
   const {
     isLoading: newLoanIsConfirming,
@@ -378,7 +378,7 @@ export const QuickLoan = (props: any) => {
 
     await approveErc721({
       address: nftCollection?.nft.address as `0x${string}`,
-      args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+      args: [magnifyCashV1Address[chainId], BigInt(nftId || 0)],
     });
   }
 
@@ -513,7 +513,7 @@ export const QuickLoan = (props: any) => {
               <div className="specific-h-500 overflow-y-scroll">
                 {flatResult.map((item) => {
                   return (
-                    <div className="nfty-check" key={item.lendingDesk.id}>
+                    <div className="magnify-check" key={item.lendingDesk.id}>
                       <input
                         type="radio"
                         className="btn-check"

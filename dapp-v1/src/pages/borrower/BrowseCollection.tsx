@@ -11,11 +11,11 @@ import { formatAddress } from "@/helpers/formatAddress";
 import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
 import {
-  nftyFinanceV1Address,
+  magnifyCashV1Address,
   useReadErc721GetApproved,
-  useSimulateNftyFinanceV1InitializeNewLoan,
+  useSimulateMagnifyCashV1InitializeNewLoan,
   useWriteErc721Approve,
-  useWriteNftyFinanceV1InitializeNewLoan,
+  useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
@@ -276,7 +276,7 @@ export const BrowseCollection = (props) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === nftyFinanceV1Address[chainId].toLowerCase()) {
+    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -288,7 +288,7 @@ export const BrowseCollection = (props) => {
     data: newLoanConfig,
     isLoading: newLoanConfigIsLoading,
     error: newLoanConfigError,
-  } = useSimulateNftyFinanceV1InitializeNewLoan({
+  } = useSimulateMagnifyCashV1InitializeNewLoan({
     args: [
       BigInt(selectedLendingDesk?.id ? selectedLendingDesk.id : 0),
       nft?.address as `0x${string}`,
@@ -314,7 +314,7 @@ export const BrowseCollection = (props) => {
     data: newLoanWriteTransactionData,
     writeContractAsync: newLoanWrite,
     error: newLoanWriteError,
-  } = useWriteNftyFinanceV1InitializeNewLoan();
+  } = useWriteMagnifyCashV1InitializeNewLoan();
 
   const {
     isLoading: newLoanIsConfirming,
@@ -388,7 +388,7 @@ export const BrowseCollection = (props) => {
 
     await approveErc721({
       address: nft?.address as `0x${string}`,
-      args: [nftyFinanceV1Address[chainId], BigInt(nftId || 0)],
+      args: [magnifyCashV1Address[chainId], BigInt(nftId || 0)],
     });
   }
   // Modal submit

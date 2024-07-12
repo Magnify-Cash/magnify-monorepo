@@ -1,7 +1,7 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import { createPlatformWalletSetEvent, initializeProtocol } from "../utils";
 import { platformWallet } from "../consts";
-import { handlePlatformWalletSet } from "../../src/nfty-finance";
+import { handlePlatformWalletSet } from "../../src/magnify-cash";
 import { Address } from "@graphprotocol/graph-ts";
 
 beforeAll(() => {

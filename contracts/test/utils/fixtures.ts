@@ -2,51 +2,51 @@ import { ethers } from "hardhat";
 import { LoanConfig } from "./consts";
 import { getEvent } from "./utils";
 
-export const deployNftyFinance = async () => {
+export const deployMagnifyCash = async () => {
   const [owner, alice] = await ethers.getSigners();
 
   // Obligation Notes
   const ObligationNotes = await ethers.getContractFactory(
-    "NFTYObligationNotesV1"
+    "MagnifyObligationNotesV1"
   );
   const obligationNotes = await ObligationNotes.deploy(
-    "NFTY Obligation Notes",
+    "Magnify Obligation Notes",
     "BORROW",
-    "https://metadata.nfty.finance/BORROW/",
+    "https://metadata.magnify.cash/BORROW/",
     owner.address
   );
   await obligationNotes.waitForDeployment();
 
   // Lending Keys
-  const LendingKeys = await ethers.getContractFactory("NFTYLendingKeysV1");
+  const LendingKeys = await ethers.getContractFactory("MagnifyLendingKeysV1");
   const lendingKeys = await LendingKeys.deploy(
-    "NFTY Lending Keys",
+    "Magnify Lending Keys",
     "KEYS",
-    "https://metadata.nfty.finance/KEYS/",
+    "https://metadata.magnify.cash/KEYS/",
     owner.address
   );
   await lendingKeys.waitForDeployment();
 
-  const NFTYFinance = await ethers.getContractFactory("NFTYFinanceV1");
+  const MagnifyCash = await ethers.getContractFactory("MagnifyCashV1");
 
   const loanOriginationFee = 200n;
   const platformWallet = ethers.Wallet.createRandom().address;
 
-  const nftyFinance = await NFTYFinance.deploy(
+  const magnifyCash = await MagnifyCash.deploy(
     obligationNotes.target,
     lendingKeys.target,
     loanOriginationFee,
     platformWallet,
     owner.address
   );
-  await nftyFinance.waitForDeployment();
+  await magnifyCash.waitForDeployment();
 
   // Configuration
-  await obligationNotes.setNftyFinance(nftyFinance.target);
-  await lendingKeys.setNftyFinance(nftyFinance.target);
+  await obligationNotes.setMagnifyCash(magnifyCash.target);
+  await lendingKeys.setMagnifyCash(magnifyCash.target);
 
   return {
-    nftyFinance,
+    magnifyCash,
     obligationNotes,
     lendingKeys,
     loanOriginationFee,
@@ -78,8 +78,8 @@ export const deployTestTokens = async () => {
   return { erc20, erc721, erc1155 };
 };
 
-export const deployNftyFinanceWithTestTokens = async () => {
-  const { ...items } = await deployNftyFinance();
+export const deployMagnifyCashWithTestTokens = async () => {
+  const { ...items } = await deployMagnifyCash();
   const { ...testTokens } = await deployTestTokens();
 
   return {
@@ -90,14 +90,14 @@ export const deployNftyFinanceWithTestTokens = async () => {
 
 export const initializeLendingDesk = async () => {
   const {
-    nftyFinance,
+    magnifyCash,
     obligationNotes,
     erc20,
     erc721,
     erc1155,
     lendingKeys,
     platformWallet,
-  } = await deployNftyFinanceWithTestTokens();
+  } = await deployMagnifyCashWithTestTokens();
 
   const [owner, lender, borrower, alice] = await ethers.getSigners();
 
@@ -105,24 +105,24 @@ export const initializeLendingDesk = async () => {
 
   // Get ERC20 and approve
   await erc20.connect(lender).mint(initialBalance);
-  await erc20.connect(lender).approve(nftyFinance.getAddress(), initialBalance);
+  await erc20.connect(lender).approve(magnifyCash.getAddress(), initialBalance);
 
   // Create liquidity shop
-  const tx = await nftyFinance
+  const tx = await magnifyCash
     .connect(lender)
     .initializeNewLendingDesk(erc20.getAddress(), initialBalance, []);
 
   // Get liquidity shop from event
   const event = await getEvent(tx, "NewLendingDeskInitialized");
   const lendingDeskId = event?.lendingDeskId;
-  const lendingDesk = await nftyFinance.lendingDesks(lendingDeskId);
+  const lendingDesk = await magnifyCash.lendingDesks(lendingDeskId);
 
   return {
     owner,
     lender,
     alice,
     borrower,
-    nftyFinance,
+    magnifyCash,
     obligationNotes,
     erc20,
     erc721,
@@ -136,7 +136,7 @@ export const initializeLendingDesk = async () => {
 };
 
 export const initializeLendingDeskAndAddLoanConfig = async () => {
-  const { nftyFinance, lender, lendingDeskId, erc721, ...rest } =
+  const { magnifyCash, lender, lendingDeskId, erc721, ...rest } =
     await initializeLendingDesk();
 
   const loanConfig: LoanConfig = {
@@ -150,10 +150,10 @@ export const initializeLendingDeskAndAddLoanConfig = async () => {
     maxInterest: 1500n,
   };
 
-  await nftyFinance
+  await magnifyCash
     .connect(lender)
     .setLendingDeskLoanConfigs(lendingDeskId, [loanConfig]);
-  return { nftyFinance, lender, lendingDeskId, loanConfig, erc721, ...rest };
+  return { magnifyCash, lender, lendingDeskId, loanConfig, erc721, ...rest };
 };
 
 export const initializeLoan = async () => {
@@ -162,18 +162,18 @@ export const initializeLoan = async () => {
   const nftId = 0;
   const maxInterestAllowed = 10000000n;
 
-  const { borrower, erc20, erc721, nftyFinance, lendingDeskId, ...rest } =
+  const { borrower, erc20, erc721, magnifyCash, lendingDeskId, ...rest } =
     await initializeLendingDeskAndAddLoanConfig();
 
   // Give borrower some ERC20 and NFTs
   await erc20.connect(borrower).mint(10000);
   await erc721.connect(borrower).mint(1);
 
-  // Approve NFTYLending to transfer tokens
-  await erc20.connect(borrower).approve(nftyFinance.target, 10000);
-  await erc721.connect(borrower).approve(nftyFinance.target, nftId);
+  // Approve Magnify Cash to transfer tokens
+  await erc20.connect(borrower).approve(magnifyCash.target, 10000);
+  await erc721.connect(borrower).approve(magnifyCash.target, nftId);
 
-  const tx = await nftyFinance
+  const tx = await magnifyCash
     .connect(borrower)
     .initializeNewLoan(
       lendingDeskId,
@@ -191,13 +191,13 @@ export const initializeLoan = async () => {
   const platformFee = event?.platformFee;
 
   // Get loan
-  const loan = await nftyFinance.loans(loanId);
+  const loan = await magnifyCash.loans(loanId);
 
   return {
     borrower,
     erc20,
     erc721,
-    nftyFinance,
+    magnifyCash,
     lendingDeskId,
     nftId,
     loanDuration,
@@ -228,52 +228,52 @@ export const calculateRepaymentAmount = async (
   return totalAmountDue;
 };
 
-export const deployNftyErc721 = async () => {
-  const name = "NFTY ERC721";
-  const symbol = "NFTY";
-  const baseUri = "https://metadata.nfty-erc721.local";
+export const deploymagnifyErc721 = async () => {
+  const name = "Magnify ERC721";
+  const symbol = "MAG";
+  const baseUri = "https://metadata.magnify-erc721.local";
 
-  const [owner, alice, nftyFinance] = await ethers.getSigners();
+  const [owner, alice, magnifyCash] = await ethers.getSigners();
 
-  const NFTYERC721V1 = await ethers.getContractFactory("NFTYERC721V1");
-  const nftyErc721 = await NFTYERC721V1.deploy(
+  const MagnifyERC721V1 = await ethers.getContractFactory("MagnifyERC721V1");
+  const magnifyErc721 = await MagnifyERC721V1.deploy(
     name,
     symbol,
     baseUri,
     owner.address
   );
-  await nftyErc721.waitForDeployment();
+  await magnifyErc721.waitForDeployment();
 
   return {
     name,
     symbol,
     baseUri,
-    nftyErc721,
+    magnifyErc721,
     owner,
     alice,
-    nftyFinance,
+    magnifyCash,
   };
 };
 
-export const deployNftyErc721AndSetNftyFinance = async () => {
-  const { nftyErc721, owner, nftyFinance, ...rest } = await deployNftyErc721();
+export const deploymagnifyErc721AndSetMagnifyCash = async () => {
+  const { magnifyErc721, owner, magnifyCash, ...rest } = await deploymagnifyErc721();
 
-  await nftyErc721.connect(owner).setNftyFinance(nftyFinance.address);
+  await magnifyErc721.connect(owner).setMagnifyCash(magnifyCash.address);
 
   return {
-    nftyErc721,
+    magnifyErc721,
     owner,
-    nftyFinance,
+    magnifyCash,
     ...rest,
   };
 };
 
-export const deployNftyErc721AndMint = async () => {
-  const { nftyErc721, alice, nftyFinance, ...rest } =
-    await deployNftyErc721AndSetNftyFinance();
+export const deploymagnifyErc721AndMint = async () => {
+  const { magnifyErc721, alice, magnifyCash, ...rest } =
+    await deploymagnifyErc721AndSetMagnifyCash();
 
   const tokenId = 1;
-  await nftyErc721.connect(nftyFinance).mint(alice.address, tokenId);
+  await magnifyErc721.connect(magnifyCash).mint(alice.address, tokenId);
 
-  return { nftyErc721, alice, nftyFinance, tokenId, ...rest };
+  return { magnifyErc721, alice, magnifyCash, tokenId, ...rest };
 };

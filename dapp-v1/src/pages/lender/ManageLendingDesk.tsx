@@ -7,10 +7,10 @@ import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
-  useSimulateNftyFinanceV1SetLendingDeskState,
-  useWriteNftyFinanceV1RemoveLendingDeskLoanConfig,
-  useWriteNftyFinanceV1SetLendingDeskLoanConfigs,
-  useWriteNftyFinanceV1SetLendingDeskState,
+  useSimulateMagnifyCashV1SetLendingDeskState,
+  useWriteMagnifyCashV1RemoveLendingDeskLoanConfig,
+  useWriteMagnifyCashV1SetLendingDeskLoanConfigs,
+  useWriteMagnifyCashV1SetLendingDeskState,
 } from "@/wagmi-generated";
 import type { NFTInfo } from "@nftylabs/nft-lists";
 import { useEffect, useRef, useState } from "react";
@@ -243,7 +243,7 @@ export const ManageLendingDesk = (props: any) => {
     isLoading: freezeConfigIsLoading,
     error: freezeConfigError,
     refetch: refetchFreezeConfig,
-  } = useSimulateNftyFinanceV1SetLendingDeskState({
+  } = useSimulateMagnifyCashV1SetLendingDeskState({
     args: [BigInt(result.data?.lendingDesk?.id || 0), boolStatus],
     query: {
       enabled: !!result.data?.lendingDesk?.id,
@@ -253,7 +253,7 @@ export const ManageLendingDesk = (props: any) => {
     data: freezeData,
     writeContractAsync: freezeWrite,
     error: freezeError,
-  } = useWriteNftyFinanceV1SetLendingDeskState();
+  } = useWriteMagnifyCashV1SetLendingDeskState();
   const {
     isLoading: freezeIsConfirming,
     isSuccess: freezeIsConfirmed,
@@ -340,7 +340,7 @@ export const ManageLendingDesk = (props: any) => {
     data: updateLendingDeskData,
     writeContractAsync: updateLendingDesk,
     error: updateLendingDeskError,
-  } = useWriteNftyFinanceV1SetLendingDeskLoanConfigs();
+  } = useWriteMagnifyCashV1SetLendingDeskLoanConfigs();
   const {
     isLoading: updateLendingDeskIsConfirming,
     isSuccess: updateLendingDeskIsConfirmed,
@@ -465,7 +465,7 @@ export const ManageLendingDesk = (props: any) => {
     data: deleteCollectionData,
     writeContractAsync: deleteCollection,
     error: deleteCollectionError,
-  } = useWriteNftyFinanceV1RemoveLendingDeskLoanConfig();
+  } = useWriteMagnifyCashV1RemoveLendingDeskLoanConfig();
   const {
     isLoading: deleteCollectionIsConfirming,
     isSuccess: deleteCollectionIsConfirmed,

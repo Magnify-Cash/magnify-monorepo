@@ -7,7 +7,7 @@ import {
 import {
   handleLendingDeskLiquidityDeposited,
   handleLendingDeskLiquidityWithdrawn,
-} from "../../src/nfty-finance";
+} from "../../src/magnify-cash";
 import { BigInt } from "@graphprotocol/graph-ts";
 import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
 

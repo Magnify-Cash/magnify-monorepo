@@ -8,7 +8,7 @@ import {
   createLendingDeskStateSetEvent,
   initializeLendingDesk,
 } from "../utils";
-import { handleLendingDeskStateSet } from "../../src/nfty-finance";
+import { handleLendingDeskStateSet } from "../../src/magnify-cash";
 import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
 import { LendingDesk } from "../../generated/schema";
 

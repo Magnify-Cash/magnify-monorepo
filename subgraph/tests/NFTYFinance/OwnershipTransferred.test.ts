@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import { createOwnershipTransferredEvent, initializeProtocol } from "../utils";
-import { handleOwnershipTransferred } from "../../src/nfty-finance";
+import { handleOwnershipTransferred } from "../../src/magnify-cash";
 import { Address } from "@graphprotocol/graph-ts";
 import { protocolOwner } from "../consts";
 

@@ -3,10 +3,10 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: NFTYFinance
+    name: MagnifyCash
     network: base-sepolia
     source:
-      abi: NFTYFinance
+      abi: MagnifyCash
       address: "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f"
       startBlock: 9062856
     mapping:
@@ -20,8 +20,8 @@ dataSources:
         - NftCollection
         - Loan
       abis:
-        - name: NFTYFinance
-          file: ../contracts/artifacts/contracts/NFTYFinanceV1.sol/NFTYFinanceV1.json
+        - name: MagnifyCash
+          file: ../contracts/artifacts/contracts/MagnifyCashV1.sol/MagnifyCashV1.json
         - name: ERC20
           file: ../contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
       eventHandlers:
@@ -55,7 +55,7 @@ dataSources:
           handler: handleDefaultedLoanLiquidated
         - event: PlatformWalletSet(address)
           handler: handlePlatformWalletSet
-      file: ./src/nfty-finance.ts
+      file: ./src/magnify-cash.ts
   - kind: ethereum/contract
     name: LendingKeys
     network: base-sepolia
@@ -71,7 +71,7 @@ dataSources:
         - LendingDesk
       abis:
         - name: LendingKeys
-          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
+          file: ../contracts/artifacts/contracts/MagnifyERC721V1.sol/MagnifyERC721V1.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
@@ -91,7 +91,7 @@ dataSources:
         - Loan
       abis:
         - name: ObligationNotes
-          file: ../contracts/artifacts/contracts/NFTYERC721V1.sol/NFTYERC721V1.json
+          file: ../contracts/artifacts/contracts/MagnifyERC721V1.sol/MagnifyERC721V1.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer

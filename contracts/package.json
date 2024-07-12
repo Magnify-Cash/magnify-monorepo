@@ -1,5 +1,5 @@
 {
-  "name": "nftyfinance-contracts",
+  "name": "magnify-contracts",
   "version": "0.0.1",
   "license": "UNLICENSED",
   "scripts": {
@@ -10,10 +10,10 @@
     "deploy:local": "yarn build && yarn hardhat deploy --network localhost",
     "deploy:sepolia": "yarn build && yarn hardhat deploy --network sepolia",
     "deploy:baseSepolia": "yarn build && yarn hardhat deploy --network baseSepolia",
-    "mythril": "myth analyze contracts/contracts/NFTYFinanceV1.sol  --solc-json ./solc.json",
+    "mythril": "myth analyze contracts/contracts/MagnifyCashV1.sol  --solc-json ./solc.json",
     "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings",
     "fuzz": "echidna ./test/GuardianAudits/fuzz/EchidnaRouter.sol --contract EchidnaRouter --config config.yaml",
-    "invariants": "FOUNDRY_PROFILE=quick forge test --match-contract NFTYFinanceInvariantTest -vvvv"
+    "invariants": "FOUNDRY_PROFILE=quick forge test --match-contract MagnifyCashInvariantTest -vvvv"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

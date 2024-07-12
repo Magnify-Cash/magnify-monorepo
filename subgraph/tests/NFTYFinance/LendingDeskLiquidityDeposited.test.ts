@@ -8,7 +8,7 @@ import {
   createLendingDeskLiquidityDepositedEvent,
   initializeLendingDesk,
 } from "../utils";
-import { handleLendingDeskLiquidityDeposited } from "../../src/nfty-finance";
+import { handleLendingDeskLiquidityDeposited } from "../../src/magnify-cash";
 import { BigInt } from "@graphprotocol/graph-ts";
 import { erc20Address, lendingDeskId, lendingDeskOwner } from "../consts";
 import { LendingDesk } from "../../generated/schema";

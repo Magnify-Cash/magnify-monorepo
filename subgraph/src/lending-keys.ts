@@ -3,7 +3,7 @@ import { Transfer } from "../generated/LendingKeys/LendingKeys";
 import { LendingDesk, User } from "../generated/schema";
 
 export function handleTransfer(event: Transfer): void {
-  // Skip if this is a mint or burn event, as those are handled by NFTYFinance's event handlers
+  // Skip if this is a mint or burn event, as those are handled by MagnifyCash's event handlers
   if (event.params.from == Address.zero() || event.params.to == Address.zero())
     return;
 

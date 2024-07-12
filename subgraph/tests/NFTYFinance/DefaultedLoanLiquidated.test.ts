@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as/assembly/index";
 import { createDefaultedLoanLiquidatedEvent, initializeLoan } from "../utils";
-import { handleDefaultedLoanLiquidated } from "../../src/nfty-finance";
+import { handleDefaultedLoanLiquidated } from "../../src/magnify-cash";
 import {
   erc20Address,
   lendingDeskId,

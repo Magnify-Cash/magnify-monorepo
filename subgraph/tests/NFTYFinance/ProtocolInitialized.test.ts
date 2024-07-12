@@ -3,7 +3,7 @@ import {
   handleLoanOriginationFeeSet,
   handleOwnershipTransferred,
   handleProtocolInitialized,
-} from "../../src/nfty-finance";
+} from "../../src/magnify-cash";
 import {
   createLoanOriginationFeeSetEvent,
   createOwnershipTransferredEvent,

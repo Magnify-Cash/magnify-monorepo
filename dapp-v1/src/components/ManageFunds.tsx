@@ -2,13 +2,13 @@ import { PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
-  nftyFinanceV1Address,
+  magnifyCashV1Address,
   useReadErc20Allowance,
-  useSimulateNftyFinanceV1DepositLendingDeskLiquidity,
-  useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity,
+  useSimulateMagnifyCashV1DepositLendingDeskLiquidity,
+  useSimulateMagnifyCashV1WithdrawLendingDeskLiquidity,
   useWriteErc20Approve,
-  useWriteNftyFinanceV1DepositLendingDeskLiquidity,
-  useWriteNftyFinanceV1WithdrawLendingDeskLiquidity,
+  useWriteMagnifyCashV1DepositLendingDeskLiquidity,
+  useWriteMagnifyCashV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -117,7 +117,7 @@ export const ManageFunds = ({
 
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
     address: lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    args: [address as `0x${string}`, magnifyCashV1Address[chainId]],
   });
 
   const {
@@ -181,7 +181,7 @@ export const ManageFunds = ({
     isLoading: depositConfigIsLoading,
     error: depositConfigError,
     refetch: refetchDepositConfig,
-  } = useSimulateNftyFinanceV1DepositLendingDeskLiquidity({
+  } = useSimulateMagnifyCashV1DepositLendingDeskLiquidity({
     args: [
       BigInt(lendingDesk?.id || 0),
       toWei(amount.toString(), lendingDesk?.erc20?.decimals),
@@ -194,7 +194,7 @@ export const ManageFunds = ({
     data: depositWriteData,
     writeContractAsync: depositWrite,
     error: depositWriteError,
-  } = useWriteNftyFinanceV1DepositLendingDeskLiquidity();
+  } = useWriteMagnifyCashV1DepositLendingDeskLiquidity();
   const depositLiquidity = async () => {
     await depositWrite(depositConfig!.request);
   };
@@ -207,7 +207,7 @@ export const ManageFunds = ({
     data: withdrawConfig,
     isLoading: withdrawConfigIsLoading,
     error: withdrawConfigError,
-  } = useSimulateNftyFinanceV1WithdrawLendingDeskLiquidity({
+  } = useSimulateMagnifyCashV1WithdrawLendingDeskLiquidity({
     args: [
       BigInt(lendingDesk?.id || 0),
       toWei(amount?.toString(), lendingDesk?.erc20?.decimals),
@@ -220,7 +220,7 @@ export const ManageFunds = ({
     data: withdrawWriteData,
     writeContractAsync: withdrawWrite,
     error: withdrawWriteError,
-  } = useWriteNftyFinanceV1WithdrawLendingDeskLiquidity();
+  } = useWriteMagnifyCashV1WithdrawLendingDeskLiquidity();
 
   const withdrawLiquidity = async () => {
     // Check if withdrawWrite is a function i.e. if the withdrawWrite function is defined
@@ -374,7 +374,7 @@ export const ManageFunds = ({
     await approveErc20({
       address: lendingDesk?.erc20.id as `0x${string}`,
       args: [
-        nftyFinanceV1Address[chainId],
+        magnifyCashV1Address[chainId],
         toWei(amount.toString(), lendingDesk?.erc20?.decimals),
       ],
     });

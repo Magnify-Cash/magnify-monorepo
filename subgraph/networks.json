@@ -1,6 +1,6 @@
 {
   "sepolia": {
-    "NFTYFinance": {
+    "MagnifyCash": {
       "address": "0x6CeAF3EFF44b434B6e91041101FDe8c449A6A2f0",
       "startBlock": 5225934
     },
@@ -18,7 +18,7 @@
     }
   },
   "base-sepolia": {
-    "NFTYFinance": {
+    "MagnifyCash": {
       "address": "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f",
       "startBlock": 9062856
     },
@@ -32,7 +32,7 @@
     }
   },
   "mainnet": {
-    "NFTYFinance": {
+    "MagnifyCash": {
       "address": "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f",
       "startBlock": 9062856
     },

@@ -4,7 +4,7 @@ import {
   createUnpausedEvent,
   initializeProtocol,
 } from "../utils";
-import { handlePaused, handleUnpaused } from "../../src/nfty-finance";
+import { handlePaused, handleUnpaused } from "../../src/magnify-cash";
 import { ProtocolInfo } from "../../generated/schema";
 
 beforeAll(() => {

@@ -8,7 +8,7 @@ import {
   createNewLendingDeskInitializedEvent,
   initializeProtocol,
 } from "../utils";
-import { handleNewLendingDeskInitialized } from "../../src/nfty-finance";
+import { handleNewLendingDeskInitialized } from "../../src/magnify-cash";
 import { BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { Erc20, LendingDesk } from "../../generated/schema";
 import {

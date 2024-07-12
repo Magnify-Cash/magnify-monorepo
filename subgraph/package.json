@@ -1,11 +1,11 @@
 {
-  "name": "nftyfinance-subgraph",
+  "name": "magnify-subgraph",
   "version": "0.0.1",
   "scripts": {
     "codegen": "graph codegen",
     "deploy:sepolia": "graph codegen && graph deploy --product hosted-service skulltech/nftyfinance-sepolia --network sepolia",
     "deploy:baseSepolia": "graph codegen && graph deploy --product hosted-service crypto-rizzo/nftyfinance-base-sepolia --network base-sepolia",
-    "deploy:local": "graph codegen && graph remove --node http://localhost:8020/ nftyfinance-local && graph create --node http://localhost:8020/ nftyfinance-local && graph deploy -l 0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 nftyfinance-local --network mainnet",
+    "deploy:local": "graph codegen && graph remove --node http://localhost:8020/ magnify-local && graph create --node http://localhost:8020/ magnify-local && graph deploy -l 0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 magnify-local --network mainnet",
     "test": "graph test"
   },
   "dependencies": {

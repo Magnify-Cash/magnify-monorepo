@@ -59,10 +59,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="docs" element={<Pages.Demo title="Docs" />} />
               <Route path="community" element={<Pages.Demo title="Community" />} />
 
-              {/* Token */}
-              <Route path="token" element={<Pages.Demo title="NFTY Token" />} />
-              <Route path="stake" element={<Pages.Demo title="NFTY Staking" />} />
-
               {/* Catch All */}
               <Route path="*" element={<Navigate to="/" />} />
             </Route>

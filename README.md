@@ -1,5 +1,5 @@
-# NFTY Finance V1 Monorepo
-Welcome to NFTY Finance V1! This repository serves as the central hub for various subprojects that collectively constitute the NFTY Finance protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
+# Magnify Cash V1 Monorepo
+Welcome to Magnify Cash V1! This repository serves as the central hub for various subprojects that collectively constitute the Magnify Cash protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
 
 ## Repo Structure
 
@@ -7,13 +7,13 @@ This monorepo utilizes [yarn workspaces](https://classic.yarnpkg.com/lang/en/doc
 
 Currently, the monorepo comprises the following four subprojects:
 
-1. **contracts**: This section contains the smart contracts that form the backbone of the NFTY Finance protocol. For in-depth details, please refer to the [`/contracts`](contracts/docs/README.md) directory.
+1. **contracts**: This section contains the smart contracts that form the backbone of the Magnify Cash protocol. For in-depth details, please refer to the [`/contracts`](contracts/docs/README.md) directory.
 
-2. **subgraph**: Here, you can find the code responsible for managing the subgraph of the NFTY Finance protocol. (You may include additional context or purpose of the subgraph here.)
+2. **subgraph**: Here, you can find the code responsible for managing the subgraph of the Magnify Cash protocol. (You may include additional context or purpose of the subgraph here.)
 
 3. **faucet**: The faucet subproject deals with setting up and managing the faucet service. (Feel free to elaborate further on the functionality of the faucet if needed.)
 
-4. **dapp**: The dapp subproject encompasses the decentralized application (dApp) for NFTY Finance. (Provide more information on the features and functionalities of the dApp as necessary.)
+4. **dapp**: The dapp subproject encompasses the decentralized application (dApp) for Magnify Cash. (Provide more information on the features and functionalities of the dApp as necessary.)
 
 ## Local Development Setup
 
@@ -87,4 +87,4 @@ If you just want to deploy the subgraph and dapp and not the contracts, you can 
 
 ## Running Tests
 
-To run all smart contract tests, execute `yarn contracts test`. If you want to target specific tests, e.g., tests with the name `NFTYNotes`, you can use `yarn contracts test --grep "NFTYNotes"`.
+To run all smart contract tests, execute `yarn contracts test`.

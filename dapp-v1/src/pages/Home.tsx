@@ -39,22 +39,6 @@ export const Home = (props) => {
             </div>
           </div>
         </div>
-        {/*
-        <div className="col-sm-6 col-xl-4">
-          <div className="card border-0 shadow rounded-4 h-100 bg-primary-subtle">
-            <div className="card-body">
-              <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle">
-                <i className="fa-solid fa-lock h1 m-0" />
-              </div>
-              <div className="text-center mt-3">
-                <h5>Stake</h5>
-                <p>Stake NFTY and participate</p>
-                <NavLink to="/stake">Start Staking &rarr;</NavLink>
-              </div>
-            </div>
-          </div>
-        </div>
-        */}
       </div>
       <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5 bg-info-subtle">
         <div className="card-body py-4">

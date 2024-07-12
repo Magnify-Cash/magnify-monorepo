@@ -6,7 +6,7 @@ import "dotenv/config";
 
 // Import tasks
 import "./tasks/deploy-nft-collection";
-import "./tasks/deploy-nfty-erc721";
+import "./tasks/deploy-magnify-erc721";
 import "./tasks/deploy-token";
 import "./tasks/deploy";
 

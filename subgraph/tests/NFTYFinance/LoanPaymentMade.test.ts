@@ -5,7 +5,7 @@ import {
   test,
 } from "matchstick-as/assembly/index";
 import { createLoanPaymentMadeEvent, initializeLoan } from "../utils";
-import { handleLoanPaymentMade } from "../../src/nfty-finance";
+import { handleLoanPaymentMade } from "../../src/magnify-cash";
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
   erc20Address,

@@ -7,10 +7,10 @@ import { useToastContext } from "@/helpers/CreateToast";
 import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
-  nftyFinanceV1Address,
+  magnifyCashV1Address,
   useReadErc20Allowance,
   useWriteErc20Approve,
-  useWriteNftyFinanceV1InitializeNewLendingDesk,
+  useWriteMagnifyCashV1InitializeNewLendingDesk,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -220,7 +220,7 @@ export const CreateLendingDesk = (props: any) => {
   */
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
     address: token?.token?.address as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    args: [address as `0x${string}`, magnifyCashV1Address[chainId]],
   });
   const {
     data: approveErc20TransactionData,
@@ -247,7 +247,7 @@ export const CreateLendingDesk = (props: any) => {
     await approveErc20({
       address: token?.token?.address as `0x${string}`,
       args: [
-        nftyFinanceV1Address[chainId],
+        magnifyCashV1Address[chainId],
         toWei(deskFundingAmount, token?.token?.decimals),
       ],
     });
@@ -308,7 +308,7 @@ export const CreateLendingDesk = (props: any) => {
     data: initializeNewLendingDeskData,
     writeContractAsync: initializeNewLendingDesk,
     error: initializeNewLendingDeskError,
-  } = useWriteNftyFinanceV1InitializeNewLendingDesk();
+  } = useWriteMagnifyCashV1InitializeNewLendingDesk();
   const {
     isLoading: initDeskIsConfirming,
     isSuccess: initDeskIsConfirmed,

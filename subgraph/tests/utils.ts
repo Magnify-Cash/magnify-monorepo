@@ -16,7 +16,7 @@ import {
   PlatformWalletSet,
   ProtocolInitialized,
   Unpaused,
-} from "../generated/NFTYFinance/NFTYFinance";
+} from "../generated/MagnifyCash/MagnifyCash";
 import {
   createMockedFunction,
   newTypedMockEvent,
@@ -30,7 +30,7 @@ import {
   handleOwnershipTransferred,
   handlePlatformWalletSet,
   handleProtocolInitialized,
-} from "../src/nfty-finance";
+} from "../src/magnify-cash";
 import {
   lendingKeys,
   loanOriginationFee,

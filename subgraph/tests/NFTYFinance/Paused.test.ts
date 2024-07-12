@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "matchstick-as";
 import { createPausedEvent, initializeProtocol } from "../utils";
-import { handlePaused } from "../../src/nfty-finance";
+import { handlePaused } from "../../src/magnify-cash";
 import { ProtocolInfo } from "../../generated/schema";
 
 beforeAll(() => {

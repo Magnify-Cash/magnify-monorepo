@@ -8,9 +8,9 @@ import {ERC721Mock} from "../mocks/ERC721Mock.sol";
 import {ERC1155Mock} from "../mocks/ERC1155Mock.sol";
 import {IERC721Mock} from "../mocks/IERC721Mock.sol";
 import {IERC1155Mock} from "../mocks/IERC1155Mock.sol";
-import {INFTYFinanceV1} from "contracts/interfaces/INFTYFinanceV1.sol";
+import {IMagnifyCashV1} from "contracts/interfaces/IMagnifyCashV1.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {INFTYERC721V1} from "contracts/interfaces/INFTYERC721V1.sol";
+import {IMagnifyERC721V1} from "contracts/interfaces/IMagnifyERC721V1.sol";
 
 // echidna ./test/GuardianAudits/fuzz/EchidnaRouter.sol --contract EchidnaRouter --config config.yaml --workers 4
 
@@ -43,7 +43,7 @@ contract EchidnaRouter is EchidnaSetup {
     uint256 internal s_erc721Counter;
     uint256 internal s_erc1155Counter;
 
-    INFTYFinanceV1.LoanConfig[] internal s_loanConfigs;
+    IMagnifyCashV1.LoanConfig[] internal s_loanConfigs;
 
     mapping(uint256 deskId => uint256 totalDeposited) internal s_totalDeposited;
     mapping(uint256 deskId => uint256 totalBorrowed) internal s_totalBorrowed;
@@ -83,7 +83,7 @@ contract EchidnaRouter is EchidnaSetup {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                               NFTY FINANCE HANDLERS
+                               MAGNIFY CASH HANDLERS
     //////////////////////////////////////////////////////////////////////////*/
     function fuzz_initializeNewLendingDesk(uint256 depositAmount, uint256 seed1, uint256 seed2, uint256 seed3, bool isERC1155)
         public
@@ -91,49 +91,49 @@ contract EchidnaRouter is EchidnaSetup {
         globalInvariants
     {
         // PRE_CONDITIONS
-        INFTYFinanceV1.LoanConfig[] memory configs = new INFTYFinanceV1.LoanConfig[](2);
+        IMagnifyCashV1.LoanConfig[] memory configs = new IMagnifyCashV1.LoanConfig[](2);
         configs[0] = _getNewLoanConfig(seed1, seed2, seed3, isERC1155);
         configs[1] = _getNewLoanConfig(seed1 / 2, seed2 / 2, seed3 / 2, !isERC1155);
 
         // Prevent same nftCollection as one will override the other.
         if (configs[0].nftCollection == configs[1].nftCollection) return;
 
-        uint256 lendingDeskIdCounter = nftyFinance.lendingDeskIdCounter();
+        uint256 lendingDeskIdCounter = magnifyCash.lendingDeskIdCounter();
         depositAmount = bound(depositAmount, 1, MAX_AMOUNT);
 
         address lendingToken;
         if (seed1 % 5 == 0) lendingToken = erc20;
         else lendingToken = erc20_6;
 
-        uint256 balanceBefore = ERC20Mock(lendingToken).balanceOf(address(nftyFinance));
+        uint256 balanceBefore = ERC20Mock(lendingToken).balanceOf(address(magnifyCash));
 
         // ACTIONS
         deal(lendingToken, msg.sender, depositAmount);
         vm.prank(msg.sender);
-        ERC20Mock(lendingToken).approve(address(nftyFinance), depositAmount);
+        ERC20Mock(lendingToken).approve(address(magnifyCash), depositAmount);
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
+        (bool success,) = address(magnifyCash).call(
             abi.encodeWithSelector(
-                INFTYFinanceV1.initializeNewLendingDesk.selector, lendingToken, depositAmount, configs
+                IMagnifyCashV1.initializeNewLendingDesk.selector, lendingToken, depositAmount, configs
             )
         );
 
         // POST_CONDITIONS
         if (success) {
-            uint256 lendingDeskIdCounterAfter = nftyFinance.lendingDeskIdCounter();
+            uint256 lendingDeskIdCounterAfter = magnifyCash.lendingDeskIdCounter();
             s_totalDeposited[lendingDeskIdCounterAfter] += depositAmount;
-            INFTYFinanceV1.LendingDesk memory lendingDesk = _getLendingDesk(lendingDeskIdCounterAfter);
+            IMagnifyCashV1.LendingDesk memory lendingDesk = _getLendingDesk(lendingDeskIdCounterAfter);
 
             assertEq(lendingDeskIdCounterAfter, lendingDeskIdCounter + 1, "lending desk id");
             assertEq(lendingKeys.ownerOf(lendingDeskIdCounterAfter), msg.sender, "lending desk owner");
             assertEq(lendingDesk.erc20, lendingToken, "wrong erc20 address");
             assertEq(lendingDesk.balance, depositAmount, "balance!=depositAmount");
             assertEq(
-                ERC20Mock(lendingToken).balanceOf(address(nftyFinance)), balanceBefore + depositAmount, "wrong balance"
+                ERC20Mock(lendingToken).balanceOf(address(magnifyCash)), balanceBefore + depositAmount, "wrong balance"
             );
 
             for (uint256 i = 0; i < configs.length; i++) {
-                INFTYFinanceV1.LoanConfig memory config =
+                IMagnifyCashV1.LoanConfig memory config =
                     _getLoanConfig(lendingDeskIdCounterAfter, configs[i].nftCollection);
 
                 assertEq(config.nftCollection, configs[i].nftCollection, "nft collection");
@@ -155,7 +155,7 @@ contract EchidnaRouter is EchidnaSetup {
         uint256 deskId = _getRandomDeskId(seed1);
         if (deskId == 0) return;
 
-        INFTYFinanceV1.LoanConfig[] memory configs = new INFTYFinanceV1.LoanConfig[](2);
+        IMagnifyCashV1.LoanConfig[] memory configs = new IMagnifyCashV1.LoanConfig[](2);
         configs[0] = _getNewLoanConfig(seed1, seed2, seed3, isERC1155);
         configs[1] = _getNewLoanConfig(seed1 / 2, seed2 / 2, seed3 / 2, !isERC1155);
 
@@ -166,14 +166,14 @@ contract EchidnaRouter is EchidnaSetup {
 
         // ACTIONS
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.setLendingDeskLoanConfigs.selector, deskId, configs)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.setLendingDeskLoanConfigs.selector, deskId, configs)
         );
 
         // POST_CONDITIONS
         if (success) {
             for (uint256 i = 0; i < configs.length; i++) {
-                INFTYFinanceV1.LoanConfig memory config = _getLoanConfig(deskId, configs[i].nftCollection);
+                IMagnifyCashV1.LoanConfig memory config = _getLoanConfig(deskId, configs[i].nftCollection);
 
                 assertEq(config.nftCollection, configs[i].nftCollection, "nft collection");
                 assertEq(config.nftCollectionIsErc1155, configs[i].nftCollectionIsErc1155, "ERC type");
@@ -201,13 +201,13 @@ contract EchidnaRouter is EchidnaSetup {
 
         // ACTIONS
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.removeLendingDeskLoanConfig.selector, deskId, nftCollection)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.removeLendingDeskLoanConfig.selector, deskId, nftCollection)
         );
 
         // POST_CONDITIONS
         if (success) {
-            INFTYFinanceV1.LoanConfig memory config = _getLoanConfig(deskId, nftCollection);
+            IMagnifyCashV1.LoanConfig memory config = _getLoanConfig(deskId, nftCollection);
 
             assertEq(config.nftCollection, address(0), "nft collection");
             assertFalse(config.nftCollectionIsErc1155, "ERC type");
@@ -239,10 +239,10 @@ contract EchidnaRouter is EchidnaSetup {
         // ACTIONS
         deal(lendingToken, msg.sender, depositAmount);
         vm.prank(msg.sender);
-        ERC20Mock(lendingToken).approve(address(nftyFinance), depositAmount);
+        ERC20Mock(lendingToken).approve(address(magnifyCash), depositAmount);
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.depositLendingDeskLiquidity.selector, deskId, depositAmount)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.depositLendingDeskLiquidity.selector, deskId, depositAmount)
         );
 
         // POST_CONDITIONS
@@ -268,8 +268,8 @@ contract EchidnaRouter is EchidnaSetup {
 
         // ACTIONS
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.withdrawLendingDeskLiquidity.selector, deskId, withdrawAmount)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.withdrawLendingDeskLiquidity.selector, deskId, withdrawAmount)
         );
 
         // POST_CONDITIONS
@@ -287,25 +287,25 @@ contract EchidnaRouter is EchidnaSetup {
         // PRE_CONDITIONS
         uint256 deskId = _getRandomDeskId(seed);
         if (deskId == 0) return;
-        INFTYFinanceV1.LendingDeskStatus statusBefore = _getLendingDesk(deskId).status;
+        IMagnifyCashV1.LendingDeskStatus statusBefore = _getLendingDesk(deskId).status;
         address lendingKeyOwner = lendingKeys.ownerOf(deskId);
 
         // ACTIONS
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.setLendingDeskState.selector, deskId, freeze)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.setLendingDeskState.selector, deskId, freeze)
         );
 
         // POST_CONDITIONS
         if (success) {
             if (freeze) {
-                assertTrue(_getLendingDesk(deskId).status == INFTYFinanceV1.LendingDeskStatus.Frozen, "freeze status");
+                assertTrue(_getLendingDesk(deskId).status == IMagnifyCashV1.LendingDeskStatus.Frozen, "freeze status");
             } else {
-                assertTrue(_getLendingDesk(deskId).status == INFTYFinanceV1.LendingDeskStatus.Active, "active status");
+                assertTrue(_getLendingDesk(deskId).status == IMagnifyCashV1.LendingDeskStatus.Active, "active status");
             }
             assertTrue(lendingKeyOwner == msg.sender, "Not owner of lending desk");
-            assertFalse(statusBefore == INFTYFinanceV1.LendingDeskStatus.Frozen && freeze, "Already frozen");
-            assertFalse(statusBefore == INFTYFinanceV1.LendingDeskStatus.Active && !freeze, "Already unfrozen");
+            assertFalse(statusBefore == IMagnifyCashV1.LendingDeskStatus.Frozen && freeze, "Already frozen");
+            assertFalse(statusBefore == IMagnifyCashV1.LendingDeskStatus.Active && !freeze, "Already unfrozen");
         }
     }
 
@@ -323,8 +323,8 @@ contract EchidnaRouter is EchidnaSetup {
         duration = _bound(uint256(duration), 1, MAX_DURATION);
         borrowAmount = _bound(borrowAmount, 1, MAX_AMOUNT);
 
-        INFTYFinanceV1.LendingDeskStatus statusBefore = _getLendingDesk(params.deskId).status;
-        uint256 currentLoanId = nftyFinance.loanIdCounter();
+        IMagnifyCashV1.LendingDeskStatus statusBefore = _getLendingDesk(params.deskId).status;
+        uint256 currentLoanId = magnifyCash.loanIdCounter();
         uint256 user_balBefore = IERC20(_getLendingDesk(params.deskId).erc20).balanceOf(msg.sender);
         uint256 platform_balBefore = IERC20(_getLendingDesk(params.deskId).erc20).balanceOf(platformWallet);
 
@@ -332,15 +332,15 @@ contract EchidnaRouter is EchidnaSetup {
         uint256 nftId = _mintNft(params.nftCollection, params.isERC1155);
         if (params.isERC1155) {
             vm.prank(msg.sender);
-            IERC1155Mock(params.nftCollection).setApprovalForAll(address(nftyFinance), true);
+            IERC1155Mock(params.nftCollection).setApprovalForAll(address(magnifyCash), true);
         } else {
             vm.prank(msg.sender);
-            IERC721Mock(params.nftCollection).approve(address(nftyFinance), nftId);
+            IERC721Mock(params.nftCollection).approve(address(magnifyCash), nftId);
         }
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
+        (bool success,) = address(magnifyCash).call(
             abi.encodeWithSelector(
-                INFTYFinanceV1.initializeNewLoan.selector,
+                IMagnifyCashV1.initializeNewLoan.selector,
                 params.deskId,
                 params.nftCollection,
                 nftId,
@@ -352,8 +352,8 @@ contract EchidnaRouter is EchidnaSetup {
 
         //POST-CONDITION
         if (success) {
-            INFTYFinanceV1.Loan memory loan = _getLoan(currentLoanId + 1);
-            INFTYFinanceV1.LoanConfig memory config = _getLoanConfig(params.deskId, params.nftCollection);
+            IMagnifyCashV1.Loan memory loan = _getLoan(currentLoanId + 1);
+            IMagnifyCashV1.LoanConfig memory config = _getLoanConfig(params.deskId, params.nftCollection);
             s_totalBorrowed[currentLoanId + 1] += borrowAmount;
 
             //Assert if the parameters are set correctly
@@ -367,9 +367,9 @@ contract EchidnaRouter is EchidnaSetup {
             assertEq(loan.nftId, nftId, "loan.nftId");
             assertEq(loan.lendingDeskId, params.deskId, "loan.lendingDeskId");
             assertEq(loan.duration, duration, "loan.duration");
-            assertTrue(loan.status == INFTYFinanceV1.LoanStatus.Active, "loan.status");
+            assertTrue(loan.status == IMagnifyCashV1.LoanStatus.Active, "loan.status");
             assertFalse(
-                statusBefore == INFTYFinanceV1.LendingDeskStatus.Frozen, "Lending Desk frozen"
+                statusBefore == IMagnifyCashV1.LendingDeskStatus.Frozen, "Lending Desk frozen"
             );
 
             //Assert for Amount Received by borrower and platform wallet
@@ -391,16 +391,16 @@ contract EchidnaRouter is EchidnaSetup {
     function fuzz_makeLoanPayment(uint256 repayAmount, uint32 seed) public settleBlockTime globalInvariants {
         // PRE_CONDITIONS
         uint256 loanId = _getRandomLoanId(seed);
-        INFTYFinanceV1.Loan memory loan = _getLoan(loanId);
+        IMagnifyCashV1.Loan memory loan = _getLoan(loanId);
         address lendingToken = _getLendingDesk(loan.lendingDeskId).erc20;
         repayAmount = _bound(repayAmount, 1, MAX_AMOUNT);
         bool isEntireAmountRepaid;
 
         bool fullRepayment = seed % 3 == 0;
         if (fullRepayment) {
-            repayAmount = nftyFinance.getLoanAmountDue(loanId);
+            repayAmount = magnifyCash.getLoanAmountDue(loanId);
         }
-        isEntireAmountRepaid = repayAmount == nftyFinance.getLoanAmountDue(loanId);
+        isEntireAmountRepaid = repayAmount == magnifyCash.getLoanAmountDue(loanId);
 
         //ACTIONS
 
@@ -410,23 +410,23 @@ contract EchidnaRouter is EchidnaSetup {
         }
 
         vm.prank(msg.sender);
-        ERC20Mock(lendingToken).approve(address(nftyFinance), repayAmount);
+        ERC20Mock(lendingToken).approve(address(magnifyCash), repayAmount);
 
         vm.prank(msg.sender);
-        (bool success,) = address(nftyFinance).call(
-            abi.encodeWithSelector(INFTYFinanceV1.makeLoanPayment.selector, loanId, repayAmount, fullRepayment)
+        (bool success,) = address(magnifyCash).call(
+            abi.encodeWithSelector(IMagnifyCashV1.makeLoanPayment.selector, loanId, repayAmount, fullRepayment)
         );
 
         //POST-CONDITION
         if (success) {
-            INFTYFinanceV1.Loan memory newLoanDetails = _getLoan(loanId);
-            INFTYFinanceV1.LoanConfig memory loanConfig =
+            IMagnifyCashV1.Loan memory newLoanDetails = _getLoan(loanId);
+            IMagnifyCashV1.LoanConfig memory loanConfig =
                 _getLoanConfig(newLoanDetails.lendingDeskId, newLoanDetails.nftCollection);
             assertEq(newLoanDetails.amountPaidBack, loan.amountPaidBack + repayAmount, "loan.amountPaidBack");
 
             // Full Repayment
             if (fullRepayment) {
-                assertTrue(newLoanDetails.status == INFTYFinanceV1.LoanStatus.Resolved, "loan resolved");
+                assertTrue(newLoanDetails.status == IMagnifyCashV1.LoanStatus.Resolved, "loan resolved");
                 assertTrue(newLoanDetails.amountPaidBack >= newLoanDetails.amount, "loan not paid back completely");
 
                 if (loanConfig.nftCollectionIsErc1155) {
@@ -439,7 +439,7 @@ contract EchidnaRouter is EchidnaSetup {
             } else {
                 if (!isEntireAmountRepaid) {
                     assertTrue(
-                        newLoanDetails.status == INFTYFinanceV1.LoanStatus.Active, "loan not active with payment pending"
+                        newLoanDetails.status == IMagnifyCashV1.LoanStatus.Active, "loan not active with payment pending"
                     );
                 }
             }
@@ -449,29 +449,29 @@ contract EchidnaRouter is EchidnaSetup {
             uint256 hoursElapsed = (block.timestamp - loan.startTime) / 1 hours;
             assertTrue(hoursElapsed < loan.duration, "Loan Repaid after Duration");
 
-            assertFalse(loan.status != INFTYFinanceV1.LoanStatus.Active, "loan not active");
+            assertFalse(loan.status != IMagnifyCashV1.LoanStatus.Active, "loan not active");
         }
     }
 
     function fuzz_liquidateDefaultedLoan(uint256 seed) public settleBlockTime globalInvariants {
         // PRE_CONDITIONS
         uint256 loanId = _getRandomLoanId(seed);
-        INFTYFinanceV1.Loan memory loan = _getLoan(loanId);
+        IMagnifyCashV1.Loan memory loan = _getLoan(loanId);
         address lender = lendingKeys.ownerOf(loan.lendingDeskId);
         uint256 endTime = loan.startTime + loan.duration * 1 hours;
 
         //ACTIONS
         vm.prank(msg.sender);
         (bool success,) =
-            address(nftyFinance).call(abi.encodeWithSelector(INFTYFinanceV1.liquidateDefaultedLoan.selector, loanId));
+            address(magnifyCash).call(abi.encodeWithSelector(IMagnifyCashV1.liquidateDefaultedLoan.selector, loanId));
 
         //POST-CONDITION
         if (success) {
-            INFTYFinanceV1.Loan memory newLoanDetails = _getLoan(loanId);
-            INFTYFinanceV1.LoanConfig memory loanConfig =
+            IMagnifyCashV1.Loan memory newLoanDetails = _getLoan(loanId);
+            IMagnifyCashV1.LoanConfig memory loanConfig =
                 _getLoanConfig(newLoanDetails.lendingDeskId, newLoanDetails.nftCollection);
 
-            assertTrue(newLoanDetails.status == INFTYFinanceV1.LoanStatus.Defaulted, "loan defaulted");
+            assertTrue(newLoanDetails.status == IMagnifyCashV1.LoanStatus.Defaulted, "loan defaulted");
             assertGe(block.timestamp, endTime, "loan defaulted");
 
             if (loanConfig.nftCollectionIsErc1155) {
@@ -482,7 +482,7 @@ contract EchidnaRouter is EchidnaSetup {
 
             assertTrue(lender == msg.sender, "Not owner of lending desk");
             assertFalse(block.timestamp < endTime, "Loan not defaulted");
-            assertFalse(loan.status != INFTYFinanceV1.LoanStatus.Active, "loan not active");
+            assertFalse(loan.status != IMagnifyCashV1.LoanStatus.Active, "loan not active");
         }
     }
 
@@ -537,7 +537,7 @@ contract EchidnaRouter is EchidnaSetup {
 
     /// @dev Contract Balance >= All Desk Balances
     function _invariant_ContractBalanceGreaterThanDeskBalances() internal {
-        uint256 totalDesks = nftyFinance.lendingDeskIdCounter();
+        uint256 totalDesks = magnifyCash.lendingDeskIdCounter();
         uint256 totalDeskBalances;
 
         for (uint256 i = 1; i <= totalDesks;) {
@@ -548,14 +548,14 @@ contract EchidnaRouter is EchidnaSetup {
             }
         }
 
-        uint256 contractBalance = IERC20(erc20).balanceOf(address(nftyFinance));
-        uint256 contractBalance6 = IERC20(erc20_6).balanceOf(address(nftyFinance));
+        uint256 contractBalance = IERC20(erc20).balanceOf(address(magnifyCash));
+        uint256 contractBalance6 = IERC20(erc20_6).balanceOf(address(magnifyCash));
         assertGe(contractBalance + contractBalance6, totalDeskBalances, "Contract Balance < All Desk Balances");
     }
 
     /// @dev Lending Desk Total Deposits >= Total Borrowed
     function _invariant_DeskDepositsGreaterThanBorrowed() internal {
-        uint256 totalDesks = nftyFinance.lendingDeskIdCounter();
+        uint256 totalDesks = magnifyCash.lendingDeskIdCounter();
 
         for (uint256 i = 1; i <= totalDesks;) {
             assertGe(s_totalDeposited[i], s_totalBorrowed[i], "Total Deposits < Total Borrowed");
@@ -572,7 +572,7 @@ contract EchidnaRouter is EchidnaSetup {
 
     function _getNewLoanConfig(uint256 amountSeed, uint interestSeed, uint durationSeed, bool isERC1155)
         internal
-        returns (INFTYFinanceV1.LoanConfig memory)
+        returns (IMagnifyCashV1.LoanConfig memory)
     {
         bool useExistingConfig = amountSeed % 2 == 0;
         if (useExistingConfig && s_loanConfigs.length > 0) {
@@ -584,8 +584,8 @@ contract EchidnaRouter is EchidnaSetup {
         uint256 maxAmount = bound(amountSeed, minAmount, MAX_AMOUNT);
         uint32 minInterest = uint32(bound(interestSeed, 1, MAX_INTEREST));
         uint32 minDuration = uint32(bound(durationSeed, 1, MAX_DURATION));
-        uint32 maxDuration = uint32(bound(durationSeed, minDuration, MAX_DURATION)); 
-        
+        uint32 maxDuration = uint32(bound(durationSeed, minDuration, MAX_DURATION));
+
         uint32 maxInterest;
         if (minAmount == maxAmount && minDuration == maxDuration) {
             maxInterest = minInterest;
@@ -602,7 +602,7 @@ contract EchidnaRouter is EchidnaSetup {
             nftCollection = s_erc721s[bound(amountSeed, 0, s_erc721s.length - 1)];
         }
 
-        INFTYFinanceV1.LoanConfig memory _config = INFTYFinanceV1.LoanConfig(
+        IMagnifyCashV1.LoanConfig memory _config = IMagnifyCashV1.LoanConfig(
             nftCollection, isERC1155, minAmount, maxAmount, minInterest, maxInterest, minDuration, maxDuration
         );
 
@@ -611,15 +611,15 @@ contract EchidnaRouter is EchidnaSetup {
         return _config;
     }
 
-    function _getLendingDesk(uint256 id) internal view returns (INFTYFinanceV1.LendingDesk memory) {
-        (address _erc20, uint256 _balance, INFTYFinanceV1.LendingDeskStatus status) = nftyFinance.lendingDesks(id);
-        return INFTYFinanceV1.LendingDesk(_erc20, _balance, status);
+    function _getLendingDesk(uint256 id) internal view returns (IMagnifyCashV1.LendingDesk memory) {
+        (address _erc20, uint256 _balance, IMagnifyCashV1.LendingDeskStatus status) = magnifyCash.lendingDesks(id);
+        return IMagnifyCashV1.LendingDesk(_erc20, _balance, status);
     }
 
     function _getLoanConfig(uint256 id, address nftCollection)
         internal
         view
-        returns (INFTYFinanceV1.LoanConfig memory)
+        returns (IMagnifyCashV1.LoanConfig memory)
     {
         (
             address _nftCollection,
@@ -630,13 +630,13 @@ contract EchidnaRouter is EchidnaSetup {
             uint32 _maxInterest,
             uint32 _minDuration,
             uint32 _maxDuration
-        ) = nftyFinance.lendingDeskLoanConfigs(id, nftCollection);
-        return INFTYFinanceV1.LoanConfig(
+        ) = magnifyCash.lendingDeskLoanConfigs(id, nftCollection);
+        return IMagnifyCashV1.LoanConfig(
             _nftCollection, _isERC1155, _minAmount, _maxAmount, _minInterest, _maxInterest, _minDuration, _maxDuration
         );
     }
 
-    function _getLoan(uint256 id) internal view returns (INFTYFinanceV1.Loan memory) {
+    function _getLoan(uint256 id) internal view returns (IMagnifyCashV1.Loan memory) {
         (
             uint256 _amount,
             uint256 _amountPaidBack,
@@ -646,15 +646,15 @@ contract EchidnaRouter is EchidnaSetup {
             uint64 _lendingDeskId,
             uint32 _duration,
             uint32 _interest,
-            INFTYFinanceV1.LoanStatus _status,
+            IMagnifyCashV1.LoanStatus _status,
             bool isERC1155
-        ) = nftyFinance.loans(id);
-        return INFTYFinanceV1.Loan(
+        ) = magnifyCash.loans(id);
+        return IMagnifyCashV1.Loan(
             _amount, _amountPaidBack, _nftCollection, _startTime, _nftId, _lendingDeskId, _duration, _interest, _status, isERC1155
         );
     }
 
-    function _hasValidInterest(INFTYFinanceV1.LoanConfig memory _config) internal pure returns (bool) {
+    function _hasValidInterest(IMagnifyCashV1.LoanConfig memory _config) internal pure returns (bool) {
         if (
             _config.minAmount == _config.maxAmount && _config.minDuration == _config.maxDuration
                 && _config.minInterest != _config.maxInterest
@@ -666,15 +666,15 @@ contract EchidnaRouter is EchidnaSetup {
     }
 
     function _getRandomDeskId(uint256 seed) internal view returns (uint256) {
-        if (nftyFinance.lendingDeskIdCounter() == 0) return 0;
+        if (magnifyCash.lendingDeskIdCounter() == 0) return 0;
 
-        return _bound(seed, 1, nftyFinance.lendingDeskIdCounter());
+        return _bound(seed, 1, magnifyCash.lendingDeskIdCounter());
     }
 
     function _getRandomLoanId(uint256 seed) internal view returns (uint256) {
-        if (nftyFinance.loanIdCounter() == 0) return 0;
+        if (magnifyCash.loanIdCounter() == 0) return 0;
 
-        return _bound(seed, 1, nftyFinance.loanIdCounter());
+        return _bound(seed, 1, magnifyCash.loanIdCounter());
     }
 
     function _getRandomNftCollection(uint256 seed) internal returns (address collection, bool isERC1155) {
@@ -701,7 +701,7 @@ contract EchidnaRouter is EchidnaSetup {
         }
     }
 
-    function _calculateInterest(uint256 borrowAmount, uint256 duration, INFTYFinanceV1.LoanConfig memory config)
+    function _calculateInterest(uint256 borrowAmount, uint256 duration, IMagnifyCashV1.LoanConfig memory config)
         internal
         returns (uint32 interest)
     {

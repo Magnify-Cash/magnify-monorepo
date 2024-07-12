@@ -1,5 +1,5 @@
 sources:
-  - name: nftyFinance
+  - name: magnifyCash
     handler:
       graphql:
         endpoint: ${VITE_GRAPHQL_ENDPOINT}

@@ -1,5 +1,5 @@
 {
-  "name": "nftyfinance-monorepo",
+  "name": "magnify-monorepo",
   "version": "0.0.1",
   "private": "true",
   "type": "module",
@@ -7,10 +7,10 @@
     "node": "20.x"
   },
   "scripts": {
-    "contracts": "yarn workspace nftyfinance-contracts",
-    "faucet": "yarn workspace nftyfinance-faucet",
-    "subgraph": "yarn workspace nftyfinance-subgraph",
-    "dapp": "yarn workspace nftyfinance-dapp-v1",
+    "contracts": "yarn workspace magnify-contracts",
+    "faucet": "yarn workspace magnify-faucet",
+    "subgraph": "yarn workspace magnify-subgraph",
+    "dapp": "yarn workspace magnify-dapp-v1",
     "graph-node": "cd ../graph-node/docker && rm -rf data && docker compose down && docker compose up",
     "deploy:local": "yarn contracts deploy:local && yarn subgraph deploy:local && yarn dapp generate ",
     "build:dapp": "yarn dapp build",

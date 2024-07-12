@@ -2,14 +2,14 @@ import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
 import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
-  nftyFinanceV1Address,
+  magnifyCashV1Address,
   useReadErc20Allowance,
-  useReadNftyFinanceV1GetLoanAmountDue,
-  useSimulateNftyFinanceV1LiquidateDefaultedLoan,
-  useSimulateNftyFinanceV1MakeLoanPayment,
+  useReadMagnifyCashV1GetLoanAmountDue,
+  useSimulateMagnifyCashV1LiquidateDefaultedLoan,
+  useSimulateMagnifyCashV1MakeLoanPayment,
   useWriteErc20Approve,
-  useWriteNftyFinanceV1LiquidateDefaultedLoan,
-  useWriteNftyFinanceV1MakeLoanPayment,
+  useWriteMagnifyCashV1LiquidateDefaultedLoan,
+  useWriteMagnifyCashV1MakeLoanPayment,
 } from "@/wagmi-generated";
 import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
@@ -94,7 +94,7 @@ const LoanDetails = ({
     error: loanAmountDueError,
     isLoading: loanAmountDueIsLoading,
     isFetched: loanAmountDueIsFetched,
-  } = useReadNftyFinanceV1GetLoanAmountDue({
+  } = useReadMagnifyCashV1GetLoanAmountDue({
     args: [BigInt(loan?.id)],
     query: {
       enabled: status === "Active",
@@ -246,7 +246,7 @@ const LoanDetails = ({
 
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc20Allowance({
     address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-    args: [address as `0x${string}`, nftyFinanceV1Address[chainId]],
+    args: [address as `0x${string}`, magnifyCashV1Address[chainId]],
   });
 
   //update checked state on approvalData change and payBackAmount change
@@ -281,7 +281,7 @@ const LoanDetails = ({
     isLoading: makeLoanPaymentConfigIsLoading,
     error: makeLoanPaymentConfigError,
     refetch: makeLoanPaymentRefetch,
-  } = useSimulateNftyFinanceV1MakeLoanPayment({
+  } = useSimulateMagnifyCashV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
       toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals), // amount
@@ -295,7 +295,7 @@ const LoanDetails = ({
     data: makeLoanPaymentData,
     writeContractAsync: makeLoanPaymentWrite,
     error: makeLoanPaymentError,
-  } = useWriteNftyFinanceV1MakeLoanPayment();
+  } = useWriteMagnifyCashV1MakeLoanPayment();
 
   // Resolve Loan Hook
   //This is enabled when resolve is set to true
@@ -304,7 +304,7 @@ const LoanDetails = ({
     isLoading: resolveLoanPaymentConfigIsLoading,
     error: resolveLoanPaymentConfigError,
     refetch: resolveLoanPaymentRefetch,
-  } = useSimulateNftyFinanceV1MakeLoanPayment({
+  } = useSimulateMagnifyCashV1MakeLoanPayment({
     args: [
       BigInt(loan?.id || 0), // loan ID
       BigInt(0), // amount doesn't matter when resolving loan
@@ -318,7 +318,7 @@ const LoanDetails = ({
     data: resolveLoanPaymentData,
     writeContractAsync: resolveLoanPaymentWrite,
     error: resolveLoanPaymentError,
-  } = useWriteNftyFinanceV1MakeLoanPayment();
+  } = useWriteMagnifyCashV1MakeLoanPayment();
 
   // Liquidate Overdue loan Hook
   const {
@@ -326,7 +326,7 @@ const LoanDetails = ({
     isLoading: liquidateConfigIsLoading,
     error: liquidateConfigError,
     refetch: liquidateRefetch,
-  } = useSimulateNftyFinanceV1LiquidateDefaultedLoan({
+  } = useSimulateMagnifyCashV1LiquidateDefaultedLoan({
     query: {
       enabled: !timeInfo.isTimeLeft,
     },
@@ -339,7 +339,7 @@ const LoanDetails = ({
     data: liquidateData,
     writeContractAsync: liquidateWrite,
     error: liquidateError,
-  } = useWriteNftyFinanceV1LiquidateDefaultedLoan();
+  } = useWriteMagnifyCashV1LiquidateDefaultedLoan();
 
   async function liquidateOverdueLoan(loanID: string) {
     //Check if liquidateConfig is undefined or liquidateConfigError is not null
@@ -377,7 +377,7 @@ const LoanDetails = ({
     await approveErc20({
       address: loan?.lendingDesk?.erc20.id as `0x${string}`,
       args: [
-        nftyFinanceV1Address[chainId],
+        magnifyCashV1Address[chainId],
         toWei(payBackAmount, loan?.lendingDesk?.erc20?.decimals),
       ],
     });
@@ -420,7 +420,7 @@ const LoanDetails = ({
     if (loanAmountDue) {
       await approveErc20ResolveLoan({
         address: loan?.lendingDesk?.erc20.id as `0x${string}`,
-        args: [nftyFinanceV1Address[chainId], loanAmountDue ?? BigInt(0)],
+        args: [magnifyCashV1Address[chainId], loanAmountDue ?? BigInt(0)],
       });
     } else {
       loanAmountDueRefetch();

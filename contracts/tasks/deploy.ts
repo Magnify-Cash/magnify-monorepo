@@ -2,10 +2,10 @@ import { task } from "hardhat/config";
 import { readFile, writeFile } from "fs/promises";
 import { Contract } from "ethers";
 
-// Task to deploy NFTYLending contract with its dependencies
+// Task to deploy Magnify Cash contract with its dependencies
 task(
   "deploy",
-  "Deploy NFTYLending contract with all its dependencies"
+  "Deploy Magnify Cash contract with all its dependencies"
 ).setAction(async (_, hre) => {
   // Deploy ERC20s
   const usdc: Contract = await hre.run("deploy-token", {
@@ -48,39 +48,39 @@ task(
   await punks.mint(10);
   await unlistedpunks.mint(10);
 
-  // Deploy NFTYFinance's dependencies
-  const obligationNotes: Contract = await hre.run("deploy-nfty-erc721", {
-    name: "NFTY Finance Obligation Notes",
+  // Deploy MagnifyCash's dependencies
+  const obligationNotes: Contract = await hre.run("deploy-magnify-erc721", {
+    name: "Magnify Cash Obligation Notes",
     symbol: "BORROW",
-    baseuri: "https://api.nfty.finance/metadata/BORROW/",
+    baseuri: "https://api.magnify.cash/metadata/BORROW/",
   });
-  const lendingKeys: Contract = await hre.run("deploy-nfty-erc721", {
-    name: "NFTY Finance Lending Keys",
+  const lendingKeys: Contract = await hre.run("deploy-magnify-erc721", {
+    name: "Magnify Cash Lending Keys",
     symbol: "KEYS",
-    baseuri: "https://api.nfty.finance/metadata/KEYS/",
+    baseuri: "https://api.magnify.cash/metadata/KEYS/",
   });
 
   const platformWallet = hre.ethers.Wallet.createRandom().address;
 
-  // Deploy NFTYFinance
+  // Deploy MagnifyCash
   const [owner] = await hre.ethers.getSigners();
 
-  const NFTYFinanceV1 = await hre.ethers.getContractFactory("NFTYFinanceV1");
-  const nftyFinance = await NFTYFinanceV1.deploy(
+  const MagnifyCashV1 = await hre.ethers.getContractFactory("MagnifyCashV1");
+  const magnifyCash = await MagnifyCashV1.deploy(
     obligationNotes.target,
     lendingKeys.target,
     200,
     platformWallet,
     owner.address
   );
-  await nftyFinance.waitForDeployment();
+  await magnifyCash.waitForDeployment();
 
-  // Set NFTYFinance address in NFTYERC721s
-  await obligationNotes.setNftyFinance(nftyFinance.target);
-  await lendingKeys.setNftyFinance(nftyFinance.target);
+  // Set MagnifyCash address in MagnifyERC721s
+  await obligationNotes.setMagnifyCash(magnifyCash.target);
+  await lendingKeys.setMagnifyCash(magnifyCash.target);
 
   // Wait for transactions to be mined so that we can get the block numbers
-  const nftyFinanceTx = await nftyFinance.deploymentTransaction()?.wait();
+  const magnifyCashTx = await magnifyCash.deploymentTransaction()?.wait();
   const obligationNotesTx = await obligationNotes
     .deploymentTransaction()
     ?.wait();
@@ -94,9 +94,9 @@ task(
 
   // Write addresses to deployments.json
   const deployments = {
-    nftyFinance: {
-      address: nftyFinance.target,
-      startBlock: nftyFinanceTx?.blockNumber,
+    magnifyCash: {
+      address: magnifyCash.target,
+      startBlock: magnifyCashTx?.blockNumber,
     },
     obligationNotes: {
       address: obligationNotes.target,
@@ -158,7 +158,7 @@ task(
   const networksFile = await readFile("../subgraph/networks.json", "utf8");
   const networks = JSON.parse(networksFile);
   networks["mainnet"] = {
-    NFTYFinance: deployments.nftyFinance,
+    MagnifyCash: deployments.magnifyCash,
     ObligationNotes: deployments.obligationNotes,
     LendingKeys: deployments.lendingKeys,
   };
@@ -167,6 +167,6 @@ task(
     JSON.stringify(networks, undefined, 2)
   );
 
-  console.log("NFTYFinance deployed @", nftyFinance.target);
+  console.log("MagnifyCash deployed @", magnifyCash.target);
   console.log("Platform wallet:", platformWallet);
 });

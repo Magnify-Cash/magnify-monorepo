@@ -3,7 +3,7 @@ import {
   createLendingDeskLoanConfigRemovedEvent,
   initializeLendingDesk,
 } from "../utils";
-import { handleLendingDeskLoanConfigRemoved } from "../../src/nfty-finance";
+import { handleLendingDeskLoanConfigRemoved } from "../../src/magnify-cash";
 import { ethereum } from "@graphprotocol/graph-ts";
 import { NftCollection } from "../../generated/schema";
 import {
