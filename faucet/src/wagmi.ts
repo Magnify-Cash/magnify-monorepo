@@ -12,7 +12,6 @@ if (import.meta.env.DEV) {
 
 export const config = createConfig(
   getDefaultConfig({
-    autoConnect: true,
     appName: "Magnify Cash Testnet Faucet",
     walletConnectProjectId,
     chains: chainlist,
