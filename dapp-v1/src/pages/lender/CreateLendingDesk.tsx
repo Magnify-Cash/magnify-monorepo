@@ -614,17 +614,19 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                       </div>
                       <div className="my-4 text-end">
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
-                          disabled={!nftCollection}
-                          onClick={
-                            editDesk ? handleSubmit(onUpdate) : handleSubmit(onSubmit)
-                          }
-                          style={{ filter: "grayscale(1)" }}
-                        >
-                          {editDesk ? "Update Desk" : "Add to Desk"}
-                        </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-lg py-2 px-5 rounded-pill"
+                        disabled={!nftCollection}
+                        onClick={
+                          editDesk ? handleSubmit(onUpdate) : handleSubmit(onSubmit)
+                        }
+                        style={{
+                          filter: !nftCollection ? "grayscale(1)" : "none"
+                        }}
+                      >
+                        {editDesk ? "Update Desk" : "Add to Desk"}
+                      </button>
                       </div>
                     </div>
                   </form>
