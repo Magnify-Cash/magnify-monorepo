@@ -19,8 +19,12 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <div className="h4">Borrow</div>
-                <p style={{ fontSize: "16px" }}>Instant liquidity for your NFT as collateral</p>
-                <NavLink to="/quick-loan">Borrow Now<i className="fa-light fa-arrow-right ms-1"></i></NavLink>
+                <p style={{ fontSize: "16px" }}>
+                  Instant liquidity for your NFT as collateral
+                </p>
+                <NavLink to="/quick-loan">
+                  Borrow Now<i className="fa-light fa-arrow-right ms-1"></i>
+                </NavLink>
               </div>
             </div>
           </div>
@@ -33,8 +37,12 @@ export const Home = (props) => {
               </div>
               <div className="text-center mt-3">
                 <div className="h4">Lend</div>
-                <p style={{ fontSize: "16px" }}>Customize lending desks & issue loans</p>
-                <NavLink to="/create-desk">Start Lending<i className="fa-light fa-arrow-right ms-1"></i></NavLink>
+                <p style={{ fontSize: "16px" }}>
+                  Customize lending desks & issue loans
+                </p>
+                <NavLink to="/create-desk">
+                  Start Lending<i className="fa-light fa-arrow-right ms-1"></i>
+                </NavLink>
               </div>
             </div>
           </div>
