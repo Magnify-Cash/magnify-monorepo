@@ -56,7 +56,7 @@ export const BrowseCollections = (props: any) => {
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       {/* start stats card */}
-      <div className="card border-0 shadow rounded-4 col-xl-8 mx-auto">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 col-xl-8 mx-auto">
         <div className="card-body p-4">
           <div className="row g-4 justify-space-around">
             <div className="col-sm-6">
@@ -89,7 +89,7 @@ export const BrowseCollections = (props: any) => {
       {/* End stats card */}
 
       {/* Start table */}
-      <div className="card border-0 shadow rounded-4 my-4 overflow-hidden col-xl-7 mx-auto">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 my-4 overflow-hidden col-xl-7 mx-auto">
         <div className="table-responsive">
           <table className="table m-0 text-nowrap">
             <thead>

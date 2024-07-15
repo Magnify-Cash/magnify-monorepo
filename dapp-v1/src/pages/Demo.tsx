@@ -4,7 +4,7 @@ export const Demo = (props: any) => {
       {/* Demo Row Card */}
       <div className="row g-4 g-xl-5 justify-content-center">
         <div className="col-sm-6 col-xl-4">
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
             <div className="card-body">
               <div className="specific-w-100 specific-h-100 mx-auto d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle">
                 <i className="fa-solid fa-hand-holding-dollar h1 m-0" />
@@ -23,7 +23,7 @@ export const Demo = (props: any) => {
       {/* End demo card */}
 
       {/* Demo Row */}
-      <div className="card border-0 shadow rounded-4 mt-4 mt-xl-5">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 mt-4 mt-xl-5">
         <div className="card-body py-4">
           <div className="row g-4 g-xl-5 justify-content-center">
             <div className="col-sm-6 col-xl-4">
@@ -71,7 +71,7 @@ export const Demo = (props: any) => {
       {/* End row */}
 
       {/* Demo table */}
-      <div className="card border-0 shadow rounded-4 my-4 my-xl-5 overflow-hidden">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 my-4 my-xl-5 overflow-hidden">
         <div className="table-responsive">
           <table className="table m-0 text-nowrap">
             <thead>

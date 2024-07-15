@@ -390,7 +390,7 @@ export const CreateLendingDesk = (props: any) => {
           <div className="container-gluid g-0">
             <div className="row g-4">
               <div className="col-xl-12">
-                <div className="card border-0 shadow rounded-4">
+                <div className="card bg-primary-subtle border-primary-subtle rounded-4">
                   <div className="card-body p-4 w-lg-75">
                     <div>
                       <h5 className="fw-medium text-primary-emphasis">
@@ -421,7 +421,7 @@ export const CreateLendingDesk = (props: any) => {
                 </div>
               </div>
               <div className="col-12">
-                <div className="card border-0 shadow rounded-4">
+                <div className="card bg-primary-subtle border-primary-subtle rounded-4">
                   <form id="configForm">
                     <div className="card-body p-4">
                       <div>
@@ -634,7 +634,7 @@ export const CreateLendingDesk = (props: any) => {
           </div>
         </div>
         <div className="col-xl-4">
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
             <div className="card-body p-4">
               <h6 className="fw-medium text-body-secondary mb-4">
                 Lending Desk Details

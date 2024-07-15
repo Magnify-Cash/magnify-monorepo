@@ -441,7 +441,7 @@ export const BrowseCollection = (props) => {
       </div>
 
       {/* Demo table */}
-      <div className="card border-0 shadow rounded-4 my-4 mb-xl-5 overflow-hidden">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 my-4 mb-xl-5 overflow-hidden">
         <div className="table-responsive">
           <table className="table m-0 text-nowrap">
             <thead>

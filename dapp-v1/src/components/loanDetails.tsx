@@ -562,7 +562,7 @@ const LoanDetails = ({
 
   return (
     <div className="col-sm-6 col-xl-4 mb-4" key={loan?.id}>
-      <div className="card border-0 shadow rounded-4 h-100">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
         {isLender ? (
           <div className="card-header p-0">
             <NavLink
