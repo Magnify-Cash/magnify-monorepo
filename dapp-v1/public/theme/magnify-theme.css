@@ -181,7 +181,7 @@
 
 body {
     min-height: 100vh;
-    background: radial-gradient(at top center, hsla(var(--bs-primary-600-hsl), 0.15), var(--bs-body-bg));
+    background: radial-gradient(at top center, hsla(var(--bs-primary-500-hsl), 0.125), var(--bs-body-bg));
 }
 
 /**
