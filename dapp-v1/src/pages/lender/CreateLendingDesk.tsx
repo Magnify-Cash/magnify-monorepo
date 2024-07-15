@@ -100,6 +100,19 @@ export const CreateLendingDesk = (props: any) => {
       );
       return;
     }
+    if (
+      Number.parseFloat(newConfig.minDuration) <= 0 ||
+      Number.parseFloat(newConfig.minInterest) <= 0 ||
+      Number.parseFloat(newConfig.minOffer) <= 0
+    ) {
+      addToast(
+        "Invalid Input",
+        "Please ensure that the min values are all greater than 0",
+        "error",
+      );
+      return;
+    }
+
     // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
     // If nft is selected form can not be submitted
     if (nftCollection) {
@@ -625,7 +638,13 @@ export const CreateLendingDesk = (props: any) => {
                           filter: !nftCollection ? "grayscale(1)" : "none"
                         }}
                       >
-                        {editDesk ? "Update Desk" : "Add to Desk"}
+                        {
+                          !nftCollection
+                          ? "Choose Collection"
+                          : editDesk
+                            ? "Update Desk"
+                            : "Add to Desk"
+                        }
                       </button>
                       </div>
                     </div>
