@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <!-- Meta tags -->
     <meta charset="utf-8" />
@@ -30,7 +30,7 @@
     <!-- THEME -->
     <link href="/theme/halfmoon.css" rel="stylesheet" />
     <link href="/theme/magnify-theme.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/e222fd7f73.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/b726644cc6.js" crossorigin="anonymous"></script>
     <style type="text/css">
       .btn-square {
         padding-left: 0;
@@ -109,39 +109,6 @@
       /* Enable all tooltips */
       const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
       const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-      /* Setting cookie */
-      function setCookie(name, value, days) {
-          var expires = "";
-          if (days) {
-              var date = new Date();
-              date.setTime(date.getTime() + (days*24*60*60*1000));
-              expires = "; expires=" + date.toUTCString();
-          }
-          document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-      }
-
-      /* Toggle dark mode */
-      function toggleDarkMode() {
-        var preference = document.documentElement.getAttribute("data-bs-theme");
-        if (!preference) {
-          document.documentElement.setAttribute("data-bs-theme", "dark");
-        }
-        else {
-          if (preference === "light") {
-            document.documentElement.setAttribute("data-bs-theme", "dark");
-          } else {
-            document.documentElement.setAttribute("data-bs-theme", "light");
-          }
-        }
-
-        setCookie("colorMode", document.documentElement.getAttribute("data-bs-theme"), 365);
-      }
-    </script>
-
-    <!-- Halfmoon window -->
-    <script>
-      window.toggleDarkMode = toggleDarkMode;
     </script>
   </body>
 </html>

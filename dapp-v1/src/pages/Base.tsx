@@ -118,7 +118,7 @@ export const Base = () => {
           {/* Sidebar start */}
           <nav
             id="sidebar"
-            className="sidebar shadow border-0 offcanvas-start offcanvas-lg"
+            className="sidebar bg-primary-subtle border-primary-subtle offcanvas-start offcanvas-lg"
             tabIndex={-1}
           >
             <div className="offcanvas-header">
@@ -133,17 +133,8 @@ export const Base = () => {
                   height="28"
                   className="d-block rounded flex-shrink-0 me-2"
                 />
-                <strong>Magnify Cash</strong>
+                <strong className="antialiased">Magnify Cash</strong>
               </NavLink>
-              <button
-                type="button"
-                className="btn btn-link rounded-pill me-2 d-none d-lg-inline-block"
-                aria-label="Toggle dark mode"
-                onClick={() => toggleDarkMode()}
-                style={{ width: "33px" }}
-              >
-                <i className="fa-solid fa-moon" />
-              </button>
               <button
                 type="button"
                 className="btn-close d-lg-none"
@@ -328,32 +319,23 @@ export const Base = () => {
 
           {/* Navbar start */}
           <div
-            className="alert alert-secondary text-bg-secondary alert-dismissible fade show rounded-0 d-flex align-items-center pe-3"
+            className="alert bg-primary bg-opacity-10 alert-dismissible fade show rounded-0"
             role="alert"
           >
-            <div className="me-3 d-flex align-items-center">
-              <i className="fa-solid fa-newspaper me-1"></i>
-              <span className="alert-text">
+            <div className="d-flex align-items-center">
+              <i className="fa-light fa-bell-ring me-3"></i>
+              <div>
                 Alert: What's New — Enhanced UI and responsiveness, fixed stats for
-                borrowers and lenders.
-              </span>
-              &nbsp;
-              <a
-                target="_blank"
-                href="https://blog.magnify.cash/june-6th-release-notes/"
-                rel="noreferrer"
-              >
-                Read more here...
-              </a>
+                borrowers and lenders.{" "}
+                <a
+                  target="_blank"
+                  href="https://blog.magnify.cash/june-6th-release-notes/"
+                  rel="noreferrer"
+                >
+                  Read more here<i className="fa-light fa-arrow-right ms-1"></i>
+                </a>
+              </div>
             </div>
-            <a
-              role="button"
-              className="text-reset ms-auto text-decoration-none fs-5 flex-shrink-0"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            >
-              <i className="fa-solid fa-times"></i>
-            </a>
           </div>
           <div className="py-2 py-lg-3">
             <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
@@ -367,15 +349,6 @@ export const Base = () => {
                     data-bs-target="#sidebar"
                   >
                     <i className="fa-solid fa-bars" />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-link"
-                    aria-label="Toggle dark mode"
-                    onClick={() => toggleDarkMode()}
-                    style={{ width: "33px" }}
-                  >
-                    <i className="fa-solid fa-moon" />
                   </button>
                 </div>
                 <NavLink to="/" className="d-lg-none me-auto">
@@ -404,7 +377,7 @@ export const Base = () => {
                             className="btn btn-md btn-primary d-sm-none"
                           >
                             {!isConnected && <small>Connect</small>}
-                            <i className="fa-solid fa-wallet" />
+                            <i className="fa-solid fa-wallet ms-2" />
                           </button>
                           <button
                             onClick={show}
