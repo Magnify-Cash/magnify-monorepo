@@ -539,7 +539,7 @@ export const ManageLendingDesk = (props: any) => {
       </div>
       <div className="row g-4 mt-n2 mb-4">
         <div className="col-12">
-          <div className="card border-0 shadow rounded-4">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4">
             <div className="card-body p-4">
               <h5 className="fw-medium text-primary-emphasis">
                 Lending Desk {result.data?.lendingDesk?.id}
@@ -609,7 +609,7 @@ export const ManageLendingDesk = (props: any) => {
         </div>
         {/* End row */}
         <div className="col-xxl-6">
-          <div className="card border-0 shadow rounded-4 h-100 overflow-hidden d-block">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100 overflow-hidden d-block">
             <div className="card-body p-4 specific-h-75">
               <h5 className="fw-medium text-primary-emphasis">
                 {/* Total number of collections */}
@@ -696,7 +696,7 @@ export const ManageLendingDesk = (props: any) => {
           </div>
         </div>
         <div className="col-xxl-6">
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
             <div className="card-body p-4">
               <div>
                 <h5 className="fw-medium text-primary-emphasis">

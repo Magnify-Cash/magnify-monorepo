@@ -100,6 +100,19 @@ export const CreateLendingDesk = (props: any) => {
       );
       return;
     }
+    if (
+      Number.parseFloat(newConfig.minDuration) <= 0 ||
+      Number.parseFloat(newConfig.minInterest) <= 0 ||
+      Number.parseFloat(newConfig.minOffer) <= 0
+    ) {
+      addToast(
+        "Invalid Input",
+        "Please ensure that the min values are all greater than 0",
+        "error",
+      );
+      return;
+    }
+
     // Getting the value of selected nft("selectedNftCollection") directly from nftCollection state variable
     // If nft is selected form can not be submitted
     if (nftCollection) {
@@ -390,7 +403,7 @@ export const CreateLendingDesk = (props: any) => {
           <div className="container-gluid g-0">
             <div className="row g-4">
               <div className="col-xl-12">
-                <div className="card border-0 shadow rounded-4">
+                <div className="card bg-primary-subtle border-primary-subtle rounded-4">
                   <div className="card-body p-4 w-lg-75">
                     <div>
                       <h5 className="fw-medium text-primary-emphasis">
@@ -421,7 +434,7 @@ export const CreateLendingDesk = (props: any) => {
                 </div>
               </div>
               <div className="col-12">
-                <div className="card border-0 shadow rounded-4">
+                <div className="card bg-primary-subtle border-primary-subtle rounded-4">
                   <form id="configForm">
                     <div className="card-body p-4">
                       <div>
@@ -621,9 +634,15 @@ export const CreateLendingDesk = (props: any) => {
                           onClick={
                             editDesk ? handleSubmit(onUpdate) : handleSubmit(onSubmit)
                           }
-                          style={{ filter: "grayscale(1)" }}
+                          style={{
+                            filter: !nftCollection ? "grayscale(1)" : "none",
+                          }}
                         >
-                          {editDesk ? "Update Desk" : "Add to Desk"}
+                          {!nftCollection
+                            ? "Choose Collection"
+                            : editDesk
+                              ? "Update Desk"
+                              : "Add to Desk"}
                         </button>
                       </div>
                     </div>
@@ -634,7 +653,7 @@ export const CreateLendingDesk = (props: any) => {
           </div>
         </div>
         <div className="col-xl-4">
-          <div className="card border-0 shadow rounded-4 h-100">
+          <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
             <div className="card-body p-4">
               <h6 className="fw-medium text-body-secondary mb-4">
                 Lending Desk Details

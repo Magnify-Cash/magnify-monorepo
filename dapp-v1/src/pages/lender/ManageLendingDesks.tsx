@@ -121,7 +121,10 @@ const LendingDeskRow = ({ desks, status }) => {
   // OK
   return desks.map((desk) => {
     return (
-      <div className="card border-0 shadow rounded-4 my-4" key={desk.id}>
+      <div
+        className="card bg-primary-subtle border-primary-subtle rounded-4 my-4"
+        key={desk.id}
+      >
         <div className="card-body p-4">
           <h5 className="fw-medium text-primary-emphasis">Lending Desk {desk.id}</h5>
           <div className="container-fluid g-0 mt-4">

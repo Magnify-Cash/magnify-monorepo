@@ -562,12 +562,13 @@ const LoanDetails = ({
 
   return (
     <div className="col-sm-6 col-xl-4 mb-4" key={loan?.id}>
-      <div className="card border-0 shadow rounded-4 h-100">
+      <div className="card bg-primary-subtle border-primary-subtle rounded-4 h-100">
         {isLender ? (
-          <div className="card-header p-0">
+          <div className="card-header py-2 rounded-top-4 text-center">
             <NavLink
-              className="btn btn-lg py-2 w-100 focus-ring bg-primary-subtle"
+              className="d-block w-100 h-100"
               to={`/manage-desks/${loan.lendingDesk?.id}`}
+              style={{ fontSize: "16px" }}
             >
               Lending Desk #{loan.lendingDesk?.id}
             </NavLink>
