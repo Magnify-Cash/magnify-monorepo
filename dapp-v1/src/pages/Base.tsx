@@ -89,20 +89,6 @@ export const Base = () => {
   // theme
   const activeClass = "nav-link d-flex align-items-center active fw-bold fs-5";
   const inactiveClass = "nav-link d-flex align-items-center";
-  const cookie = getCookie("colorMode");
-  const initialMode: Types.Mode =
-    cookie === "light" || cookie === "dark" ? cookie : "auto";
-  const [mode, setMode] = useState(initialMode);
-  document.documentElement.setAttribute("data-bs-theme", cookie);
-  function toggleDarkMode() {
-    window.toggleDarkMode();
-    const cookie = getCookie("colorMode");
-    if (cookie === "light") {
-      setMode("light");
-    } else {
-      setMode("dark");
-    }
-  }
 
   // graphQL
   const chainId = useChainId();
@@ -113,7 +99,7 @@ export const Base = () => {
 
   return (
     <ToastContext.Provider value={{ addToast, closeToast }}>
-      <ConnectKitProvider mode={mode}>
+      <ConnectKitProvider>
         <Provider value={client}>
           {/* Sidebar start */}
           <nav
