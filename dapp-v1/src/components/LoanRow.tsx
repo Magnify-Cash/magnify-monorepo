@@ -23,7 +23,7 @@ export const LoanRow = ({
 }: ILoanRowProps) => {
   // Setup loan data and handle empty state
   // Note: Handle "Pending Default" manually
-  loans = loans.filter((loan: Loan) => {
+  loans = loans?.filter((loan: Loan) => {
     const { isTimeLeft } = calculateTimeInfo(loan.startTime, loan.duration);
     if (loan.status === "Active") {
       if (!isTimeLeft && status === "PendingDefault") {
