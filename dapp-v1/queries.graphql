@@ -177,6 +177,11 @@ query QuickLoan($erc20Id: String, $nftCollectionId: String) {
         }
       }
     }
+    pageInfo {
+      hasNextPage
+      startCursor
+      endCursor
+    }
   }
   nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
     items {
