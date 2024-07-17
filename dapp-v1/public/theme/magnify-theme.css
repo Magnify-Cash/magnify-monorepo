@@ -159,6 +159,10 @@
 }
 
 [data-bs-theme="dark"] {
+    /* Background */
+
+    --bs-body-bg-hsl: 180, 3%, 13%;
+
     /* Color */
 
     --bs-body-color-hsl: var(--bs-color-hue), var(--bs-color-saturation), 95%;
@@ -175,13 +179,12 @@
 
 /**
  * ----------------------------------------------------------------------------
- * [ Body and main ]
+ * [ Content wrapper ]
  * ----------------------------------------------------------------------------
  */
 
-body {
-    min-height: 100vh;
-    background: radial-gradient(at top center, hsla(var(--bs-primary-500-hsl), 0.125), var(--bs-body-bg));
+.content-wrapper {
+    background: radial-gradient(60% 30% at top center, hsla(var(--bs-primary-500-hsl), 0.25), var(--bs-body-bg));
 }
 
 /**

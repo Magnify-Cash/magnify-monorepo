@@ -463,7 +463,7 @@ export const QuickLoan = (props: any) => {
         <div className="card-body">
           <div className="mb-3">
             <label
-              className="form-label text-primary-emphasis fw-bold"
+              className="form-label"
               htmlFor="choose-nft"
             >
               You collateralize (choose NFT):
@@ -497,7 +497,7 @@ export const QuickLoan = (props: any) => {
           </div>
           <div className="mb-3">
             <label
-              className="form-label text-primary-emphasis fw-bold"
+              className="form-label"
               htmlFor="choose-currency"
             >
               You borrow (choose currency):
@@ -530,7 +530,7 @@ export const QuickLoan = (props: any) => {
             />
           </div>
           <div>
-            <label className="form-label text-primary-emphasis fw-bold">
+            <label className="form-label">
               Select offer:
             </label>
             {flatResult.length > 0 ? (

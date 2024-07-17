@@ -110,7 +110,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 mt-n2 mb-4">
               <LoanRow
-                loans={data?.loans?.items}
+                loans={data?.loans?.items || []}
                 status="Active"
                 isLender
                 reexecuteQuery={refetchData}
@@ -128,7 +128,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 mt-n2 mb-4">
               <LoanRow
-                loans={data?.loans?.items}
+                loans={data?.loans?.items || []}
                 status="PendingDefault"
                 isLender
                 liquidate
@@ -147,7 +147,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 mt-n2 mb-4">
               <LoanRow
-                loans={data?.loans?.items}
+                loans={data?.loans?.items || []}
                 status="Defaulted"
                 isLender
                 reexecuteQuery={refetchData}
@@ -165,7 +165,7 @@ export const Dashboard = (props: any) => {
           >
             <div className="row g-4 mt-n2 mb-4">
               <LoanRow
-                loans={data?.loans?.items}
+                loans={data?.loans?.items || []}
                 status="Resolved"
                 isLender
                 reexecuteQuery={refetchData}

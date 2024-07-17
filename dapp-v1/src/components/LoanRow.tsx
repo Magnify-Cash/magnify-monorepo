@@ -36,7 +36,7 @@ export const LoanRow = ({
     }
   });
 
-  if (!loans) {
+  if (loans.length === 0) {
     return (
       <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
