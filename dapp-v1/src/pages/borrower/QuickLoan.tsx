@@ -21,6 +21,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
+import { FixedSizeList as List } from "react-window";
+import { QuickLoanListRow as Row } from "@/components/QuickLoanListRow";
 import {
   GetErc20sForNftCollectionDocument,
   QuickLoanDocument,
@@ -510,81 +512,24 @@ export const QuickLoan = (props: any) => {
               Select offer:
             </label>
             {flatResult.length > 0 ? (
-              <div className="specific-h-500 overflow-y-scroll">
-                {flatResult.map((item) => {
-                  return (
-                    <div className="magnify-check" key={item.lendingDesk.id}>
-                      <input
-                        type="radio"
-                        className="btn-check"
-                        autoComplete="off"
-                        name="desks"
-                        id={item.lendingDesk.id}
-                        onClick={(e) =>
-                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
-                        }
-                        value={JSON.stringify(item)}
-                      />
-                      <label
-                        className="btn py-2 d-block w-100 border border-secondary border-opacity-25"
-                        htmlFor={item.lendingDesk.id}
-                      >
-                        <div className="d-flex align-items-center justify-content-center mx-auto">
-                          <img
-                            src={nft?.logoURI}
-                            width="30"
-                            alt={nft?.address}
-                            className="flex-shrink-0"
-                          />
-                          <span className="ms-3">
-                            {formatAddress(item.loanConfig?.nftCollection?.id)}
-                          </span>
-                        </div>
-                        <div className="container-fluid g-0">
-                          <div className="row g-2 mt-2">
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-success-subtle text-center">
-                                <div className="text-success-emphasis h3 mb-3">
-                                  <i className="fa-light fa-hand-holding-dollar" />
-                                </div>
-                                <div className="fw-bold">
-                                  {fromWei(
-                                    item.loanConfig.maxAmount,
-                                    token?.token.decimals,
-                                  )}
-                                </div>
-                                <small className="fw-normal">max offer</small>
-                              </div>
-                            </div>
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-info-subtle text-center">
-                                <div className="text-info-emphasis h3 mb-3">
-                                  <i className="fa-light fa-calendar-clock" />
-                                </div>
-                                <div className="fw-bold">
-                                  {item.loanConfig.maxDuration / 24} days
-                                </div>
-                                <small className="fw-normal">duration</small>
-                              </div>
-                            </div>
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-primary bg-opacity-10 text-center">
-                                <div className="text-primary-emphasis h3 mb-3">
-                                  <i className="fa-light fa-badge-percent" />
-                                </div>
-                                <div className="fw-bold">
-                                  {item.loanConfig.maxInterest / 100} %
-                                </div>
-                                <small className="fw-normal">interest</small>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
+              <List
+                height={400}
+                itemCount={flatResult.length}
+                itemSize={200}
+                width={"100%"}
+
+              >
+                {({ index, style }) => (
+                  <Row
+                    style={style}
+                    index={index}
+                    items={flatResult}
+                    nft={nft}
+                    token={token}
+                    setSelectedLendingDesk={setSelectedLendingDesk}
+                  />
+                )}
+              </List>
             ) : (
               <div className="card-body pt-0">
                 <img
