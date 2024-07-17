@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import { FixedSizeList as List } from "react-window";
+import InfiniteLoader from "react-window-infinite-loader";
 import { QuickLoanListRow as Row } from "@/components/QuickLoanListRow";
 import {
   GetErc20sForNftCollectionDocument,
@@ -45,6 +46,7 @@ export const QuickLoan = (props: any) => {
   /*
   graphql hooks
   */
+  const [afterCursor, setAfterCursor] = useState<string>("") // Provide a default value for afterCursor
   // tokenlist / nftlist state management
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
@@ -64,15 +66,34 @@ export const QuickLoan = (props: any) => {
 
   const [flatResult, setFlatResult] = useState<any>([]);
 
-  const [result] = useQuery({
+  const [result, reexecuteQuery] = useQuery({
     query: QuickLoanDocument,
     variables: {
+      after: afterCursor,
       nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
       erc20Id: token?.token?.address?.toLowerCase() || "",
     },
   });
 
   const { data, fetching, error } = result;
+  const hasNextPage = data?.lendingDesks.pageInfo.hasNextPage;
+
+  // This function `loadMoreItems` is responsible for loading more lending desk items if there are any.
+  const loadMoreItems = () => {
+    if (data && hasNextPage) {
+      setAfterCursor(data.lendingDesks.pageInfo.endCursor!); // Update the 'after' cursor for the next query
+      reexecuteQuery({
+        requestPolicy: "network-only",
+      })
+    }
+  };
+
+  // If there are more items to be loaded then add an extra row to hold a loading indicator component.
+  const itemCount = hasNextPage ? flatResult.length + 1 : flatResult.length;
+
+  // Every row is loaded except for our loading indicator row.
+  const isItemLoaded = index => !hasNextPage || index < flatResult.length;
+
 
   /*
   Alchemy hooks
@@ -142,7 +163,8 @@ export const QuickLoan = (props: any) => {
 
     if (data && !fetching && !error) {
       const formatted = formatData(data);
-      setFlatResult(formatted);
+      //This sets the formatted data to the flatResult state
+      setFlatResult(prevItems => [...prevItems, ...formatted]);
     }
   }, [data, fetching, error]);
 
@@ -292,14 +314,14 @@ export const QuickLoan = (props: any) => {
       Math.round((duration || 0) * 24),
       toWei(amount ? amount.toString() : "0", token?.token.decimals),
       selectedLendingDesk &&
-        Math.round(
-          calculateLoanInterest(
-            selectedLendingDesk?.loanConfig,
-            amount,
-            duration,
-            selectedLendingDesk?.erc20?.decimals || 18,
-          ) * 100,
-        ),
+      Math.round(
+        calculateLoanInterest(
+          selectedLendingDesk?.loanConfig,
+          amount,
+          duration,
+          selectedLendingDesk?.erc20?.decimals || 18,
+        ) * 100,
+      ),
     ],
     query: {
       enabled: checked,
@@ -512,24 +534,37 @@ export const QuickLoan = (props: any) => {
               Select offer:
             </label>
             {flatResult.length > 0 ? (
-              <List
-                height={400}
-                itemCount={flatResult.length}
-                itemSize={200}
-                width={"100%"}
-
+              <InfiniteLoader
+                isItemLoaded={isItemLoaded}
+                itemCount={itemCount}
+                //Return a no-operation function during data fetching
+                //to prevent the infinite loader from triggering additional loads.
+                loadMoreItems={fetching ? () => { } : loadMoreItems}
               >
-                {({ index, style }) => (
-                  <Row
-                    style={style}
-                    index={index}
-                    items={flatResult}
-                    nft={nft}
-                    token={token}
-                    setSelectedLendingDesk={setSelectedLendingDesk}
-                  />
+                {({ onItemsRendered, ref }) => (
+                  <List
+                    height={400}
+                    itemCount={itemCount}
+                    onItemsRendered={onItemsRendered}
+                    ref={ref}
+                    itemSize={200}
+                    width={"100%"}
+
+                  >
+                    {({ index, style }) => (
+                      <Row
+                        style={style}
+                        index={index}
+                        items={flatResult}
+                        nft={nft}
+                        token={token}
+                        setSelectedLendingDesk={setSelectedLendingDesk}
+                        isItemLoaded={isItemLoaded}
+                      />
+                    )}
+                  </List>
                 )}
-              </List>
+              </InfiniteLoader>
             ) : (
               <div className="card-body pt-0">
                 <img

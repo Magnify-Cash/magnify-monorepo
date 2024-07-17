@@ -1,10 +1,19 @@
-import React, { useState } from 'react'; // Import useState if not already imported
+import React, { useState } from "react"; // Import useState if not already imported
 import { formatAddress } from "@/helpers/formatAddress";
 import { fromWei } from "@/helpers/utils";
 
-const QuickLoanListRow = ({ index, style, items, nft, token, setSelectedLendingDesk }) => {
-
-
+const QuickLoanListRow = ({
+    index,
+    style,
+    items,
+    nft,
+    token,
+    isItemLoaded,
+    setSelectedLendingDesk,
+}) => {
+    if (!isItemLoaded(index)) {
+        return <LoadingComponent style={style} />;
+    }
     return (
         <div style={style}>
             <div className="magnify-check" key={items[index]?.lendingDesk.id}>
@@ -44,7 +53,7 @@ const QuickLoanListRow = ({ index, style, items, nft, token, setSelectedLendingD
                                     <div className="fw-bold">
                                         {fromWei(
                                             items[index]?.loanConfig.maxAmount,
-                                            token?.token.decimals,
+                                            token?.token.decimals
                                         )}
                                     </div>
                                     <small className="fw-normal">max offer</small>
@@ -79,5 +88,15 @@ const QuickLoanListRow = ({ index, style, items, nft, token, setSelectedLendingD
         </div>
     );
 };
+
+const LoadingComponent = ({ style }) => (
+    <div style={style}>
+        <div className="magnify-check">
+            <div className="d-flex align-items-center justify-content-center mx-auto">
+                <span className="ms-3">Loading...</span>
+            </div>
+        </div>
+    </div>
+);
 
 export { QuickLoanListRow };
