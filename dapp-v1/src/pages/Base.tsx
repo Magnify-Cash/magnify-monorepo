@@ -303,97 +303,99 @@ export const Base = () => {
           </nav>
           {/* Sidebar end */}
 
-          {/* Navbar start */}
-          <div
-            className="alert bg-primary bg-opacity-10 alert-dismissible fade show rounded-0"
-            role="alert"
-          >
-            <div className="d-flex align-items-center">
-              <i className="fa-light fa-bell-ring me-3"></i>
-              <div>
-                Alert: What's New — Enhanced UI and responsiveness, fixed stats for
-                borrowers and lenders.{" "}
-                <a
-                  target="_blank"
-                  href="https://blog.magnify.cash/june-6th-release-notes/"
-                  rel="noreferrer"
-                >
-                  Read more here<i className="fa-light fa-arrow-right ms-1"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="py-2 py-lg-3">
-            <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
-              <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
-                <div className="btn-group me-3 d-lg-none">
-                  <button
-                    type="button"
-                    className="btn btn-link"
-                    aria-label="Toggle sidebar"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#sidebar"
+          <div className="content-wrapper min-vh-100">
+            {/* Navbar start */}
+            <div
+              className="alert bg-primary bg-opacity-10 alert-dismissible fade show rounded-0"
+              role="alert"
+            >
+              <div className="d-flex align-items-center">
+                <i className="fa-light fa-bell-ring me-3"></i>
+                <div>
+                  Alert: What's New — Enhanced UI and responsiveness, fixed stats for
+                  borrowers and lenders.{" "}
+                  <a
+                    target="_blank"
+                    href="https://blog.magnify.cash/june-6th-release-notes/"
+                    rel="noreferrer"
                   >
-                    <i className="fa-solid fa-bars" />
-                  </button>
+                    Read more here<i className="fa-light fa-arrow-right ms-1"></i>
+                  </a>
                 </div>
-                <NavLink to="/" className="d-lg-none me-auto">
-                  <img
-                    src="/theme/magnify-cash-logo.jpeg"
-                    alt="Logo"
-                    width="28"
-                    height="28"
-                  />
-                </NavLink>
-                <ConnectKitButton.Custom>
-                  {({
-                    isConnected,
-                    isConnecting,
-                    truncatedAddress,
-                    show,
-                    hide,
-                    address,
-                    ensName,
-                  }) => {
-                    return (
-                      <>
-                        <div>
-                          <button
-                            onClick={show}
-                            className="btn btn-md btn-primary d-sm-none"
-                          >
-                            {!isConnected && <small>Connect</small>}
-                            <i className="fa-solid fa-wallet ms-2" />
-                          </button>
-                          <button
-                            onClick={show}
-                            className="btn btn-md btn-primary d-none d-sm-inline"
-                          >
-                            {isConnected && <small>{truncatedAddress}</small>}
-                            {!isConnected && <small>Connect</small>}
-                            <i className="fa-solid fa-wallet ms-2" />
-                          </button>
-                        </div>
-                      </>
-                    );
-                  }}
-                </ConnectKitButton.Custom>
               </div>
-              <h3
-                id="base-title"
-                className="m-0 text-center text-lg-start order-lg-first"
-              >
-                {title}
-              </h3>
             </div>
-          </div>
-          {/* Navbar end */}
+            <div className="py-2 py-lg-3">
+              <div className="container-md px-3 px-sm-4 px-xl-5 py-1 d-lg-flex align-items-center">
+                <div className="ps-lg-3 ms-auto mb-3 mb-lg-0 d-flex order-lg-last">
+                  <div className="btn-group me-3 d-lg-none">
+                    <button
+                      type="button"
+                      className="btn btn-link"
+                      aria-label="Toggle sidebar"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#sidebar"
+                    >
+                      <i className="fa-solid fa-bars" />
+                    </button>
+                  </div>
+                  <NavLink to="/" className="d-lg-none me-auto">
+                    <img
+                      src="/theme/magnify-cash-logo.jpeg"
+                      alt="Logo"
+                      width="28"
+                      height="28"
+                    />
+                  </NavLink>
+                  <ConnectKitButton.Custom>
+                    {({
+                      isConnected,
+                      isConnecting,
+                      truncatedAddress,
+                      show,
+                      hide,
+                      address,
+                      ensName,
+                    }) => {
+                      return (
+                        <>
+                          <div>
+                            <button
+                              onClick={show}
+                              className="btn btn-md btn-primary d-sm-none"
+                            >
+                              {!isConnected && <small>Connect</small>}
+                              <i className="fa-solid fa-wallet ms-2" />
+                            </button>
+                            <button
+                              onClick={show}
+                              className="btn btn-md btn-primary d-none d-sm-inline"
+                            >
+                              {isConnected && <small>{truncatedAddress}</small>}
+                              {!isConnected && <small>Connect</small>}
+                              <i className="fa-solid fa-wallet ms-2" />
+                            </button>
+                          </div>
+                        </>
+                      );
+                    }}
+                  </ConnectKitButton.Custom>
+                </div>
+                <h3
+                  id="base-title"
+                  className="m-0 text-center text-lg-start order-lg-first"
+                >
+                  {title}
+                </h3>
+              </div>
+            </div>
+            {/* Navbar end */}
 
-          {/* Content start */}
-          <main className="mt-4 mt-xl-5">
-            <Outlet />
-          </main>
-          {/* Content end */}
+            {/* Content start */}
+            <main className="mt-4 mt-xl-5">
+              <Outlet />
+            </main>
+            {/* Content end */}
+          </div>
 
           {/* Toasts start */}
           <div
