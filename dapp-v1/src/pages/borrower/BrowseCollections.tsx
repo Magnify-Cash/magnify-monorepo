@@ -80,7 +80,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
         </tr>
       );
     })}
-    {loading && <p>Loading...</p>}
+    {loading && <LoadingIndicator/>}
     {error && <p>Error: {error.message}</p>}
     {hasNextPage && (
       <button onClick={loadMore} disabled={loading} className="btn btn-primary">
