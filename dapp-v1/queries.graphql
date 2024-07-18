@@ -94,8 +94,8 @@ query ManageLendingDesk($deskId: String!) {
   }
 }
 
-query BrowseCollections {
-  nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
+query BrowseCollections($after: String) {
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }, after:$after) {
     items {
       id
       loanConfigs {
@@ -109,6 +109,10 @@ query BrowseCollections {
           }
         }
       }
+    }
+    pageInfo {
+        endCursor
+        hasNextPage
     }
   }
   protocolInfo(id: "0") {

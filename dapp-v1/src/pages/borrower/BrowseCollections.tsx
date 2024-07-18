@@ -1,11 +1,11 @@
 import { Blockies } from "@/components";
+import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import fetchNFTDetails from "@/helpers/FetchNfts";
 import type { INft } from "@/helpers/FetchNfts";
 import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useQuery } from "urql";
 import { useChainId } from "wagmi";
 import { BrowseCollectionsDocument } from "../../../.graphclient";
 
@@ -13,20 +13,15 @@ interface INftCollection extends INft {
   erc20s: IToken[];
 }
 
-export const BrowseCollections = (props: any) => {
-  // GraphQL
-  const [result] = useQuery({
-    query: BrowseCollectionsDocument,
-  });
-  const { data, fetching, error } = result;
+const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) => {
   const chainId = useChainId();
-
   const [nftArr, setNftArr] = useState<INftCollection[]>([]);
+  console.log(items)
 
+  // This function will be executed whenever the query data changes
   useEffect(() => {
-    // This function will be executed whenever the query data changes
-    if (!fetching) getNFTs();
-  }, [data]);
+    if (!loading) getNFTs();
+  }, [items]);
 
   //This is used to lookup a list of nfts off chain
   const getNFTs = async () => {
@@ -34,7 +29,7 @@ export const BrowseCollections = (props: any) => {
     const resultArr: INftCollection[] = [];
 
     //An array of nft ids
-    const nftIdArr = data?.nftCollections.items.map(
+    const nftIdArr = items?.map(
       (nftCollection) => nftCollection.id,
     );
 
@@ -42,9 +37,9 @@ export const BrowseCollections = (props: any) => {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);
 
       //fetching tokens associated with each collection
-      if (data?.nftCollections.items.length) {
-        for (let i = 0; i < data.nftCollections.items.length; i++) {
-          const nftCollection = data.nftCollections.items[i];
+      if (items?.length) {
+        for (let i = 0; i < items?.length; i++) {
+          const nftCollection = items[i];
           const tokens = await fetchTokensForCollection(nftCollection, chainId);
           resultArr[i] = { ...fetchedNftArr[i], erc20s: tokens };
         }
@@ -52,7 +47,50 @@ export const BrowseCollections = (props: any) => {
     }
     setNftArr(resultArr);
   };
+  return (
+    <tbody>
+    {items && items?.map((nftCollection, index) => {
+      return (
+        <tr className="align-middle" key={nftCollection.id}>
+          <td className="py-3 ps-3">
+            {nftArr.length && nftArr[index]?.logoURI ? (
+              <img
+                src={nftArr[index]?.logoURI}
+                width="30"
+                className="d-block rounded-circle"
+                alt={nftArr[index]?.symbol}
+              />
+            ) : (
+              <Blockies seed={nftArr[index]?.address} size={8} />
+            )}
+          </td>
+          <td className="py-3">
+            {nftArr.length ? nftArr[index]?.name : null}
+          </td>
+          <td className="py-3">
+            <NavLink
+              to={`/explore/${nftCollection.id}`}
+              className="btn btn-outline-primary rounded-pill px-4"
+            >
+              <i className="fa-solid fa-link" />
+              <span className="d-none d-sm-inline ms-3">Find a Loan</span>
+            </NavLink>
+          </td>
+        </tr>
+      );
+    })}
+    {loading && <p>Loading...</p>}
+    {error && <p>Error: {error.message}</p>}
+    {hasNextPage && (
+      <button onClick={loadMore} disabled={loading} className="btn btn-primary">
+        Load More
+      </button>
+    )}
+    </tbody>
+  )
+}
 
+export const BrowseCollections = (props: any) => {
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       {/* start stats card */}
@@ -66,7 +104,6 @@ export const BrowseCollections = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
-                    {result.data?.protocolInfo?.nftCollectionsCount}
                   </h3>
                   <p className="m-0 text-primary-emphasis">number of collections</p>
                 </div>
@@ -78,7 +115,6 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-square-dollar h4 m-0" />
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">{result.data?.protocolInfo?.erc20sCount}</h3>
                   <p className="m-0 text-primary-emphasis">number of currencies</p>
                 </div>
               </div>
@@ -102,42 +138,14 @@ export const BrowseCollections = (props: any) => {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {fetching && <LoadingIndicator />}
-              {result.data?.nftCollections.items.map((nftCollection, index) => {
-                const currencies = nftCollection.loanConfigs?.items.map(
-                  (x) => x.lendingDesk.erc20.symbol,
-                );
-                return (
-                  <tr className="align-middle" key={nftCollection.id}>
-                    <td className="py-3 ps-3">
-                      {nftArr.length && nftArr[index]?.logoURI ? (
-                        <img
-                          src={nftArr[index].logoURI}
-                          width="30"
-                          className="d-block rounded-circle"
-                          alt={nftArr[index]?.symbol}
-                        />
-                      ) : (
-                        <Blockies seed={nftArr[index]?.address} size={8} />
-                      )}
-                    </td>
-                    <td className="py-3">
-                      {nftArr.length ? nftArr[index].name : null}
-                    </td>
-                    <td className="py-3">
-                      <NavLink
-                        to={`/explore/${nftCollection.id}`}
-                        className="btn btn-outline-primary rounded-pill px-4"
-                      >
-                        <i className="fa-solid fa-link" />
-                        <span className="d-none d-sm-inline ms-3">Find a Loan</span>
-                      </NavLink>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
+            <PaginatedList
+              query={BrowseCollectionsDocument}
+              dataKey="nftCollections"
+              variables={{}}
+              props={{}}
+            >
+              {renderLendingDesks}
+            </PaginatedList>
           </table>
         </div>
       </div>

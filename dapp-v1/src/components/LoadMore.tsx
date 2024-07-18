@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from "urql";
 
 const PaginatedList = ({ query, variables, dataKey, children, props }) => {
@@ -13,8 +13,8 @@ const PaginatedList = ({ query, variables, dataKey, children, props }) => {
   const { data, fetching, error } = result;
 
   useEffect(() => {
-    if (data && data[dataKey] && data[dataKey].items) {
-      setAllItems(prevItems => [...prevItems, ...data[dataKey].items]);
+    if (data && data?.[dataKey] && data?.[dataKey].items) {
+      setAllItems(prevItems => [...prevItems, ...data?.[dataKey].items]);
     }
   }, [data, dataKey]);
 
