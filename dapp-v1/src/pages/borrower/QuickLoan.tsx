@@ -1,4 +1,5 @@
 import PaginatedList from "@/components/LoadMore";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { PopupTokenList } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
@@ -50,26 +51,40 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
   //This function formats the data received from the graphql query
   //It filters out lending desks with no loanConfig items and balance less than minAmount
   useEffect(() => {
-    const formatData = (data: QuickLoanQuery["lendingDesks"]["items"]) =>
+    const formatData = (data: QuickLoanQuery["lendingDesks"]["items"], targetNftCollectionId: string) =>
       data
         .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
-        .filter(
-          (lendingDesk) =>
-            Number(lendingDesk?.balance) >=
-            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount),
+        .filter((lendingDesk) =>
+          lendingDesk.loanConfigs.items.some(
+            (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
+          )
         )
-        .map(({ id, balance, status, erc20, loanConfigs }) => ({
-          lendingDesk: {
-            id,
-            balance,
-            status,
-            erc20: { ...erc20 },
-          },
-          loanConfig: { ...loanConfigs?.items[0] },
-        }));
+        .filter((lendingDesk) => {
+          const matchingLoanConfig = lendingDesk.loanConfigs.items.find(
+            (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
+          );
+          return matchingLoanConfig && Number(lendingDesk.balance) >= Number(matchingLoanConfig.minAmount);
+        })
+        .map(({ id, balance, status, erc20, loanConfigs }) => {
+          const matchingLoanConfig = loanConfigs.items.find(
+            (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
+          );
+          return {
+            lendingDesk: {
+              id,
+              balance,
+              status,
+              erc20: { ...erc20 },
+            },
+            loanConfig: matchingLoanConfig ? { ...matchingLoanConfig } : undefined,
+          };
+        });
+
+
 
     if (items && !loading && !error) {
-      const formatted = formatData(items);
+      const formatted = formatData(items, props.nftCollection.nft.address);
+      console.log(formatted)
       setFlatResult(formatted);
     }
   }, [items, loading, error]);
@@ -164,6 +179,13 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
           Start customizing to see offers
         </p>
       </div>
+    )}
+    {loading && <LoadingIndicator />}
+    {error && <p>Error: {error.message}</p>}
+    {hasNextPage && (
+      <button onClick={loadMore} disabled={loading} className="btn btn-primary">
+        Load More
+      </button>
     )}
     </div>
   )
@@ -594,7 +616,7 @@ export const QuickLoan = (props: any) => {
                 chainId: chainId,
                 selectedLendingDesk: selectedLendingDesk,
                 _setSelectedLendingDesk: _setSelectedLendingDesk,
-                nft: nft,
+                nftCollection: nftCollection,
                 setNft: setNft,
                 token: token
               }}
