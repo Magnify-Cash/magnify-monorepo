@@ -121,11 +121,12 @@ query BrowseCollections($after: String) {
   }
 }
 
-query BrowseCollection($nftCollectionId: String) {
+query BrowseCollection($nftCollectionId: String, $after: String) {
   lendingDesks(
     where: { status: Active, balance_gt: "0" }
     orderBy: "balance"
     orderDirection: "desc"
+    after: $after
   ) {
     items {
       id
@@ -152,6 +153,10 @@ query BrowseCollection($nftCollectionId: String) {
           maxDuration
         }
       }
+    }
+    pageInfo {
+        endCursor
+        hasNextPage
     }
   }
 }
