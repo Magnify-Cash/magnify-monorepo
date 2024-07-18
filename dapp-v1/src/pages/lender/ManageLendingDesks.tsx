@@ -1,3 +1,4 @@
+import { useState } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import PaginatedList from "@/components/LoadMore";
 import { fromWei } from "@/helpers/utils";
@@ -6,25 +7,25 @@ import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
 const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, props }) => {
-  // Filter by status and handle empty state
-  console.log(props.status, items);
-  items = items.filter((desk) => desk.status === props.status);
-  if (items.length === 0) {
-    return (
-      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
-        <img
-          src="theme/images/Vector.png"
-          alt="Not Found Robot"
-          className="img-fluid d-block mx-auto specific-w-150 mw-100"
-        />
-        <div className="h3 text-center mt-5">Nothing found</div>
-        <p className="text-body-secondary text-center mt-3">
-          {"Don’t know where to start? "}
-          <NavLink to="/create-desk">Create a Lending Desk</NavLink>
-        </p>
-      </div>
-    );
-  }
+  if (loading) return (
+    <LoadingIndicator/>
+  )
+
+  if (items.length === 0) return (
+    <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
+      <img
+        src="theme/images/Vector.png"
+        alt="Not Found Robot"
+        className="img-fluid d-block mx-auto specific-w-150 mw-100"
+      />
+      <div className="h3 text-center mt-5">Nothing found</div>
+      <p className="text-body-secondary text-center mt-3">
+        {"Don’t know where to start? "}
+        <NavLink to="/create-desk">Create a Lending Desk</NavLink>
+      </p>
+    </div>
+  );
+
   return (
       <div>
       {items.map((desk) =>
@@ -100,7 +101,6 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
         </div>
       </div>
     )}
-    {loading && <p>Loading...</p>}
     {error && <p>Error: {error.message}</p>}
     {hasNextPage && (
       <button onClick={loadMore} disabled={loading} className="btn btn-primary">
@@ -114,6 +114,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
 export const ManageLendingDesks = (props: any) => {
   // GraphQL
   const { address } = useAccount();
+  const [status, setStatus] = useState("Active");
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
@@ -138,6 +139,7 @@ export const ManageLendingDesks = (props: any) => {
               role="tab"
               aria-controls="pills-active"
               aria-selected="true"
+              onClick={() => setStatus("Active")}
             >
               Active Desks
             </button>
@@ -152,6 +154,7 @@ export const ManageLendingDesks = (props: any) => {
               role="tab"
               aria-controls="pills-frozen"
               aria-selected="false"
+              onClick={() => setStatus("Frozen")}
             >
               Frozen Desks
             </button>
@@ -180,11 +183,9 @@ export const ManageLendingDesks = (props: any) => {
             query={ManageLendingDesksDocument}
             variables={{
               walletAddress: address?.toLowerCase() || "",
+              status: status
             }}
             dataKey="lendingDesks"
-            props={{
-              status: "Active"
-            }}
           >
             {renderLendingDesks}
           </PaginatedList>
@@ -202,11 +203,9 @@ export const ManageLendingDesks = (props: any) => {
             query={ManageLendingDesksDocument}
             variables={{
               walletAddress: address?.toLowerCase() || "",
+              status: status
             }}
             dataKey="lendingDesks"
-            props={{
-              status: "Frozen"
-            }}
           >
             {renderLendingDesks}
           </PaginatedList>
