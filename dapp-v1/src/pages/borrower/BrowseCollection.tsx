@@ -546,6 +546,7 @@ export const BrowseCollection = (props) => {
                   Interest Rate
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
               </tr>
             </thead>
             <PaginatedList
