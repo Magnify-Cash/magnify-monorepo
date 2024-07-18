@@ -434,6 +434,9 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
             <td className="py-3">
               {formatAddress(loanConfig.lendingDesk.owner.id)}
             </td>
+            <td>
+            {loanConfig.lendingDesk.erc20.symbol}
+            </td>
             <td className="py-3 align-middle">
               {tokens?.[index]?.logoURI ? (
                 <img
