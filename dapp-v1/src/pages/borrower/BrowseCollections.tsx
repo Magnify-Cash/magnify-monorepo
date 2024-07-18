@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useChainId } from "wagmi";
 import { BrowseCollectionsDocument } from "../../../.graphclient";
+import { useQuery } from "urql"
+import { HomeDocument } from "../../../.graphclient";
 
 interface INftCollection extends INft {
   erc20s: IToken[];
@@ -16,7 +18,6 @@ interface INftCollection extends INft {
 const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) => {
   const chainId = useChainId();
   const [nftArr, setNftArr] = useState<INftCollection[]>([]);
-  console.log(items)
 
   // This function will be executed whenever the query data changes
   useEffect(() => {
@@ -91,6 +92,11 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
 }
 
 export const BrowseCollections = (props: any) => {
+  // GraphQL
+  const [result] = useQuery({
+    query: HomeDocument,
+  });
+
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       {/* start stats card */}
@@ -104,6 +110,7 @@ export const BrowseCollections = (props: any) => {
                 </div>
                 <div className="ps-3">
                   <h3 className="m-0">
+                    {result.data?.protocolInfo?.nftCollectionsCount}
                   </h3>
                   <p className="m-0 text-primary-emphasis">number of collections</p>
                 </div>
@@ -115,6 +122,9 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-square-dollar h4 m-0" />
                 </div>
                 <div className="ps-3">
+                  <h3 className="m-0">
+                  {result.data?.protocolInfo?.erc20sCount}
+                  </h3>
                   <p className="m-0 text-primary-emphasis">number of currencies</p>
                 </div>
               </div>
