@@ -1,107 +1,15 @@
 import LoadingIndicator from "@/components/LoadingIndicator";
+import PaginatedList from "@/components/LoadMore";
 import { fromWei } from "@/helpers/utils";
 import { NavLink } from "react-router-dom";
-import { useQuery } from "urql";
 import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
-export const ManageLendingDesks = (props: any) => {
-  // GraphQL
-  const { address } = useAccount();
-  const [result] = useQuery({
-    query: ManageLendingDesksDocument,
-    variables: {
-      walletAddress: address?.toLowerCase() || "",
-    },
-  });
-  const { data, fetching } = result;
-
-  return (
-    <div className="container-md px-3 px-sm-4 px-lg-5">
-      <NavLink
-        to="/create-desk"
-        className="btn btn-primary btn-sm mb-3 py-2 px-3 rounded-pill me-auto d-sm-none"
-        role="button"
-        aria-label="Create"
-      >
-        <i className="fa-solid fa-plus" />
-        <span className="d-none d-sm-inline">Create Lending Desk</span>
-      </NavLink>
-      <div className="d-flex align-items-center">
-        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
-              id="pills-active-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#pills-active"
-              type="button"
-              role="tab"
-              aria-controls="pills-active"
-              aria-selected="true"
-            >
-              Active Desks
-            </button>
-          </li>
-          <li className="nav-item" role="presentation">
-            <button
-              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
-              id="pills-inactive-tab"
-              data-bs-toggle="pill"
-              data-bs-target="#pills-inactive"
-              type="button"
-              role="tab"
-              aria-controls="pills-inactive"
-              aria-selected="false"
-            >
-              Inactive Desks
-            </button>
-          </li>
-        </ul>
-        <NavLink
-          to="/create-desk"
-          className="btn btn-primary mb-3 py-2 px-3 rounded-pill ms-auto d-none d-sm-inline"
-          role="button"
-          aria-label="Create"
-        >
-          <i className="fa-solid fa-plus d-sm-none" />
-          <span className="d-none d-sm-inline">Create Lending Desk</span>
-        </NavLink>
-      </div>
-      {fetching && <LoadingIndicator />}
-      {!fetching && (
-        <div className="tab-content" id="pills-tabContent">
-          {/* Active Row */}
-          <div
-            className="tab-pane fade show active"
-            id="pills-active"
-            role="tabpanel"
-            aria-labelledby="pills-active-tab"
-          >
-            <LendingDeskRow desks={data?.lendingDesks.items || []} status="Active" />
-          </div>
-          {/* End Active Row */}
-
-          {/* Inactive Row */}
-          <div
-            className="tab-pane fade"
-            id="pills-inactive"
-            role="tabpanel"
-            aria-labelledby="pills-inactive-tab"
-          >
-            <LendingDeskRow desks={data?.lendingDesks.items || []} status="Frozen" />
-          </div>
-          {/* End Inactive Row */}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const LendingDeskRow = ({ desks, status }) => {
+const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, props }) => {
   // Filter by status and handle empty state
-  desks = desks.filter((desk) => desk.status === status);
-  if (desks.length === 0) {
+  console.log(props.status, items);
+  items = items.filter((desk) => desk.status === props.status);
+  if (items.length === 0) {
     return (
       <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
         <img
@@ -117,10 +25,9 @@ const LendingDeskRow = ({ desks, status }) => {
       </div>
     );
   }
-
-  // OK
-  return desks.map((desk) => {
-    return (
+  return (
+      <div>
+      {items.map((desk) =>
       <div
         className="card bg-primary-subtle border-primary-subtle rounded-4 my-4"
         key={desk.id}
@@ -192,6 +99,123 @@ const LendingDeskRow = ({ desks, status }) => {
           <div className="col-lg-4 d-flex align-items-center" />
         </div>
       </div>
-    );
-  });
+    )}
+    {loading && <p>Loading...</p>}
+    {error && <p>Error: {error.message}</p>}
+    {hasNextPage && (
+      <button onClick={loadMore} disabled={loading} className="btn btn-primary">
+        Load More
+      </button>
+    )}
+    </div>
+  )
+}
+
+export const ManageLendingDesks = (props: any) => {
+  // GraphQL
+  const { address } = useAccount();
+
+  return (
+    <div className="container-md px-3 px-sm-4 px-lg-5">
+      <NavLink
+        to="/create-desk"
+        className="btn btn-primary btn-sm mb-3 py-2 px-3 rounded-pill me-auto d-sm-none"
+        role="button"
+        aria-label="Create"
+      >
+        <i className="fa-solid fa-plus" />
+        <span className="d-none d-sm-inline">Create Lending Desk</span>
+      </NavLink>
+      <div className="d-flex align-items-center">
+        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-active-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-active"
+              type="button"
+              role="tab"
+              aria-controls="pills-active"
+              aria-selected="true"
+            >
+              Active Desks
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
+              id="pills-frozen-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#pills-frozen"
+              type="button"
+              role="tab"
+              aria-controls="pills-frozen"
+              aria-selected="false"
+            >
+              Frozen Desks
+            </button>
+          </li>
+        </ul>
+        <NavLink
+          to="/create-desk"
+          className="btn btn-primary mb-3 py-2 px-3 rounded-pill ms-auto d-none d-sm-inline"
+          role="button"
+          aria-label="Create"
+        >
+          <i className="fa-solid fa-plus d-sm-none" />
+          <span className="d-none d-sm-inline">Create Lending Desk</span>
+        </NavLink>
+      </div>
+      {(
+        <div className="tab-content" id="pills-tabContent">
+          {/* Active Row */}
+          <div
+            className="tab-pane fade show active"
+            id="pills-active"
+            role="tabpanel"
+            aria-labelledby="pills-active-tab"
+          >
+          <PaginatedList
+            query={ManageLendingDesksDocument}
+            variables={{
+              walletAddress: address?.toLowerCase() || "",
+            }}
+            dataKey="lendingDesks"
+            props={{
+              status: "Active"
+            }}
+          >
+            {renderLendingDesks}
+          </PaginatedList>
+          </div>
+          {/* End Active Row */}
+
+          {/* Frozen row */}
+          <div
+            className="tab-pane fade"
+            id="pills-frozen"
+            role="tabpanel"
+            aria-labelledby="pills-frozen-tab"
+          >
+          <PaginatedList
+            query={ManageLendingDesksDocument}
+            variables={{
+              walletAddress: address?.toLowerCase() || "",
+            }}
+            dataKey="lendingDesks"
+            props={{
+              status: "Frozen"
+            }}
+          >
+            {renderLendingDesks}
+          </PaginatedList>
+          </div>
+          {/* End frozen row */}
+
+
+        </div>
+      )}
+    </div>
+  );
 };

@@ -14,8 +14,8 @@ query Home {
   }
 }
 
-query ManageLendingDesks($walletAddress: String!) {
-  lendingDesks(where: { ownerId: $walletAddress }) {
+query ManageLendingDesks($walletAddress: String!, $after:String) {
+  lendingDesks(where: { ownerId: $walletAddress }, after:$after) {
     items {
       id
       balance
@@ -41,6 +41,10 @@ query ManageLendingDesks($walletAddress: String!) {
           status
         }
       }
+    }
+    pageInfo {
+        endCursor
+        hasNextPage
     }
   }
 }
