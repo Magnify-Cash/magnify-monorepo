@@ -11,13 +11,9 @@ import { BrowseCollectionsDocument } from "../../../.graphclient";
 import { useQuery } from "urql"
 import { HomeDocument } from "../../../.graphclient";
 
-interface INftCollection extends INft {
-  erc20s: IToken[];
-}
-
 const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) => {
   const chainId = useChainId();
-  const [nftArr, setNftArr] = useState<INftCollection[]>([]);
+  const [nftArr, setNftArr] = useState<INft[]>([]);
 
   // This function will be executed whenever the query data changes
   useEffect(() => {
@@ -27,7 +23,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
   //This is used to lookup a list of nfts off chain
   const getNFTs = async () => {
     //final result array that we need
-    const resultArr: INftCollection[] = [];
+    const resultArr: INft[] = [];
 
     //An array of nft ids
     const nftIdArr = items?.map(
@@ -36,15 +32,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
 
     if (nftIdArr?.length) {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);
-
-      //fetching tokens associated with each collection
-      if (items?.length) {
-        for (let i = 0; i < items?.length; i++) {
-          const nftCollection = items[i];
-          const tokens = await fetchTokensForCollection(nftCollection, chainId);
-          resultArr[i] = { ...fetchedNftArr[i], erc20s: tokens };
-        }
-      }
+      resultArr.push(...fetchedNftArr);
     }
     setNftArr(resultArr);
   };
