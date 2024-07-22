@@ -17,7 +17,7 @@ import { useQuery } from "urql";
 
 const PaginatedList = ({ query, variables, dataKey, children, props = {} }) => {
   // State to store all fetched items
-  const [allItems, setAllItems] = useState([]);
+  const [allItems, setAllItems] = useState<any[]>([]);
   // State to store the cursor for pagination
   const [cursor, setCursor] = useState(null);
 

@@ -215,8 +215,8 @@ query GetErc20sForNftCollection($nftCollectionId: String!) {
   }
 }
 
-query BorrowerDashboard($walletAddress: String!) {
-  loans(where: { borrowerId: $walletAddress }) {
+query BorrowerDashboard($walletAddress: String!, $after: String) {
+  loans(where: { borrowerId: $walletAddress }, after: $after) {
     items {
       id
       amount
@@ -239,6 +239,10 @@ query BorrowerDashboard($walletAddress: String!) {
       lender {
         id
       }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
     }
   }
 }
