@@ -247,8 +247,8 @@ query BorrowerDashboard($walletAddress: String!, $after: String) {
   }
 }
 
-query LenderDashboard($walletAddress: String!) {
-  loans(where: { lenderId: $walletAddress }) {
+query LenderDashboard($walletAddress: String!, $after: String) {
+  loans(where: { lenderId: $walletAddress }, after: $after) {
     items {
       id
       amount
@@ -272,6 +272,10 @@ query LenderDashboard($walletAddress: String!) {
       lender {
         id
       }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
     }
   }
 }

@@ -1,9 +1,40 @@
 import { LoanRow } from "@/components";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { useEffect, useState } from "react";
-import { useQuery } from "urql";
 import { useAccount, useChainId } from "wagmi";
 import { LenderDashboardDocument } from "../../../.graphclient";
+import PaginatedList from "@/components/LoadMore";
+
+const renderLenderDashboard = ({
+  items,
+  loading,
+  error,
+  loadMore,
+  hasNextPage,
+  props,
+}) => {
+  if (loading) return <LoadingIndicator />;
+  return (
+    <>
+      <LoanRow
+        loans={items}
+        status={props.status}
+        isLender={props.isLender}
+        liquidate={props.liquidate}
+        reexecuteQuery={props.reexecuteQuery}
+      />
+      {error && <p>Error: {error.message}</p>}
+      {hasNextPage && (
+        <button
+          onClick={loadMore}
+          disabled={loading}
+          className="btn btn-primary"
+        >
+          Load More
+        </button>
+      )}
+    </>
+  );
+};
 
 export const Dashboard = (props: any) => {
   /*
@@ -12,34 +43,15 @@ export const Dashboard = (props: any) => {
   const chainId = useChainId();
   // GraphQL
   const { address } = useAccount();
-  const [paused, setPaused] = useState(false);
-  const [result, reexecuteQuery] = useQuery({
-    query: LenderDashboardDocument,
-    variables: {
-      walletAddress: address?.toLowerCase() || "",
-    },
-    pause: paused,
-    requestPolicy: "cache-and-network",
-  });
-  const { data, fetching } = result;
-
-  useEffect(() => {
-    if (data) {
-      setPaused(true); // Correctly sets the query to be paused when data is fetched
-    }
-  }, [data]);
-
-  const refetchData = () => {
-    setPaused(false);
-    reexecuteQuery({
-      requestPolicy: "network-only",
-    });
-  };
 
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="d-flex align-items-center">
-        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+        <ul
+          className="nav nav-pills nav-fill mb-3"
+          id="pills-tab"
+          role="tablist"
+        >
           <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
@@ -98,83 +110,99 @@ export const Dashboard = (props: any) => {
           </li>
         </ul>
       </div>
-      {fetching && <LoadingIndicator />}
-      {!fetching && (
-        <div className="tab-content" id="pills-tabContent">
-          {/* Active Row */}
-          <div
-            className="tab-pane fade show active"
-            id="pills-active"
-            role="tabpanel"
-            aria-labelledby="pills-active-tab"
-          >
-            <div className="row g-4 mt-n2 mb-4">
-              <LoanRow
-                loans={data?.loans?.items || []}
-                status="Active"
-                isLender
-                reexecuteQuery={refetchData}
-              />
-            </div>
+      <div className="tab-content" id="pills-tabContent">
+        {/* Active Row */}
+        <div
+          className="tab-pane fade show active"
+          id="pills-active"
+          role="tabpanel"
+          aria-labelledby="pills-active-tab"
+        >
+          <div className="row g-4 mt-n2 mb-4">
+            <PaginatedList
+              query={LenderDashboardDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+              }}
+              dataKey="loans"
+              props={{ status: "Active", isLender: true }}
+            >
+              {renderLenderDashboard}
+            </PaginatedList>
           </div>
-          {/* End Active Row */}
-
-          {/* Pending Default Row */}
-          <div
-            className="tab-pane fade"
-            id="pills-pending-default"
-            role="tabpanel"
-            aria-labelledby="pills-pending-default-tab"
-          >
-            <div className="row g-4 mt-n2 mb-4">
-              <LoanRow
-                loans={data?.loans?.items || []}
-                status="PendingDefault"
-                isLender
-                liquidate
-                reexecuteQuery={refetchData}
-              />
-            </div>
-          </div>
-          {/* End Pending Default Row */}
-
-          {/* Defaulted Row */}
-          <div
-            className="tab-pane fade"
-            id="pills-defaulted"
-            role="tabpanel"
-            aria-labelledby="pills-defaulted-tab"
-          >
-            <div className="row g-4 mt-n2 mb-4">
-              <LoanRow
-                loans={data?.loans?.items || []}
-                status="Defaulted"
-                isLender
-                reexecuteQuery={refetchData}
-              />
-            </div>
-          </div>
-          {/* End Defaulted Row */}
-
-          {/* Resolved Row */}
-          <div
-            className="tab-pane fade"
-            id="pills-completed"
-            role="tabpanel"
-            aria-labelledby="pills-completed-tab"
-          >
-            <div className="row g-4 mt-n2 mb-4">
-              <LoanRow
-                loans={data?.loans?.items || []}
-                status="Resolved"
-                isLender
-                reexecuteQuery={refetchData}
-              />
-            </div>
-          </div>
-          {/* End Resolved Row */}
         </div>
-      )}
+        {/* End Active Row */}
+
+        {/* Pending Default Row */}
+        <div
+          className="tab-pane fade"
+          id="pills-pending-default"
+          role="tabpanel"
+          aria-labelledby="pills-pending-default-tab"
+        >
+          <div className="row g-4 mt-n2 mb-4">
+            <PaginatedList
+              query={LenderDashboardDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+              }}
+              dataKey="loans"
+              props={{
+                status: "PendingDefault",
+                isLender: true,
+                liquidate: true,
+              }}
+            >
+              {renderLenderDashboard}
+            </PaginatedList>
+          </div>
+        </div>
+        {/* End Pending Default Row */}
+
+        {/* Defaulted Row */}
+        <div
+          className="tab-pane fade"
+          id="pills-defaulted"
+          role="tabpanel"
+          aria-labelledby="pills-defaulted-tab"
+        >
+          <div className="row g-4 mt-n2 mb-4">
+            <PaginatedList
+              query={LenderDashboardDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+              }}
+              dataKey="loans"
+              props={{ status: "Defaulted", isLender: true }}
+            >
+              {renderLenderDashboard}
+            </PaginatedList>
+          </div>
+        </div>
+        {/* End Defaulted Row */}
+
+        {/* Resolved Row */}
+        <div
+          className="tab-pane fade"
+          id="pills-completed"
+          role="tabpanel"
+          aria-labelledby="pills-completed-tab"
+        >
+          <div className="row g-4 mt-n2 mb-4">
+            <PaginatedList
+              query={LenderDashboardDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+              }}
+              dataKey="loans"
+              props={{ status: "Resolved", isLender: true }}
+            >
+              {renderLenderDashboard}
+            </PaginatedList>
+          </div>
+        </div>
+        {/* End Resolved Row */}
+      </div>
     </div>
   );
 };
