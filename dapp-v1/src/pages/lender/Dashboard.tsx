@@ -125,6 +125,7 @@ export const Dashboard = (props: any) => {
                 walletAddress: address?.toLowerCase() || "",
               }}
               dataKey="loans"
+              manualRefetch={true}
               props={{ status: "Active", isLender: true }}
             >
               {renderLenderDashboard}
@@ -147,6 +148,7 @@ export const Dashboard = (props: any) => {
                 walletAddress: address?.toLowerCase() || "",
               }}
               dataKey="loans"
+              manualRefetch={true}
               props={{
                 status: "PendingDefault",
                 isLender: true,
@@ -173,6 +175,7 @@ export const Dashboard = (props: any) => {
                 walletAddress: address?.toLowerCase() || "",
               }}
               dataKey="loans"
+              manualRefetch={true}
               props={{ status: "Defaulted", isLender: true }}
             >
               {renderLenderDashboard}
@@ -195,6 +198,7 @@ export const Dashboard = (props: any) => {
                 walletAddress: address?.toLowerCase() || "",
               }}
               dataKey="loans"
+              manualRefetch={true}
               props={{ status: "Resolved", isLender: true }}
             >
               {renderLenderDashboard}
