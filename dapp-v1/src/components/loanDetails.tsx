@@ -534,6 +534,10 @@ const LoanDetails = ({
         setActionIsLoading(false);
         reexecuteQuery ? reexecuteQuery() : null;
       }
+      // Reset the form
+      resetForm();
+      // Refetch the approval data
+      refetchApprovalData();
       // Close modal
       const modal = document.getElementsByClassName("modal show")[0];
       window.bootstrap.Modal.getInstance(modal)?.hide();
