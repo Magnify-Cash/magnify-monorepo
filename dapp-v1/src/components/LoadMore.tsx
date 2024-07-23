@@ -80,6 +80,7 @@ const PaginatedList = ({
   const loadMore = () => {
     if (data && data[dataKey] && data[dataKey].pageInfo.endCursor) {
       setCursor(data[dataKey].pageInfo.endCursor);
+      setPaused(false);
     }
   };
 
