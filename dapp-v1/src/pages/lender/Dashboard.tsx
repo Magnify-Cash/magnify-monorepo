@@ -12,16 +12,11 @@ const renderLenderDashboard = ({
   hasNextPage,
   props,
 }) => {
-  if (loading) return <LoadingIndicator />;
+
   return (
     <>
-      <LoanRow
-        loans={items}
-        status={props.status}
-        isLender={props.isLender}
-        liquidate={props.liquidate}
-        reexecuteQuery={props.reexecuteQuery}
-      />
+      {items.length > 0 && <LoanRow {...{ loans: items, ...props }} />}
+      {loading && <LoadingIndicator />}
       {error && <p>Error: {error.message}</p>}
       {hasNextPage && (
         <button
