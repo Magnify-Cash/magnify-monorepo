@@ -40,9 +40,7 @@ const PaginatedList = ({
 
   // Function to refetch the query data
   const refetchData = () => {
-    setTimeout(() => {
-      setPaused(false);
-    }, 100);
+    setPaused(false);
      reexecuteQuery({
       requestPolicy: "network-only",
     });
