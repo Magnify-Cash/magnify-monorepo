@@ -38,45 +38,54 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
   };
   return (
     <tbody>
-    {items && items?.map((nftCollection, index) => {
-      return (
-        <tr className="align-middle" key={nftCollection.id}>
-          <td className="py-3 ps-3">
-            {nftArr.length && nftArr[index]?.logoURI ? (
-              <img
-                src={nftArr[index]?.logoURI}
-                width="30"
-                className="d-block rounded-circle"
-                alt={nftArr[index]?.symbol}
-              />
-            ) : (
-              <Blockies seed={nftArr[index]?.address} size={8} />
-            )}
-          </td>
-          <td className="py-3">
-            {nftArr.length ? nftArr[index]?.name : null}
-          </td>
-          <td className="py-3">
-            <NavLink
-              to={`/explore/${nftCollection.id}`}
-              className="btn btn-outline-primary rounded-pill px-4"
+      {items &&
+        items?.map((nftCollection, index) => {
+          return (
+            <tr className="align-middle" key={nftCollection.id}>
+              <td className="py-3 ps-3">
+                {nftArr.length && nftArr[index]?.logoURI ? (
+                  <img
+                    src={nftArr[index]?.logoURI}
+                    width="30"
+                    className="d-block rounded-circle"
+                    alt={nftArr[index]?.symbol}
+                  />
+                ) : (
+                  <Blockies seed={nftArr[index]?.address} size={8} />
+                )}
+              </td>
+              <td className="py-3">
+                {nftArr.length ? nftArr[index]?.name : null}
+              </td>
+              <td className="py-3">
+                <NavLink
+                  to={`/explore/${nftCollection.id}`}
+                  className="btn btn-outline-primary rounded-pill px-4"
+                >
+                  <i className="fa-solid fa-link" />
+                  <span className="d-none d-sm-inline ms-3">Find a Loan</span>
+                </NavLink>
+              </td>
+            </tr>
+          );
+        })}
+      {loading && <LoadingIndicator />}
+      {error && <p>Error: {error.message}</p>}
+      {hasNextPage && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <button
+              onClick={loadMore}
+              disabled={loading}
+              className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
             >
-              <i className="fa-solid fa-link" />
-              <span className="d-none d-sm-inline ms-3">Find a Loan</span>
-            </NavLink>
+              Load More
+            </button>
           </td>
         </tr>
-      );
-    })}
-    {loading && <LoadingIndicator/>}
-    {error && <p>Error: {error.message}</p>}
-    {hasNextPage && (
-      <button onClick={loadMore} disabled={loading} className="btn btn-primary">
-        Load More
-      </button>
-    )}
+      )}
     </tbody>
-  )
+  );
 }
 
 export const BrowseCollections = (props: any) => {
