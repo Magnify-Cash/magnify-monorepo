@@ -55,18 +55,18 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
       data
         .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
         .filter((lendingDesk) =>
-          lendingDesk.loanConfigs.items.some(
+          lendingDesk.loanConfigs?.items?.some(
             (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
           )
         )
         .filter((lendingDesk) => {
-          const matchingLoanConfig = lendingDesk.loanConfigs.items.find(
+          const matchingLoanConfig = lendingDesk.loanConfigs?.items?.find(
             (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
           );
           return matchingLoanConfig && Number(lendingDesk.balance) >= Number(matchingLoanConfig.minAmount);
         })
         .map(({ id, balance, status, erc20, loanConfigs }) => {
-          const matchingLoanConfig = loanConfigs.items.find(
+          const matchingLoanConfig = loanConfigs?.items?.find(
             (loanConfig) => loanConfig.nftCollection.id.toUpperCase() === targetNftCollectionId.toUpperCase()
           );
           return {
@@ -84,7 +84,6 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
 
     if (items && !loading && !error) {
       const formatted = formatData(items, props.nftCollection.nft.address);
-      console.log(formatted)
       setFlatResult(formatted);
     }
   }, [items, loading, error]);
@@ -103,9 +102,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
                 autoComplete="off"
                 name="desks"
                 id={item.lendingDesk.id}
-                onClick={(e) =>
-                  setSelectedLendingDesk((e.target as HTMLInputElement).value)
-                }
+                onClick={(e) => setSelectedLendingDesk(JSON.stringify(item))}
                 value={JSON.stringify(item)}
               />
               <label
@@ -133,7 +130,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
                         <div className="fw-bold">
                           {fromWei(
                             item.loanConfig.maxAmount,
-                            props.token?.token.decimals,
+                            props.token?.token.decimals
                           )}
                         </div>
                         <small className="fw-normal">max offer</small>
