@@ -449,12 +449,12 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
             <td className="py-3">
               {fromWei(
                 loanConfig.minAmount,
-                loanConfig.lendingDesk?.erc20?.decimals,
+                loanConfig.lendingDesk?.erc20?.decimals
               )}{" "}
               -{" "}
               {fromWei(
                 loanConfig.maxAmount,
-                loanConfig.lendingDesk?.erc20?.decimals,
+                loanConfig.lendingDesk?.erc20?.decimals
               )}
             </td>
             <td className="py-3">
@@ -499,12 +499,17 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
       {loading && <LoadingIndicator />}
       {error && <p>Error: {error.message}</p>}
       {hasNextPage && (
-        <button onClick={loadMore} disabled={loading} className="btn btn-primary">
+        <button
+          onClick={loadMore}
+          disabled={loading}
+          className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
+        >
           Load More
         </button>
+
       )}
     </tbody>
-  )
+  );
 }
 
 

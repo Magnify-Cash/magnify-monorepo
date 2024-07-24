@@ -229,7 +229,7 @@ const renderLendingDesks = ({
         <button
           onClick={loadMore}
           disabled={loading}
-          className="btn btn-primary"
+          className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
         >
           Load More
         </button>
