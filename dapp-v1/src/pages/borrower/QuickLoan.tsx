@@ -19,7 +19,7 @@ import {
   useWriteErc721Approve,
   useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
@@ -589,6 +589,26 @@ export const QuickLoan = (props: any) => {
     await newLoanWrite(newLoanConfig!.request);
   }
 
+  // Memoization of the PaginatedList component
+  const memoizedPaginatedList = useMemo(
+    () => (
+      <PaginatedList
+        query={QuickLoanDocument}
+        dataKey="lendingDesks"
+        variables={{
+          nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
+          erc20Id: token?.token?.address?.toLowerCase() || "",
+        }}
+      >
+        {renderLendingDesks}
+      </PaginatedList>
+    ),
+    [
+      nftCollection?.nft?.address,
+      token?.token?.address,
+    ]
+  );
+
   return (
     <QuickLoanContext.Provider
       value={{
@@ -669,17 +689,7 @@ export const QuickLoan = (props: any) => {
             </div>
             <div>
               <label className="form-label">Select offer:</label>
-              <PaginatedList
-                query={QuickLoanDocument}
-                dataKey="lendingDesks"
-                variables={{
-                  nftCollectionId:
-                    nftCollection?.nft?.address?.toLowerCase() || "",
-                  erc20Id: token?.token?.address?.toLowerCase() || "",
-                }}
-              >
-                {renderLendingDesks}
-              </PaginatedList>
+              {memoizedPaginatedList}
             </div>
           </div>
         </div>
