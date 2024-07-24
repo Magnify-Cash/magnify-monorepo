@@ -70,18 +70,18 @@ const renderLendingDesks = ({
     _setSelectedLendingDesk(JSON.parse(e));
   const getNFTdetails = async () => {
     const fetchedNfts = await fetchNFTDetails(
-      [selectedLendingDesk?.loanConfig?.nftCollection?.id],
+      [nftCollection?.nft.address],
       chainId
     );
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
 
+  //This useEffect hook is used to get the nft details from the nftCollection
   useEffect(() => {
-    // This function will be executed whenever the selectedLendingDesk data changes
-    if (!loading) {
+     if (nftCollection && items) {
       getNFTdetails();
     }
-  }, [selectedLendingDesk]);
+  }, [nftCollection, items]);
 
   //This function formats the data received from the graphql query
   //It filters out lending desks with no loanConfig items and balance less than minAmount
