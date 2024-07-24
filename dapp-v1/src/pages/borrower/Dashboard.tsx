@@ -122,6 +122,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
+                status: "Active",
               }}
               dataKey="loans"
               manualRefetch={true}
@@ -145,6 +146,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
+                status:"Active",
               }}
               dataKey="loans"
               manualRefetch={true}
@@ -168,6 +170,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
+                status:"Resolved",
               }}
               dataKey="loans"
               manualRefetch={true}
@@ -191,6 +194,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
+                status:"Defaulted",
               }}
               dataKey="loans"
               manualRefetch={true}

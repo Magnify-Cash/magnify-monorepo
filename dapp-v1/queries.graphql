@@ -14,8 +14,15 @@ query Home {
   }
 }
 
-query ManageLendingDesks($walletAddress: String!, $status:LendingDeskStatus!, $after:String) {
-  lendingDesks(where: { ownerId: $walletAddress, status:$status }, after:$after) {
+query ManageLendingDesks(
+  $walletAddress: String!
+  $status: LendingDeskStatus!
+  $after: String
+) {
+  lendingDesks(
+    where: { ownerId: $walletAddress, status: $status }
+    after: $after
+  ) {
     items {
       id
       balance
@@ -43,8 +50,8 @@ query ManageLendingDesks($walletAddress: String!, $status:LendingDeskStatus!, $a
       }
     }
     pageInfo {
-        endCursor
-        hasNextPage
+      endCursor
+      hasNextPage
     }
   }
 }
@@ -95,7 +102,7 @@ query ManageLendingDesk($deskId: String!) {
 }
 
 query BrowseCollections($after: String) {
-  nftCollections(where: { activeLoanConfigsCount_gt: "0" }, after:$after) {
+  nftCollections(where: { activeLoanConfigsCount_gt: "0" }, after: $after) {
     items {
       id
       loanConfigs {
@@ -111,8 +118,8 @@ query BrowseCollections($after: String) {
       }
     }
     pageInfo {
-        endCursor
-        hasNextPage
+      endCursor
+      hasNextPage
     }
   }
   protocolInfo(id: "0") {
@@ -155,13 +162,13 @@ query BrowseCollection($nftCollectionId: String, $after: String) {
       }
     }
     pageInfo {
-        endCursor
-        hasNextPage
+      endCursor
+      hasNextPage
     }
   }
 }
 
-query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after:String) {
+query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after: String) {
   lendingDesks(
     where: { erc20Id: $erc20Id, status: Active, balance_gt: "0" }
     orderBy: "balance"
@@ -192,8 +199,8 @@ query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after:String) {
       }
     }
     pageInfo {
-        endCursor
-        hasNextPage
+      endCursor
+      hasNextPage
     }
   }
   nftCollections(where: { activeLoanConfigsCount_gt: "0" }) {
@@ -215,8 +222,12 @@ query GetErc20sForNftCollection($nftCollectionId: String!) {
   }
 }
 
-query BorrowerDashboard($walletAddress: String!, $after: String) {
-  loans(where: { borrowerId: $walletAddress }, after: $after) {
+query BorrowerDashboard(
+  $walletAddress: String!
+  $after: String
+  $status: LoanStatus!
+) {
+  loans(where: { borrowerId: $walletAddress, status: $status }, after: $after) {
     items {
       id
       amount
@@ -247,8 +258,12 @@ query BorrowerDashboard($walletAddress: String!, $after: String) {
   }
 }
 
-query LenderDashboard($walletAddress: String!, $after: String) {
-  loans(where: { lenderId: $walletAddress }, after: $after) {
+query LenderDashboard(
+  $walletAddress: String!
+  $after: String
+  $status: LoanStatus!
+) {
+  loans(where: { lenderId: $walletAddress, status: $status }, after: $after) {
     items {
       id
       amount
