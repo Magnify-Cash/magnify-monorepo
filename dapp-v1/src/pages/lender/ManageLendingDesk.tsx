@@ -56,56 +56,38 @@ export const ManageLendingDesk = (props: any) => {
 
   // Function to refetch the query data
   const refetchData = () => {
-    setPaused(false);
+    const interval = 100;
     setTimeout(() => {
-      reexecuteQuery({
-        requestPolicy: "network-only",
-      });
-    }, 1000); // 1000 ms delay
+      setPaused(false);
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }, interval);
   };
   /*
   Hook to watch for contract events
   */
-  useCustomWatchContractEvent({
-    eventName: "LendingDeskLiquidityDeposited",
-    onLogs: (logs) => {
-      // Refetch the query data
-      refetchData();
+  const events = [
+    { eventName: "LendingDeskLiquidityDeposited" },
+    { eventName: "LendingDeskLiquidityWithdrawn" },
+    {
+      eventName: "LendingDeskStateSet",
+      action: () => setFreezeUnfreezeIsLoading(false),
     },
-  });
+    {
+      eventName: "LendingDeskLoanConfigsSet",
+      action: () => setUpdateDeskIsLoading(false),
+    },
+    { eventName: "LendingDeskLoanConfigRemoved" },
+  ];
 
-  useCustomWatchContractEvent({
-    eventName: "LendingDeskLiquidityWithdrawn",
-    onLogs: (logs) => {
-      // Refetch the query data
-      refetchData();
-    },
-  });
-
-  useCustomWatchContractEvent({
-    eventName: "LendingDeskStateSet",
-    onLogs: (logs) => {
-      setFreezeUnfreezeIsLoading(false);
-      // Refetch the query data
-      refetchData();
-    },
-  });
-
-  useCustomWatchContractEvent({
-    eventName: "LendingDeskLoanConfigsSet",
-    onLogs: (logs) => {
-      setUpdateDeskIsLoading(false);
-      // Refetch the query data
-      refetchData();
-    },
-  });
-
-  useCustomWatchContractEvent({
-    eventName: "LendingDeskLoanConfigRemoved",
-    onLogs: (logs) => {
-      // Refetch the query data
-      refetchData();
-    },
+  events.forEach(({ eventName, action }) => {
+    useCustomWatchContractEvent({
+      eventName,
+      onLogs: (logs) => {
+        console.log(eventName, logs);
+        if (action) action();
+        refetchData();
+      },
+    });
   });
 
   const token = result.data?.lendingDesk?.erc20?.decimals;
@@ -560,7 +542,7 @@ export const ManageLendingDesk = (props: any) => {
   /*
   JSX Return
   */
-  if (result.fetching) {
+  if (result.fetching && !result.data) {
     return (
       <div className="container-md px-3 px-sm-4 px-xl-5">
         <div className="text-body-secondary position-relative">
@@ -584,6 +566,11 @@ export const ManageLendingDesk = (props: any) => {
           Manage Lending Desks
         </NavLink>
       </div>
+      {result.fetching && (
+        <div className="py-2">
+          <LoadingIndicator />
+        </div>
+      )}
       <div className="row g-4 mt-n2 mb-4">
         <div className="col-12">
           <div className="card bg-primary-subtle border-primary-subtle rounded-4">
