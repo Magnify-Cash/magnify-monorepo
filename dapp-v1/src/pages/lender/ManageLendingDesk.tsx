@@ -5,6 +5,7 @@ import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   useSimulateMagnifyCashV1SetLendingDeskState,
@@ -31,6 +32,7 @@ export const ManageLendingDesk = (props: any) => {
   /*
   graphql hooks
   */
+  const [paused, setPaused] = useState(false);
   const { id } = useParams();
   const [result, reexecuteQuery] = useQuery({
     query: ManageLendingDeskDocument,
@@ -38,8 +40,48 @@ export const ManageLendingDesk = (props: any) => {
       // @ts-ignore
       deskId: id,
     },
-    requestPolicy: "network-only",
+    pause: paused,
+    requestPolicy: "cache-and-network",
   });
+
+  // Destructure data, fetching state, and error from the query result
+  const { data, fetching, error } = result;
+
+  useEffect(() => {
+    if (!paused && data) {
+      // Pause the query after it has been executed once
+      setPaused(true);
+    }
+  }, [data]);
+
+  // Function to refetch the query data
+  const refetchData = () => {
+    setPaused(false);
+    setTimeout(() => {
+      reexecuteQuery({
+        requestPolicy: "network-only",
+      });
+    }, 1000); // 1000 ms delay
+  };
+  /*
+  Hook to watch for contract events
+  */
+  useCustomWatchContractEvent({
+    eventName: "LendingDeskLiquidityDeposited",
+    onLogs: (logs) => {
+      // Refetch the query data
+      refetchData();
+    },
+  });
+
+  useCustomWatchContractEvent({
+    eventName: "LendingDeskLiquidityWithdrawn",
+    onLogs: (logs) => {
+      // Refetch the query data
+      refetchData();
+    },
+  });
+
   const token = result.data?.lendingDesk?.erc20?.decimals;
 
   /*
@@ -539,7 +581,7 @@ export const ManageLendingDesk = (props: any) => {
           </NavLink>
         </div>
         <div className="py-2">
-        <LoadingIndicator />
+          <LoadingIndicator />
         </div>
       </div>
     );
@@ -589,12 +631,10 @@ export const ManageLendingDesk = (props: any) => {
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="deposit"
-                      reexecuteQuery={reexecuteQuery}
                     />
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="withdraw"
-                      reexecuteQuery={reexecuteQuery}
                     />
                     <div className=" form-check form-switch d-flex align-items-center justify-content-center space-x-4">
                       <input
