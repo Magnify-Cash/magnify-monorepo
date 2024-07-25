@@ -468,9 +468,7 @@ export const CreateLendingDesk = (props: any) => {
                           onClick={setNftCollection}
                         />
                       </div>
-                      <h6 className="fw-medium mt-4">
-                        Min/Max Offer
-                      </h6>
+                      <h6 className="fw-medium mt-4">Min/Max Offer</h6>
                       <div className="row g-4">
                         <div className="col-lg-6">
                           <div className="input-group">
@@ -520,9 +518,7 @@ export const CreateLendingDesk = (props: any) => {
                           </div>
                         </div>
                       </div>
-                      <h6 className="fw-medium mt-4">
-                        Min/Max Duration
-                      </h6>
+                      <h6 className="fw-medium mt-4">Min/Max Duration</h6>
                       <div className="row g-4">
                         <div className="col-lg-6">
                           <div className="input-group">
@@ -571,9 +567,7 @@ export const CreateLendingDesk = (props: any) => {
                           </div>
                         </div>
                       </div>
-                      <h6 className="fw-medium mt-4">
-                        Min/Max Interest Rate
-                      </h6>
+                      <h6 className="fw-medium mt-4">Min/Max Interest Rate</h6>
                       <div className="row g-4">
                         <div className="col-lg-6">
                           <div className="input-group">

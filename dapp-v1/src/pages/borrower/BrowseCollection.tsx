@@ -1,6 +1,7 @@
 import { Blockies } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
+import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
@@ -19,14 +20,20 @@ import {
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   BrowseCollectionDocument,
   type BrowseCollectionQuery,
 } from "../../../.graphclient";
 
-export const BrowseCollection = (props) => {
+const renderLendingDesks = ({
+  items,
+  loading,
+  error,
+  loadMore,
+  hasNextPage,
+  props,
+}) => {
   /*
   react-router hooks
   */
@@ -41,15 +48,6 @@ export const BrowseCollection = (props) => {
   graphql hooks
   */
   const { address } = useAccount();
-  const { collection_address } = useParams();
-
-  const [result] = useQuery({
-    query: BrowseCollectionDocument,
-    variables: {
-      nftCollectionId: collection_address,
-    },
-  });
-  const { data, fetching, error } = result;
 
   /*
   page title hook
@@ -59,9 +57,9 @@ export const BrowseCollection = (props) => {
   useEffect(() => {
     // This function will be executed whenever the query data changes and formattedData is set
     const getTitle = async () => {
-      if (!fetching && collection_address) {
+      if (!loading && props.collection_address) {
         const fetchedNftArr: INft[] = await fetchNFTDetails(
-          [collection_address],
+          [props.collection_address],
           chainId,
         );
         if (title) {
@@ -83,12 +81,12 @@ export const BrowseCollection = (props) => {
       const walletNfts = await getWalletNfts({
         chainId: chainId,
         wallet: address?.toLowerCase()!,
-        nftCollection: collection_address!,
+        nftCollection: props.collection_address!,
       });
       setWalletNfts(walletNfts);
     };
     fetchWalletNfts();
-  }, [address, collection_address]);
+  }, [address, props.collection_address]);
 
   /*
   form hooks / functions
@@ -99,8 +97,8 @@ export const BrowseCollection = (props) => {
   // Initial data is an array of active lending desks with loan configs property
   // We are formatting the data to be an array of loanConfigs with lendingDesk property
   useEffect(() => {
-    const formatData = (data: BrowseCollectionQuery) => ({
-      loanConfigs: data.lendingDesks.items
+    const formatData = (data: BrowseCollectionQuery["lendingDesks"]["items"]) => ({
+      loanConfigs: data
         .filter((lendingDesk) => (lendingDesk?.loanConfigs?.items?.length || 0) > 0)
         .filter(
           (lendingDesk) =>
@@ -118,15 +116,15 @@ export const BrowseCollection = (props) => {
           ...lendingDesk?.loanConfigs?.items[0],
         })),
     });
-    if (data && !fetching && !error) {
-      const formatted = formatData(data);
+    if (items && !loading && !error) {
+      const formatted = formatData(items);
       setFormattedData(formatted);
     }
-  }, [data]);
+  }, [items]);
 
   useEffect(() => {
     // This function will be executed whenever the query data changes and formattedData is set
-    if (!fetching) {
+    if (!loading) {
       getTokenDetails();
       getNFTdetails();
     }
@@ -148,7 +146,7 @@ export const BrowseCollection = (props) => {
   };
 
   const getNFTdetails = async () => {
-    const fetchedNfts = await fetchNFTDetails([collection_address!], chainId);
+    const fetchedNfts = await fetchNFTDetails([props.collection_address!], chainId);
     setNFT(fetchedNfts[0]); //There is only one nft in the array
   };
 
@@ -432,6 +430,92 @@ export const BrowseCollection = (props) => {
   }
 
   return (
+    <tbody>
+      {formattedData?.loanConfigs.map((loanConfig, index) => {
+        return (
+          <tr className="align-middle" key={loanConfig.lendingDesk.id}>
+            <td className="py-3 ps-3">
+              <Blockies seed={loanConfig.lendingDesk.owner.id} size={8} />
+            </td>
+            <td className="py-3">{formatAddress(loanConfig.lendingDesk.owner.id)}</td>
+            <td className="py-3 align-middle">
+              {tokens?.[index]?.logoURI ? (
+                <img
+                  src={tokens?.[index]?.logoURI}
+                  height="30"
+                  className="d-block rounded-circle"
+                  alt={tokens?.[index]?.symbol}
+                />
+              ) : (
+                <div>{tokens?.[index]?.name}</div>
+              )}
+            </td>
+            <td className="py-3">
+              {fromWei(loanConfig.minAmount, loanConfig.lendingDesk?.erc20?.decimals)} -{" "}
+              {fromWei(loanConfig.maxAmount, loanConfig.lendingDesk?.erc20?.decimals)}
+            </td>
+            <td className="py-3">
+              {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
+            </td>
+            <td className="py-3">
+              {loanConfig.minInterest / 100}-{loanConfig.maxInterest / 100}%
+            </td>
+            <td className="py-3 pe-3">
+              <GetLoanModal
+                {...{
+                  btnClass: "btn btn-outline-primary rounded-pill px-4",
+                  disabled: false,
+                  btnOnClick: () => {
+                    setSelectedLendingDesk(loanConfig?.lendingDesk);
+                    setSelectedLoanConfig(loanConfig);
+                  },
+                  onSubmit: () => requestLoan(index),
+                  onModalClose: resetForm,
+                  approvalIsLoading,
+                  newLoanIsLoading,
+                  newLoanConfigIsLoading,
+                  checked,
+                  onCheck: approveERC721TokenTransfer,
+                  nft,
+                  duration,
+                  setDuration,
+                  amount,
+                  setAmount,
+                  loanConfig: loanConfig as any, // disabled type checking
+                  lendingDesk: selectedLendingDesk,
+                  nftId,
+                  setNftId,
+                  walletNfts,
+                  index,
+                }}
+              />
+            </td>
+          </tr>
+        );
+      })}
+      {loading && <LoadingIndicator />}
+      {error && <p>Error: {error.message}</p>}
+      {hasNextPage && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <button
+              onClick={loadMore}
+              disabled={loading}
+              className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
+            >
+              Load More
+            </button>
+          </td>
+        </tr>
+      )}
+    </tbody>
+  );
+};
+
+export const BrowseCollection = (props) => {
+  const { collection_address } = useParams();
+
+  return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="text-body-secondary position-relative mt-n3">
         <NavLink to="/explore" className="text-reset text-decoration-none">
@@ -463,82 +547,21 @@ export const BrowseCollection = (props) => {
                   Interest Rate
                 </th>
                 <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
+                <th className="py-3 bg-primary-subtle text-primary-emphasis pe-3"> </th>
               </tr>
             </thead>
-            <tbody>
-              {fetching && <LoadingIndicator />}
-              {formattedData?.loanConfigs.map((loanConfig, index) => {
-                return (
-                  <tr className="align-middle" key={loanConfig.lendingDesk.id}>
-                    <td className="py-3 ps-3">
-                      <Blockies seed={loanConfig.lendingDesk.owner.id} size={8} />
-                    </td>
-                    <td className="py-3">
-                      {formatAddress(loanConfig.lendingDesk.owner.id)}
-                    </td>
-                    <td className="py-3 align-middle">
-                      {tokens?.[index]?.logoURI ? (
-                        <img
-                          src={tokens?.[index]?.logoURI}
-                          height="30"
-                          className="d-block rounded-circle"
-                          alt={tokens?.[index]?.symbol}
-                        />
-                      ) : (
-                        <div>{tokens?.[index]?.name}</div>
-                      )}
-                    </td>
-                    <td className="py-3">
-                      {fromWei(
-                        loanConfig.minAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals,
-                      )}{" "}
-                      -{" "}
-                      {fromWei(
-                        loanConfig.maxAmount,
-                        loanConfig.lendingDesk?.erc20?.decimals,
-                      )}
-                    </td>
-                    <td className="py-3">
-                      {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
-                    </td>
-                    <td className="py-3">
-                      {loanConfig.minInterest / 100}-{loanConfig.maxInterest / 100}%
-                    </td>
-                    <td className="py-3 pe-3">
-                      <GetLoanModal
-                        {...{
-                          btnClass: "btn btn-outline-primary rounded-pill px-4",
-                          disabled: false,
-                          btnOnClick: () => {
-                            setSelectedLendingDesk(loanConfig?.lendingDesk);
-                            setSelectedLoanConfig(loanConfig);
-                          },
-                          onSubmit: () => requestLoan(index),
-                          onModalClose: resetForm,
-                          approvalIsLoading,
-                          newLoanIsLoading,
-                          newLoanConfigIsLoading,
-                          checked,
-                          onCheck: approveERC721TokenTransfer,
-                          nft,
-                          duration,
-                          setDuration,
-                          amount,
-                          setAmount,
-                          loanConfig: loanConfig as any, // disabled type checking
-                          lendingDesk: selectedLendingDesk,
-                          nftId,
-                          setNftId,
-                          walletNfts,
-                          index,
-                        }}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
+            <PaginatedList
+              query={BrowseCollectionDocument}
+              dataKey="lendingDesks"
+              variables={{
+                nftCollectionId: collection_address,
+              }}
+              props={{
+                collection_address: collection_address,
+              }}
+            >
+              {renderLendingDesks}
+            </PaginatedList>
           </table>
         </div>
       </div>
@@ -547,9 +570,4 @@ export const BrowseCollection = (props) => {
       {/* End Container*/}
     </div>
   );
-};
-
-BrowseCollection.defaultProps = {
-  titleElement: <div>hello</div>,
-  // ...
 };

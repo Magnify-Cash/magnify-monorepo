@@ -1,6 +1,8 @@
 import { PopupTokenList } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
+import PaginatedList from "@/components/LoadMore";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import type { ITokenListItem } from "@/components/PopupTokenList";
 import type { INFTListItem } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
@@ -17,7 +19,7 @@ import {
   useWriteErc721Approve,
   useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
@@ -27,6 +29,206 @@ import {
   type QuickLoanQuery,
 } from "../../../.graphclient";
 
+interface QuickLoanContextType {
+  selectedLendingDesk: any;
+  _setSelectedLendingDesk: (value: any) => void;
+  nftCollection: any;
+  nft: any;
+  setNft: (value: any) => void;
+  token: any;
+}
+
+//This context is used to pass the data from QuickLoan to renderLendingDesks directly
+const QuickLoanContext = createContext<QuickLoanContextType>(
+  {} as QuickLoanContextType,
+);
+
+const renderLendingDesks = ({
+  items,
+  loading,
+  error,
+  loadMore,
+  hasNextPage,
+  props,
+}) => {
+  // wagmi hooks
+  const chainId: number = useChainId();
+
+  // get context data
+  const {
+    selectedLendingDesk,
+    _setSelectedLendingDesk,
+    nftCollection,
+    nft,
+    setNft,
+    token,
+  } = useContext(QuickLoanContext);
+
+  // state
+  const [flatResult, setFlatResult] = useState<any>([]);
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
+  const getNFTdetails = async () => {
+    const fetchedNfts = await fetchNFTDetails([nftCollection?.nft.address], chainId);
+    setNft(fetchedNfts[0]); //There is only one nft in the array
+  };
+
+  //This useEffect hook is used to get the nft details from the nftCollection
+  useEffect(() => {
+    if (nftCollection && items) {
+      getNFTdetails();
+    }
+  }, [nftCollection, items]);
+
+  //This function formats the data received from the graphql query
+  //It filters out lending desks with no loanConfig items and balance less than minAmount
+  useEffect(() => {
+    const formatData = (
+      data: QuickLoanQuery["lendingDesks"]["items"],
+      targetNftCollectionId: string,
+    ) =>
+      data
+        .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
+        .filter((lendingDesk) =>
+          lendingDesk.loanConfigs?.items?.some(
+            (loanConfig) =>
+              loanConfig.nftCollection.id.toUpperCase() ===
+              targetNftCollectionId.toUpperCase(),
+          ),
+        )
+        .filter((lendingDesk) => {
+          const matchingLoanConfig = lendingDesk.loanConfigs?.items?.find(
+            (loanConfig) =>
+              loanConfig.nftCollection.id.toUpperCase() ===
+              targetNftCollectionId.toUpperCase(),
+          );
+          return (
+            matchingLoanConfig &&
+            Number(lendingDesk.balance) >= Number(matchingLoanConfig.minAmount)
+          );
+        })
+        .map(({ id, balance, status, erc20, loanConfigs }) => {
+          const matchingLoanConfig = loanConfigs?.items?.find(
+            (loanConfig) =>
+              loanConfig.nftCollection.id.toUpperCase() ===
+              targetNftCollectionId.toUpperCase(),
+          );
+          return {
+            lendingDesk: {
+              id,
+              balance,
+              status,
+              erc20: { ...erc20 },
+            },
+            loanConfig: matchingLoanConfig ? { ...matchingLoanConfig } : undefined,
+          };
+        });
+
+    if (items && !loading && !error) {
+      const formatted = formatData(items, nftCollection?.nft.address ?? "");
+      setFlatResult(formatted);
+    }
+  }, [items, loading, error]);
+
+  return (
+    <div>
+      {flatResult.length > 0 ? (
+        <div className="specific-h-500 overflow-y-scroll">
+          {flatResult.map((item) => {
+            return (
+              <div className="magnify-check" key={item.lendingDesk.id}>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  autoComplete="off"
+                  name="desks"
+                  id={item.lendingDesk.id}
+                  onClick={(e) => setSelectedLendingDesk(JSON.stringify(item))}
+                  value={JSON.stringify(item)}
+                />
+                <label
+                  className="btn py-2 d-block w-100 border border-secondary border-opacity-25"
+                  htmlFor={item.lendingDesk.id}
+                >
+                  <div className="d-flex align-items-center justify-content-center mx-auto">
+                    <img
+                      src={nft?.logoURI}
+                      width="30"
+                      alt={nft?.address}
+                      className="flex-shrink-0"
+                    />
+                    <span className="ms-3">
+                      {formatAddress(item.loanConfig?.nftCollection?.id)}
+                    </span>
+                  </div>
+                  <div className="container-fluid g-0">
+                    <div className="row g-2 mt-2">
+                      <div className="col">
+                        <div className="p-2 rounded-3 bg-success-subtle text-center">
+                          <div className="text-success-emphasis h3 mb-3">
+                            <i className="fa-light fa-hand-holding-dollar" />
+                          </div>
+                          <div className="fw-bold">
+                            {fromWei(item.loanConfig.maxAmount, token?.token.decimals)}
+                          </div>
+                          <small className="fw-normal">max offer</small>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="p-2 rounded-3 bg-info-subtle text-center">
+                          <div className="text-info-emphasis h3 mb-3">
+                            <i className="fa-light fa-calendar-clock" />
+                          </div>
+                          <div className="fw-bold">
+                            {item.loanConfig.maxDuration / 24} days
+                          </div>
+                          <small className="fw-normal">duration</small>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="p-2 rounded-3 bg-primary bg-opacity-10 text-center">
+                          <div className="text-primary-emphasis h3 mb-3">
+                            <i className="fa-light fa-badge-percent" />
+                          </div>
+                          <div className="fw-bold">
+                            {item.loanConfig.maxInterest / 100} %
+                          </div>
+                          <small className="fw-normal">interest</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="card-body pt-0">
+          <img
+            src="/theme/images/ThinkingMeme.svg"
+            alt="Thinking"
+            className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
+          />
+          <p className="text-center text-body-secondary fst-italic">
+            Start customizing to see offers
+          </p>
+        </div>
+      )}
+      {loading && <LoadingIndicator />}
+      {error && <p>Error: {error.message}</p>}
+      {hasNextPage && (
+        <button
+          onClick={loadMore}
+          disabled={loading}
+          className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
+        >
+          Load More
+        </button>
+      )}
+    </div>
+  );
+};
+
 export const QuickLoan = (props: any) => {
   /*
   react-router hooks
@@ -35,19 +237,19 @@ export const QuickLoan = (props: any) => {
   /*
   wagmi hooks
   */
-  // constants
   const { address } = useAccount();
-
   const chainId = useChainId();
 
   /*
-  graphql hooks
+  tokenlist / nftlist state management
   */
-  // tokenlist / nftlist state management
+
   const [token, setToken] = useState<ITokenListItem | null>();
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
 
-  // GraphQL query for getting ERC20s for selected NFT
+  /*
+  GraphQL query for getting ERC20s for selected NFT
+  */
   const [erc20sResult] = useQuery({
     query: GetErc20sForNftCollectionDocument,
     variables: {
@@ -58,26 +260,10 @@ export const QuickLoan = (props: any) => {
     (erc20) => erc20.erc20.id,
   );
 
-  // GraphQL query
-
-  const [flatResult, setFlatResult] = useState<any>([]);
-
-  const [result] = useQuery({
-    query: QuickLoanDocument,
-    variables: {
-      nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
-      erc20Id: token?.token?.address?.toLowerCase() || "",
-    },
-  });
-
-  const { data, fetching, error } = result;
-
   /*
   Alchemy hooks
   */
   const [walletNfts, setWalletNfts] = useState<WalletNft[]>([]);
-
-  // Get the available NFTs from the wallet
   useEffect(() => {
     const fetchWalletNfts = async () => {
       const walletNfts = await getWalletNfts({
@@ -89,62 +275,16 @@ export const QuickLoan = (props: any) => {
     };
     fetchWalletNfts();
   }, [address, nftCollection?.nft.address]);
+
   /*
   form hooks / functions
   */
-  // Loan params selection
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
   const [nftId, setNftId] = useState<number>();
   const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
   const [checked, setChecked] = useState(false);
-
-  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
-
-  const getNFTdetails = async () => {
-    const fetchedNfts = await fetchNFTDetails(
-      [selectedLendingDesk?.loanConfig?.nftCollection?.id],
-      chainId,
-    );
-    setNft(fetchedNfts[0]); //There is only one nft in the array
-  };
-
-  useEffect(() => {
-    // This function will be executed whenever the selectedLendingDesk data changes
-    if (!fetching) {
-      getNFTdetails();
-    }
-  }, [selectedLendingDesk]);
-
-  //This function formats the data received from the graphql query
-  //It filters out lending desks with no loanConfig items and balance less than minAmount
-  useEffect(() => {
-    const formatData = (data: QuickLoanQuery) =>
-      data.lendingDesks.items
-        .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
-        .filter(
-          (lendingDesk) =>
-            Number(lendingDesk?.balance) >=
-            Number(lendingDesk?.loanConfigs?.items?.[0]?.minAmount),
-        )
-        .map(({ id, balance, status, erc20, loanConfigs }) => ({
-          lendingDesk: {
-            id,
-            balance,
-            status,
-            erc20: { ...erc20 },
-          },
-          loanConfig: { ...loanConfigs?.items[0] },
-        }));
-
-    if (data && !fetching && !error) {
-      const formatted = formatData(data);
-      setFlatResult(formatted);
-    }
-  }, [data, fetching, error]);
-
-  //This resets the data in the form
   const resetForm = () => {
     setNftId(undefined);
     setDuration(undefined);
@@ -163,11 +303,11 @@ export const QuickLoan = (props: any) => {
   /*
   toast hooks
   */
-
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
+
   /*
   Hook to watch for contract events
   */
@@ -190,15 +330,12 @@ export const QuickLoan = (props: any) => {
     writeContractAsync: approveErc721,
     error: approveErc721Error,
   } = useWriteErc721Approve();
-
-  //Fetch Approval Data for the NFT
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
     {
       address: nftCollection?.nft.address as `0x${string}`,
       args: [BigInt(nftId || 0)],
     },
   );
-
   const {
     isLoading: approveIsConfirming,
     isSuccess: approveIsConfirmed,
@@ -206,7 +343,6 @@ export const QuickLoan = (props: any) => {
   } = useWaitForTransactionReceipt({
     hash: approveErc721TransactionData as `0x${string}`,
   });
-
   useEffect(() => {
     if (approveErc721Error) {
       console.log("approveErc721Error", approveErc721Error);
@@ -265,7 +401,6 @@ export const QuickLoan = (props: any) => {
     approveIsConfirming,
     approveIsConfirmed,
   ]);
-
   useEffect(() => {
     if (!approvalData) {
       setChecked(false);
@@ -433,198 +568,126 @@ export const QuickLoan = (props: any) => {
     await newLoanWrite(newLoanConfig!.request);
   }
 
+  // Memoization of the PaginatedList component
+  const memoizedPaginatedList = useMemo(
+    () => (
+      <PaginatedList
+        query={QuickLoanDocument}
+        dataKey="lendingDesks"
+        variables={{
+          nftCollectionId: nftCollection?.nft?.address?.toLowerCase() || "",
+          erc20Id: token?.token?.address?.toLowerCase() || "",
+        }}
+      >
+        {renderLendingDesks}
+      </PaginatedList>
+    ),
+    [nftCollection?.nft?.address, token?.token?.address],
+  );
+
   return (
-    <div className="container-md px-3 px-sm-4 px-lg-5" style={{ overflow: "clip" }}>
-      <div className="card bg-primary-subtle border-primary-subtle rounded-4 specific-w-600 mw-100 mx-auto">
-        <div className="card-body">
-          <div className="mb-3">
-            <label
-              className="form-label"
-              htmlFor="choose-nft"
-            >
-              You collateralize (choose NFT):
-            </label>
-            <div
-              className="form-select form-select-lg w-100"
-              id="currency"
-              data-bs-toggle="modal"
-              data-bs-target="#nftModal"
-            >
-              {nftCollection ? (
-                <div className="d-flex align-items-center">
-                  <img
-                    src={nftCollection.nft.logoURI}
-                    alt={`${nftCollection.nft.name} Logo`}
-                    height="20"
-                    width="20"
-                  />
-                  <p className="m-0 ms-1">{nftCollection.nft.name}</p>
-                </div>
-              ) : (
-                "Choose NFT Collection..."
-              )}
-            </div>
-            <PopupTokenList
-              nft
-              modalId="nftModal"
-              onClick={setNftCollection}
-              restrictTo={result?.data?.nftCollections?.items.map((x) => x?.id)}
-            />
-          </div>
-          <div className="mb-3">
-            <label
-              className="form-label"
-              htmlFor="choose-currency"
-            >
-              You borrow (choose currency):
-            </label>
-            <div
-              className="form-select form-select-lg w-100"
-              id="currency"
-              data-bs-toggle="modal"
-              data-bs-target="#tokenModal"
-            >
-              {token ? (
-                <div className="d-flex align-items-center">
-                  <img
-                    src={token.token.logoURI}
-                    alt={`${token.token.name} Logo`}
-                    height="20"
-                    width="20"
-                  />
-                  <p className="m-0 ms-1">{token.token.name}</p>
-                </div>
-              ) : (
-                "Choose Currency..."
-              )}
-            </div>
-            <PopupTokenList
-              token
-              modalId="tokenModal"
-              onClick={setToken}
-              restrictTo={erc20s}
-            />
-          </div>
-          <div>
-            <label className="form-label">
-              Select offer:
-            </label>
-            {flatResult.length > 0 ? (
-              <div className="specific-h-500 overflow-y-scroll">
-                {flatResult.map((item) => {
-                  return (
-                    <div className="magnify-check" key={item.lendingDesk.id}>
-                      <input
-                        type="radio"
-                        className="btn-check"
-                        autoComplete="off"
-                        name="desks"
-                        id={item.lendingDesk.id}
-                        onClick={(e) =>
-                          setSelectedLendingDesk((e.target as HTMLInputElement).value)
-                        }
-                        value={JSON.stringify(item)}
-                      />
-                      <label
-                        className="btn py-2 d-block w-100 border border-secondary border-opacity-25"
-                        htmlFor={item.lendingDesk.id}
-                      >
-                        <div className="d-flex align-items-center justify-content-center mx-auto">
-                          <img
-                            src={nft?.logoURI}
-                            width="30"
-                            alt={nft?.address}
-                            className="flex-shrink-0"
-                          />
-                          <span className="ms-3">
-                            {formatAddress(item.loanConfig?.nftCollection?.id)}
-                          </span>
-                        </div>
-                        <div className="container-fluid g-0">
-                          <div className="row g-2 mt-2">
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-success-subtle text-center">
-                                <div className="text-success-emphasis h3 mb-3">
-                                  <i className="fa-light fa-hand-holding-dollar" />
-                                </div>
-                                <div className="fw-bold">
-                                  {fromWei(
-                                    item.loanConfig.maxAmount,
-                                    token?.token.decimals,
-                                  )}
-                                </div>
-                                <small className="fw-normal">max offer</small>
-                              </div>
-                            </div>
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-info-subtle text-center">
-                                <div className="text-info-emphasis h3 mb-3">
-                                  <i className="fa-light fa-calendar-clock" />
-                                </div>
-                                <div className="fw-bold">
-                                  {item.loanConfig.maxDuration / 24} days
-                                </div>
-                                <small className="fw-normal">duration</small>
-                              </div>
-                            </div>
-                            <div className="col">
-                              <div className="p-2 rounded-3 bg-primary bg-opacity-10 text-center">
-                                <div className="text-primary-emphasis h3 mb-3">
-                                  <i className="fa-light fa-badge-percent" />
-                                </div>
-                                <div className="fw-bold">
-                                  {item.loanConfig.maxInterest / 100} %
-                                </div>
-                                <small className="fw-normal">interest</small>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  );
-                })}
+    <QuickLoanContext.Provider
+      value={{
+        selectedLendingDesk,
+        _setSelectedLendingDesk,
+        nftCollection,
+        nft,
+        setNft,
+        token,
+      }}
+    >
+      <div className="container-md px-3 px-sm-4 px-lg-5" style={{ overflow: "clip" }}>
+        <div className="card bg-primary-subtle border-primary-subtle rounded-4 specific-w-600 mw-100 mx-auto">
+          <div className="card-body">
+            <div className="mb-3">
+              <label className="form-label" htmlFor="choose-nft">
+                You collateralize (choose NFT):
+              </label>
+              <div
+                className="form-select form-select-lg w-100"
+                id="currency"
+                data-bs-toggle="modal"
+                data-bs-target="#nftModal"
+              >
+                {nftCollection ? (
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={nftCollection.nft.logoURI}
+                      alt={`${nftCollection.nft.name} Logo`}
+                      height="20"
+                      width="20"
+                    />
+                    <p className="m-0 ms-1">{nftCollection.nft.name}</p>
+                  </div>
+                ) : (
+                  "Choose NFT Collection..."
+                )}
               </div>
-            ) : (
-              <div className="card-body pt-0">
-                <img
-                  src="/theme/images/ThinkingMeme.svg"
-                  alt="Thinking"
-                  className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
-                />
-                <p className="text-center text-body-secondary fst-italic">
-                  Start customizing to see offers
-                </p>
+              <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="choose-currency">
+                You borrow (choose currency):
+              </label>
+              <div
+                className="form-select form-select-lg w-100"
+                id="currency"
+                data-bs-toggle="modal"
+                data-bs-target="#tokenModal"
+              >
+                {token ? (
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={token.token.logoURI}
+                      alt={`${token.token.name} Logo`}
+                      height="20"
+                      width="20"
+                    />
+                    <p className="m-0 ms-1">{token.token.name}</p>
+                  </div>
+                ) : (
+                  "Choose Currency..."
+                )}
               </div>
-            )}
+              <PopupTokenList
+                token
+                modalId="tokenModal"
+                onClick={setToken}
+                restrictTo={erc20s}
+              />
+            </div>
+            <div>
+              <label className="form-label">Select offer:</label>
+              {memoizedPaginatedList}
+            </div>
           </div>
         </div>
+        <div className="my-4 specific-w-600 mw-100 mx-auto">
+          <GetLoanModal
+            {...{
+              btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
+              disabled: !token || !nftCollection || !selectedLendingDesk,
+              checked,
+              onCheck: approveERC721TokenTransfer,
+              onSubmit: requestLoan,
+              onModalClose: resetForm,
+              nft,
+              duration,
+              setDuration,
+              amount,
+              setAmount,
+              loanConfig: selectedLendingDesk?.loanConfig,
+              lendingDesk: selectedLendingDesk?.lendingDesk,
+              nftId,
+              setNftId,
+              walletNfts,
+              approvalIsLoading,
+              newLoanIsLoading,
+              newLoanConfigIsLoading,
+            }}
+          />
+        </div>
       </div>
-      <div className="my-4 specific-w-600 mw-100 mx-auto">
-        <GetLoanModal
-          {...{
-            btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
-            disabled: !token || !nftCollection || !selectedLendingDesk,
-            checked,
-            onCheck: approveERC721TokenTransfer,
-            onSubmit: requestLoan,
-            onModalClose: resetForm,
-            nft,
-            duration,
-            setDuration,
-            amount,
-            setAmount,
-            loanConfig: selectedLendingDesk?.loanConfig,
-            lendingDesk: selectedLendingDesk?.lendingDesk,
-            nftId,
-            setNftId,
-            walletNfts,
-            approvalIsLoading,
-            newLoanIsLoading,
-            newLoanConfigIsLoading,
-          }}
-        />
-      </div>
-    </div>
+    </QuickLoanContext.Provider>
   );
 };
