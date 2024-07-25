@@ -1,6 +1,6 @@
 import { ManageFunds } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
-import { Spinner } from "@/components/LoadingIndicator";
+import LoadingIndicator, { Spinner } from "@/components/LoadingIndicator";
 import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
@@ -529,6 +529,22 @@ export const ManageLendingDesk = (props: any) => {
   /*
   JSX Return
   */
+  if (result.fetching) {
+    return (
+      <div className="container-md px-3 px-sm-4 px-xl-5">
+        <div className="text-body-secondary position-relative">
+          <NavLink to="/manage-desks" className="text-reset text-decoration-none">
+            <i className="fa-light fa-angle-left me-1" />
+            Manage Lending Desks
+          </NavLink>
+        </div>
+        <div className="py-2">
+        <LoadingIndicator />
+        </div>
+      </div>
+    );
+  }
+
   return result.data?.lendingDesk ? (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="text-body-secondary position-relative">
