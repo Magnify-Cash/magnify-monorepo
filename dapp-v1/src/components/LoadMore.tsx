@@ -84,6 +84,19 @@ const PaginatedList = ({
     }
   };
 
+  // Check for null, undefined, or empty strings
+  // Set paused to true if exists
+  useEffect(() => {
+    const hasEmptyString = Object.values(variables).some(value => value === '');
+    const hasNull = Object.values(variables).some(value => value === null);
+    const hasUndefined = Object.values(variables).some(value => value === undefined)
+    if (hasEmptyString || hasNull || hasUndefined){
+      setPaused(true)
+    } else {
+      setPaused(false)
+    }
+  },[variables])
+
   // Determine if there is a next page available
   const hasNextPage =
     data && data[dataKey] && data[dataKey].pageInfo.hasNextPage;
