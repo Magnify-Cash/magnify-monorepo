@@ -16,19 +16,24 @@ const renderLendingDesks = ({
 }) => {
   if (items.length === 0)
     return (
-      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
-        <img
-          src="theme/images/Vector.png"
-          alt="Not Found Robot"
-          className="img-fluid d-block mx-auto specific-w-150 mw-100"
-        />
-        <div className="h3 text-center mt-5">Nothing found</div>
-        <p className="text-body-secondary text-center mt-3">
-          {"Don’t know where to start? "}
-          <NavLink to="/create-desk">Create a Lending Desk</NavLink>
-        </p>
-      </div>
+      <>
+        {loading && <LoadingIndicator />}
+        <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
+          <img
+            src="theme/images/Vector.png"
+            alt="Not Found Robot"
+            className="img-fluid d-block mx-auto specific-w-150 mw-100"
+          />
+          <div className="h3 text-center mt-5">Nothing found</div>
+          <p className="text-body-secondary text-center mt-3">
+            {"Don’t know where to start? "}
+            <NavLink to="/create-desk">Create a Lending Desk</NavLink>
+          </p>
+        </div>
+      </>
     );
+
+
 
   return (
     <div>
