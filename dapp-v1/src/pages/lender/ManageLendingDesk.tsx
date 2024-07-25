@@ -14,7 +14,7 @@ import {
   useWriteMagnifyCashV1SetLendingDeskState,
 } from "@/wagmi-generated";
 import type { NFTInfo } from "@magnify-cash/nft-lists";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -76,6 +76,32 @@ export const ManageLendingDesk = (props: any) => {
 
   useCustomWatchContractEvent({
     eventName: "LendingDeskLiquidityWithdrawn",
+    onLogs: (logs) => {
+      // Refetch the query data
+      refetchData();
+    },
+  });
+
+  useCustomWatchContractEvent({
+    eventName: "LendingDeskStateSet",
+    onLogs: (logs) => {
+      setFreezeUnfreezeIsLoading(false);
+      // Refetch the query data
+      refetchData();
+    },
+  });
+
+  useCustomWatchContractEvent({
+    eventName: "LendingDeskLoanConfigsSet",
+    onLogs: (logs) => {
+      setUpdateDeskIsLoading(false);
+      // Refetch the query data
+      refetchData();
+    },
+  });
+
+  useCustomWatchContractEvent({
+    eventName: "LendingDeskLoanConfigRemoved",
     onLogs: (logs) => {
       // Refetch the query data
       refetchData();
@@ -223,40 +249,6 @@ export const ManageLendingDesk = (props: any) => {
   const [updateDeskIsLoading, setUpdateDeskIsLoading] = useState<boolean>(false);
 
   /*
-  Hook to check if the query data has changed
-  */
-
-  // Ref to store the initial freeze status when the component is mounted
-  const initLendingDeskStatusRef = useRef(result.data?.lendingDesk?.status);
-
-  useEffect(() => {
-    // Checking if freeze status has changed
-    if (
-      JSON.stringify(result?.data?.lendingDesk?.status) !==
-      JSON.stringify(initLendingDeskStatusRef.current)
-    ) {
-      // If freeze status has changed, close the loading indicator
-      setFreezeUnfreezeIsLoading(false);
-    }
-    // Updating the initLendingDeskStatusRef with the latest lendingDesk status
-    initLendingDeskStatusRef.current = result?.data?.lendingDesk?.status;
-  }, [result?.data?.lendingDesk?.status]);
-
-  // Ref to store the initial loanConfigs when the component is mounted
-  const initLendingDeskConfigRef = useRef(result.data?.lendingDesk?.loanConfigs);
-  useEffect(() => {
-    if (
-      JSON.stringify(result.data?.lendingDesk?.loanConfigs) !==
-      JSON.stringify(initLendingDeskConfigRef.current)
-    ) {
-      // If loanConfigs has changed, close the loading indicator
-      setUpdateDeskIsLoading(false);
-    }
-    // Updating the initLendingDeskConfig with the latest loanConfigs
-    initLendingDeskConfigRef.current = result.data?.lendingDesk?.loanConfigs;
-  }, [result.data?.lendingDesk?.loanConfigs]);
-
-  /*
   Fetch NFT Details
   This is used to lookup a list of NFTs off chain
   */
@@ -361,7 +353,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (freezeIsConfirmed) {
-      reexecuteQuery();
       refetchFreezeConfig();
       if (loadingToastId) {
         closeToast(loadingToastId);
@@ -456,7 +447,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (updateLendingDeskIsConfirmed) {
-      reexecuteQuery();
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
@@ -550,7 +540,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (deleteCollectionIsConfirmed) {
-      reexecuteQuery();
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
