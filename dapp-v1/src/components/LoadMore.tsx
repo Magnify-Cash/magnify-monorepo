@@ -40,6 +40,9 @@ const PaginatedList = ({
 
   // Function to refetch the query data
   const refetchData = () => {
+    // Reset allItems and cursor
+    setAllItems([]);
+    setCursor(null);
     setPaused(false);
     reexecuteQuery({
       requestPolicy: "network-only",
