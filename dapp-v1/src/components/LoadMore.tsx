@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "urql";
 
 /**
@@ -41,7 +41,7 @@ const PaginatedList = ({
   // Function to refetch the query data
   const refetchData = () => {
     setPaused(false);
-     reexecuteQuery({
+    reexecuteQuery({
       requestPolicy: "network-only",
     });
   };
@@ -50,13 +50,7 @@ const PaginatedList = ({
   const { data, fetching, error } = result;
 
   useEffect(() => {
-    if (
-      !paused &&
-      manualRefetch &&
-      data &&
-      data[dataKey] &&
-      data[dataKey].items
-    ) {
+    if (!paused && manualRefetch && data && data[dataKey] && data[dataKey].items) {
       // Pause the query after it has been executed once if manualRefetch is enabled
       setPaused(true);
     }
@@ -70,15 +64,15 @@ const PaginatedList = ({
 
   // Effect to update allItems when new data is fetched
   useEffect(() => {
-    if (data && data?.[dataKey] && data?.[dataKey].items) {
+    if (data?.[dataKey]?.items) {
       // Append new items to the existing list
-      setAllItems((prevItems) => [...prevItems, ...data?.[dataKey].items]);
+      setAllItems((prevItems) => [...prevItems, ...data[dataKey].items]);
     }
   }, [data, dataKey]);
 
   // Function to load more items by updating the cursor
   const loadMore = () => {
-    if (data && data[dataKey] && data[dataKey].pageInfo.endCursor) {
+    if (data?.[dataKey]?.pageInfo.endCursor) {
       setCursor(data[dataKey].pageInfo.endCursor);
       setPaused(false);
     }
@@ -87,19 +81,18 @@ const PaginatedList = ({
   // Check for null, undefined, or empty strings
   // Set paused to true if exists
   useEffect(() => {
-    const hasEmptyString = Object.values(variables).some(value => value === '');
-    const hasNull = Object.values(variables).some(value => value === null);
-    const hasUndefined = Object.values(variables).some(value => value === undefined)
-    if (hasEmptyString || hasNull || hasUndefined){
-      setPaused(true)
+    const hasEmptyString = Object.values(variables).some((value) => value === "");
+    const hasNull = Object.values(variables).some((value) => value === null);
+    const hasUndefined = Object.values(variables).some((value) => value === undefined);
+    if (hasEmptyString || hasNull || hasUndefined) {
+      setPaused(true);
     } else {
-      setPaused(false)
+      setPaused(false);
     }
-  },[variables])
+  }, [variables]);
 
   // Determine if there is a next page available
-  const hasNextPage =
-    data && data[dataKey] && data[dataKey].pageInfo.hasNextPage;
+  const hasNextPage = data?.[dataKey]?.pageInfo.hasNextPage;
 
   // Render the children with the necessary data and controls
   return children({

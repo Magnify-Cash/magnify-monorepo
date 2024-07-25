@@ -1,27 +1,34 @@
-import { useState } from "react";
-import LoadingIndicator from "@/components/LoadingIndicator";
 import PaginatedList from "@/components/LoadMore";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { fromWei } from "@/helpers/utils";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { ManageLendingDesksDocument } from "../../../.graphclient";
 
-const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, props }) => {
-
-  if (items.length === 0) return (
-    <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
-      <img
-        src="theme/images/Vector.png"
-        alt="Not Found Robot"
-        className="img-fluid d-block mx-auto specific-w-150 mw-100"
-      />
-      <div className="h3 text-center mt-5">Nothing found</div>
-      <p className="text-body-secondary text-center mt-3">
-        {"Don’t know where to start? "}
-        <NavLink to="/create-desk">Create a Lending Desk</NavLink>
-      </p>
-    </div>
-  );
+const renderLendingDesks = ({
+  items,
+  loading,
+  error,
+  loadMore,
+  hasNextPage,
+  props,
+}) => {
+  if (items.length === 0)
+    return (
+      <div className="specific-w-400 mw-100 mx-auto mt-5 pt-3">
+        <img
+          src="theme/images/Vector.png"
+          alt="Not Found Robot"
+          className="img-fluid d-block mx-auto specific-w-150 mw-100"
+        />
+        <div className="h3 text-center mt-5">Nothing found</div>
+        <p className="text-body-secondary text-center mt-3">
+          {"Don’t know where to start? "}
+          <NavLink to="/create-desk">Create a Lending Desk</NavLink>
+        </p>
+      </div>
+    );
 
   return (
     <div>
@@ -31,15 +38,11 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
           key={desk.id}
         >
           <div className="card-body p-4">
-            <h5 className="fw-medium text-primary-emphasis">
-              Lending Desk {desk.id}
-            </h5>
+            <h5 className="fw-medium text-primary-emphasis">Lending Desk {desk.id}</h5>
             <div className="container-fluid g-0 mt-4">
               <div className="row g-4">
                 <div className="col-xl-3">
-                  <h6 className="fw-medium text-body-secondary">
-                    Currency Type
-                  </h6>
+                  <h6 className="fw-medium text-body-secondary">Currency Type</h6>
                   <div className="d-flex align-items-center text-body-secondary">
                     <div className="text-truncate">{desk.erc20.symbol}</div>
                   </div>
@@ -50,68 +53,41 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
                 </div>
                 <div className="col-xl-3">
                   <h6 className="fw-medium text-body-secondary">Total Loans</h6>
-                  <div
-                    className="text-body-secondary"
-                    style={{ height: "24px" }}
-                  >
+                  <div className="text-body-secondary" style={{ height: "24px" }}>
                     <strong>{desk.loansCount}</strong>
                   </div>
                   <br />
-                  <h6 className="fw-medium text-body-secondary">
-                    Defaulted Loans
-                  </h6>
-                  <div
-                    className="text-body-secondary"
-                    style={{ height: "24px" }}
-                  >
+                  <h6 className="fw-medium text-body-secondary">Defaulted Loans</h6>
+                  <div className="text-body-secondary" style={{ height: "24px" }}>
                     <strong>{desk.loansDefaultedCount}</strong>
                   </div>
                   <br />
-                  <h6 className="fw-medium text-body-secondary">
-                    Resolved Loans
-                  </h6>
-                  <div
-                    className="text-body-secondary"
-                    style={{ height: "24px" }}
-                  >
+                  <h6 className="fw-medium text-body-secondary">Resolved Loans</h6>
+                  <div className="text-body-secondary" style={{ height: "24px" }}>
                     <strong>{desk.loansResolvedCount}</strong>
                   </div>
                   <hr className="d-xl-none" />
                 </div>
                 <div className="col-xl-3">
-                  <h6 className="fw-medium text-body-secondary">
-                    Available Liquidity
-                  </h6>
+                  <h6 className="fw-medium text-body-secondary">Available Liquidity</h6>
                   <div className="text-body-secondary">
-                    <strong>
-                      {fromWei(desk.balance, desk?.erc20?.decimals)}
-                    </strong>
+                    <strong>{fromWei(desk.balance, desk?.erc20?.decimals)}</strong>
                     {` ${desk?.erc20?.symbol}`}
                   </div>
                   <br />
                   <h6 className="fw-medium text-body-secondary">
                     Net Liquidity Issued
                   </h6>
-                  <div
-                    className="text-body-secondary"
-                    style={{ height: "24px" }}
-                  >
+                  <div className="text-body-secondary" style={{ height: "24px" }}>
                     <strong>
                       {fromWei(desk.netLiquidityIssued, desk?.erc20?.decimals)}{" "}
                     </strong>
                     {desk.erc20.symbol}
                   </div>
                   <br />
-                  <h6 className="fw-medium text-body-secondary">
-                    Net Profit/Revenue
-                  </h6>
-                  <div
-                    className="text-body-secondary"
-                    style={{ height: "24px" }}
-                  >
-                    <strong>
-                      {fromWei(desk.netProfit, desk?.erc20?.decimals)}{" "}
-                    </strong>{" "}
+                  <h6 className="fw-medium text-body-secondary">Net Profit/Revenue</h6>
+                  <div className="text-body-secondary" style={{ height: "24px" }}>
+                    <strong>{fromWei(desk.netProfit, desk?.erc20?.decimals)} </strong>{" "}
                     {desk.erc20.symbol}
                   </div>
                   <br />
@@ -144,7 +120,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
       )}
     </div>
   );
-}
+};
 
 export const ManageLendingDesks = (props: any) => {
   // GraphQL
@@ -205,7 +181,7 @@ export const ManageLendingDesks = (props: any) => {
           <span className="d-none d-sm-inline">Create Lending Desk</span>
         </NavLink>
       </div>
-      {(
+      {
         <div className="tab-content" id="pills-tabContent">
           {/* Active Row */}
           <div
@@ -214,16 +190,16 @@ export const ManageLendingDesks = (props: any) => {
             role="tabpanel"
             aria-labelledby="pills-active-tab"
           >
-          <PaginatedList
-            query={ManageLendingDesksDocument}
-            variables={{
-              walletAddress: address?.toLowerCase() || "",
-              status: status
-            }}
-            dataKey="lendingDesks"
-          >
-            {renderLendingDesks}
-          </PaginatedList>
+            <PaginatedList
+              query={ManageLendingDesksDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+                status: status,
+              }}
+              dataKey="lendingDesks"
+            >
+              {renderLendingDesks}
+            </PaginatedList>
           </div>
           {/* End Active Row */}
 
@@ -234,22 +210,20 @@ export const ManageLendingDesks = (props: any) => {
             role="tabpanel"
             aria-labelledby="pills-frozen-tab"
           >
-          <PaginatedList
-            query={ManageLendingDesksDocument}
-            variables={{
-              walletAddress: address?.toLowerCase() || "",
-              status: status
-            }}
-            dataKey="lendingDesks"
-          >
-            {renderLendingDesks}
-          </PaginatedList>
+            <PaginatedList
+              query={ManageLendingDesksDocument}
+              variables={{
+                walletAddress: address?.toLowerCase() || "",
+                status: status,
+              }}
+              dataKey="lendingDesks"
+            >
+              {renderLendingDesks}
+            </PaginatedList>
           </div>
           {/* End frozen row */}
-
-
         </div>
-      )}
+      }
     </div>
   );
 };

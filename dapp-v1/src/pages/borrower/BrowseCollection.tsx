@@ -1,7 +1,7 @@
 import { Blockies } from "@/components";
-import PaginatedList from "@/components/LoadMore";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
+import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
@@ -20,14 +20,20 @@ import {
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   BrowseCollectionDocument,
   type BrowseCollectionQuery,
 } from "../../../.graphclient";
 
-const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, props }) => {
+const renderLendingDesks = ({
+  items,
+  loading,
+  error,
+  loadMore,
+  hasNextPage,
+  props,
+}) => {
   /*
   react-router hooks
   */
@@ -431,9 +437,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
             <td className="py-3 ps-3">
               <Blockies seed={loanConfig.lendingDesk.owner.id} size={8} />
             </td>
-            <td className="py-3">
-              {formatAddress(loanConfig.lendingDesk.owner.id)}
-            </td>
+            <td className="py-3">{formatAddress(loanConfig.lendingDesk.owner.id)}</td>
             <td className="py-3 align-middle">
               {tokens?.[index]?.logoURI ? (
                 <img
@@ -447,15 +451,8 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
               )}
             </td>
             <td className="py-3">
-              {fromWei(
-                loanConfig.minAmount,
-                loanConfig.lendingDesk?.erc20?.decimals
-              )}{" "}
-              -{" "}
-              {fromWei(
-                loanConfig.maxAmount,
-                loanConfig.lendingDesk?.erc20?.decimals
-              )}
+              {fromWei(loanConfig.minAmount, loanConfig.lendingDesk?.erc20?.decimals)} -{" "}
+              {fromWei(loanConfig.maxAmount, loanConfig.lendingDesk?.erc20?.decimals)}
             </td>
             <td className="py-3">
               {loanConfig.minDuration / 24}-{loanConfig.maxDuration / 24} days
@@ -513,8 +510,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage, prop
       )}
     </tbody>
   );
-}
-
+};
 
 export const BrowseCollection = (props) => {
   const { collection_address } = useParams();
@@ -561,7 +557,7 @@ export const BrowseCollection = (props) => {
                 nftCollectionId: collection_address,
               }}
               props={{
-                collection_address: collection_address
+                collection_address: collection_address,
               }}
             >
               {renderLendingDesks}

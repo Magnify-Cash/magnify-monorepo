@@ -1,8 +1,8 @@
 import { LoanRow } from "@/components";
+import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { useAccount, useChainId } from "wagmi";
 import { LenderDashboardDocument } from "../../../.graphclient";
-import PaginatedList from "@/components/LoadMore";
 
 const renderLenderDashboard = ({
   items,
@@ -12,7 +12,6 @@ const renderLenderDashboard = ({
   hasNextPage,
   props,
 }) => {
-
   return (
     <>
       {items.length > 0 && <LoanRow {...{ loans: items, ...props }} />}
@@ -46,11 +45,7 @@ export const Dashboard = (props: any) => {
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="d-flex align-items-center">
-        <ul
-          className="nav nav-pills nav-fill mb-3"
-          id="pills-tab"
-          role="tablist"
-        >
+        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
           <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"

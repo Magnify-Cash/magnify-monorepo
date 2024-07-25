@@ -3,12 +3,11 @@ import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import fetchNFTDetails from "@/helpers/FetchNfts";
 import type { INft } from "@/helpers/FetchNfts";
-import { type IToken, fetchTokensForCollection } from "@/helpers/FetchTokens";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "urql";
 import { useChainId } from "wagmi";
 import { BrowseCollectionsDocument } from "../../../.graphclient";
-import { useQuery } from "urql"
 import { HomeDocument } from "../../../.graphclient";
 
 const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) => {
@@ -26,9 +25,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
     const resultArr: INft[] = [];
 
     //An array of nft ids
-    const nftIdArr = items?.map(
-      (nftCollection) => nftCollection.id,
-    );
+    const nftIdArr = items?.map((nftCollection) => nftCollection.id);
 
     if (nftIdArr?.length) {
       const fetchedNftArr = await fetchNFTDetails(nftIdArr, chainId);
@@ -38,37 +35,34 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
   };
   return (
     <tbody>
-      {items &&
-        items?.map((nftCollection, index) => {
-          return (
-            <tr className="align-middle" key={nftCollection.id}>
-              <td className="py-3 ps-3">
-                {nftArr.length && nftArr[index]?.logoURI ? (
-                  <img
-                    src={nftArr[index]?.logoURI}
-                    width="30"
-                    className="d-block rounded-circle"
-                    alt={nftArr[index]?.symbol}
-                  />
-                ) : (
-                  <Blockies seed={nftArr[index]?.address} size={8} />
-                )}
-              </td>
-              <td className="py-3">
-                {nftArr.length ? nftArr[index]?.name : null}
-              </td>
-              <td className="py-3">
-                <NavLink
-                  to={`/explore/${nftCollection.id}`}
-                  className="btn btn-outline-primary rounded-pill px-4"
-                >
-                  <i className="fa-solid fa-link" />
-                  <span className="d-none d-sm-inline ms-3">Find a Loan</span>
-                </NavLink>
-              </td>
-            </tr>
-          );
-        })}
+      {items?.map((nftCollection, index) => {
+        return (
+          <tr className="align-middle" key={nftCollection.id}>
+            <td className="py-3 ps-3">
+              {nftArr.length && nftArr[index]?.logoURI ? (
+                <img
+                  src={nftArr[index]?.logoURI}
+                  width="30"
+                  className="d-block rounded-circle"
+                  alt={nftArr[index]?.symbol}
+                />
+              ) : (
+                <Blockies seed={nftArr[index]?.address} size={8} />
+              )}
+            </td>
+            <td className="py-3">{nftArr.length ? nftArr[index]?.name : null}</td>
+            <td className="py-3">
+              <NavLink
+                to={`/explore/${nftCollection.id}`}
+                className="btn btn-outline-primary rounded-pill px-4"
+              >
+                <i className="fa-solid fa-link" />
+                <span className="d-none d-sm-inline ms-3">Find a Loan</span>
+              </NavLink>
+            </td>
+          </tr>
+        );
+      })}
       {loading && <LoadingIndicator />}
       {error && <p>Error: {error.message}</p>}
       {hasNextPage && (
@@ -86,7 +80,7 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
       )}
     </tbody>
   );
-}
+};
 
 export const BrowseCollections = (props: any) => {
   // GraphQL
@@ -119,9 +113,7 @@ export const BrowseCollections = (props: any) => {
                   <i className="fa-solid fa-square-dollar h4 m-0" />
                 </div>
                 <div className="ps-3">
-                  <h3 className="m-0">
-                  {result.data?.protocolInfo?.erc20sCount}
-                  </h3>
+                  <h3 className="m-0">{result.data?.protocolInfo?.erc20sCount}</h3>
                   <p className="m-0 text-primary-emphasis">number of currencies</p>
                 </div>
               </div>

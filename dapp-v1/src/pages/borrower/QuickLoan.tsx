@@ -1,8 +1,8 @@
-import PaginatedList from "@/components/LoadMore";
-import LoadingIndicator from "@/components/LoadingIndicator";
 import { PopupTokenList } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
 import GetLoanModal from "@/components/GetLoanModal";
+import PaginatedList from "@/components/LoadMore";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import type { ITokenListItem } from "@/components/PopupTokenList";
 import type { INFTListItem } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
@@ -19,7 +19,7 @@ import {
   useWriteErc721Approve,
   useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
-import { useEffect, useState, createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
@@ -40,7 +40,7 @@ interface QuickLoanContextType {
 
 //This context is used to pass the data from QuickLoan to renderLendingDesks directly
 const QuickLoanContext = createContext<QuickLoanContextType>(
-  {} as QuickLoanContextType
+  {} as QuickLoanContextType,
 );
 
 const renderLendingDesks = ({
@@ -66,19 +66,15 @@ const renderLendingDesks = ({
 
   // state
   const [flatResult, setFlatResult] = useState<any>([]);
-  const setSelectedLendingDesk = (e: string) =>
-    _setSelectedLendingDesk(JSON.parse(e));
+  const setSelectedLendingDesk = (e: string) => _setSelectedLendingDesk(JSON.parse(e));
   const getNFTdetails = async () => {
-    const fetchedNfts = await fetchNFTDetails(
-      [nftCollection?.nft.address],
-      chainId
-    );
+    const fetchedNfts = await fetchNFTDetails([nftCollection?.nft.address], chainId);
     setNft(fetchedNfts[0]); //There is only one nft in the array
   };
 
   //This useEffect hook is used to get the nft details from the nftCollection
   useEffect(() => {
-     if (nftCollection && items) {
+    if (nftCollection && items) {
       getNFTdetails();
     }
   }, [nftCollection, items]);
@@ -88,7 +84,7 @@ const renderLendingDesks = ({
   useEffect(() => {
     const formatData = (
       data: QuickLoanQuery["lendingDesks"]["items"],
-      targetNftCollectionId: string
+      targetNftCollectionId: string,
     ) =>
       data
         .filter(({ loanConfigs }) => (loanConfigs?.items?.length ?? 0) > 0)
@@ -96,14 +92,14 @@ const renderLendingDesks = ({
           lendingDesk.loanConfigs?.items?.some(
             (loanConfig) =>
               loanConfig.nftCollection.id.toUpperCase() ===
-              targetNftCollectionId.toUpperCase()
-          )
+              targetNftCollectionId.toUpperCase(),
+          ),
         )
         .filter((lendingDesk) => {
           const matchingLoanConfig = lendingDesk.loanConfigs?.items?.find(
             (loanConfig) =>
               loanConfig.nftCollection.id.toUpperCase() ===
-              targetNftCollectionId.toUpperCase()
+              targetNftCollectionId.toUpperCase(),
           );
           return (
             matchingLoanConfig &&
@@ -114,7 +110,7 @@ const renderLendingDesks = ({
           const matchingLoanConfig = loanConfigs?.items?.find(
             (loanConfig) =>
               loanConfig.nftCollection.id.toUpperCase() ===
-              targetNftCollectionId.toUpperCase()
+              targetNftCollectionId.toUpperCase(),
           );
           return {
             lendingDesk: {
@@ -123,9 +119,7 @@ const renderLendingDesks = ({
               status,
               erc20: { ...erc20 },
             },
-            loanConfig: matchingLoanConfig
-              ? { ...matchingLoanConfig }
-              : undefined,
+            loanConfig: matchingLoanConfig ? { ...matchingLoanConfig } : undefined,
           };
         });
 
@@ -174,10 +168,7 @@ const renderLendingDesks = ({
                             <i className="fa-light fa-hand-holding-dollar" />
                           </div>
                           <div className="fw-bold">
-                            {fromWei(
-                              item.loanConfig.maxAmount,
-                              token?.token.decimals
-                            )}
+                            {fromWei(item.loanConfig.maxAmount, token?.token.decimals)}
                           </div>
                           <small className="fw-normal">max offer</small>
                         </div>
@@ -266,7 +257,7 @@ export const QuickLoan = (props: any) => {
     },
   });
   const erc20s = (erc20sResult.data?.nftCollection?.erc20s?.items ?? []).map(
-    (erc20) => erc20.erc20.id
+    (erc20) => erc20.erc20.id,
   );
 
   /*
@@ -302,7 +293,7 @@ export const QuickLoan = (props: any) => {
     _setSelectedLendingDesk(undefined);
     //This resets the styling of lending desk selection form
     const button = document.querySelector(
-      ".magnify-check .btn-check:checked"
+      ".magnify-check .btn-check:checked",
     ) as HTMLInputElement;
     if (button) {
       button.checked = false;
@@ -339,11 +330,12 @@ export const QuickLoan = (props: any) => {
     writeContractAsync: approveErc721,
     error: approveErc721Error,
   } = useWriteErc721Approve();
-  const { data: approvalData, refetch: refetchApprovalData } =
-    useReadErc721GetApproved({
+  const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
+    {
       address: nftCollection?.nft.address as `0x${string}`,
       args: [BigInt(nftId || 0)],
-    });
+    },
+  );
   const {
     isLoading: approveIsConfirming,
     isSuccess: approveIsConfirmed,
@@ -362,7 +354,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Transaction Failed",
         <ErrorDetails error={approveErc721Error.message} />,
-        "error"
+        "error",
       );
       setApprovalIsLoading(false);
     }
@@ -375,7 +367,7 @@ export const QuickLoan = (props: any) => {
         addToast(
           "Transaction Failed",
           <ErrorDetails error={approveConfirmError.message} />,
-          "error"
+          "error",
         );
       }
       setApprovalIsLoading(false);
@@ -384,7 +376,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -398,7 +390,7 @@ export const QuickLoan = (props: any) => {
         addToast(
           "Transaction Successful",
           <TransactionDetails transactionHash={approvalData!} />,
-          "success"
+          "success",
         );
       }
       setApprovalIsLoading(false);
@@ -414,9 +406,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (
-      approvalData.toLowerCase() === magnifyCashV1Address[chainId].toLowerCase()
-    ) {
+    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId].toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);
@@ -440,8 +430,8 @@ export const QuickLoan = (props: any) => {
             selectedLendingDesk?.loanConfig,
             amount,
             duration,
-            selectedLendingDesk?.erc20?.decimals || 18
-          ) * 100
+            selectedLendingDesk?.erc20?.decimals || 18,
+          ) * 100,
         ),
     ],
     query: {
@@ -471,7 +461,7 @@ export const QuickLoan = (props: any) => {
         addToast(
           "Transaction Failed",
           <ErrorDetails error={newLoanWriteError.message} />,
-          "error"
+          "error",
         );
       }
       setNewLoanIsLoading(false);
@@ -484,7 +474,7 @@ export const QuickLoan = (props: any) => {
         addToast(
           "Transaction Failed",
           <ErrorDetails error={newLoanConfirmError.message} />,
-          "error"
+          "error",
         );
       }
       setNewLoanIsLoading(false);
@@ -493,7 +483,7 @@ export const QuickLoan = (props: any) => {
       const id = addToast(
         "Transaction Pending",
         "Please wait for the transaction to be confirmed.",
-        "loading"
+        "loading",
       );
       if (id) {
         setLoadingToastId(id);
@@ -507,25 +497,16 @@ export const QuickLoan = (props: any) => {
         addToast(
           "Transaction Successful",
           <TransactionDetails transactionHash={newLoanWriteTransactionData!} />,
-          "success"
+          "success",
         );
       }
     }
-  }, [
-    newLoanWriteError,
-    newLoanConfirmError,
-    newLoanIsConfirming,
-    newLoanIsConfirmed,
-  ]);
+  }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
   // Checkbox click function
   async function approveERC721TokenTransfer() {
     if (checked) {
-      addToast(
-        "Warning",
-        <ErrorDetails error={"already approved"} />,
-        "warning"
-      );
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;
     }
     setApprovalIsLoading(true);
@@ -547,7 +528,7 @@ export const QuickLoan = (props: any) => {
 
     const lendingDeskBalance = fromWei(
       selectedLendingDesk?.lendingDesk?.balance,
-      selectedLendingDesk?.lendingDesk?.erc20?.decimals
+      selectedLendingDesk?.lendingDesk?.erc20?.decimals,
     );
 
     // Check if the user has enough balance in the lending desk
@@ -555,7 +536,7 @@ export const QuickLoan = (props: any) => {
       addToast(
         "Error",
         <ErrorDetails error="InsufficientLendingDeskBalance" />,
-        "error"
+        "error",
       );
       return;
     }
@@ -576,12 +557,10 @@ export const QuickLoan = (props: any) => {
         "Error",
         <ErrorDetails
           error={
-            newLoanConfigError
-              ? newLoanConfigError.message
-              : "Error initializing loan"
+            newLoanConfigError ? newLoanConfigError.message : "Error initializing loan"
           }
         />,
-        "error"
+        "error",
       );
       return;
     }
@@ -603,10 +582,7 @@ export const QuickLoan = (props: any) => {
         {renderLendingDesks}
       </PaginatedList>
     ),
-    [
-      nftCollection?.nft?.address,
-      token?.token?.address,
-    ]
+    [nftCollection?.nft?.address, token?.token?.address],
   );
 
   return (
@@ -620,10 +596,7 @@ export const QuickLoan = (props: any) => {
         token,
       }}
     >
-      <div
-        className="container-md px-3 px-sm-4 px-lg-5"
-        style={{ overflow: "clip" }}
-      >
+      <div className="container-md px-3 px-sm-4 px-lg-5" style={{ overflow: "clip" }}>
         <div className="card bg-primary-subtle border-primary-subtle rounded-4 specific-w-600 mw-100 mx-auto">
           <div className="card-body">
             <div className="mb-3">
@@ -650,11 +623,7 @@ export const QuickLoan = (props: any) => {
                   "Choose NFT Collection..."
                 )}
               </div>
-              <PopupTokenList
-                nft
-                modalId="nftModal"
-                onClick={setNftCollection}
-              />
+              <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} />
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="choose-currency">
@@ -696,8 +665,7 @@ export const QuickLoan = (props: any) => {
         <div className="my-4 specific-w-600 mw-100 mx-auto">
           <GetLoanModal
             {...{
-              btnClass:
-                "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
+              btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
               disabled: !token || !nftCollection || !selectedLendingDesk,
               checked,
               onCheck: approveERC721TokenTransfer,

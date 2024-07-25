@@ -1,9 +1,8 @@
 import { LoanRow } from "@/components";
+import PaginatedList from "@/components/LoadMore";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { useQuery } from "urql";
 import { useAccount, useChainId } from "wagmi";
 import { BorrowerDashboardDocument } from "../../../.graphclient";
-import PaginatedList from "@/components/LoadMore";
 
 const renderBorrowerDashboard = ({
   items,
@@ -19,17 +18,17 @@ const renderBorrowerDashboard = ({
       {loading && <LoadingIndicator />}
       {error && <p>Error: {error.message}</p>}
       {hasNextPage && (
-      <div className="row g-4 justify-content-center mt-0">
-        <div className="col-sm-6 col-xl-4 mb-2">
-          <button
-            onClick={loadMore}
-            disabled={loading}
-            className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
-          >
-            Load More
-          </button>
+        <div className="row g-4 justify-content-center mt-0">
+          <div className="col-sm-6 col-xl-4 mb-2">
+            <button
+              onClick={loadMore}
+              disabled={loading}
+              className="btn btn-primary d-block mx-auto my-3 px-4 py-2 text-uppercase font-weight-bold"
+            >
+              Load More
+            </button>
+          </div>
         </div>
-      </div>
       )}
     </>
   );
@@ -42,15 +41,10 @@ export const Dashboard = (props: any) => {
   // GraphQL
   const { address } = useAccount();
 
-
   return (
     <div className="container-md px-3 px-sm-4 px-lg-5">
       <div className="d-flex align-items-center">
-        <ul
-          className="nav nav-pills nav-fill mb-3"
-          id="pills-tab"
-          role="tablist"
-        >
+        <ul className="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
           <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link active btn focus-ring px-4 py-2 me-2 fw-normal"
@@ -146,7 +140,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
-                status:"Active",
+                status: "Active",
               }}
               dataKey="loans"
               manualRefetch={true}
@@ -170,7 +164,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
-                status:"Resolved",
+                status: "Resolved",
               }}
               dataKey="loans"
               manualRefetch={true}
@@ -194,7 +188,7 @@ export const Dashboard = (props: any) => {
               query={BorrowerDashboardDocument}
               variables={{
                 walletAddress: address?.toLowerCase() || "",
-                status:"Defaulted",
+                status: "Defaulted",
               }}
               dataKey="loans"
               manualRefetch={true}

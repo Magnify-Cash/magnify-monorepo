@@ -1,7 +1,7 @@
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
-import { ConnectKitButton, ConnectKitProvider, type Types } from "connectkit";
+import { ConnectKitButton, ConnectKitProvider } from "connectkit";
 import { type ReactElement, cloneElement, createContext, useState } from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
