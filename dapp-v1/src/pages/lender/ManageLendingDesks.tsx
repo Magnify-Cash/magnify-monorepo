@@ -33,8 +33,6 @@ const renderLendingDesks = ({
       </>
     );
 
-
-
   return (
     <div>
       {items.map((desk) => (
@@ -160,7 +158,7 @@ export const ManageLendingDesks = (props: any) => {
               Active Desks
             </button>
           </li>
-          <li className="nav-item" role="presentation">
+          <li className="nav-item mx-2" role="presentation">
             <button
               className="nav-link btn focus-ring px-4 py-2 me-2 fw-normal"
               id="pills-frozen-tab"
