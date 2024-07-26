@@ -63,8 +63,20 @@ const renderLendingDesks = ({ items, loading, error, loadMore, hasNextPage }) =>
           </tr>
         );
       })}
-      {loading && <LoadingIndicator />}
-      {error && <p>Error: {error.message}</p>}
+      {loading && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <LoadingIndicator />
+          </td>
+        </tr>
+      )}
+      {error && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <p>Error: {error.message}</p>
+          </td>
+        </tr>
+      )}
       {hasNextPage && (
         <tr>
           <td colSpan={100} className="text-center">
