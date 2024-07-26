@@ -11,7 +11,7 @@ import {
   useWriteMagnifyCashV1LiquidateDefaultedLoan,
   useWriteMagnifyCashV1MakeLoanPayment,
 } from "@/wagmi-generated";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
@@ -100,22 +100,6 @@ const LoanDetails = ({
       enabled: status === "Active",
     },
   });
-
-  /*
-   Hook to check if the query data has changed
-  */
-
-  const initAmountDueRef = useRef(loanAmountDue);
-  useEffect(() => {
-    if (initAmountDueRef.current === null && loanAmountDue !== null) {
-      initAmountDueRef.current = loanAmountDue;
-    }
-    //close the modal if the loan amount due has changed
-    if (initAmountDueRef.current !== loanAmountDue) {
-      setActionIsLoading(false);
-    }
-    initAmountDueRef.current = loanAmountDue;
-  }, [loanAmountDue]);
 
   useEffect(() => {
     if (loanAmountDueError) {

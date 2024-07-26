@@ -16,6 +16,6 @@
     "react-dom": "18.3.1",
     "react-hook-form": "7.51.4",
     "viem": "2.x",
-    "wagmi": "2.9.8"
+    "wagmi": "2.12.0"
   }
 }

@@ -1,10 +1,11 @@
 import { ManageFunds } from "@/components";
 import ErrorDetails from "@/components/ErrorDetails";
-import { Spinner } from "@/components/LoadingIndicator";
+import LoadingIndicator, { Spinner } from "@/components/LoadingIndicator";
 import { type INFTListItem, PopupTokenList } from "@/components/PopupTokenList";
 import TransactionDetails from "@/components/TransactionDetails";
 import { useToastContext } from "@/helpers/CreateToast";
 import fetchNFTDetails, { type INft } from "@/helpers/FetchNfts";
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { fromWei, toWei } from "@/helpers/utils";
 import {
   useSimulateMagnifyCashV1SetLendingDeskState,
@@ -13,7 +14,7 @@ import {
   useWriteMagnifyCashV1SetLendingDeskState,
 } from "@/wagmi-generated";
 import type { NFTInfo } from "@magnify-cash/nft-lists";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -31,6 +32,7 @@ export const ManageLendingDesk = (props: any) => {
   /*
   graphql hooks
   */
+  const [paused, setPaused] = useState(false);
   const { id } = useParams();
   const [result, reexecuteQuery] = useQuery({
     query: ManageLendingDeskDocument,
@@ -38,8 +40,56 @@ export const ManageLendingDesk = (props: any) => {
       // @ts-ignore
       deskId: id,
     },
-    requestPolicy: "network-only",
+    pause: paused,
+    requestPolicy: "cache-and-network",
   });
+
+  // Destructure data, fetching state, and error from the query result
+  const { data, fetching, error } = result;
+
+  useEffect(() => {
+    if (!paused && data) {
+      // Pause the query after it has been executed once
+      setPaused(true);
+    }
+  }, [data]);
+
+  // Function to refetch the query data
+  const refetchData = () => {
+    const interval = 100;
+    setTimeout(() => {
+      setPaused(false);
+      reexecuteQuery({ requestPolicy: "network-only" });
+    }, interval);
+  };
+  /*
+  Hook to watch for contract events
+  */
+  const events = [
+    { eventName: "LendingDeskLiquidityDeposited" },
+    { eventName: "LendingDeskLiquidityWithdrawn" },
+    {
+      eventName: "LendingDeskStateSet",
+      action: () => setFreezeUnfreezeIsLoading(false),
+    },
+    {
+      eventName: "LendingDeskLoanConfigsSet",
+      action: () => setUpdateDeskIsLoading(false),
+    },
+    { eventName: "LendingDeskLoanConfigRemoved" },
+  ];
+
+  events.forEach(({ eventName, action }) => {
+    useCustomWatchContractEvent({
+      eventName,
+      onLogs: (logs) => {
+        console.log(eventName, logs);
+        if (action) action();
+        refetchData();
+      },
+    });
+  });
+
   const token = result.data?.lendingDesk?.erc20?.decimals;
 
   /*
@@ -181,40 +231,6 @@ export const ManageLendingDesk = (props: any) => {
   const [updateDeskIsLoading, setUpdateDeskIsLoading] = useState<boolean>(false);
 
   /*
-  Hook to check if the query data has changed
-  */
-
-  // Ref to store the initial freeze status when the component is mounted
-  const initLendingDeskStatusRef = useRef(result.data?.lendingDesk?.status);
-
-  useEffect(() => {
-    // Checking if freeze status has changed
-    if (
-      JSON.stringify(result?.data?.lendingDesk?.status) !==
-      JSON.stringify(initLendingDeskStatusRef.current)
-    ) {
-      // If freeze status has changed, close the loading indicator
-      setFreezeUnfreezeIsLoading(false);
-    }
-    // Updating the initLendingDeskStatusRef with the latest lendingDesk status
-    initLendingDeskStatusRef.current = result?.data?.lendingDesk?.status;
-  }, [result?.data?.lendingDesk?.status]);
-
-  // Ref to store the initial loanConfigs when the component is mounted
-  const initLendingDeskConfigRef = useRef(result.data?.lendingDesk?.loanConfigs);
-  useEffect(() => {
-    if (
-      JSON.stringify(result.data?.lendingDesk?.loanConfigs) !==
-      JSON.stringify(initLendingDeskConfigRef.current)
-    ) {
-      // If loanConfigs has changed, close the loading indicator
-      setUpdateDeskIsLoading(false);
-    }
-    // Updating the initLendingDeskConfig with the latest loanConfigs
-    initLendingDeskConfigRef.current = result.data?.lendingDesk?.loanConfigs;
-  }, [result.data?.lendingDesk?.loanConfigs]);
-
-  /*
   Fetch NFT Details
   This is used to lookup a list of NFTs off chain
   */
@@ -319,7 +335,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (freezeIsConfirmed) {
-      reexecuteQuery();
       refetchFreezeConfig();
       if (loadingToastId) {
         closeToast(loadingToastId);
@@ -414,7 +429,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (updateLendingDeskIsConfirmed) {
-      reexecuteQuery();
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
@@ -508,7 +522,6 @@ export const ManageLendingDesk = (props: any) => {
       }
     }
     if (deleteCollectionIsConfirmed) {
-      reexecuteQuery();
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
@@ -529,6 +542,22 @@ export const ManageLendingDesk = (props: any) => {
   /*
   JSX Return
   */
+  if (result.fetching && !result.data) {
+    return (
+      <div className="container-md px-3 px-sm-4 px-xl-5">
+        <div className="text-body-secondary position-relative">
+          <NavLink to="/manage-desks" className="text-reset text-decoration-none">
+            <i className="fa-light fa-angle-left me-1" />
+            Manage Lending Desks
+          </NavLink>
+        </div>
+        <div className="py-2">
+          <LoadingIndicator />
+        </div>
+      </div>
+    );
+  }
+
   return result.data?.lendingDesk ? (
     <div className="container-md px-3 px-sm-4 px-xl-5">
       <div className="text-body-secondary position-relative">
@@ -537,6 +566,11 @@ export const ManageLendingDesk = (props: any) => {
           Manage Lending Desks
         </NavLink>
       </div>
+      {result.fetching && (
+        <div className="py-2">
+          <LoadingIndicator />
+        </div>
+      )}
       <div className="row g-4 mt-n2 mb-4">
         <div className="col-12">
           <div className="card bg-primary-subtle border-primary-subtle rounded-4">
@@ -573,12 +607,10 @@ export const ManageLendingDesk = (props: any) => {
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="deposit"
-                      reexecuteQuery={reexecuteQuery}
                     />
                     <ManageFunds
                       lendingDesk={result?.data?.lendingDesk}
                       action="withdraw"
-                      reexecuteQuery={reexecuteQuery}
                     />
                     <div className=" form-check form-switch d-flex align-items-center justify-content-center space-x-4">
                       <input
