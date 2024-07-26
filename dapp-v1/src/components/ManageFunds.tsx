@@ -10,7 +10,7 @@ import {
   useWriteMagnifyCashV1DepositLendingDeskLiquidity,
   useWriteMagnifyCashV1WithdrawLendingDeskLiquidity,
 } from "@/wagmi-generated";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import ErrorDetails from "./ErrorDetails";
@@ -20,7 +20,6 @@ import TransactionDetails from "./TransactionDetails";
 interface ManageFundsProps {
   lendingDesk: any;
   action: "deposit" | "withdraw";
-  reexecuteQuery: () => void;
 }
 
 interface ManageFundForm {
@@ -28,11 +27,7 @@ interface ManageFundForm {
 }
 
 //ManageFunds component is used to deposit or withdraw liquidity from a lending desk
-export const ManageFunds = ({
-  lendingDesk,
-  action,
-  reexecuteQuery,
-}: ManageFundsProps) => {
+export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
   /*
   wagmi hooks
   */
@@ -83,27 +78,6 @@ export const ManageFunds = ({
   const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [actionIsLoading, setActionIsLoading] = useState<boolean>(false);
 
-  /*
-  Hook to check if the query data has changed
-  */
-
-  // Ref to store the initial lendingDesk balance when the component is mounted
-  const initLendingDeskBalanceRef = useRef(lendingDesk.balance);
-
-  useEffect(() => {
-    // Checking if lendingDesk balance has changed
-    if (
-      JSON.stringify(lendingDesk.balance) !==
-      JSON.stringify(initLendingDeskBalanceRef.current)
-    ) {
-      // If lendingDesk balance has changed, close the modal
-      setActionIsLoading(false);
-      const modal = document.getElementsByClassName("modal show")[0];
-      window.bootstrap.Modal.getInstance(modal)?.hide();
-    }
-    // Updating the initLendingDeskBalanceRef with the latest lendingDesk balance
-    initLendingDeskBalanceRef.current = lendingDesk.balance;
-  }, [lendingDesk.balance]);
   /*
   Deposit Liquidity
   Calls `depositLendingDeskLiquidity`
@@ -344,7 +318,7 @@ export const ManageFunds = ({
       }
     }
     if (actionIsConfirmed) {
-      reexecuteQuery ? reexecuteQuery() : null;
+      setActionIsLoading(false);
       refetchApprovalData();
       if (loadingToastId) {
         closeToast(loadingToastId);
@@ -355,6 +329,12 @@ export const ManageFunds = ({
           "success",
         );
       }
+      // Close modal
+      const modal = document.getElementsByClassName("modal show")[0];
+      window.bootstrap.Modal.getInstance(modal)?.hide();
+      // Close modal backdrop
+      const modalBackdrop = document.getElementsByClassName("modal-backdrop")[0];
+      modalBackdrop?.remove();
     }
   }, [
     actionErrorMap[action],
