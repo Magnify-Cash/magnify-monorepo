@@ -79,10 +79,9 @@ export default function GetLoanModal({
                 name="check"
                 disabled={approvalIsLoading}
                 checked={checked}
-                onClick={onCheck}
+                onChange={onCheck}
                 className="form-check-input"
                 type="checkbox"
-                value=""
                 id="flexCheckChecked"
                 hidden={approvalIsLoading}
                 style={{
