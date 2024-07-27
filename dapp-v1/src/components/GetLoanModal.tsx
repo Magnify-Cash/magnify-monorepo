@@ -179,9 +179,10 @@ export default function GetLoanModal({
                 <label htmlFor="select-nft" className="form-label">
                   Select NFT
                 </label>
-                <select
+               <select
                   className="form-select form-select-lg py-2"
                   id="select-nft"
+                  defaultValue={""}
                   onChange={(e) =>
                     setNftId(
                       // @ts-ignore
@@ -189,7 +190,7 @@ export default function GetLoanModal({
                     )
                   }
                 >
-                  <option selected value="">
+                  <option value="">
                     Select NFT
                   </option>
                   {walletNfts.map((x) => (
