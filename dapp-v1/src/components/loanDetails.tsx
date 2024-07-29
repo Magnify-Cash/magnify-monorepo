@@ -784,7 +784,7 @@ const LoanDetails = ({
                         <input
                           disabled={approvalIsLoading}
                           checked={checked}
-                          onClick={() => approveERC20TokenTransfer()}
+                          onChange={() => approveERC20TokenTransfer()}
                           className="form-check-input me-3 align-center"
                           type="checkbox"
                           value=""
@@ -920,7 +920,7 @@ const LoanDetails = ({
                         <input
                           disabled={approvalIsLoading}
                           checked={checkedResolveLoan}
-                          onClick={() => approveTokenTransferResolveLoan()}
+                          onChange={() => approveTokenTransferResolveLoan()}
                           className="form-check-input me-3 align-center"
                           type="checkbox"
                           value=""

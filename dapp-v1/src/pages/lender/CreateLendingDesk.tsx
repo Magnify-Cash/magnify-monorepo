@@ -877,7 +877,7 @@ export const CreateLendingDesk = (props: any) => {
                       <input
                         checked={checked}
                         disabled={approvalIsLoading || Number(deskFundingAmount) <= 0}
-                        onClick={() => approveERC20TokenTransfer()}
+                        onChange={() => approveERC20TokenTransfer()}
                         className="form-check-input me-3"
                         type="checkbox"
                         value=""
