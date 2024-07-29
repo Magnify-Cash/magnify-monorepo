@@ -79,10 +79,9 @@ export default function GetLoanModal({
                 name="check"
                 disabled={approvalIsLoading}
                 checked={checked}
-                onClick={onCheck}
+                onChange={onCheck}
                 className="form-check-input"
                 type="checkbox"
-                value=""
                 id="flexCheckChecked"
                 hidden={approvalIsLoading}
                 style={{
@@ -182,6 +181,7 @@ export default function GetLoanModal({
                 <select
                   className="form-select form-select-lg py-2"
                   id="select-nft"
+                  defaultValue={""}
                   onChange={(e) =>
                     setNftId(
                       // @ts-ignore
@@ -189,9 +189,7 @@ export default function GetLoanModal({
                     )
                   }
                 >
-                  <option selected value="">
-                    Select NFT
-                  </option>
+                  <option value="">Select NFT</option>
                   {walletNfts.map((x) => (
                     <option key={x.tokenId} value={x.tokenId}>
                       {x.name || `${nft?.name} #${x.tokenId}`}

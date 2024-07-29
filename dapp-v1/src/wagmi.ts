@@ -26,11 +26,21 @@ export const config = createConfig(
         `https://base-mainnet.g.alchemy.com/v2/${
           import.meta.env.VITE_ALCHEMY_API_KEY
         }/`,
+        {
+          batch: {
+            batchSize: 50,
+          },
+        },
       ),
       [baseSepolia.id]: http(
         `https://base-sepolia.g.alchemy.com/v2/${
           import.meta.env.VITE_ALCHEMY_API_KEY
         }/`,
+        {
+          batch: {
+            batchSize: 50,
+          },
+        },
       ),
     },
 

@@ -12,6 +12,10 @@ const renderLenderDashboard = ({
   hasNextPage,
   props,
 }) => {
+  if (items.length === 0 && !loading) {
+    return <LoanRow {...{ loans: items, ...props }} />;
+  }
+
   return (
     <>
       {items.length > 0 && <LoanRow {...{ loans: items, ...props }} />}

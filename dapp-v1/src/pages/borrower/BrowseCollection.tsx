@@ -447,7 +447,7 @@ const renderLendingDesks = ({
                   alt={tokens?.[index]?.symbol}
                 />
               ) : (
-                <div>{tokens?.[index]?.name}</div>
+                <span>{tokens?.[index]?.name}</span>
               )}
             </td>
             <td className="py-3">
@@ -493,8 +493,20 @@ const renderLendingDesks = ({
           </tr>
         );
       })}
-      {loading && <LoadingIndicator />}
-      {error && <p>Error: {error.message}</p>}
+      {loading && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <LoadingIndicator />
+          </td>
+        </tr>
+      )}
+      {error && (
+        <tr>
+          <td colSpan={100} className="text-center">
+            <p>Error: {error.message}</p>
+          </td>
+        </tr>
+      )}
       {hasNextPage && (
         <tr>
           <td colSpan={100} className="text-center">
