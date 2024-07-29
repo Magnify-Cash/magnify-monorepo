@@ -7,9 +7,10 @@ const CreateToast = (
   content: string | ReactElement,
   variant: ToastProps["variant"],
   index: number,
+  key: string
 ) => {
   return (
-    <ToastComponent title={title} content={content} variant={variant} index={index} />
+    <ToastComponent title={title} content={content} variant={variant} index={index} key={key} />
   );
 };
 

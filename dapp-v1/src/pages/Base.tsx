@@ -70,7 +70,8 @@ export const Base = () => {
 
   // Function to add a new toast
   const addToast: ToastContextType["addToast"] = (title, message, type) => {
-    const newToast = CreateToast(title, message, type, toasts.length + 1);
+    const key = Math.random().toString(36).substring(2, 11); // Generate a random key
+    const newToast = CreateToast(title, message, type, toasts.length + 1, key);
     setToasts((prevToasts) => [...prevToasts, newToast]);
     return newToast.props.index;
   };
@@ -402,7 +403,6 @@ export const Base = () => {
             id="toast-container"
             className="toast-container position-fixed top-0 end-0 p-3"
           >
-            {/* {toasts.map((toast) => toast)} */}
             {toasts.map((toast) => cloneElement(toast, { key: toast.key }))}
           </div>
           {/* Toasts end */}
