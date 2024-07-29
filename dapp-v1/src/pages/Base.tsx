@@ -1,5 +1,6 @@
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
+import { TermsOfService } from "@/components/TermsOfService";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
 import { ConnectKitButton, ConnectKitProvider } from "connectkit";
 import { type ReactElement, cloneElement, createContext, useState } from "react";
@@ -406,6 +407,10 @@ export const Base = () => {
             {toasts.map((toast) => cloneElement(toast, { key: toast.key }))}
           </div>
           {/* Toasts end */}
+
+          {/* Terms of service */}
+          <TermsOfService />
+          {/* End terms of service */}
         </Provider>
       </ConnectKitProvider>
     </ToastContext.Provider>
