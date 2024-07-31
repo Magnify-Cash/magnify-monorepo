@@ -51,7 +51,7 @@ const renderLendingDesks = ({
                   </div>
                   <br />
                   <h6 className="fw-medium text-body-secondary">Collections</h6>
-                  <p className="m-0">{desk.loanConfigs.length}</p>
+                  <p className="m-0">{desk.loanConfigs.items.length}</p>
                   <br />
                 </div>
                 <div className="col-xl-3">
