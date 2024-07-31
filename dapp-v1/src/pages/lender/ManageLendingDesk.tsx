@@ -76,7 +76,10 @@ export const ManageLendingDesk = (props: any) => {
       eventName: "LendingDeskLoanConfigsSet",
       action: () => setUpdateDeskIsLoading(false),
     },
-    { eventName: "LendingDeskLoanConfigRemoved" },
+    {
+      eventName: "LendingDeskLoanConfigRemoved",
+      action: () => setDeleteLoadingState(deleteCollectionIndex, false),
+    },
   ];
 
   events.forEach(({ eventName, action }) => {
@@ -108,6 +111,7 @@ export const ManageLendingDesk = (props: any) => {
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
   const [editDesk, setEditDesk] = useState<boolean>(false);
   const [editDeskIndex, setEditDeskIndex] = useState<number>(0);
+  const [deleteCollectionIndex, setDeleteCollectionIndex] = useState<number>(0);
   const {
     register,
     setValue,
@@ -179,10 +183,13 @@ export const ManageLendingDesk = (props: any) => {
     // Set the selected NFT collection
     setNftCollection({ nft: selectedNft as NFTInfo });
   };
+
   //set deleting collection variable to true
   const handleDeleteCollection = async (index) => {
     const selectedNft = nftArr[index];
     setNftCollection({ nft: selectedNft as NFTInfo });
+    setDeleteCollectionIndex(index);
+    setDeleteLoadingState(index, true);
     try {
       await deleteCollection({
         args: [
@@ -229,7 +236,17 @@ export const ManageLendingDesk = (props: any) => {
   const [freezeUnfreezeIsLoading, setFreezeUnfreezeIsLoading] =
     useState<boolean>(false);
   const [updateDeskIsLoading, setUpdateDeskIsLoading] = useState<boolean>(false);
+  const [deleteCollectionIsLoading, setDeleteCollectionIsLoading] = useState<{
+    [key: number]: boolean;
+  }>({});
 
+  // Function to set loading state for a specific collection index
+  const setDeleteLoadingState = (index: number, isLoading: boolean) => {
+    setDeleteCollectionIsLoading((prevState) => ({
+      ...prevState,
+      [index]: isLoading,
+    }));
+  };
   /*
   Fetch NFT Details
   This is used to lookup a list of NFTs off chain
@@ -498,6 +515,7 @@ export const ManageLendingDesk = (props: any) => {
           "error",
         );
       }
+      setDeleteLoadingState(deleteCollectionIndex, false);
     }
     if (deleteCollectionConfirmError) {
       console.error(deleteCollectionConfirmError);
@@ -510,6 +528,7 @@ export const ManageLendingDesk = (props: any) => {
           "error",
         );
       }
+      setDeleteLoadingState(deleteCollectionIndex, false);
     }
     if (deleteCollectionIsConfirming) {
       const id = addToast(
@@ -680,7 +699,11 @@ export const ManageLendingDesk = (props: any) => {
                             className="text-reset text-decoration-none btn border-0 p-0"
                             aria-label="Edit"
                           >
-                            <i className="fa-regular fa-trash-can" />
+                            {deleteCollectionIsLoading[index] ? (
+                              <i className="fa fa-spinner fa-spin" />
+                            ) : (
+                              <i className="fa-regular fa-trash-can" />
+                            )}
                           </button>
                         </span>
                       </div>
