@@ -51,7 +51,7 @@ const renderLendingDesks = ({
                   </div>
                   <br />
                   <h6 className="fw-medium text-body-secondary">Collections</h6>
-                  <p className="m-0">{desk.loanConfigs.length}</p>
+                  <p className="m-0">{desk.loanConfigs.items.length}</p>
                   <br />
                 </div>
                 <div className="col-xl-3">
@@ -99,7 +99,7 @@ const renderLendingDesks = ({
                 <div className="col-xl-3 d-flex flex-column ps-xl-4 ps-xxl-5">
                   <NavLink
                     to={`/manage-desks/${desk.id}`}
-                    className="btn btn-lg py-2 px-3 focus-ring bg-primary-subtle rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100"
+                    className="btn btn-lg py-2 px-3 focus-ring bg-primary bg-opacity-10 rounded-pill text-primary-emphasis d-flex align-items-center justify-content-between text-start d-block w-100"
                   >
                     Edit <i className="fa-regular fa-pencil" />
                   </NavLink>

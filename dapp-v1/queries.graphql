@@ -14,15 +14,8 @@ query Home {
   }
 }
 
-query ManageLendingDesks(
-  $walletAddress: String!
-  $status: LendingDeskStatus!
-  $after: String
-) {
-  lendingDesks(
-    where: { ownerId: $walletAddress, status: $status }
-    after: $after
-  ) {
+query ManageLendingDesks($walletAddress: String!, $status: LendingDeskStatus!, $after: String) {
+  lendingDesks(where: {ownerId: $walletAddress, status: $status}, after: $after) {
     items {
       id
       balance
@@ -38,7 +31,7 @@ query ManageLendingDesks(
         symbol
         decimals
       }
-      loanConfigs {
+      loanConfigs(where: {active: true}) {
         items {
           id
         }
