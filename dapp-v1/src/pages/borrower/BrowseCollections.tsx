@@ -108,7 +108,7 @@ export const BrowseCollections = (props: any) => {
           <div className="row g-4 justify-space-around">
             <div className="col-sm-6">
               <div className="d-flex align-items-center">
-                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle flex-shrink-0">
                   <i className="fa-solid fa-hexagon-vertical-nft h4 m-0" />
                 </div>
                 <div className="ps-3">
@@ -121,7 +121,7 @@ export const BrowseCollections = (props: any) => {
             </div>
             <div className="col-sm-6">
               <div className="d-flex align-items-center">
-                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis rounded-circle flex-shrink-0">
+                <div className="specific-w-50 specific-h-50 d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary-emphasis rounded-circle flex-shrink-0">
                   <i className="fa-solid fa-square-dollar h4 m-0" />
                 </div>
                 <div className="ps-3">
