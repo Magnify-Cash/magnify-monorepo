@@ -204,14 +204,25 @@ const renderLendingDesks = ({
         </div>
       ) : (
         <div className="card-body pt-0">
-          <img
-            src="/theme/images/ThinkingMeme.svg"
-            alt="Thinking"
-            className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
-          />
-          <p className="text-center text-body-secondary fst-italic">
-            Start customizing to see offers
-          </p>
+          <div className="specific-w-300 mw-100 mx-auto text-body-secondary my-5" style={{ fontSize: 16 }}>
+            <div>Please choose the NFT and currency to see offers:</div>
+            <div className="mt-2">
+              {nft ? (
+                <i className="fa-solid fa-check-circle text-primary-emphasis"></i>
+              ) : (
+                <i className="fa-solid fa-circle opacity-25"></i>
+              )}
+              <span className="ms-2">NFT selected</span>
+            </div>
+            <div className="mt-1">
+              {token ? (
+                <i className="fa-solid fa-check-circle text-primary-emphasis"></i>
+              ) : (
+                <i className="fa-solid fa-circle opacity-25"></i>
+              )}
+              <span className="ms-2">Currency selected</span>
+            </div>
+          </div>
         </div>
       )}
       {loading && <LoadingIndicator />}
