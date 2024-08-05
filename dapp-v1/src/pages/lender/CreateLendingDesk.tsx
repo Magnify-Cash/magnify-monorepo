@@ -738,13 +738,9 @@ export const CreateLendingDesk = (props: any) => {
                   })}
                 </div>
               ) : (
-                <div>
-                  <img
-                    src="/theme/images/ThinkingMeme.svg"
-                    alt="Thinking"
-                    className="img-fluid mx-auto d-block my-3 specific-w-150 mw-100"
-                  />
-                  <p className="text-center">Start customizing to see details...</p>
+                <div className="text-body-secondary text-center" style={{ fontSize: 16 }}>
+                  <i className="fa-light fa-info-circle text-primary-emphasis"></i>
+                  <span className="ms-2">Select currency to get started</span>
                 </div>
               )}
             </div>
