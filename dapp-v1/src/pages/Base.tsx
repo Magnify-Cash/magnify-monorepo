@@ -89,8 +89,8 @@ export const Base = () => {
   };
 
   // theme
-  const activeClass = "nav-link d-flex align-items-center active fw-bold fs-5";
-  const inactiveClass = "nav-link d-flex align-items-center";
+  const activeClass = "nav-link px-2 py-1 lh-lg rounded d-flex align-items-center active text-bg-primary fw-bold antialiased";
+  const inactiveClass = "nav-link px-2 py-1 lh-lg rounded d-flex align-items-center";
 
   // graphQL
   const chainId = useChainId();
