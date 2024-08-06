@@ -103,6 +103,10 @@ const getErrorText = (error: string) => {
     case error.includes("UnsupportedNFTCollection"):
       return "Unsupported NFT collection";
 
+    // Errors signatures not available in the contract ABI
+    case error.includes("0xe450d38c"):
+      return "Insufficient Token Balance in the Wallet";
+
     // default
     default:
       return "Unknown error. Please refresh the page and try again.";
