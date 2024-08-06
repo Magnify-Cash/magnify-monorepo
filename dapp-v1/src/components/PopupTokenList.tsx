@@ -1,7 +1,7 @@
 import { useToastContext } from "@/helpers/CreateToast";
 import { formatAddress } from "@/helpers/formatAddress";
-import { getTokenListUrls } from "@/helpers/tokenUrls";
-import { getBlockExplorerURL } from "@/helpers/utils";
+import { getTokenListUrls } from "@/helpers/ProtocolDefaults";
+import { getBlockExplorerURL } from "@/helpers/ProtocolDefaults";
 import type { NFTInfo } from "@magnify-cash/nft-lists";
 import type { TokenInfo } from "@uniswap/token-lists";
 import {

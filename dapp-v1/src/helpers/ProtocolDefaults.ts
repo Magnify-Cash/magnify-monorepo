@@ -1,5 +1,6 @@
 import { magnifyCashV1Address } from "../wagmi-generated";
 
+export const MAGNIFY_CASH_MAINNET_GRAPH: string = "";
 export const MAGNIFY_CASH_GOERLI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44181/nftyfinance/0.0.9";
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
@@ -14,6 +15,8 @@ export const getProtocolAddress = (chainId: any) => magnifyCashV1Address[chainId
 export const getProtocolChain = (chainId: any) => chainId;
 export const getProtocolGraphUrl = (chainId: any) => {
   switch (chainId) {
+    case 1:
+      return MAGNIFY_CASH_MAINNET_GRAPH;
     case 5: // GOERLI
       return MAGNIFY_CASH_GOERLI_GRAPH;
     case 31337:
@@ -27,4 +30,61 @@ export const getProtocolGraphUrl = (chainId: any) => {
     default:
       return MAGNIFY_CASH_HARDHAT_GRAPH;
   }
+};
+
+const nftListUrlsMap = {
+  1: [
+    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json?token=GHSAT0AAAAAACFG2BS3CVGA2FTJWHAHSUBQZURQOOA",
+  ],
+  8453: [],
+  84532: import.meta.env.DEV
+    ? ["http://localhost:5173/tokenlists/nftsBaseSepolia.json"]
+    : ["https://early.magnify.cash/tokenlists/nftsBaseSepolia.json"],
+  31337: ["http://localhost:5173/tokenlists/nfts.json"],
+};
+
+const tokenListUrlsMap = {
+  1: ["https://tokens.coingecko.com/ethereum/all.json"],
+  8453: ["https://tokens.coingecko.com/base/all.json"],
+  84532: import.meta.env.DEV
+    ? ["http://localhost:5173/tokenlists/tokensBaseSepolia.json"]
+    : ["https://early.magnify.cash/tokenlists/tokensBaseSepolia.json"],
+  31337: ["http://localhost:5173/tokenlists/tokens.json"],
+};
+
+export function getTokenListUrls(
+  chainId: number,
+  isNft: boolean | undefined,
+  isToken: boolean | undefined,
+): string[] | undefined {
+  if (isNft) {
+    return nftListUrlsMap[chainId];
+  }
+  if (isToken) {
+    return tokenListUrlsMap[chainId];
+  }
+}
+
+
+export const getBlockExplorerURL = (chainId: number) => {
+  // Add the base url for the block explorer for different networks
+  let baseUrl = "";
+
+  switch (chainId) {
+    case 11155111:
+      baseUrl = "https://sepolia.etherscan.io";
+      break;
+    case 8453:
+      baseUrl = "https://basescan.org";
+      break;
+    case 84532:
+      baseUrl = "https://sepolia.basescan.org";
+      break;
+    case 1:
+      baseUrl = "https://etherscan.io"
+    default:
+      baseUrl = "https://etherscan.io";
+      break;
+  }
+  return baseUrl;
 };

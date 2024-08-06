@@ -1,4 +1,4 @@
-import { getBlockExplorerURL } from "@/helpers/utils";
+import { getBlockExplorerURL } from "@/helpers/ProtocolDefaults";
 import type React from "react";
 import { useChainId } from "wagmi";
 
