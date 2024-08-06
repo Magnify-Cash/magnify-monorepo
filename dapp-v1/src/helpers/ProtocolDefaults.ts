@@ -65,7 +65,6 @@ export function getTokenListUrls(
   }
 }
 
-
 export const getBlockExplorerURL = (chainId: number) => {
   // Add the base url for the block explorer for different networks
   let baseUrl = "";
@@ -81,7 +80,8 @@ export const getBlockExplorerURL = (chainId: number) => {
       baseUrl = "https://sepolia.basescan.org";
       break;
     case 1:
-      baseUrl = "https://etherscan.io"
+      baseUrl = "https://etherscan.io";
+      break;
     default:
       baseUrl = "https://etherscan.io";
       break;

@@ -1,5 +1,5 @@
-import { formatAddress } from "./formatAddress";
 import { getTokenListUrls } from "./ProtocolDefaults";
+import { formatAddress } from "./formatAddress";
 
 interface IJsonData {
   nfts: INft[];

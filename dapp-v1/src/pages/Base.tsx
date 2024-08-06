@@ -1,6 +1,6 @@
+import { TermsOfService } from "@/components/TermsOfService";
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
-import { TermsOfService } from "@/components/TermsOfService";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
 import { ConnectKitButton, ConnectKitProvider } from "connectkit";
 import { type ReactElement, cloneElement, createContext, useState } from "react";
@@ -89,7 +89,8 @@ export const Base = () => {
   };
 
   // theme
-  const activeClass = "nav-link px-2 py-1 lh-lg rounded d-flex align-items-center active text-bg-primary fw-bold antialiased";
+  const activeClass =
+    "nav-link px-2 py-1 lh-lg rounded d-flex align-items-center active text-bg-primary fw-bold antialiased";
   const inactiveClass = "nav-link px-2 py-1 lh-lg rounded d-flex align-items-center";
 
   // graphQL

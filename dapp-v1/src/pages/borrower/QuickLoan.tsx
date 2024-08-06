@@ -204,7 +204,10 @@ const renderLendingDesks = ({
         </div>
       ) : (
         <div className="card-body pt-0">
-          <div className="specific-w-300 mw-100 mx-auto text-body-secondary my-5" style={{ fontSize: 16 }}>
+          <div
+            className="specific-w-300 mw-100 mx-auto text-body-secondary my-5"
+            style={{ fontSize: 16 }}
+          >
             <div>Please choose the NFT and currency to see offers:</div>
             <div className="mt-2">
               {nft ? (
