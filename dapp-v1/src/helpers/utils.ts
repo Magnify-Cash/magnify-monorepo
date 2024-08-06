@@ -172,24 +172,3 @@ export const fromWei = (value: bigint, decimals: number | undefined): string => 
 
   return "0";
 };
-
-export const getBlockExplorerURL = (chainId: number) => {
-  // Add the base url for the block explorer for different networks
-  let baseUrl = "";
-
-  switch (chainId) {
-    case 11155111:
-      baseUrl = "https://sepolia.etherscan.io";
-      break;
-    case 8453:
-      baseUrl = "https://basescan.org";
-      break;
-    case 84532:
-      baseUrl = "https://sepolia.basescan.org";
-      break;
-    default:
-      baseUrl = "https://etherscan.io";
-      break;
-  }
-  return baseUrl;
-};

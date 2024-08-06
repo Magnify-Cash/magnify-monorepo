@@ -738,7 +738,10 @@ export const CreateLendingDesk = (props: any) => {
                   })}
                 </div>
               ) : (
-                <div className="text-body-secondary text-center" style={{ fontSize: 16 }}>
+                <div
+                  className="text-body-secondary text-center"
+                  style={{ fontSize: 16 }}
+                >
                   <i className="fa-light fa-info-circle text-primary-emphasis"></i>
                   <span className="ms-2">Select currency to get started</span>
                 </div>

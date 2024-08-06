@@ -1,11 +1,11 @@
 import { getDefaultConfig } from "connectkit";
 import { http, createConfig } from "wagmi";
-import { base, baseSepolia, hardhat } from "wagmi/chains";
+import { base, baseSepolia, hardhat, mainnet } from "wagmi/chains";
 
 // Chains
 const chainlist: any = [
+  mainnet,
   baseSepolia, // Note: First chain in list is default
-  base,
 ];
 if (import.meta.env.DEV) {
   chainlist.push(hardhat);

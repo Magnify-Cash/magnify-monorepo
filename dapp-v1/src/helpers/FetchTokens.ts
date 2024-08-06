@@ -1,5 +1,5 @@
+import { getTokenListUrls } from "./ProtocolDefaults";
 import { formatAddress } from "./formatAddress";
-import { getTokenListUrls } from "./tokenUrls";
 
 interface IJsonData {
   tokens: IToken[];
