@@ -105,7 +105,6 @@ contract MagnifyCashV1 is
     error LoanHasNotDefaulted();
     error LoanHasDefaulted();
     error PlatformWalletIsZeroAddr();
-    error LoanOriginationFeeMoreThan10Percent();
     error LoanMustBeActiveForMin1Hour();
     error LoanPaymentExceedsDebt();
     error InterestRateTooHigh();
@@ -853,10 +852,6 @@ contract MagnifyCashV1 is
     function setLoanOriginationFee(
         uint256 _loanOriginationFee
     ) public onlyOwner {
-        // Check inputs (fee cannot be greater than 10%)
-        if (_loanOriginationFee > 1000)
-            revert LoanOriginationFeeMoreThan10Percent();
-
         // Set loan origination fees & emit event
         loanOriginationFee = _loanOriginationFee;
         emit LoanOriginationFeeSet(_loanOriginationFee);

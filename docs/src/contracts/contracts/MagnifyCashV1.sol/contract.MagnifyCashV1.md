@@ -647,12 +647,6 @@ error LoanHasDefaulted();
 error PlatformWalletIsZeroAddr();
 ```
 
-### LoanOriginationFeeMoreThan10Percent
-
-```solidity
-error LoanOriginationFeeMoreThan10Percent();
-```
-
 ### LoanMustBeActiveForMin1Hour
 
 ```solidity
@@ -670,4 +664,3 @@ error LoanPaymentExceedsDebt();
 ```solidity
 error InterestRateTooHigh();
 ```
-
