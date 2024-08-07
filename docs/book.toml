@@ -4,7 +4,7 @@ title = 'Magnify Cash'
 [output.html]
 no-section-label = true
 additional-js = ['solidity.min.js']
-additional-css = ['book.css']
+additional-css = ['book.css', 'theme/css/general.css', 'theme/css/variables.css']
 git-repository-url = 'https://github.com/Magnify-Cash/magnify-monorepo'
 
 [output.html.fold]
