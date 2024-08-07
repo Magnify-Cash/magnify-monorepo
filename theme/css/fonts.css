@@ -4,13 +4,13 @@
 /* open-sans-300 - latin_vietnamese_latin-ext_greek-ext_greek_cyrillic-ext_cyrillic */
 @font-face {
     font-family: "Urbane";
-    src: url("Urbane-Medium.ttf");
+    src: url("../../fonts/Urbane-Medium.ttf");
     font-weight: normal;
 }
 
 @font-face {
     font-family: "Urbane";
-    src: url("Urbane-Bold.ttf");
+    src: url("../../fonts/Urbane-Bold.ttf");
     font-weight: bold;
 }
 
