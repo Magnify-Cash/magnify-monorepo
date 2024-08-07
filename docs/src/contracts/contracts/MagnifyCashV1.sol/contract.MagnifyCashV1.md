@@ -1,5 +1,5 @@
 # MagnifyCashV1
-[Git Source](https://github.com/Magnify-Cash/magnify-monorepo/blob/efd970ae36caf12f463329311207d019e41348d8/contracts/contracts/MagnifyCashV1.sol)
+[Git Source](https://github.com/Magnify-Cash/magnify-monorepo/blob/83f7c34f9b7f31d25f317e1b417033ab222d09b0/contracts/contracts/MagnifyCashV1.sol)
 
 **Inherits:**
 [IMagnifyCashV1](/contracts/contracts/interfaces/IMagnifyCashV1.sol/contract.IMagnifyCashV1.md), Ownable, Pausable, ERC721Holder, ERC1155Holder

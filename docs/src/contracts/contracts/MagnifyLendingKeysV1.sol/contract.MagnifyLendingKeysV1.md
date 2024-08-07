@@ -1,5 +1,5 @@
 # MagnifyLendingKeysV1
-[Git Source](https://github.com/Magnify-Cash/magnify-monorepo/blob/efd970ae36caf12f463329311207d019e41348d8/contracts/contracts/MagnifyLendingKeysV1.sol)
+[Git Source](https://github.com/Magnify-Cash/magnify-monorepo/blob/83f7c34f9b7f31d25f317e1b417033ab222d09b0/contracts/contracts/MagnifyLendingKeysV1.sol)
 
 **Inherits:**
 [MagnifyERC721V1](/contracts/contracts/MagnifyERC721V1.sol/contract.MagnifyERC721V1.md)
