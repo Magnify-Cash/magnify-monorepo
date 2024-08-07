@@ -103,7 +103,11 @@ export default function GetLoanModal({
             onClick={() => onSubmit()}
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
           >
-            {newLoanIsLoading ? <Spinner show={newLoanIsLoading} /> : "Request Loan"}
+            {newLoanIsLoading || newLoanConfigIsLoading ? (
+              <Spinner show={true} />
+            ) : (
+              "Request Loan"
+            )}
           </button>
         </div>
       }

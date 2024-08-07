@@ -812,8 +812,8 @@ const LoanDetails = ({
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.payback(loan?.id)}
                       >
-                        {actionIsLoading ? (
-                          <Spinner show={actionIsLoading} />
+                        {actionIsLoading || actionConfigLoadingMap[action] ? (
+                          <Spinner show={true} />
                         ) : (
                           " Pay Now"
                         )}
@@ -950,8 +950,8 @@ const LoanDetails = ({
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.resolve(loan?.id)}
                       >
-                        {actionIsLoading ? (
-                          <Spinner show={actionIsLoading} />
+                        {actionIsLoading || actionConfigLoadingMap[action] ? (
+                          <Spinner show={true} />
                         ) : (
                           "Resolve Now"
                         )}
@@ -1039,8 +1039,8 @@ const LoanDetails = ({
                         className="btn btn-primary btn-lg rounded-pill d-block w-100 mt-3 py-3 lh-1"
                         onClick={() => actionMap.liquidate(loan?.id)}
                       >
-                        {actionIsLoading ? (
-                          <Spinner show={actionIsLoading} />
+                        {actionIsLoading || actionConfigLoadingMap[action] ? (
+                          <Spinner show={true} />
                         ) : (
                           "Liquidate Overdue Loan"
                         )}

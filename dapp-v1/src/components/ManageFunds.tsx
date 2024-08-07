@@ -404,7 +404,11 @@ export const ManageFunds = ({ lendingDesk, action }: ManageFundsProps) => {
             className="btn btn-primary btn-lg rounded-pill d-block w-100 py-3 lh-1"
             onClick={actionMap[action] || (() => console.log("error"))}
           >
-            {actionIsLoading ? <Spinner show={actionIsLoading} /> : actionText}
+            {actionIsLoading || actionConfigLoadingMap[action] ? (
+              <Spinner show={true} />
+            ) : (
+              actionText
+            )}
           </button>
         </div>
       }
