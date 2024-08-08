@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - deployment/developer-docs
 permissions:
   contents: write
 
