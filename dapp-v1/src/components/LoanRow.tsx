@@ -1,3 +1,4 @@
+import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { calculateTimeInfo } from "@/helpers/utils";
 import { NavLink } from "react-router-dom";
 import type { Loan } from "../../.graphclient";
@@ -35,6 +36,39 @@ export const LoanRow = ({
       return loan.status === status;
     }
   });
+
+  /*
+  Hook to watch for contract events
+  */
+
+  if (status === "PendingDefault") {
+    useCustomWatchContractEvent({
+      eventName: "DefaultedLoanLiquidated",
+      onLogs: (logs) => {
+        console.log("DefaultedLoanLiquidated event", logs);
+        // Close modal
+        const modal = document.getElementsByClassName("modal show")[0];
+        window.bootstrap.Modal.getInstance(modal)?.hide();
+        // Re-execute query
+        reexecuteQuery && reexecuteQuery();
+      },
+    });
+  }
+  if (status === "Active") {
+    useCustomWatchContractEvent({
+      eventName: "LoanPaymentMade",
+      onLogs: (logs) => {
+        console.log("LoanPaymentMade event", logs);
+        if (logs[0].args) {
+          // Close modal
+          const modal = document.getElementsByClassName("modal show")[0];
+          window.bootstrap.Modal.getInstance(modal)?.hide();
+          // Re-execute query
+          reexecuteQuery && reexecuteQuery();
+        }
+      },
+    });
+  }
 
   if (loans.length === 0) {
     return (
