@@ -57,6 +57,22 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY]
     }
   },
-};
+  etherscan: {
+    /*
+     * If the project targets multiple EVM-compatible networks that have different explorers, then it is necessary
+     * to set multiple API keys.
+     *
+     * Note. This is not necessarily the same name that is used to define the network.
+     * To see the full list of supported networks, run `$ npx hardhat verify --list-networks`. The identifiers
+     * shown there are the ones that should be used as keys in the `apiKey` object.
+     *
+     * See the link for details:
+     * https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-etherscan#multiple-api-keys-and-alternative-block-explorers.
+     */
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY
+    }
+  }
+  };
 
 export default config;
