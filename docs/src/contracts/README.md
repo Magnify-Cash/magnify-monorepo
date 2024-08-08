@@ -1,4 +1,0 @@
-
-
-# Contents
-- [contracts](/contracts/contracts)
