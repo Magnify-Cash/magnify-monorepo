@@ -12,4 +12,3 @@
 # Developer Guide
   - [❱ integration](integration/README.md)
     - [Basic Integration](integration/basic-integration.md)
-    - [Advanced Integration](integration/advanced-integration.md)
