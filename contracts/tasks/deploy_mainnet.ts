@@ -13,12 +13,14 @@ task(
   var platformWallet = process.env.PLATFORM_WALLET;
   var obligationURI = process.env.OBLIGATION_URI;
   var keysURI = process.env.KEYS_URI;
+  var contractOwner = process.env.CONTRACT_OWNER;
   var lof = parseInt(process.env.LOF) || 0;
-  if (platformWallet === "" || obligationURI === "" || keysURI === "" || lof === 0) {
+  if (platformWallet === "" || obligationURI === "" || keysURI === "" || lof === 0 || contractOwner == "") {
     console.log("Platform Wallet:", platformWallet)
     console.log("Obligation Notes URI:", obligationURI)
     console.log("Lending Keys URI:", keysURI)
-    console.log("Lending Keys URI:", lof)
+    console.log("Loan Origination Fee (BPS):", lof)
+    console.log("Contract Owner:", contractOwner)
     console.log("Cannot continue. Missing one of the above")
     return
   }
@@ -30,11 +32,13 @@ task(
     name: "Magnify Cash Obligation Notes",
     symbol: "BORROW",
     baseuri: obligationURI,
+    owner: contractOwner
   });
   const lendingKeys: Contract = await hre.run("deploy-magnify-erc721", {
     name: "Magnify Cash Lending Keys",
     symbol: "KEYS",
     baseuri: keysURI,
+    owner: contractOwner
   });
 
   // Deploy MagnifyCash
@@ -46,7 +50,7 @@ task(
     lendingKeys.target,
     lof,
     platformWallet,
-    owner.address
+    contractOwner
   );
   await magnifyCash.waitForDeployment();
 
