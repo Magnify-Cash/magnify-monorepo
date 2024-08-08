@@ -180,33 +180,23 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="magnifycash---v1"><a class="header" href="#magnifycash---v1">MagnifyCash - V1</a></h1>
-<p>MagnifyCash V1 is a smart contract protocol that facilitates lending and borrowing of ERC20 tokens using NFTs as collateral. The protocol introduces a novel AMM-style architecture called "LAMM" (Lending Automated Market Maker) for lending markets.</p>
+                        <h1 id="magnifycash"><a class="header" href="#magnifycash">MagnifyCash</a></h1>
+<p>MagnifyCash is an onchain protocol that facilitates lending and borrowing of ERC20 tokens using NFTs as collateral. The protocol introduces a novel AMM-style architecture called "LAMM" (Lending Automated Market Maker) for lending markets.</p>
 <p>The protocol provides a simple but powerful DeFi primitive where any NFT can be lent against any fungible token. All lending parameters are fully customizable - duration, interest, and loan value - offering liquidity providers a full range of capital utilization.</p>
-<p>Going a step further all objects in the protocol are tokenized (liquidity, credit, and debit positions). The goal here is a composable base layer where developers can steadily build on top of for years to come.</p>
-<p>To sustain the protocol and its community long-term, a 2% loan origination fee is levied on all loans issued, which is split equally between the protocol insurance fund, NFT royalty payouts, and protocol revenue.</p>
-<INSERT GRAPHIC HERE>
-<h2 id="contracts"><a class="header" href="#contracts">Contracts</a></h2>
-<p>The MagnifyCashV1 protocol consists of a single core contract and several peripheral contracts. Here is the contract structure:</p>
+<p>In contrast to many lending markets, the MagnifyCash protocol supports lending for any type of fungible or non-fungible asset. This approach targets the long-tail of asset distribution, where there are tens and thousands of assets without any suitable markets.</p>
+<p>Additionally, the MagnifyCash protocol is entirely dependency-free. All transactions are between a lender and borrower exclusively, free of any external third parties. By doing so, users are able to manage risk on their own accord, without worrying about mass liqudiation events, flash crashes, and the like.</p>
+<p>Going a step further, lender and borrower positions in the protocol are tokenized. The goal here is a composable base layer where developers can steadily build on top of for years to come.</p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
 <ul>
-<li><code>MagnifyCashV1.sol</code>: Core protocol module.</li>
-<li><code>MagnifyCashERC721.sol</code>: Abstract ERC721 with built-in roles.</li>
-<li><code>MagnifyLendingKeysV1.sol</code>: Lending Desk NFT, tokenizing lending desk ownership.</li>
-<li><code>MagnifyObligationNotesV1.sol</code>: Obligation note NFT, tokenizing a borrower's obligation to repay the loan.</li>
+<li><a href="contracts/contracts/interfaces">Interfaces</a></li>
+<li><a href="contracts/contracts">Contracts</a></li>
+<li><a href="integration/">Integration Guides</a></li>
 </ul>
-<h2 id="contract-structure"><a class="header" href="#contract-structure">Contract Structure</a></h2>
-<p>The contract is organized into the following sections:</p>
-<ol>
-<li>Storage: Defines the storage variables used by the contract.</li>
-<li>Events: Defines the events emitted by the contract.</li>
-<li>Constructor: Initializes the contract with provided addresses and sets the loan origination fee.</li>
-<li>Core Functions: Implements the core functionality of the contract, including creating lending desks, configuring loan parameters, depositing/withdrawing liquidity, borrowing loans, repaying loans, and liquidating defaulted loans.</li>
-<li>Admin Functions: Implements the admin functionality of the contract, such as setting loan origination fees, withdrawing platform fees, and pausing/unpausing the protocol.</li>
-</ol>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="interfaces"><a class="header" href="#interfaces">Interfaces</a></h1>
+<p>The MagnifyCash protocol utilizes two main interface files.</p>
 <ul>
-<li><a href="contracts/contracts/interfaces/IMagnifyCashV1.sol/contract.IMagnifyCashV1.html">IMagnifyCashV1</a></li>
-<li><a href="contracts/contracts/interfaces/IMagnifyERC721V1.sol/contract.IMagnifyERC721V1.html">IMagnifyERC721V1</a></li>
+<li><a href="contracts/contracts/interfaces/IMagnifyCashV1.sol/contract.IMagnifyCashV1.html">IMagnifyCashV1</a>: Interface for core protocol module.</li>
+<li><a href="contracts/contracts/interfaces/IMagnifyERC721V1.sol/contract.IMagnifyERC721V1.html">IMagnifyERC721V1</a>: Interface for ERC721 tokenization, used in both the lending keys and the obligation notes</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="imagnifycashv1"><a class="header" href="#imagnifycashv1">IMagnifyCashV1</a></h1>
 <p><a href="https://github.com/Magnify-Cash/magnify-monorepo/blob/83f7c34f9b7f31d25f317e1b417033ab222d09b0/contracts/contracts/interfaces/IMagnifyCashV1.sol">Git Source</a></p>
@@ -431,12 +421,13 @@ IERC721</p>
 <h3 id="burn"><a class="header" href="#burn">burn</a></h3>
 <pre><code class="language-solidity">function burn(uint256 tokenId) external;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contents-1"><a class="header" href="#contents-1">Contents</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="contracts"><a class="header" href="#contracts">Contracts</a></h2>
+<p>The MagnifyCash protocol consists of a single core contract and several peripheral contracts. Below is the contract structure:</p>
 <ul>
-<li><a href="contracts/contracts/MagnifyCashV1.sol/contract.MagnifyCashV1.html">MagnifyCashV1</a></li>
-<li><a href="contracts/contracts/MagnifyERC721V1.sol/contract.MagnifyERC721V1.html">MagnifyERC721V1</a></li>
-<li><a href="contracts/contracts/MagnifyLendingKeysV1.sol/contract.MagnifyLendingKeysV1.html">MagnifyLendingKeysV1</a></li>
-<li><a href="contracts/contracts/MagnifyObligationNotesV1.sol/contract.MagnifyObligationNotesV1.html">MagnifyObligationNotesV1</a></li>
+<li><a href="contracts/contracts/contracts/contracts/MagnifyCashV1.sol/contract.MagnifyCashV1.html"><code>MagnifyCashV1.sol</code></a>: Core protocol module.</li>
+<li><a href="contracts/contracts/contracts/contracts/MagnifyERC721V1.sol/contract.MagnifyERC721V1.html"><code>MagnifyERC721.sol</code></a>: Abstract ERC721 with built-in roles.</li>
+<li><a href="contracts/contracts/contracts/contracts/MagnifyLendingKeysV1.sol/contract.MagnifyLendingKeysV1.html"><code>MagnifyLendingKeysV1.sol</code></a>: Lending desk NFT, tokenizing lending desk ownership.</li>
+<li><a href="contracts/contracts/contracts/contracts/MagnifyObligationNotesV1.sol/contract.MagnifyObligationNotesV1.html"><code>MagnifyObligationNotesV1.sol</code></a>: Obligation note NFT, tokenizing a borrower's obligation to repay the loan.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="magnifycashv1"><a class="header" href="#magnifycashv1">MagnifyCashV1</a></h1>
 <p><a href="https://github.com/Magnify-Cash/magnify-monorepo/blob/83f7c34f9b7f31d25f317e1b417033ab222d09b0/contracts/contracts/MagnifyCashV1.sol">Git Source</a></p>
@@ -816,7 +807,7 @@ ERC721, Ownable</p>
 <h3 id="baseuri"><a class="header" href="#baseuri">baseURI</a></h3>
 <pre><code class="language-solidity">string public baseURI;
 </code></pre>
-<h3 id="magnifycash"><a class="header" href="#magnifycash">magnifyCash</a></h3>
+<h3 id="magnifycash-1"><a class="header" href="#magnifycash-1">magnifyCash</a></h3>
 <pre><code class="language-solidity">address public magnifyCash;
 </code></pre>
 <h3 id="_name"><a class="header" href="#_name">_name</a></h3>
@@ -905,7 +896,7 @@ ERC721, Ownable</p>
 <pre><code class="language-solidity">constructor(string memory _name, string memory _symbol, string memory _baseURI, address _initialOwner)
     MagnifyERC721V1(_name, _symbol, _baseURI, _initialOwner);
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contents-2"><a class="header" href="#contents-2">Contents</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
 <ul>
 <li><a href="integration/basic-integration.html">Basic Integration</a></li>
 <li><a href="integration/advanced-integration.html">Advanced Integration</a></li>
