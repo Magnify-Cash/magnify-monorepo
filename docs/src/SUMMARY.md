@@ -11,4 +11,4 @@
     - [MagnifyObligationNotesV1](contracts/contracts/MagnifyObligationNotesV1.sol/contract.MagnifyObligationNotesV1.md)
 # Developer Guide
   - [❱ integration](integration/README.md)
-    - [Basic Integration](integration/basic-integration.md)
+    - [Basic Integration (Ethers)](integration/basic-integration.md)
