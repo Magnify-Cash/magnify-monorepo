@@ -362,8 +362,6 @@ const renderLendingDesks = ({
       }
     }
     if (newLoanIsConfirmed) {
-      refetchApprovalData();
-
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
@@ -373,6 +371,7 @@ const renderLendingDesks = ({
           "success",
         );
       }
+      refetchApprovalData();
     }
   }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
