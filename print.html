@@ -92,7 +92,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">Reference Guide</li><li class="chapter-item "><a href="contracts/contracts/interfaces/index.html">❱ interfaces</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="contracts/contracts/interfaces/IMagnifyCashV1.sol/contract.IMagnifyCashV1.html">IMagnifyCashV1</a></li><li class="chapter-item "><a href="contracts/contracts/interfaces/IMagnifyERC721V1.sol/contract.IMagnifyERC721V1.html">IMagnifyERC721V1</a></li></ol></li><li class="chapter-item "><a href="contracts/contracts/index.html">❱ contracts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="contracts/contracts/MagnifyCashV1.sol/contract.MagnifyCashV1.html">MagnifyCashV1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyERC721V1.sol/contract.MagnifyERC721V1.html">MagnifyERC721V1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyLendingKeysV1.sol/contract.MagnifyLendingKeysV1.html">MagnifyLendingKeysV1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyObligationNotesV1.sol/contract.MagnifyObligationNotesV1.html">MagnifyObligationNotesV1</a></li></ol></li><li class="chapter-item "><li class="part-title">Developer Guide</li><li class="chapter-item "><a href="integration/index.html">❱ integration</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="integration/basic-integration.html">Basic Integration</a></li><li class="chapter-item "><a href="integration/advanced-integration.html">Advanced Integration</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">Reference Guide</li><li class="chapter-item "><a href="contracts/contracts/interfaces/index.html">❱ interfaces</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="contracts/contracts/interfaces/IMagnifyCashV1.sol/contract.IMagnifyCashV1.html">IMagnifyCashV1</a></li><li class="chapter-item "><a href="contracts/contracts/interfaces/IMagnifyERC721V1.sol/contract.IMagnifyERC721V1.html">IMagnifyERC721V1</a></li></ol></li><li class="chapter-item "><a href="contracts/contracts/index.html">❱ contracts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="contracts/contracts/MagnifyCashV1.sol/contract.MagnifyCashV1.html">MagnifyCashV1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyERC721V1.sol/contract.MagnifyERC721V1.html">MagnifyERC721V1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyLendingKeysV1.sol/contract.MagnifyLendingKeysV1.html">MagnifyLendingKeysV1</a></li><li class="chapter-item "><a href="contracts/contracts/MagnifyObligationNotesV1.sol/contract.MagnifyObligationNotesV1.html">MagnifyObligationNotesV1</a></li></ol></li><li class="chapter-item "><li class="part-title">Developer Guide</li><li class="chapter-item "><a href="integration/index.html">❱ integration</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="integration/basic-integration.html">Basic Integration</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -898,210 +898,141 @@ ERC721, Ownable</p>
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
 <ul>
-<li><a href="integration/basic-integration.html">Basic Integration</a></li>
-<li><a href="integration/advanced-integration.html">Advanced Integration</a></li>
+<li><a href="integration/basic-integration.html">Basic Integration (Ethers)</a></li>
+<li>Basic Integration (WAGMI): Coming soon</li>
+<li>Basic Integration (Web3Py): Coming soon</li>
+<li>Advanced Integration (Ethers): Coming soon</li>
+<li>Advanced Integration (WAGMI): Coming soon</li>
+<li>Advanced Integration (Web3Py): Coming soon</li>
+<li>GraphQL Integration: Coming soon</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="magnifycashv1-integration-guide"><a class="header" href="#magnifycashv1-integration-guide">MagnifyCashV1 Integration Guide</a></h1>
-<p>Welcome to the MagnifyCashV1 Integration Guide! This document is designed to help developers seamlessly integrate their applications with the Magnify Cash protocol. MagnifyCashV1 is a smart contract protocol that facilitates lending and borrowing of ERC20 tokens using NFTs as collateral. The protocol is built with a focus on being fully on-chain, non-custodial, and independent of external oracles and intermediaries.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>The MagnifyCashV1 contract is a decentralized lending platform that allows users to lend and borrow against their NFT assets. This integration guide will walk you through the process of interacting with the MagnifyCashV1 contract using the Ethers.js library. You'll learn how to initialize new lending desks, set loan configurations, deposit and withdraw liquidity, and initiate new loans.</p>
 <h2 id="integration-steps"><a class="header" href="#integration-steps">Integration Steps</a></h2>
-<p>Integrating your application with MagnifyCashV1 is developer-friendly, offering flexibility in choosing the Ethereum RPC stack that suits your preferences. Below are the steps for lenders and borrowers:</p>
-<h3 id="for-lenders"><a class="header" href="#for-lenders">For Lenders</a></h3>
-<p><strong>Step 1: Create Lending Desk</strong></p>
-<p>Use the <code>initializeNewLendingDesk</code> function to establish a new lending desk within the Magnify Cash protocol. This enables you to define your lending parameters and get ready to offer loans.</p>
-<p>JavaScript/TypeScript (using ethers.js) - Example:</p>
-<pre><code class="language-javascript">const initializeNewLendingDesk = async () =&gt; {
-  // Connect to Ethereum network using ethers.js
-  const provider = new ethers.providers.JsonRpcProvider('YOUR_RPC_URL');
-  const signer = provider.getSigner();
-
-  // Instantiate MagnifyCashV1 contract
-  const contract = new ethers.Contract('MagnifyCashV1_CONTRACT_ADDRESS', MagnifyCashV1_ABI, signer);
-
-  // Prepare the inputs (erc20ToLoan, initialFundingAmount, loanConfigs)
-  const erc20ToLoan = "0x..."
-  const initialFundingAmount = 100
-  const loanConfigs = [{
-    nftCollection: erc721.address,
-    minAmount: ethers.utils.parseUnits("10", 18),
-    maxAmount: ethers.utils.parseUnits("100", 18),
-    minDuration: BigNumber.from(24),
-    maxDuration: BigNumber.from(240),
-    minInterest: BigNumber.from(200),
-    maxInterest: BigNumber.from(1500),
-  }];
-
-  // Call the initializeNewLendingDesk function
-  const tx = await contract.initializeNewLendingDesk(erc20ToLoan, initialFundingAmount, loanConfigs);
-  await tx.wait();
-
-  console.log('Lending desk created successfully!');
-};
-</code></pre>
-<p>Python (using web3.py) - Example:</p>
-<pre><code class="language-python">from web3 import Web3
-
-w3 = Web3(Web3.HTTPProvider('YOUR_RPC_URL'))
-
-# Get contract
-contract = w3.eth.contract(address='MagnifyCashV1_CONTRACT_ADDRESS', abi=MagnifyCashV1_ABI)
-
-# Prepare the inputs (erc20ToLoan, initialFundingAmount, loanConfigs)
-erc20ToLoan = "0x..."
-initialFundingAmount = 100
-loanConfigs = [{
-  nftCollection: erc721.address,
-  minAmount: 1,
-  maxAmount: 100,
-  minDuration: 30,
-  maxDuration: 120,
-  minInterest: 100,
-  maxInterest: 1000,
-}];
-
-# Call the initializeNewLendingDesk function
-tx_hash = contract.functions.initializeNewLendingDesk(
-  erc20ToLoan,
-  initialFundingAmount,
-  loanConfigs
-).transact()
-tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-
-print('Lending desk created successfully!')
-</code></pre>
-<h3 id="for-borrowers"><a class="header" href="#for-borrowers">For Borrowers</a></h3>
-<p><strong>Step 1: Initialize Loan</strong></p>
-<p>Borrowers can create loans against ERC20 tokens by providing NFT collateral through the <code>initializeNewLoan</code> function. This process is straightforward and requires minimal effort from borrowers.</p>
-<p>JavaScript/TypeScript (using ethers.js) - Example:</p>
-<pre><code class="language-javascript">const initializeNewLoan = async () =&gt; {
-  // Connect to Ethereum network using ethers.js
-  const provider = new ethers.providers.JsonRpcProvider('YOUR_RPC_URL');
-  const signer = provider.getSigner();
-
-  // Instantiate MagnifyCashV1 contract
-  const contract = new ethers.Contract('MagnifyCashV1_CONTRACT_ADDRESS', MagnifyCashV1_ABI, signer);
-
-  // call with parameters
-  const _lendingDeskId = BigNumber.from(1);
-  const _nftCollection = "0x..";
-  const _nftId = BigNumber.from(1001)
-  const _duration = BigNumber.from(30);
-  const _amount = ethers.utils.parseUnits("50", 18);
-
-  const tx = await contract.initializeNewLoan(
-   _lendingDeskId,
-   _nftCollection,
-   _nftId,
-   _duration,
-   _amount,
-  );
-  await tx.wait();
-
-  console.log('Loan initialized successfully!');
-};
-</code></pre>
-<p>Python (using web3.py) - Example:</p>
-<pre><code class="language-python">from web3 import Web3
-
-w3 = Web3(Web3.HTTPProvider('YOUR_RPC_URL'))
-
-# Get contract
-contract = w3.eth.contract(address='MagnifyCashV1_CONTRACT_ADDRESS', abi=MagnifyCashV1_ABI)
-
-# call with params
-_lendingDeskId = 1
-_nftCollection = "0x.."
-_nftId = 101
-_duration = 30
-_amount = 50
-
-tx_hash = contract.functions.initializeNewLoan(
-  _lendingDeskId,
-  _nftCollection,
-  _nftId,
-  _duration,
-  _amount,
-).transact()
-tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-
-print('Lending desk created successfully!')
-</code></pre>
-<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<p>This guide covers the following key functionalities:</p>
 <ul>
-<li></li>
-<li></li>
-<li></li>
+<li>Initializing a new lending desk</li>
+<li>Setting new loan configs for a lending desk</li>
+<li>Depositing liquidity into a lending desk</li>
+<li>Withdrawing liquidity from a lending desk</li>
+<li>Initializing a new loan</li>
 </ul>
-<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
-<p>Hop into the discord!</p>
-<h2 id="read-more"><a class="header" href="#read-more">Read More</a></h2>
-<p>For more in-depth information on the Magnify Cash protocol, contract interactions, and advanced features, please refer to the documentation in the <code>/contracts</code> directory.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="advanced-integration-with-magnify-cash"><a class="header" href="#advanced-integration-with-magnify-cash">Advanced Integration with Magnify Cash</a></h1>
-<p>In this section, we will extend the basic integration to fetch and display data from the Magnify Cash protocol using the Magnify Cash subgraph. Similar to the previous example, we will use React for the web interface and Apollo Client to send queries to the subgraph. Let's get started!</p>
-<h2 id="setting-up-the-environment"><a class="header" href="#setting-up-the-environment">Setting Up the Environment</a></h2>
-<p>First, ensure you have set up your React application as shown in the previous section. If you haven't done that yet, follow the steps mentioned there to create a new React app and set up Apollo Client.</p>
-<h2 id="graphql-client-for-magnify-cash"><a class="header" href="#graphql-client-for-magnify-cash">GraphQL Client for Magnify Cash</a></h2>
-<p>Just like before, we need to set up a middleware to make requests to the Magnify Cash subgraph. Replace the existing imports in your <code>App.js</code> file with the following code:</p>
-<pre><code class="language-jsx">import React from 'react';
-import './App.css';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
+<p>You'll need to replace the following placeholders with your actual values:</p>
+<ul>
+<li><code>your-ethereum-node-url</code>: The URL of your Ethereum node (e.g., Infura, Alchemy, or your own node)</li>
+<li><code>your-private-key</code>: The private key of the Ethereum account you'll be using to interact with the contract</li>
+<li><code>contract-address</code>: The address of the deployed MagnifyCashV1 contract</li>
+<li><code>0x...</code>: The addresses of the ERC20 token, NFT collection, and other contract-specific addresses</li>
+</ul>
+<h2 id="code"><a class="header" href="#code">Code</a></h2>
+<pre><code class="language-javascript">// Import the necessary Ethers.js modules
+const { ethers } = require('ethers');
 
-export const client = new ApolloClient({
-  link: new HttpLink({
-	uri: 'https://api.thegraph.com/subgraphs/name/nftyfinance/nftyfinance-v1',
-  }),
-  cache: new InMemoryCache(),
-});
+// Set up the provider and signer
+const provider = new ethers.providers.JsonRpcProvider('https://your-ethereum-node-url');
+const signer = new ethers.Wallet('your-private-key', provider);
 
-function App() {
-  return &lt;div&gt;&lt;/div&gt;;
+// Load the contract ABI
+const contractABI = [
+  // Contract ABI goes here
+];
+
+// Create the contract instance
+const contract = new ethers.Contract('contract-address', contractABI, signer);
+
+// Example usage: Initialize a new lending desk
+const erc20 = '0x...'; // Address of the ERC20 token to be used
+const depositAmount = ethers.utils.parseEther('1000'); // Initial balance of the lending desk
+const loanConfigs = [
+  {
+    nftCollection: '0x...', // Address of the NFT collection
+    minAmount: ethers.utils.parseEther('0.1'), // Minimum loan amount
+    maxAmount: ethers.utils.parseEther('1'), // Maximum loan amount
+    minInterest: 500, // Minimum interest rate (in basis points)
+    maxInterest: 2000, // Maximum interest rate (in basis points)
+    minDuration: 24, // Minimum loan duration (in hours)
+    maxDuration: 720 // Maximum loan duration (in hours)
+  }
+];
+
+async function initializeNewLendingDesk() {
+  try {
+    const tx = await contract.initializeNewLendingDesk(erc20, depositAmount, loanConfigs);
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('New lending desk initialized');
+  } catch (error) {
+    console.error('Error initializing new lending desk:', error);
+  }
 }
 
-export default App;
-</code></pre>
-<p>Here, we have updated the <code>uri</code> to point to the Magnify Cash subgraph instead of the Magnify Cash subgraph.</p>
-<h2 id="writing-the-queries-for-magnify-cash"><a class="header" href="#writing-the-queries-for-magnify-cash">Writing the Queries for Magnify Cash</a></h2>
-<p>Next, let's define the queries to fetch data from the Magnify Cash protocol. We will retrieve information about Magnify Cash contracts, lending desks, and active loans. Add the following code below the imports in <code>App.js</code>:</p>
-<pre><code class="language-jsx">import gql from 'graphql-tag';
+// Example usage: Set new loan configs for a lending desk
+const lendingDeskId = 1;
+const newLoanConfigs = [
+  // New loan config details
+];
 
-const LENDING_DESKS_QUERY = gql`
-  query lendingDesks {
-	lendingDesks {
-	  id
-	  name
-	  totalLiquidity
-	  availableLiquidity
-	  minimumCollateralizationRatio
-	  liquidationPenalty
-	  borrowInterestRate
-	}
+async function setLendingDeskLoanConfigs() {
+  try {
+    const tx = await contract.setLendingDeskLoanConfigs(lendingDeskId, newLoanConfigs);
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('Lending desk loan configs updated');
+  } catch (error) {
+    console.error('Error updating lending desk loan configs:', error);
   }
-`;
+}
 
-const ACTIVE_LOANS_QUERY = gql`
-  query activeLoans {
-	activeLoans {
-	  id
-	  borrower
-	  lendingDesk {
-		id
-	  }
-	  collateral
-	  collateralizationRatio
-	  debt
-	  borrowInterestRate
-	  loanStartTime
-	  loanDuration
-	  status
-	}
+// Example usage: Deposit liquidity into a lending desk
+const lendingDeskId = 1;
+const depositAmount = ethers.utils.parseEther('100');
+
+async function depositLendingDeskLiquidity() {
+  try {
+    const tx = await contract.depositLendingDeskLiquidity(lendingDeskId, depositAmount);
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('Liquidity deposited into lending desk');
+  } catch (error) {
+    console.error('Error depositing liquidity into lending desk:', error);
   }
-`;
-</code></pre>
-<p>These queries will fetch data about all lending desks and active loans in the Magnify Cash protocol.</p>
-<h2 id="fetching-and-displaying-data"><a class="header" href="#fetching-and-displaying-data">Fetching and Displaying Data</a></h2>
-<p>We will use the <code>useQuery</code> hook to fetch and display data about the lending desks and active loans. Replace the content of the <code>App</code> function with the following code:</p>
-<pre><code class="language-jsx">todo...
+}
+
+// Example usage: Withdraw liquidity from a lending desk
+const lendingDeskId = 1;
+const withdrawalAmount = ethers.utils.parseEther('50');
+
+async function withdrawLendingDeskLiquidity() {
+  try {
+    const tx = await contract.withdrawLendingDeskLiquidity(lendingDeskId, withdrawalAmount);
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('Liquidity withdrawn from lending desk');
+  } catch (error) {
+    console.error('Error withdrawing liquidity from lending desk:', error);
+  }
+}
+
+// Example usage: Initialize a new loan
+const lendingDeskId = 1;
+const nftCollection = '0x...'; // Address of the NFT collection
+const nftId = 123; // ID of the NFT to be used as collateral
+const loanAmount = ethers.utils.parseEther('0.5');
+const loanDuration = 72; // Duration in hours
+const maxInterestAllowed = 1500; // Maximum interest rate (in basis points)
+
+async function initializeNewLoan() {
+  try {
+    const tx = await contract.initializeNewLoan(
+      lendingDeskId,
+      nftCollection,
+      nftId,
+      loanDuration,
+      loanAmount,
+      maxInterestAllowed
+    );
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('New loan initialized');
+  } catch (error) {
+    console.error('Error initializing new loan:', error);
+  }
+}
 </code></pre>
 
                     </main>
