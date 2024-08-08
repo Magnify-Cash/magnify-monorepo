@@ -132,6 +132,7 @@ export const getWalletNfts = async ({
 
   // handle live networks
   const chainIdToAlchemyNetwork = {
+    1: Network.ETH_MAINNET,
     5: Network.ETH_GOERLI,
     80001: Network.MATIC_MUMBAI,
     11155111: Network.ETH_SEPOLIA,
