@@ -80,8 +80,6 @@ const getErrorText = (error: string) => {
       return "Loan is not active";
     case error.includes("LoanMustBeActiveForMin1Hour"):
       return "Loan must be active for at least 1 hour";
-    case error.includes("LoanOriginationFeeMoreThan10Percent"):
-      return "Loan origination fee exceeds 10%";
     case error.includes("LoanPaymentExceedsDebt"):
       return "Loan payment exceeds debt";
     case error.includes("MaxAmountIsLessThanMin"):

@@ -1,0 +1,5 @@
+[doc]
+ignore = [
+   "**/test/**/*"
+]
+title = "Magnify Cash"

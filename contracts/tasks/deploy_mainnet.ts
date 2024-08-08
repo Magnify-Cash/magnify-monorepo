@@ -13,10 +13,12 @@ task(
   var platformWallet = process.env.PLATFORM_WALLET;
   var obligationURI = process.env.OBLIGATION_URI;
   var keysURI = process.env.KEYS_URI;
-  if (platformWallet === "" || obligationURI === "" || keysURI === "") {
+  var lof = parseInt(process.env.LOF) || 0;
+  if (platformWallet === "" || obligationURI === "" || keysURI === "" || lof === 0) {
     console.log("Platform Wallet:", platformWallet)
     console.log("Obligation Notes URI:", obligationURI)
     console.log("Lending Keys URI:", keysURI)
+    console.log("Lending Keys URI:", lof)
     console.log("Cannot continue. Missing one of the above")
     return
   }
@@ -42,7 +44,7 @@ task(
   const magnifyCash = await MagnifyCashV1.deploy(
     obligationNotes.target,
     lendingKeys.target,
-    200,
+    lof,
     platformWallet,
     owner.address
   );

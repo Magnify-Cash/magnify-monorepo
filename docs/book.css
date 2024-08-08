@@ -1,0 +1,25 @@
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table td:first-child {
+    width: 15%;
+}
+
+table td:nth-child(2) {
+    width: 25%;
+}
+
+@font-face {
+    font-family: "Urbane";
+    src: url("../fonts/Urbane-Medium.ttf");
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Urbane";
+    src: url("../fonts/Urbane-Medium.ttf");
+    font-weight: bold;
+}

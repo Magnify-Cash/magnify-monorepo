@@ -3,16 +3,6 @@ import { deployMagnifyCash } from "../utils/fixtures";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Magnify Cash: Set loan origination fee", function () {
-  it("should fail when fee > 10%", async () => {
-    const { magnifyCash } = await loadFixture(deployMagnifyCash);
-
-    const tx = magnifyCash.setLoanOriginationFee(10000);
-    expect(tx).to.be.revertedWithCustomError(
-      magnifyCash,
-      "LoanOriginationFeeMoreThan10Percent"
-    );
-  });
-
   it("should set loan origination fee", async () => {
     const { magnifyCash } = await loadFixture(deployMagnifyCash);
     const loanOriginationFee = 100;
