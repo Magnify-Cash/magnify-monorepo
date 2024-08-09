@@ -50,7 +50,7 @@ export const LoanRow = ({
         const modal = document.getElementsByClassName("modal show")[0];
         window.bootstrap.Modal.getInstance(modal)?.hide();
         // Re-execute query
-        reexecuteQuery && reexecuteQuery();
+        reexecuteQuery?.();
       },
     });
   }
@@ -64,7 +64,7 @@ export const LoanRow = ({
           const modal = document.getElementsByClassName("modal show")[0];
           window.bootstrap.Modal.getInstance(modal)?.hide();
           // Re-execute query
-          reexecuteQuery && reexecuteQuery();
+          reexecuteQuery?.();
         }
       },
     });
