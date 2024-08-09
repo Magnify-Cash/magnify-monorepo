@@ -27,9 +27,9 @@ export const PopupTransaction: React.FC<PopupTransactionProps> = (props) => {
 
   if (isConnected === false) {
     snippet = (
-      <button className={props.btnClass} disabled={true}>
-        Connect Wallet
-      </button>
+      <div className="text-body-secondary  mb-3 p-3 border border-danger rounded-pill w-100 d-block mt-3 bg-transparent text-center">
+        Please Connect Wallet to Continue
+      </div>
     );
   } else if (props.loading) {
     snippet = (
