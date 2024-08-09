@@ -28,7 +28,7 @@ export const getProtocolGraphUrl = (chainId: any) => {
     case 84532:
       return MAGNIFY_CASH_BASE_SEPOLIA_GRAPH;
     default:
-      return MAGNIFY_CASH_HARDHAT_GRAPH;
+      return "";
   }
 };
 

@@ -2,12 +2,12 @@ import { TermsOfService } from "@/components/TermsOfService";
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
-import { ConnectKitButton, useModal } from "connectkit";
+import { ConnectKitButton, ChainIcon, useModal } from "connectkit";
 import { type ReactElement, cloneElement, createContext, useState } from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
-import { useChainId } from "wagmi";
+import { useChainId, useAccount } from "wagmi";
 declare let bootstrap: any;
 
 type ToastContextType = {
@@ -95,17 +95,28 @@ export const Base = () => {
 
   // graphQL
   const chainId = useChainId();
-  const graphUrl = getProtocolGraphUrl(chainId);
+  const account = useAccount();
   const { openSwitchNetworks } = useModal();
+  console.log(chainId, account.chainId)
   let client = null;
-  if (graphUrl !== ""){
-    const client = new Client({
+  if (account.chainId !== undefined){
+    let graphUrl = getProtocolGraphUrl(account.chainId);
+    if (graphUrl !== ""){
+      client = new Client({
+        url: graphUrl,
+        exchanges: [cacheExchange, fetchExchange],
+      });
+    } else {
+      openSwitchNetworks();
+    }
+  } else {
+    let graphUrl = getProtocolGraphUrl(chainId);
+    client = new Client({
       url: graphUrl,
       exchanges: [cacheExchange, fetchExchange],
     });
-  } else {
-    openSwitchNetworks();
   }
+
 
   return (
     <ToastContext.Provider value={{ addToast, closeToast }}>
@@ -357,6 +368,7 @@ export const Base = () => {
                   </NavLink>
                   <ConnectKitButton.Custom>
                     {({
+                      chain,
                       isConnected,
                       isConnecting,
                       truncatedAddress,
@@ -367,7 +379,10 @@ export const Base = () => {
                     }) => {
                       return (
                         <>
-                          <div>
+                          <div className="d-flex">
+                            <button disabled={!chain?.id} className="btn btn-sm btn-primary me-2" onClick={() => openSwitchNetworks()}>
+                              <ChainIcon id={chain?.id || chainId}  />
+                            </button>
                             <button
                               onClick={show}
                               className="btn btn-md btn-primary d-sm-none"
@@ -379,7 +394,7 @@ export const Base = () => {
                               onClick={show}
                               className="btn btn-md btn-primary d-none d-sm-inline"
                             >
-                              {isConnected && <small>{truncatedAddress}</small>}
+                              {isConnected && <small>{ensName || truncatedAddress}</small>}
                               {!isConnected && <small>Connect</small>}
                               <i className="fa-solid fa-wallet ms-2" />
                             </button>
