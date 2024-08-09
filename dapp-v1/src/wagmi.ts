@@ -42,6 +42,16 @@ export const config = createConfig(
           },
         },
       ),
+      [mainnet.id]: http(
+        `https://eth-mainnet.g.alchemy.com/v2/${
+          import.meta.env.VITE_ALCHEMY_API_KEY
+        }/`,
+        {
+          batch: {
+            batchSize: 50,
+          },
+        },
+      ),
     },
 
     // App Info

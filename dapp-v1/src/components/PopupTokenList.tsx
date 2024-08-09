@@ -82,9 +82,7 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
       // get list data
       const responses = await Promise.all(
         urls.map(async (url) => {
-          const response = await fetch(url, {
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
-          });
+          const response = await fetch(url);
           return response.json();
         }),
       );
