@@ -513,12 +513,11 @@ const LoanDetails = ({
       }
       // Refetch data based on the action type
       if (action === "payback") {
+        setActionIsLoading(false);
         loanAmountDueRefetch(); // Refetch loan amount due after successful payment
         // Close modal
         const modal = document.getElementsByClassName("modal show")[0];
         window.bootstrap.Modal.getInstance(modal)?.hide();
-      } else {
-        setActionIsLoading(false);
       }
       // Reset the form
       resetForm();
