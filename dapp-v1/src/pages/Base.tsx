@@ -2,7 +2,7 @@ import { TermsOfService } from "@/components/TermsOfService";
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
-import { ConnectKitButton, ConnectKitProvider } from "connectkit";
+import { ConnectKitButton, useModal } from "connectkit";
 import { type ReactElement, cloneElement, createContext, useState } from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -95,14 +95,20 @@ export const Base = () => {
 
   // graphQL
   const chainId = useChainId();
-  const client = new Client({
-    url: getProtocolGraphUrl(chainId),
-    exchanges: [cacheExchange, fetchExchange],
-  });
+  const graphUrl = getProtocolGraphUrl(chainId);
+  const { openSwitchNetworks } = useModal();
+  let client = null;
+  if (graphUrl !== ""){
+    const client = new Client({
+      url: graphUrl,
+      exchanges: [cacheExchange, fetchExchange],
+    });
+  } else {
+    openSwitchNetworks();
+  }
 
   return (
     <ToastContext.Provider value={{ addToast, closeToast }}>
-      <ConnectKitProvider>
         <Provider value={client}>
           {/* Sidebar start */}
           <nav
@@ -395,7 +401,11 @@ export const Base = () => {
 
             {/* Content start */}
             <main className="mt-4 mt-xl-5">
-              <Outlet />
+            {
+              client
+                ? <Outlet />
+                : null
+            }
             </main>
             {/* Content end */}
           </div>
@@ -413,7 +423,6 @@ export const Base = () => {
           <TermsOfService />
           {/* End terms of service */}
         </Provider>
-      </ConnectKitProvider>
     </ToastContext.Provider>
   );
 };

@@ -5,6 +5,7 @@ import * as ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { WagmiProvider } from "wagmi";
 import { config } from "./wagmi";
+import { ConnectKitButton, ConnectKitProvider } from "connectkit";
 
 const queryClient = new QueryClient();
 
@@ -12,6 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
+      <ConnectKitProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Pages.Base />}>
@@ -64,6 +66,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </Route>
           </Routes>
         </BrowserRouter>
+        </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>,
