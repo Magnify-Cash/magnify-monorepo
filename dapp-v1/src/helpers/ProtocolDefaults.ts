@@ -1,6 +1,6 @@
 import { magnifyCashV1Address } from "../wagmi-generated";
 
-export const MAGNIFY_CASH_MAINNET_GRAPH: string = "";
+export const MAGNIFY_CASH_MAINNET_GRAPH: string = "test";
 export const MAGNIFY_CASH_GOERLI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44181/nftyfinance/0.0.9";
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
@@ -28,13 +28,13 @@ export const getProtocolGraphUrl = (chainId: any) => {
     case 84532:
       return MAGNIFY_CASH_BASE_SEPOLIA_GRAPH;
     default:
-      return MAGNIFY_CASH_HARDHAT_GRAPH;
+      return "";
   }
 };
 
 const nftListUrlsMap = {
   1: [
-    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json?token=GHSAT0AAAAAACFG2BS3CVGA2FTJWHAHSUBQZURQOOA",
+    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json",
   ],
   8453: [],
   84532: import.meta.env.DEV
