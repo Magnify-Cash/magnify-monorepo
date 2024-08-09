@@ -3,9 +3,9 @@ import { http, createConfig } from "wagmi";
 import { base, baseSepolia, hardhat, mainnet } from "wagmi/chains";
 
 // Chains
+// Note: First chain in list is default
 const chainlist: any = [
-  mainnet,
-  baseSepolia, // Note: First chain in list is default
+  baseSepolia,
 ];
 if (import.meta.env.DEV) {
   chainlist.push(hardhat);
