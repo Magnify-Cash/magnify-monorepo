@@ -514,17 +514,16 @@ const LoanDetails = ({
       // Refetch data based on the action type
       if (action === "payback") {
         loanAmountDueRefetch(); // Refetch loan amount due after successful payment
+        // Close modal
+        const modal = document.getElementsByClassName("modal show")[0];
+        window.bootstrap.Modal.getInstance(modal)?.hide();
       } else {
         setActionIsLoading(false);
-        reexecuteQuery ? reexecuteQuery() : null;
       }
       // Reset the form
       resetForm();
       // Refetch the approval data
       refetchApprovalData();
-      // Close modal
-      const modal = document.getElementsByClassName("modal show")[0];
-      window.bootstrap.Modal.getInstance(modal)?.hide();
     }
   }, [
     actionErrorMap[action],

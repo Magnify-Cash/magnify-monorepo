@@ -504,7 +504,6 @@ export const QuickLoan = (props: any) => {
       }
     }
     if (newLoanIsConfirmed) {
-      refetchApprovalData();
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
@@ -514,6 +513,7 @@ export const QuickLoan = (props: any) => {
           "success",
         );
       }
+      refetchApprovalData();
     }
   }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
 
