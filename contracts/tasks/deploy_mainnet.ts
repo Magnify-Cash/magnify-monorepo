@@ -14,7 +14,7 @@ task(
   var obligationURI = process.env.OBLIGATION_URI;
   var keysURI = process.env.KEYS_URI;
   var contractOwner = process.env.CONTRACT_OWNER;
-  var lof = parseInt(process.env.LOF) || 0;
+  var lof = parseInt(process.env.LOF || "0");
   if (platformWallet === "" || obligationURI === "" || keysURI === "" || lof === 0 || contractOwner == "") {
     console.log("Platform Wallet:", platformWallet)
     console.log("Obligation Notes URI:", obligationURI)
@@ -32,13 +32,11 @@ task(
     name: "Magnify Cash Obligation Notes",
     symbol: "BORROW",
     baseuri: obligationURI,
-    owner: contractOwner
   });
   const lendingKeys: Contract = await hre.run("deploy-magnify-erc721", {
     name: "Magnify Cash Lending Keys",
     symbol: "KEYS",
     baseuri: keysURI,
-    owner: contractOwner
   });
 
   // Deploy MagnifyCash
@@ -49,8 +47,8 @@ task(
     obligationNotes.target,
     lendingKeys.target,
     lof,
-    platformWallet,
-    contractOwner
+    platformWallet!,
+    owner.address
   );
   await magnifyCash.waitForDeployment();
 
@@ -86,10 +84,20 @@ task(
     JSON.stringify(deployments, undefined, 2),
     "utf8"
   );
+
+  console.log("Step 5: Transfer ownership")
+  await magnifyCash.transferOwnership(contractOwner!)
+  await lendingKeys.transferOwnership(contractOwner)
+  await obligationNotes.transferOwnership(contractOwner)
+
   console.log(`${"-".repeat(100)}`)
   console.log("FINISH MagnifyCash")
   console.log("MagnifyCash Protocol deployed @", magnifyCash.target);
   console.log("MagnifyCash Lending Keys deployed @", lendingKeys.target);
   console.log("MagnifyCash Obligation Notes deployed @", obligationNotes.target);
+  console.log(`${"-".repeat(100)}`)
   console.log("Platform wallet @", platformWallet);
+  console.log("MagnifyCash Owner", await magnifyCash.owner());
+  console.log("MagnifyCash Lending Keys Owner", await lendingKeys.owner());
+  console.log("MagnifyCash Obligation Notes Owner", await obligationNotes.owner());
 });

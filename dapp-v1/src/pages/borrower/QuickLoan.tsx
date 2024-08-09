@@ -420,7 +420,7 @@ export const QuickLoan = (props: any) => {
       setChecked(false);
       return;
     }
-    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId].toLowerCase()) {
+    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId]?.toLowerCase()) {
       setChecked(true);
     } else {
       setChecked(false);

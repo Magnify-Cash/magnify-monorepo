@@ -50,7 +50,7 @@ export const LoanRow = ({
         const modal = document.getElementsByClassName("modal show")[0];
         window.bootstrap.Modal.getInstance(modal)?.hide();
         // Re-execute query
-        reexecuteQuery && reexecuteQuery();
+        reexecuteQuery?.();
       },
     });
   }
@@ -59,12 +59,12 @@ export const LoanRow = ({
       eventName: "LoanPaymentMade",
       onLogs: (logs) => {
         console.log("LoanPaymentMade event", logs);
-        if (logs[0].args) {
+        if (logs[0].args.resolved) {
           // Close modal
           const modal = document.getElementsByClassName("modal show")[0];
           window.bootstrap.Modal.getInstance(modal)?.hide();
           // Re-execute query
-          reexecuteQuery && reexecuteQuery();
+          reexecuteQuery?.();
         }
       },
     });
