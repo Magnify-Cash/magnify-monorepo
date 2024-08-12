@@ -1,4 +1,3 @@
-import { TermsOfService } from "@/components/TermsOfService";
 import type { ToastProps } from "@/components/ToastComponent";
 import { CreateToast } from "@/helpers/CreateToast";
 import { getProtocolGraphUrl } from "@/helpers/ProtocolDefaults";
@@ -305,9 +304,7 @@ export const Base = () => {
           >
             <div className="d-flex align-items-center">
               <i className="fa-light fa-bell-ring me-3"></i>
-              <div>
-                Alert: What's New — Mainnet is here!
-              </div>
+              <div>Alert: What's New — Mainnet is here!</div>
             </div>
           </div>
           <div className="py-2 py-lg-3">
@@ -401,7 +398,7 @@ export const Base = () => {
         {/* Toasts end */}
 
         {/* Terms of service */}
-        { /* <TermsOfService /> */}
+        {/* <TermsOfService /> */}
         {/* End terms of service */}
       </Provider>
     </ToastContext.Provider>
