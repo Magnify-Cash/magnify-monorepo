@@ -21,6 +21,8 @@ query ManageLendingDesks(
 ) {
   lendingDesks(
     where: { ownerId: $walletAddress, status: $status }
+    orderBy: "id"
+    orderDirection: "desc"
     after: $after
     limit: 10
   ) {
@@ -105,11 +107,14 @@ query ManageLendingDesk($deskId: String!) {
 query BrowseCollections($after: String) {
   nftCollections(
     where: { activeLoanConfigsCount_gt: "0" }
+    orderBy: "activeLoanConfigsCount"
+    orderDirection: "desc"
     after: $after
     limit: 100
   ) {
     items {
       id
+      activeLoanConfigsCount
       loanConfigs {
         items {
           lendingDesk {
@@ -236,6 +241,8 @@ query BorrowerDashboard(
 ) {
   loans(
     where: { borrowerId: $walletAddress, status: $status }
+    orderBy: "startTime"
+    orderDirection: "desc"
     after: $after
     limit: 15
   ) {
@@ -276,6 +283,8 @@ query LenderDashboard(
 ) {
   loans(
     where: { lenderId: $walletAddress, status: $status }
+    orderBy: "startTime"
+    orderDirection: "desc"
     after: $after
     limit: 15
   ) {
