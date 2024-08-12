@@ -25,6 +25,7 @@ import { useQuery } from "urql";
 import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import {
   GetErc20sForNftCollectionDocument,
+  GetNftsWithLendingDeksDocument,
   QuickLoanDocument,
   type QuickLoanQuery,
 } from "../../../.graphclient";
@@ -262,6 +263,17 @@ export const QuickLoan = (props: any) => {
   const [nftCollection, setNftCollection] = useState<INFTListItem | null>();
 
   /*
+  GraphQL query for getting NFTs with lending desks
+  */
+  const [nftsResult] = useQuery({
+    query: GetNftsWithLendingDeksDocument,
+  });
+  //This is used to get the nft ids of the nfts with lending desks
+  const availableNfts = (nftsResult.data?.nftCollections?.items ?? []).map(
+    (nftCollection) => nftCollection.id,
+  );
+
+  /*
   GraphQL query for getting ERC20s for selected NFT
   */
   const [erc20sResult] = useQuery({
@@ -273,6 +285,7 @@ export const QuickLoan = (props: any) => {
   const erc20s = (erc20sResult.data?.nftCollection?.erc20s?.items ?? []).map(
     (erc20) => erc20.erc20.id,
   );
+
 
   /*
   Alchemy hooks
@@ -637,7 +650,7 @@ export const QuickLoan = (props: any) => {
                   "Choose NFT Collection..."
                 )}
               </div>
-              <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} />
+              <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} restrictTo={availableNfts} />
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="choose-currency">
