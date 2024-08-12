@@ -409,7 +409,7 @@ export const Base = () => {
         {/* Toasts end */}
 
         {/* Terms of service */}
-        <TermsOfService />
+        { /* <TermsOfService /> */}
         {/* End terms of service */}
       </Provider>
     </ToastContext.Provider>
