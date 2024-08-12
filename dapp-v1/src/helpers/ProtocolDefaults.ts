@@ -1,6 +1,7 @@
 import { magnifyCashV1Address } from "../wagmi-generated";
 
-export const MAGNIFY_CASH_MAINNET_GRAPH: string = "";
+export const MAGNIFY_CASH_MAINNET_GRAPH: string =
+  "https://api.ghostlogs.xyz/gg/pub/6899103b-b9b4-4293-934b-8c884cae119b/ghostgraph";
 export const MAGNIFY_CASH_GOERLI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44181/nftyfinance/0.0.9";
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
