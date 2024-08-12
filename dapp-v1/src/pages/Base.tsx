@@ -306,15 +306,7 @@ export const Base = () => {
             <div className="d-flex align-items-center">
               <i className="fa-light fa-bell-ring me-3"></i>
               <div>
-                Alert: What's New — Enhanced UI and responsiveness, fixed stats for
-                borrowers and lenders.{" "}
-                <a
-                  target="_blank"
-                  href="https://blog.magnify.cash/june-6th-release-notes/"
-                  rel="noreferrer"
-                >
-                  Read more here<i className="fa-light fa-arrow-right ms-1"></i>
-                </a>
+                Alert: What's New — Mainnet is here!
               </div>
             </div>
           </div>
