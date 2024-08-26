@@ -13,7 +13,7 @@
     "lint:apply": "yarn biome check --apply ./src"
   },
   "dependencies": {
-    "@graphprotocol/client-cli": "3.0.5",
+    "@graphprotocol/client-cli": "3.0.7",
     "@graphprotocol/client-urql": "2.0.5",
     "@magnify-cash/nft-lists": "0.0.1",
     "@tanstack/react-query": "5.37.1",
