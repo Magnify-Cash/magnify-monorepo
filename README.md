@@ -78,7 +78,7 @@ If you just want to deploy the subgraph and dapp and not the contracts, you can 
 ### frontend
 - add deployed contract address in `dapp-v1/wagmi.config.ts`
 - add new chain in `dapp-v1/src/wagmi.ts`
-- update protocol defaults in `dapp-v1/src/helpers/constants.ts` + `dapp-v1/src/helpers/protocolDefaults`
+- update protocol defaults in `dapp-v1/src/helpers/protocolDefaults`
 - update alchemy networks in `dapp-v1/src/helpers/utils.ts`
 
 ### subgraph

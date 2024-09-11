@@ -8,6 +8,8 @@ export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44194/nftyfinance-mumbai/0.0.7";
 export const MAGNIFY_CASH_BASE_SEPOLIA_GRAPH: string =
   "https://api.ghostlogs.xyz/gg/pub/197bcbbb-5ad1-4bb9-a74d-bb5aeafcbd58/ghostgraph";
+export const MAGNIFY_CASH_BASE_MAINNET_GRAPH: string =
+  "https://api.ghostlogs.xyz/gg/pub/7b5c8b27-bf54-4164-b864-ab667a657975/ghostgraph";
 export const MAGNIFY_CASH_SEPOLIA_GRAPH: string =
   "https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-sepolia";
 export const MAGNIFY_CASH_HARDHAT_GRAPH: string =
@@ -28,6 +30,8 @@ export const getProtocolGraphUrl = (chainId: any) => {
       return MAGNIFY_CASH_SEPOLIA_GRAPH;
     case 84532:
       return MAGNIFY_CASH_BASE_SEPOLIA_GRAPH;
+    case 8453:
+      return MAGNIFY_CASH_BASE_MAINNET_GRAPH;
     default:
       return "";
   }
