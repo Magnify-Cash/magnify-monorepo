@@ -137,6 +137,7 @@ export const getWalletNfts = async ({
     80001: Network.MATIC_MUMBAI,
     11155111: Network.ETH_SEPOLIA,
     84532: Network.BASE_SEPOLIA,
+    8453: Network.BASE_MAINNET,
   };
   const alchemy = new Alchemy({
     apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
