@@ -222,6 +222,21 @@ query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after: String) {
   }
 }
 
+query GetNftsWithLendingDeks {
+  nftCollections(
+    where: { activeLoanConfigsCount_gt: "0" }
+    limit: 500
+  ) {
+    items {
+      id
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
 query GetErc20sForNftCollection($nftCollectionId: String!) {
   nftCollection(id: $nftCollectionId) {
     erc20s {
@@ -233,6 +248,7 @@ query GetErc20sForNftCollection($nftCollectionId: String!) {
     }
   }
 }
+
 
 query BorrowerDashboard(
   $walletAddress: String!
