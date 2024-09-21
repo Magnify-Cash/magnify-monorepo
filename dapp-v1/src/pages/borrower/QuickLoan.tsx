@@ -286,7 +286,6 @@ export const QuickLoan = (props: any) => {
     (erc20) => erc20.erc20.id,
   );
 
-
   /*
   Alchemy hooks
   */
@@ -650,7 +649,12 @@ export const QuickLoan = (props: any) => {
                   "Choose NFT Collection..."
                 )}
               </div>
-              <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} restrictTo={availableNfts} />
+              <PopupTokenList
+                nft
+                modalId="nftModal"
+                onClick={setNftCollection}
+                restrictTo={availableNfts}
+              />
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="choose-currency">
