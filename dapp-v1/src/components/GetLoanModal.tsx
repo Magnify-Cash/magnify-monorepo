@@ -133,7 +133,11 @@ export default function GetLoanModal({
                           width="30"
                         />
                       )}
-                      <div className="h5 fw-medium m-0">{nft?.name}</div>
+                      <div className="h5 fw-medium m-0" title={nft?.name}>
+                        {nft?.name && !nft.name.startsWith("0x") && nft.name.length > 10
+                          ? `${nft.name.substring(0, 10)}...`
+                          : nft?.name}
+                      </div>
                     </div>
                     <div className="text-body-secondary">Collection Type</div>
                   </div>
