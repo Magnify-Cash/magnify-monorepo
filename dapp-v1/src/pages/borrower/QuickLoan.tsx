@@ -151,12 +151,14 @@ const renderLendingDesks = ({
                   htmlFor={item.lendingDesk.id}
                 >
                   <div className="d-flex align-items-center justify-content-center mx-auto">
-                    <img
-                      src={nft?.logoURI}
-                      width="30"
-                      alt={nft?.address}
-                      className="flex-shrink-0"
-                    />
+                    {nft?.logoURI && (
+                      <img
+                        src={nft?.logoURI}
+                        width="30"
+                        alt={nft?.address}
+                        className="flex-shrink-0"
+                      />
+                    )}
                     <span className="ms-3">
                       {formatAddress(item.loanConfig?.nftCollection?.id)}
                     </span>
