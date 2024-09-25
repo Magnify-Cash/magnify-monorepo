@@ -13,21 +13,22 @@
     "lint:apply": "yarn biome check --apply ./src"
   },
   "dependencies": {
-    "@graphprotocol/client-cli": "3.0.5",
-    "@graphprotocol/client-urql": "2.0.5",
+    "@graphprotocol/client-cli": "3.0.7",
+    "@graphprotocol/client-urql": "2.0.7",
     "@magnify-cash/nft-lists": "0.0.1",
-    "@tanstack/react-query": "5.37.1",
+    "@tanstack/react-query": "5.56.2",
     "@uniswap/token-lists": "1.0.0-beta.34",
-    "alchemy-sdk": "3.3.1",
+    "alchemy-sdk": "3.4.1",
     "connectkit": "1.8.2",
-    "graphql": "16.8.1",
+    "graphql": "16.9.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-hook-form": "7.52.2",
-    "react-router-dom": "6.26.0",
+    "react-hook-form": "7.53.0",
+    "react-router-dom": "6.26.2",
     "react-window": "1.8.10",
     "urql": "4.1.0",
-    "viem": "2.x",
-    "wagmi": "2.12.5"
+    "viem": "2.21.14",
+    "vite": "^5.4.8",
+    "wagmi": "2.12.14"
   }
 }
