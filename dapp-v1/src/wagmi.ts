@@ -4,10 +4,16 @@ import { base, baseSepolia, hardhat, mainnet } from "wagmi/chains";
 
 // Chains
 // Note: First chain in list is default
-const chainlist: any = [mainnet, base, baseSepolia];
-if (import.meta.env.DEV) {
-  chainlist.push(hardhat);
-}
+const chainlist: any = [];
+// If vite network env is not set, default to mainnet
+const networkEnv = import.meta.env.VITE_NETWORK_ENV || "mainnet";
+const isTestnet = networkEnv === "testnet";
+const isMainnet = networkEnv === "mainnet";
+const isDev = import.meta.env.DEV;
+
+if (isTestnet) chainlist.push(baseSepolia);
+if (isMainnet) chainlist.push(mainnet, base);
+if (isDev) chainlist.push(hardhat);
 
 // Wagmi + ConnectKit Configuration
 export const config = createConfig(
