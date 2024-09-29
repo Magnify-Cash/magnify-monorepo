@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "urql";
 
 /**
@@ -65,13 +65,28 @@ const PaginatedList = ({
     setCursor(null);
   }, [variables]);
 
-  // Effect to update allItems when new data is fetched
-  useEffect(() => {
-    if (data?.[dataKey]?.items) {
-      // Append new items to the existing list
-      setAllItems((prevItems) => [...prevItems, ...data[dataKey].items]);
+  // Function to update allItems with the new items from the query without duplicates
+  const updateItems = useCallback(() => {
+    if (data?.[dataKey] && Array.isArray(data[dataKey].items)) {
+      setAllItems((prevItems) => {
+        const newItems = data[dataKey].items;
+        const prevItemsMap = new Map(prevItems.map((item) => [item.id, item]));
+        const uniqueItems = [...prevItems];
+        newItems.forEach((item) => {
+          if (item?.id && !prevItemsMap.has(item.id)) {
+            uniqueItems.push(item);
+          }
+        });
+
+        return uniqueItems;
+      });
     }
   }, [data, dataKey]);
+
+  // Effect to update allItems when new data is fetched
+  useEffect(() => {
+    updateItems();
+  }, [updateItems]);
 
   // Function to load more items by updating the cursor
   const loadMore = () => {

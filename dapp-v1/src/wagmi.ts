@@ -7,10 +7,9 @@ import { base, baseSepolia, hardhat, mainnet } from "wagmi/chains";
 // We are setting chains based on .envs as well as hostname
 const chainlist: any = [];
 const domain = window.location.hostname;
-if (domain === "app.magnify.cash"){
-  chainlist.push(mainnet, base)
-}
-else {
+if (domain === "app.magnify.cash") {
+  chainlist.push(mainnet, base);
+} else {
   chainlist.push(baseSepolia);
 }
 if (import.meta.env.DEV) {
