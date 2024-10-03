@@ -25,6 +25,7 @@ export interface IConfigForm {
   minDuration: string;
   minInterest: string;
   minOffer: string;
+  isERC1155: boolean;
 }
 
 export const CreateLendingDesk = (props: any) => {
@@ -337,7 +338,7 @@ export const CreateLendingDesk = (props: any) => {
         toWei(deskFundingAmount, token?.token?.decimals),
         deskConfigs.map((config) => ({
           nftCollection: config.selectedNftCollection?.nft?.address as `0x${string}`,
-          nftCollectionIsErc1155: false,
+          nftCollectionIsErc1155: config.isERC1155,
           minAmount: BigInt(toWei(config.minOffer, token?.token?.decimals)),
           maxAmount: toWei(config.maxOffer, token?.token?.decimals),
           // To account for days
@@ -467,6 +468,22 @@ export const CreateLendingDesk = (props: any) => {
                           modalId="nftModal"
                           onClick={setNftCollection}
                         />
+                        <div className="form-check mx-1 mb-3 my-4">
+                          <input
+                            {...register("isERC1155")}
+                            type="checkbox"
+                            className={`form-check-input me-3`}
+                            id="is-erc1155"
+                            name="isERC1155"
+                            style={{ transform: "scale(1.5)" }}
+                          />
+                          <label
+                            htmlFor="is-erc1155"
+                            className={`form-check-label fs-5`}
+                          >
+                            Is ERC1155 Standard
+                          </label>
+                        </div>
                       </div>
                       <h6 className="fw-medium mt-4">Min/Max Offer</h6>
                       <div className="row g-4">
