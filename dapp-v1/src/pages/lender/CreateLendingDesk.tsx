@@ -725,6 +725,15 @@ export const CreateLendingDesk = (props: any) => {
                         </div>
                         <div className="mt-2 d-flex align-items-center">
                           <span className="flex-shrink-0 specific-w-25">
+                            <i className="fa-brands fa-ethereum text-success-emphasis" />
+                          </span>
+                          <div className="text-truncate">
+                            <strong>ERC Standard:</strong>
+                            {config.isERC1155 ? " ERC1155" : " ERC721"}
+                          </div>
+                        </div>
+                        <div className="mt-1 d-flex align-items-center">
+                          <span className="flex-shrink-0 specific-w-25">
                             <i className="fa-light fa-hand-holding-dollar text-success-emphasis" />
                           </span>
                           <div className="text-truncate">
@@ -732,6 +741,7 @@ export const CreateLendingDesk = (props: any) => {
                             {token.token.symbol}
                           </div>
                         </div>
+
                         <div className="mt-1 d-flex align-items-center">
                           <span className="flex-shrink-0 specific-w-25">
                             <i className="fa-light fa-calendar-clock text-info-emphasis" />
