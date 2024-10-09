@@ -391,8 +391,9 @@ export const ManageLendingDesk = (props: any) => {
   });
   async function updateDesk() {
     setUpdateDeskIsLoading(true);
-    await updateLendingDesk({
-      args: [
+    try {
+      await updateLendingDesk({
+        args: [
         BigInt(result.data?.lendingDesk?.id || 0),
         [
           {
@@ -414,8 +415,12 @@ export const ManageLendingDesk = (props: any) => {
             maxInterest: Number.parseFloat(deskConfig?.maxInterest) * 100,
           },
         ],
-      ],
-    });
+        ],
+      });
+    } catch (error: any) {
+      console.error(error);
+      addToast("Error", <ErrorDetails error={error.message} />, "error");
+    }
   }
   useEffect(() => {
     if (updateLendingDeskError) {
@@ -432,7 +437,8 @@ export const ManageLendingDesk = (props: any) => {
       setUpdateDeskIsLoading(false);
     }
     if (updateLendingDeskConfirmError) {
-      console.error(updateLendingDeskConfirmError);
+      console.log("update lending desk confirm error", updateLendingDeskConfirmError.message);
+      // console.error(updateLendingDeskConfirmError);
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);

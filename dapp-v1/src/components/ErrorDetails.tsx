@@ -57,7 +57,7 @@ const getErrorText = (error: string) => {
     case error.includes("InvalidLoanId"):
       return "Invalid loan ID";
     case error.includes("InvalidNFTCollection"):
-      return "Invalid NFT collection";
+      return "Invalid NFT collection standard, please confirm your NFT collection is ERC721 or ERC1155";
     case error.includes("LendingDeskIsNotEmpty"):
       return "Lending desk is not empty";
     case error.includes("LendingDeskIsNotActive"):
@@ -100,6 +100,7 @@ const getErrorText = (error: string) => {
       return "Platform wallet address is zero";
     case error.includes("UnsupportedNFTCollection"):
       return "Unsupported NFT collection";
+
 
     // Errors signatures not available in the contract ABI
     case error.includes("0xe450d38c"):
