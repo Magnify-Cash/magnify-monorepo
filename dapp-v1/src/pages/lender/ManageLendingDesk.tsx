@@ -126,10 +126,18 @@ export const ManageLendingDesk = (props: any) => {
     maxDuration: "0",
     minInterest: "0",
     maxInterest: "0",
+    isERC1155: false,
   });
   const getFormValues = (selectedLoan: any) => {
-    const { maxAmount, minAmount, maxDuration, minDuration, maxInterest, minInterest } =
-      selectedLoan;
+    const {
+      maxAmount,
+      minAmount,
+      maxDuration,
+      minDuration,
+      maxInterest,
+      minInterest,
+      nftCollectionIsErc1155,
+    } = selectedLoan;
     const decimals = result?.data?.lendingDesk?.erc20?.decimals;
     const formValues: IConfigForm = {
       minOffer: fromWei(minAmount, decimals),
@@ -138,6 +146,7 @@ export const ManageLendingDesk = (props: any) => {
       maxDuration: (maxDuration / 24).toString(),
       minInterest: (minInterest / 100).toString(),
       maxInterest: (maxInterest / 100).toString(),
+      isERC1155: nftCollectionIsErc1155,
     };
     return formValues;
   };
@@ -389,7 +398,7 @@ export const ManageLendingDesk = (props: any) => {
           {
             nftCollection: deskConfig?.selectedNftCollection?.nft
               ?.address as `0x${string}`,
-            nftCollectionIsErc1155: false,
+            nftCollectionIsErc1155: deskConfig?.isERC1155,
             minAmount: BigInt(
               toWei(deskConfig?.minOffer, result.data?.lendingDesk?.erc20?.decimals),
             ),
@@ -709,6 +718,17 @@ export const ManageLendingDesk = (props: any) => {
                       </div>
                     </div>
                     <div className="mt-2 d-flex align-items-center">
+                      <div className="mt-2 d-flex align-items-center">
+                        <span className="flex-shrink-0 specific-w-25">
+                          <i className="fa-brands fa-ethereum text-success-emphasis" />
+                        </span>
+                        <div className="text-truncate">
+                          <strong>ERC Standard:</strong>
+                          {config.nftCollectionIsErc1155 ? " ERC1155" : " ERC721"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2 d-flex align-items-center">
                       <span className="flex-shrink-0 specific-w-25">
                         <i className="fa-light fa-hand-holding-dollar text-success-emphasis" />
                       </span>
@@ -779,6 +799,19 @@ export const ManageLendingDesk = (props: any) => {
                   )}
                 </div>
                 <PopupTokenList nft modalId="nftModal" onClick={setNftCollection} />
+                <div className="form-check mx-1 mb-3 my-4">
+                  <input
+                    {...register("isERC1155")}
+                    type="checkbox"
+                    className={`form-check-input me-3`}
+                    id="is-erc1155"
+                    name="isERC1155"
+                    style={{ transform: "scale(1.5)" }}
+                  />
+                  <label htmlFor="is-erc1155" className={`form-check-label fs-5`}>
+                    Is ERC1155 Standard
+                  </label>
+                </div>
               </div>
               <h6 className="fw-medium text-primary-emphasis mt-4">Min/Max Offer</h6>
               <div className="row g-4">
