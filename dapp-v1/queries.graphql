@@ -94,6 +94,7 @@ query ManageLendingDesk($deskId: String!) {
         maxInterest
         minDuration
         maxDuration
+        nftCollectionIsErc1155
       }
     }
     loans {

@@ -20,6 +20,7 @@ type LoanConfig @entity {
   maxInterest: BigInt!
   minDuration: BigInt!
   maxDuration: BigInt!
+  nftCollectionIsErc1155: Boolean!
 }
 
 type LendingDesk @entity {

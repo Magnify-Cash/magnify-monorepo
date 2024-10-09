@@ -7,7 +7,7 @@ export const MAGNIFY_CASH_GOERLI_GRAPH: string =
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44194/nftyfinance-mumbai/0.0.7";
 export const MAGNIFY_CASH_BASE_SEPOLIA_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/197bcbbb-5ad1-4bb9-a74d-bb5aeafcbd58/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/d94bdadc-4cf4-44a1-9888-c8be5ab887fc/ghostgraph";
 export const MAGNIFY_CASH_BASE_MAINNET_GRAPH: string =
   "https://api.ghostlogs.xyz/gg/pub/7b5c8b27-bf54-4164-b864-ab667a657975/ghostgraph";
 export const MAGNIFY_CASH_SEPOLIA_GRAPH: string =
