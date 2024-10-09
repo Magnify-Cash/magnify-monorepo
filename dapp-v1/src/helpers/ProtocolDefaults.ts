@@ -1,7 +1,7 @@
 import { magnifyCashV1Address } from "../wagmi-generated";
 
 export const MAGNIFY_CASH_MAINNET_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/6899103b-b9b4-4293-934b-8c884cae119b/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/580feb28-c6e6-49f2-8918-f6cf8b0ef310/ghostgraph";
 export const MAGNIFY_CASH_GOERLI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44181/nftyfinance/0.0.9";
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
@@ -9,7 +9,7 @@ export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
 export const MAGNIFY_CASH_BASE_SEPOLIA_GRAPH: string =
   "https://api.ghostlogs.xyz/gg/pub/d94bdadc-4cf4-44a1-9888-c8be5ab887fc/ghostgraph";
 export const MAGNIFY_CASH_BASE_MAINNET_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/7b5c8b27-bf54-4164-b864-ab667a657975/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/3ae58551-116b-498b-8342-feaab1c7be29/ghostgraph";
 export const MAGNIFY_CASH_SEPOLIA_GRAPH: string =
   "https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-sepolia";
 export const MAGNIFY_CASH_HARDHAT_GRAPH: string =
