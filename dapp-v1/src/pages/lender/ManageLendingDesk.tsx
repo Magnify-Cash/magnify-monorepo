@@ -394,27 +394,27 @@ export const ManageLendingDesk = (props: any) => {
     try {
       await updateLendingDesk({
         args: [
-        BigInt(result.data?.lendingDesk?.id || 0),
-        [
-          {
-            nftCollection: deskConfig?.selectedNftCollection?.nft
-              ?.address as `0x${string}`,
-            nftCollectionIsErc1155: deskConfig?.isERC1155,
-            minAmount: BigInt(
-              toWei(deskConfig?.minOffer, result.data?.lendingDesk?.erc20?.decimals),
-            ),
-            maxAmount: toWei(
-              deskConfig?.maxOffer,
-              result.data?.lendingDesk?.erc20?.decimals,
-            ),
-            // To account for days
-            minDuration: Number.parseFloat(deskConfig?.minDuration) * 24, // Convert days to hours
-            maxDuration: Number.parseFloat(deskConfig?.maxDuration) * 24,
-            // To account for basis points
-            minInterest: Number.parseFloat(deskConfig?.minInterest) * 100,
-            maxInterest: Number.parseFloat(deskConfig?.maxInterest) * 100,
-          },
-        ],
+          BigInt(result.data?.lendingDesk?.id || 0),
+          [
+            {
+              nftCollection: deskConfig?.selectedNftCollection?.nft
+                ?.address as `0x${string}`,
+              nftCollectionIsErc1155: deskConfig?.isERC1155,
+              minAmount: BigInt(
+                toWei(deskConfig?.minOffer, result.data?.lendingDesk?.erc20?.decimals),
+              ),
+              maxAmount: toWei(
+                deskConfig?.maxOffer,
+                result.data?.lendingDesk?.erc20?.decimals,
+              ),
+              // To account for days
+              minDuration: Number.parseFloat(deskConfig?.minDuration) * 24, // Convert days to hours
+              maxDuration: Number.parseFloat(deskConfig?.maxDuration) * 24,
+              // To account for basis points
+              minInterest: Number.parseFloat(deskConfig?.minInterest) * 100,
+              maxInterest: Number.parseFloat(deskConfig?.maxInterest) * 100,
+            },
+          ],
         ],
       });
     } catch (error: any) {
@@ -437,8 +437,7 @@ export const ManageLendingDesk = (props: any) => {
       setUpdateDeskIsLoading(false);
     }
     if (updateLendingDeskConfirmError) {
-      console.log("update lending desk confirm error", updateLendingDeskConfirmError.message);
-      // console.error(updateLendingDeskConfirmError);
+      console.error(updateLendingDeskConfirmError);
       if (loadingToastId) {
         closeToast(loadingToastId);
         setLoadingToastId(null);
