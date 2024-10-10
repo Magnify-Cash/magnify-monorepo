@@ -159,7 +159,7 @@ query BrowseCollection($nftCollectionId: String, $after: String) {
         symbol
         decimals
       }
-      loanConfigs(where: { nftCollectionId: $nftCollectionId }) {
+      loanConfigs(where: { nftCollectionId: $nftCollectionId, active: true }) {
         items {
           nftCollection {
             id
@@ -197,7 +197,7 @@ query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after: String) {
         symbol
         decimals
       }
-      loanConfigs(where: { nftCollectionId: $nftCollectionId }) {
+      loanConfigs(where: { nftCollectionId: $nftCollectionId, active: true }) {
         items {
           minAmount
           maxAmount
