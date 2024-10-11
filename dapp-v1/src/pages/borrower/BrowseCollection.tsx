@@ -293,19 +293,23 @@ const renderLendingDesks = ({
       BigInt(nftId || "0"),
       Math.round((duration || 0) * 24),
       toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
-      selectedLoanConfig &&
-        selectedLendingDesk &&
-        Math.round(
-          calculateLoanInterest(
-            selectedLoanConfig,
-            amount,
-            duration,
-            selectedLendingDesk?.erc20?.decimals || 18,
-          ) * 100,
-        ),
+      Math.round(
+        calculateLoanInterest(
+          selectedLoanConfig,
+          amount,
+          duration,
+          selectedLendingDesk?.erc20?.decimals || 18,
+        ) * 100,
+      ),
     ],
     query: {
-      enabled: checked,
+      enabled:
+        checked &&
+        !!nftId &&
+        !!duration &&
+        !!amount &&
+        !!selectedLendingDesk &&
+        !!selectedLoanConfig,
     },
   });
   const {

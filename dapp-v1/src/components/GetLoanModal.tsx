@@ -190,7 +190,9 @@ export default function GetLoanModal({
                   className="form-select form-select-lg py-2"
                   id="select-nft"
                   defaultValue={""}
-                  onChange={(e) => setNftId(e.target.value ? e.target.value : undefined)}
+                  onChange={(e) =>
+                    setNftId(e.target.value ? e.target.value : undefined)
+                  }
                 >
                   <option value="">Select NFT</option>
                   {walletNfts.map((x) => (

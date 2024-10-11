@@ -452,18 +452,23 @@ export const QuickLoan = (props: any) => {
       BigInt(nftId || "0"),
       Math.round((duration || 0) * 24),
       toWei(amount ? amount.toString() : "0", token?.token.decimals),
-      selectedLendingDesk &&
-        Math.round(
-          calculateLoanInterest(
-            selectedLendingDesk?.loanConfig,
-            amount,
-            duration,
-            selectedLendingDesk?.erc20?.decimals || 18,
-          ) * 100,
-        ),
+      Math.round(
+        calculateLoanInterest(
+          selectedLendingDesk?.loanConfig,
+          amount,
+          duration,
+          token?.token.decimals || 18,
+        ) * 100,
+      ),
     ],
     query: {
-      enabled: checked,
+      enabled:
+        checked &&
+        !!nftId &&
+        !!duration &&
+        !!amount &&
+        !!selectedLendingDesk &&
+        !!token,
     },
   });
   const {
