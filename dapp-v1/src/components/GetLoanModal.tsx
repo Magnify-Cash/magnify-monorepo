@@ -21,8 +21,8 @@ type GetLoanModalProps = {
   setDuration: (duration: number) => void;
   amount?: number;
   setAmount: (amount: number) => void;
-  nftId?: number;
-  setNftId: (nftId: number) => void;
+  nftId?: string | undefined;
+  setNftId: (nftId: string | undefined) => void;
   walletNfts: WalletNft[];
   disabled: boolean;
   btnClass: string;
@@ -190,12 +190,7 @@ export default function GetLoanModal({
                   className="form-select form-select-lg py-2"
                   id="select-nft"
                   defaultValue={""}
-                  onChange={(e) =>
-                    setNftId(
-                      // @ts-ignore
-                      e.target.value ? Number.parseInt(e.target.value) : undefined,
-                    )
-                  }
+                  onChange={(e) => setNftId(e.target.value ? e.target.value : undefined)}
                 >
                   <option value="">Select NFT</option>
                   {walletNfts.map((x) => (

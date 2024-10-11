@@ -132,7 +132,7 @@ const renderLendingDesks = ({
 
   // loan params selection
   const [nft, setNFT] = useState<INft>();
-  const [nftId, setNftId] = useState<number>();
+  const [nftId, setNftId] = useState<string | undefined>();
   const [tokens, setTokens] = useState<IToken[]>([]);
   const [selectedLendingDesk, setSelectedLendingDesk] = useState<any>();
   const [selectedLoanConfig, setSelectedLoanConfig] = useState<any>();
@@ -196,7 +196,7 @@ const renderLendingDesks = ({
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
     {
       address: nft?.address as `0x${string}`,
-      args: [BigInt(nftId || 0)],
+      args: [BigInt(nftId || "0")],
     },
   );
 
@@ -290,7 +290,7 @@ const renderLendingDesks = ({
     args: [
       BigInt(selectedLendingDesk?.id ? selectedLendingDesk.id : 0),
       nft?.address as `0x${string}`,
-      BigInt(nftId || 0),
+      BigInt(nftId || "0"),
       Math.round((duration || 0) * 24),
       toWei(amount ? amount.toString() : "0", selectedLendingDesk?.erc20.decimals),
       selectedLoanConfig &&
@@ -385,7 +385,7 @@ const renderLendingDesks = ({
 
     await approveErc721({
       address: nft?.address as `0x${string}`,
-      args: [magnifyCashV1Address[chainId], BigInt(nftId || 0)],
+      args: [magnifyCashV1Address[chainId], BigInt(nftId || "0")],
     });
   }
   // Modal submit

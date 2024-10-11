@@ -308,7 +308,7 @@ export const QuickLoan = (props: any) => {
   form hooks / functions
   */
   const [selectedLendingDesk, _setSelectedLendingDesk] = useState<any>();
-  const [nftId, setNftId] = useState<number>();
+  const [nftId, setNftId] = useState<string | undefined>();
   const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
@@ -361,7 +361,7 @@ export const QuickLoan = (props: any) => {
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
     {
       address: nftCollection?.nft.address as `0x${string}`,
-      args: [BigInt(nftId || 0)],
+      args: [BigInt(nftId || "0")],
     },
   );
   const {
@@ -449,7 +449,7 @@ export const QuickLoan = (props: any) => {
     args: [
       BigInt(selectedLendingDesk?.lendingDesk?.id ?? 0),
       nftCollection?.nft.address as `0x${string}`,
-      BigInt(nftId || 0),
+      BigInt(nftId || "0"),
       Math.round((duration || 0) * 24),
       toWei(amount ? amount.toString() : "0", token?.token.decimals),
       selectedLendingDesk &&
@@ -541,7 +541,7 @@ export const QuickLoan = (props: any) => {
 
     await approveErc721({
       address: nftCollection?.nft.address as `0x${string}`,
-      args: [magnifyCashV1Address[chainId], BigInt(nftId || 0)],
+      args: [magnifyCashV1Address[chainId], BigInt(nftId || "0")],
     });
   }
 
