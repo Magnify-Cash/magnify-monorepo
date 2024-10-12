@@ -1,30 +1,14 @@
 {
   "magnifyCash": {
-    "address": "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f",
-    "startBlock": 9062856
+    "address": "0x9C8D226016492a8fE6531Fe1409aD79099Dd0729",
+    "startBlock": 20974284
   },
   "obligationNotes": {
-    "address": "0xB9c25987c5Fa19214b27743C22480FEa2734b88c",
-    "startBlock": 9062851
+    "address": "0x22c2CA6181241e5e7Dd4F0548631Bdb3481274a2",
+    "startBlock": 20974278
   },
   "lendingKeys": {
-    "address": "0x00cB7654463392E0E430699A607D07eAD5C04246",
-    "startBlock": 9062854
-  },
-  "punks": {
-    "address": "0x821c7be938200F359864c0c80eEF93c95E0D06c7",
-    "startBlock": 9062838
-  },
-  "doodles": {
-    "address": "0x54D328D53F3C11F4Ab319dd3292Bb16B64364B08",
-    "startBlock": 9062835
-  },
-  "usdc": {
-    "address": "0xD2bA1C651429C0C798c9D2351d16c64f16e05dBF",
-    "startBlock": 9062821
-  },
-  "dai": {
-    "address": "0xbEC8ab89b34835F6b99fFc29c088426E8e708ceA",
-    "startBlock": 9062822
+    "address": "0xB64105EB7CD38bCCE999DA4f38a98015736DCE2E",
+    "startBlock": 20974281
   }
 }
