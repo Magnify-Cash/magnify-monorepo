@@ -69,6 +69,37 @@ If you just want to deploy the subgraph and dapp and not the contracts, you can 
 
 - For the scripts to work correctly, ensure that both this repo and the graph-node repo are present in the same parent directory.
 
+## Deploying to Production
+
+### Requirements:
+1. Ensure you have `.env` and `contracts/.env` filled out. This includes the following variables:
+`.env`
+```
+INFURA_API_KEY
+PRIVATE_KEY
+```
+
+`contracts/.env`
+```
+SOLC_VERSION
+DAPP_SRC
+REPORT_GAS
+CMC_KEY
+PLATFORM_WALLET
+OBLIGATION_URI
+KEYS_URI
+LOF
+CONTRACT_OWNER
+MAINNET_URL
+ETHERSCAN_API_KEY
+```
+
+### Steps
+1. Run `yarn contracts deploy:<network>`.
+2. Change the addresses and block numbers in `dapp-v1/wagmi.config.ts` as needed by copying them from the new `deployments.json`.
+3. Make sure `yarn dapp build` is working locally.
+4. Push changes to `staging` branch for them to be deployed.
+
 ## Supporting new chain (WIP)
 
 ### contracts
