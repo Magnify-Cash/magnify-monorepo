@@ -551,7 +551,7 @@ contract MagnifyCashV1 is
     function initializeNewLoan(
         uint64 _lendingDeskId,
         address _nftCollection,
-        uint64 _nftId,
+        uint256 _nftId,
         uint32 _duration,
         uint256 _amount,
         uint32 _maxInterestAllowed
