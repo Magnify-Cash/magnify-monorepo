@@ -9,7 +9,7 @@ export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
 export const MAGNIFY_CASH_BASE_SEPOLIA_GRAPH: string =
   "https://api.ghostlogs.xyz/gg/pub/d94bdadc-4cf4-44a1-9888-c8be5ab887fc/ghostgraph";
 export const MAGNIFY_CASH_BASE_MAINNET_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/c7560c1c-c263-4cb5-bab6-2620a0562713/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/8bf67182-75f2-41e8-ae10-bd4d26d9c91e/ghostgraph";
 export const MAGNIFY_CASH_SEPOLIA_GRAPH: string =
   "https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-sepolia";
 export const MAGNIFY_CASH_HARDHAT_GRAPH: string =
