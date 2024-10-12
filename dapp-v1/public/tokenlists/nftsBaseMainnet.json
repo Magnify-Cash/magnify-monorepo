@@ -1,0 +1,4009 @@
+{
+  "name": "Magnify Base Chain NFTs",
+  "timestamp": "2024-10-12T17:26:47.852Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "magnify",
+    "base",
+    "nft",
+    "collectible"
+  ],
+  "nfts": [
+    {
+      "chainId": 8453,
+      "address": "0x03c4738ee98ae44591e1a4a4f3cab6641d95dd9a",
+      "nftType": "UNKNOWN",
+      "name": "Basenames",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b0ebd291210059d7b74c0af44fd9c638.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdd0e8ca49615015e1f4486fb118a39aeb8066876",
+      "nftType": "UNKNOWN",
+      "name": "WenSwap",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/07b33c3df1bd668afe68a64af2d82e9d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa449b4f43d9a33fcdcf397b9cc7aa909012709fd",
+      "nftType": "UNKNOWN",
+      "name": "onchain gaias",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2bba7a5bbe484cf46ac9e2a8af58ce86.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcb28749c24af4797808364d71d71539bc01e76d4",
+      "nftType": "UNKNOWN",
+      "name": "based punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/857e39e54f4fa53eb78d1747e9470478.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc3e65e17182535a891de7a95f660e3dd124de2b2",
+      "nftType": "UNKNOWN",
+      "name": "The Ape Society",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7ac1a86f94189749f7d94dab9ee7a346.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2d53d0545cd1275b69040e3c50587e2cc4443a52",
+      "nftType": "UNKNOWN",
+      "name": "Base Gods",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5a0d8b395d0288ad816e302ecce9f3cd.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa78e2e6f0add0e9b1a9c17cc929270d9ad89478c",
+      "nftType": "UNKNOWN",
+      "name": "PrimeApePlanet",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/58bfb52aef572a0297fe423419a1c1aa.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xee7d1b184be8185adc7052635329152a4d0cdefa",
+      "nftType": "UNKNOWN",
+      "name": "Kemonokaki",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3c9b7dcf5895c3dcdde0a5346a7393cc.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x381b0d693dc6c5ea556838e8604ae000510a16ac",
+      "nftType": "UNKNOWN",
+      "name": "Based Ape Gang",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/60363f6bea8a020e0ab88eccd2491d5b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x949bed087ff0241e04e98d807de3c3dd97eaa381",
+      "nftType": "UNKNOWN",
+      "name": "Mochimons",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9d79f21e82b12ff835c2e251e76a50da.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x379002701bf6f2862e3dfdd1f96d3c5e1bf450b6",
+      "nftType": "UNKNOWN",
+      "name": "XENFT Base By Xen Crypto",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/0155504731428554c3ac0e6a369388ce.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6ba5ba71810c1196f20123b57b66c9ed2a5dbd76",
+      "nftType": "UNKNOWN",
+      "name": "Juicy Adventure Onchain Summer: Juice Pack",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/d0f8a35bef7c5f7f051d09ba25374ce4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x217ec1ac929a17481446a76ff9b95b9a64f298cf",
+      "nftType": "UNKNOWN",
+      "name": "Based Fellas",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/2999c0431e537bf155fe7b71df9db679.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdc46c1e93b71ff9209a0f8076a9951569dc35855",
+      "nftType": "UNKNOWN",
+      "name": "MYSTCL",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a57a2bb6436d06113205fc9e330ce070.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbc72a61bd9511c7cf9ed7e4b0cac1b8d0fba4bc6",
+      "nftType": "UNKNOWN",
+      "name": "NFToshis 2.0",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/47ec9fd277b722d1daf0ebf7acf7a003.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6acd40f2f094e2cfa1a942ae411e9a18e459da02",
+      "nftType": "UNKNOWN",
+      "name": "File Node Access Key (Base)",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb2a0fd738d584b47bee18da0f3d7c140bf2d1476",
+      "nftType": "UNKNOWN",
+      "name": "The CryptoDads",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gae/sVpJk_fa5_BffT0qIVVtaaOJ1qPqvz1uRijJWFPo8uqVn8mFQxkGu2k7rpMZ3HZ47oN3DcypipqjvXBRrWje0gwnelEMYaZn_2NN470?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf97908c0c4130830a3fd5f8c51d07a18787ac626",
+      "nftType": "UNKNOWN",
+      "name": "The Album",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b81e111576a7ed7d70a40e7bc338ffb9.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x71cfbebb61a42d2e5ccff0831663cd58d2e442d9",
+      "nftType": "UNKNOWN",
+      "name": "Miggles",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8daf15f9ab4d19d1f02056cb94e89663.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8b557d73607328138f0bbcef1017949b7ab484cd",
+      "nftType": "UNKNOWN",
+      "name": "$FWB Migration to Base",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/27d0e138d0edb812f4c6d1c93458622d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x13dc8261fce63499aa25deb512bb1827b411b83b",
+      "nftType": "UNKNOWN",
+      "name": "swatches by jvmi",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7de0794e14fbf7af9c135a9a52452500.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xce9a5b9bcd53e484c9e7b7bcbfc212a11240e891",
+      "nftType": "UNKNOWN",
+      "name": "Pokpok Genesis Flock",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a2baa084a96410302632d7774c0ee1ad.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb5f58fe2fdd79b279bf2b201f91ba784b79c8744",
+      "nftType": "UNKNOWN",
+      "name": "Doodles Wearables",
+      "symbol": "",
+      "logoURI": "https://raw.seadn.io/files/8a6864871bbf4fe1c677c11abaf060a8.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbdb1a8772409a0c5eeb347060cbf4b41dd7b2c62",
+      "nftType": "UNKNOWN",
+      "name": "NFToshis",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/baf8bf8c257338582acfdb82aeeded3f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xce829656e70b2f4784580538233eb03f8a068b70",
+      "nftType": "UNKNOWN",
+      "name": "No-Based",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/c6f3f5b140b4b6c05f3e8f91696b1b13.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4ed83635e2309a7c067d0f98efca47b920bf79b1",
+      "nftType": "UNKNOWN",
+      "name": "No-Punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/49c73a27749482a091a092f1ed8b8963.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf804802bb39cb3113038db367b00044f16089df3",
+      "nftType": "UNKNOWN",
+      "name": "ZIELCHAIN",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ecf6467aa175984fbb63c2ec453ad57e.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x14682d38aea6d5fab5b59909f2db7575e9881053",
+      "nftType": "UNKNOWN",
+      "name": "Everdawn Genesis Cards",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0a5274985831125c5b94a28eccdd9673.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8ce608ce2b5004397faef1556bfe33bdfbe4696d",
+      "nftType": "UNKNOWN",
+      "name": "The Based LP",
+      "symbol": "",
+      "logoURI": "https://raw.seadn.io/files/20cd724e6baff0b5e16ee4c6570936c9.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1195cf65f83b3a5768f3c496d3a05ad6412c64b7",
+      "nftType": "UNKNOWN",
+      "name": "Layer3 CUBE",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cc923fed69a7ff36e3efda000b08acd4.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x37d706c8a44c389408f866f953fab5e33be08855",
+      "nftType": "UNKNOWN",
+      "name": "Artela Capila - Lie Down!",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1050ac10f38ca23917c2ea906b26f648.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x982e6297f1785f3f1a07f6ad75188e2be02582da",
+      "nftType": "UNKNOWN",
+      "name": "MOON:BEAM",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3f5b42f1f99bc9396814ed97f0e227d3.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc57bded689c0c528a16ed435b073e4e9a10d85dc",
+      "nftType": "UNKNOWN",
+      "name": "Based Mfers",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/565708b843248fac2623c77442a1b084.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x475aa716337d79b5ea513bfe4cc01787eb2e6004",
+      "nftType": "UNKNOWN",
+      "name": "SoMon OwOG Collection",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/d0d682e69484ccce2ad0867f3247957d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2465317b13767db4127a40ea37630ea7214ba8f6",
+      "nftType": "UNKNOWN",
+      "name": "SmallBrosNFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/315a468e05125de88ff9f1faecf539d2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6e4db21d18d8b4d934e3745059dda4b4ac351b73",
+      "nftType": "UNKNOWN",
+      "name": "Capy Friends",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/de338718e648e1d816ff3f615e426cbd.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf0d0df7142f60f7f3847463a509fd8969e3e3a27",
+      "nftType": "UNKNOWN",
+      "name": "tiny based frogs",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/07849b41068eb68d734fa98bba3e3e49.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x35968b521658a9cb7334fdd89bb693fd9b2f91cb",
+      "nftType": "UNKNOWN",
+      "name": "Phaver Cred Pass S1",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9131bfadffda23c2eb55ce462c2505b9.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6eac5d8b005fdc64d855a398ed48ade9f77b7a34",
+      "nftType": "UNKNOWN",
+      "name": "Bored Base Kennel Club",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0b5f74918681de074e39433294b28cd6.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7d5861cfe1c74aaa0999b7e2651bf2ebd2a62d89",
+      "nftType": "UNKNOWN",
+      "name": "Base Day One",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/30a1c5cbc4dbbfd9151ba93e294a8f53.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x56dfe6ae26bf3043dc8fdf33bf739b4ff4b3bc4a",
+      "nftType": "UNKNOWN",
+      "name": "re:generates",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b565c95590007d42f2e4aa5fd16e3eea.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x754fa2f31386f8afed6230011da955d0dbed53a5",
+      "nftType": "UNKNOWN",
+      "name": "DackiEgg",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7a13158b8bb9e4c41f87f073f5aee09f.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x896c192071c7a903d97c30975f5bf5c411625fe9",
+      "nftType": "UNKNOWN",
+      "name": "World of Pumpkins",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/25c93f83b1cabca99a57800d5acbdbb6.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xebcec2e959bad4137925f9ddb68e163cca72242b",
+      "nftType": "UNKNOWN",
+      "name": "DackieOnBase",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/04a6310ec3336db2b569001544550a34.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5f0e82a26e55f149bb55f964b8507bb2de5c473f",
+      "nftType": "UNKNOWN",
+      "name": "DeeKay Motion - New Era BTC",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/067e074d5a9e9b9fdf2dc58f81c63984.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x89d487cf2d082e5e83f5e8dcaa4ecaa508959e77",
+      "nftType": "UNKNOWN",
+      "name": "Pengs",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7f76bb06be88febc1cdf5d64d033e734.webp?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x424d781e0163b5a42ca2f27d036c2d5c561022c3",
+      "nftType": "UNKNOWN",
+      "name": "Primitives",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/72e0178a5c37892afab21cadbdb05e0a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1e37c433dac77c4e13f7ea0287b58e35c17cc23f",
+      "nftType": "UNKNOWN",
+      "name": "DeeKay Motion - New Era ETH",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/c7a5cd741bf5c368112143f0b22376a0.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x20fd75eccd7bb9c4eb9e3bb4c09c6b382e15d63e",
+      "nftType": "UNKNOWN",
+      "name": "VeeCon 2024 Tickets",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a7eaf88ec81e804728c4273389e30af7.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe1ae87b63278369173c860a9600d9e5ef597b492",
+      "nftType": "UNKNOWN",
+      "name": "EVOLutions",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cf32929b48597db98651f09e08b9da15.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x519ed34150300dc0d04d50a5ff401177a92b4406",
+      "nftType": "UNKNOWN",
+      "name": "SamNFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6930328192430701ff4dedba4c98152d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x56e245db19a77175008d780509fa991f785c1366",
+      "nftType": "UNKNOWN",
+      "name": "Calamity: Artifacts",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a1fa0b2623ef97688b399856787a0be2.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x463ee85608241d546476667fa433a83ea2ab8bcf",
+      "nftType": "UNKNOWN",
+      "name": "Collection ZERO by PlayerZero",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/d420e93d3e8155bf6e1e3197bdd732f4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9099c794451d5fb64d1fb044418bbf9e3de47a4c",
+      "nftType": "UNKNOWN",
+      "name": "Ava | ETHERNITY AINFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1f37aa249fcedd359033b8802279baf7.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x07a06a34773f886587ac49c121da179c9697f34a",
+      "nftType": "UNKNOWN",
+      "name": "Birb Base NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/fa3f2ddeb17d2f4a23c656250086d927.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x803fc79d31ab30a39b3bd2a90171470cc82ba44a",
+      "nftType": "UNKNOWN",
+      "name": "Welcome to the new Base.org",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x55830ee25501161ab75c98f4207cb14043b911da",
+      "nftType": "UNKNOWN",
+      "name": "Blerb Hybrid",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/707b13d2f41ff45e932fd2810ff9e7f1.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbe3c7abab76f0a1de602fdb2f44faf604a5f649f",
+      "nftType": "UNKNOWN",
+      "name": "Hoomans",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/78b1a078697a918e28c6ce90281fc97b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7a3a5517ad93979c06a77857e287336152ab99b9",
+      "nftType": "UNKNOWN",
+      "name": "Chooky",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a303f8c90a465d55e62efd83c50acd63.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x594ab8fb9c2e5fd43c2d34d4ea39e961f56d3e78",
+      "nftType": "UNKNOWN",
+      "name": "Rebel Monkes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/dc966345fda9d8d5b19f6d4ad1fc1269.webp?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0fa0d0ca5ef191b339fc213c9c84f5b670713ccd",
+      "nftType": "UNKNOWN",
+      "name": "Br8tties",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5eb855b2bda89aae70e1a0387ee55856.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe3150c35226e5afecc58f159d79d5bcc3f82e33f",
+      "nftType": "UNKNOWN",
+      "name": "Bomefers",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/c8350445987cdfb248dc2a9b558d0741.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x26a1f8813df5a318ed7aa1091c30db0f25727a18",
+      "nftType": "UNKNOWN",
+      "name": "Aux Arbres",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/88c66230ddc1e17106ab5232f31d8900.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x227f81f5f697cdd9554a43bbab01d7a85b9466c1",
+      "nftType": "UNKNOWN",
+      "name": "Shredding Sassy - Base",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/f8d06cadfe0e5d0f190b196112e6fb2a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x93d9212fb2111b4619c48393a4cc2c9e1983edb3",
+      "nftType": "UNKNOWN",
+      "name": "Degentlemen",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9179416e637ef2696b475f71b4e10fdd.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x880fb3cf5c6cc2d7dfc13a993e839a9411200c17",
+      "nftType": "UNKNOWN",
+      "name": "Gnars",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2abfb4af401d703da51dc4c0faaae05e.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc37b22a70f83d03bbf54075ba428104547d60a0e",
+      "nftType": "UNKNOWN",
+      "name": "Cyberdins",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0974e8149fce042c6420d751d030914f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb20a14afbca14348ee8073fa022fee175e7065be",
+      "nftType": "UNKNOWN",
+      "name": "The CryptoMoms",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/55832d87b7e5d49ee766dd7b56452a1a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd683f8f08aca669bf9207d72dceb6bac063c34a2",
+      "nftType": "UNKNOWN",
+      "name": "BASED MINIS",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/410999535315211d48fc6e901348ef7d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0c9249d3ebfb491c4053e98e1ff777fe44cf1581",
+      "nftType": "UNKNOWN",
+      "name": "Normilady",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/911a6728db2d63051910eec55bd08a1b.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x412ae9a6aede7b8269c96996a2b5bb4837fd210a",
+      "nftType": "UNKNOWN",
+      "name": "Base OCS NFT on Galxe",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b3272df28330c743bdf228ebaf2bd199.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9e7a06c281355f60570e47a12650c89fe1d36ff3",
+      "nftType": "UNKNOWN",
+      "name": "Based OnChain Punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/44c5f7af5d13c5dc8027b94e28d2e75a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa8cede192de6f1fc8b1b6230013b6cc2b0b9e55b",
+      "nftType": "UNKNOWN",
+      "name": "The Girls of Armament: Chibi Royale",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3ba1af764406cc28d4c907120e7fa5d1.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x85e7df5708902be39891d59abef8e21ede91e8bf",
+      "nftType": "UNKNOWN",
+      "name": "Degen Haberdashers",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ed0a8552c09711798ab3d2786264da04.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x18212841ede4d2148a79562558931c41c899979d",
+      "nftType": "UNKNOWN",
+      "name": "Ava | ETHERNITY AINFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1f37aa249fcedd359033b8802279baf7.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x408c186c1ffcc78592cbdae9b04da8a64a975550",
+      "nftType": "UNKNOWN",
+      "name": "Cat Town | Items",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ddf0560ebebec14172198510e8dd5a8c.webp?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf024931ad636f44922d5224843e311abb71daa0a",
+      "nftType": "UNKNOWN",
+      "name": "BaseBulls",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/48facbf795e8ee2d9b7f2c30e2fd3a6e.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x108db2038c6e8bc1a0b058c70e752b14d08648bf",
+      "nftType": "UNKNOWN",
+      "name": "Black Mirror Experience: Smile Pass",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/19303f3b3bf4154cc52c56ec30ac8353.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x91e53123f364a4e1dea2dcbd847c0eab292ea189",
+      "nftType": "UNKNOWN",
+      "name": "RiBT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/7db97ba94e2efbb948354bd98a7ba1be.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf50a84399290bba75e4a11317009bb45a36c5831",
+      "nftType": "UNKNOWN",
+      "name": "cbBTC is onchain",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe6249eafdc9c8a809fe28a5213120b1860f9a75f",
+      "nftType": "UNKNOWN",
+      "name": "BasePaint Work In Progress",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/72a582dc1460868eee40e25f73b7035a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1fc10ef15e041c5d3c54042e52eb0c54cb9b710c",
+      "nftType": "UNKNOWN",
+      "name": "Base is for builders",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2f7bbaa5ecde267f899d9c5c3ea6e904.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7cc7add921e2222738561d03c89589929cefcf21",
+      "nftType": "UNKNOWN",
+      "name": "Chimpers Cards - Amulet",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2e0cb7b67d3c6e9cc3bdabf6fe0d7a4a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x52795937ded2847f083488f70a1a20655c0b9673",
+      "nftType": "UNKNOWN",
+      "name": "MEME WL",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/e7f92f75004df5a912d942debc4a0434.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x617978b8af11570c2dab7c39163a8bde1d282407",
+      "nftType": "UNKNOWN",
+      "name": "Based Bits",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ce15b17643bec4d2e02cfb99d6d20818.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x471e6dc70cc55da6430f221637d7372eb5080ad2",
+      "nftType": "UNKNOWN",
+      "name": "Derivatives by Genie",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/19bedd4718c61e9ebe3dd4dcbcf11033.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf39be779905d16fe23b2cc1297dc3e759d2daa11",
+      "nftType": "UNKNOWN",
+      "name": "PunkApepen",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8f5670e02bbfc9e3cd1fffd89fc2c336.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8a6f2c9601a635a6698809c4d62f3be172892d4d",
+      "nftType": "UNKNOWN",
+      "name": "Mintify Base Keys",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cb573e475e3ce1c5d0594203dada37bd.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0bff76ae95be2de35e145cd4af0963da50e16d4c",
+      "nftType": "UNKNOWN",
+      "name": "Normilio",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/10b99f4d231e9a7f526582f8c63f3645.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe40da5b14733e69a8457dfa259c6ba5759bd928c",
+      "nftType": "UNKNOWN",
+      "name": "Glass Punk by PIV",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/f38e50167236dffd4a9962096ad8d388.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe0e0768e73782ae7ee49418bbe7e69f914d40956",
+      "nftType": "UNKNOWN",
+      "name": "Liberoverse Pass",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/457f31b6a6045cbe62730dc1fb0efaff.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1aa8931c79c885f71bf5da21628e3f7d5de56174",
+      "nftType": "UNKNOWN",
+      "name": "NEIRO",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ade9ce48d717c1fb66aec6cb0c0a3604.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3cceeabe8667d357db502066c7af6c1c466c731b",
+      "nftType": "UNKNOWN",
+      "name": "The Legend of Long Wei",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/455e01f1f34e04b7b80fc831fca800a7.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x726d09eb63b6feb1b6e9cd19b3add4bbee749a74",
+      "nftType": "UNKNOWN",
+      "name": "Neo Squiggles",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/4d83fb21083ce61081c484f70c17a39b.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5519dc53d698ce6b9eefc71efc454e4b269307b9",
+      "nftType": "UNKNOWN",
+      "name": "1337 Brians",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/106d89e19a88c8b7bc30a824fc20910f.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x67e925c742b2e6cb01f9d7e56beb182a178b6f9d",
+      "nftType": "UNKNOWN",
+      "name": "Okay Bears Yacht Club",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2827813fef12a323ec871e163062d53f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3d8683bbf9cae7ad0441b65ddcadec3850d1256e",
+      "nftType": "UNKNOWN",
+      "name": "PNUKS",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/834a75c4617d33ab1fd89f78816f0657.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x94e259436ed3784ebd787aaa6b033f9217119688",
+      "nftType": "UNKNOWN",
+      "name": "Play Collective",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7e4d3e938e260827b80b17d384136f66.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa4a8011f5dc46e68a34fba084b9139ff01a13c26",
+      "nftType": "UNKNOWN",
+      "name": "Grug",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/209abbb3a83dac8ac5252f1eb6ac7725.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb46cae60bf243f1060ffab43611ca808966bf1cb",
+      "nftType": "UNKNOWN",
+      "name": "Cat Town | Founder Collection",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/062c2e2e6a3789247f01fb9266ee7f7d.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xddbec1867ab3bfc4df5ef2de5ff59015d3e419fa",
+      "nftType": "UNKNOWN",
+      "name": "Farcaster: Dolphin",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/6132d43aaaf2de083ef9b50d78a9d9d3.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xde7c3435c34ddee79234adf612467727e980400d",
+      "nftType": "UNKNOWN",
+      "name": "FARWORLD // Creatures",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/244ed6dd289a6ab8c971941096467637.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8991a2794ca6fb1f0f7872b476bb9f2fb800adc1",
+      "nftType": "UNKNOWN",
+      "name": "Oviators",
+      "symbol": "",
+      "logoURI": "https://raw.seadn.io/files/eff1614c677129d1974b04effd937b79.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x46dc9da021b9322d210f88bf504e2ce8169931b2",
+      "nftType": "UNKNOWN",
+      "name": "Phenoms On Base",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a250d3fae51285c444708b990b9e32d4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x73682a7f47cb707c52cb38192dbb9266d3220315",
+      "nftType": "UNKNOWN",
+      "name": "Outcasts",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0897b41807fd4b550c22b12a3808628e.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x37a0c3216a09ec87bb91958ca06065659d80f8dd",
+      "nftType": "UNKNOWN",
+      "name": "Optimists",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a7ca9fe8db12ae2f6cb695deb24bab77.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa47172bea713e21f6bbdd8c18f1f4db3ff064a9f",
+      "nftType": "UNKNOWN",
+      "name": "Miss Toshi",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/15a8caea6e0b22f2ab4332af6ccd0939.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf1f991d07a4c142b550c9dcb9576b9b34083ed58",
+      "nftType": "UNKNOWN",
+      "name": "Degens by doy",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/17aa0d8441ac2f8f615d3e0f3167705e.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0e688f5dca4a0a4729946acbc44c792341714e08",
+      "nftType": "UNKNOWN",
+      "name": "EFP",
+      "symbol": "",
+      "logoURI": "https://raw.seadn.io/files/a1993fb3f6013ee2e52b460d1b13a765.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x05a28e3d5f68c8b4a521ab7f74bd887fae6a598d",
+      "nftType": "UNKNOWN",
+      "name": "Base - Based",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6517b49c83f96ed57e01d08f7da98d8a.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb88842bd68d181dfa1b7355f6f986f19c11c6406",
+      "nftType": "UNKNOWN",
+      "name": "Lil Hotties Official",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/d4a5d68f7870cd9691dfc77063a3b88f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc9d128f88a8d97342a37680f0ce0f34598f289d0",
+      "nftType": "UNKNOWN",
+      "name": "1,000 True Fans",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/d116e85605bb772509a22f6dd6449005.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0877ba8c3782eb7bc20a4a30e32048b714886711",
+      "nftType": "UNKNOWN",
+      "name": "Based Five Head",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/44a3f8ac709ef78713d61ebe103cb294.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7dd93e40c42eb48e64de05a583ecf19471e60ffc",
+      "nftType": "UNKNOWN",
+      "name": "OnChain Coasts by LiveArt",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f29095f62843dc3ef7da772e93310320.webp?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0be0bb1097f4465b17b1ac3b22b5427d9cbf6d2c",
+      "nftType": "UNKNOWN",
+      "name": "Bored Ape Base Club",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/afb4939e07f432a7803974d2b8b3c72c.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0cc2120d12efe0cf15bf37694a67a2f4c2ead236",
+      "nftType": "UNKNOWN",
+      "name": "FOMO BULL CLUB MEMBER NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ba15b7282ef54c0ab0592e15ea020a26.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb3663f1c1b7d7b3ae45c031abd4c3cb13f8ee984",
+      "nftType": "UNKNOWN",
+      "name": "Based Nakamigos",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f7b39611b336cc91a1d231cff388dbed.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1f8153c31aa162fea3fbfe1bfcacb6a4f16ee115",
+      "nftType": "UNKNOWN",
+      "name": "Base Pastel Punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/72e10e3e5991fb7f6cb6b4ff6414cfbe.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4b2398f723e13bb728587942815362bbc80752ad",
+      "nftType": "UNKNOWN",
+      "name": "RŌHKI - VERMILLION",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/001d7d1277c1b8dce929d0bbc3991bc0.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0b5d069a880d6ece6f449e5be9695003b64cf0ad",
+      "nftType": "UNKNOWN",
+      "name": "based puppets",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/95fa210b3890c5a854d5dfe4b3501215.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf2f9b21ad20a747d1965342e9d764c1d957da79a",
+      "nftType": "UNKNOWN",
+      "name": "Non-Playable Customs: Genesis Edition",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/89738f0b9f2cd9982a06e10f8f5a0658.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x34aa4a3aa3ec2e0e40e6bb8fc52cbef243dc69a4",
+      "nftType": "UNKNOWN",
+      "name": "Superchain Chiblings",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ca2b82d5e685f44d52d96c169b557fd0.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x35dd5f311f71e0bbbc13ecff06f657dec317202b",
+      "nftType": "UNKNOWN",
+      "name": "Freedom Flockerz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/17d0c7f164149c863da551a097093c89.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x76a7ba0de6b80e9abcc1855713022b1e753ac1d1",
+      "nftType": "UNKNOWN",
+      "name": "MoBA #1: Portraits of an Enjoyer by Joseph Pixler",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/acae7690a8e988781963da7fe5612af1.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2d25e170e0cbd81707e914ba5eea1d172089afc6",
+      "nftType": "UNKNOWN",
+      "name": "Bepes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0342e11ed8bab2170bfb0b358cf72087.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa91b95a1dba98e3537ead7aa4a488a8886316be2",
+      "nftType": "UNKNOWN",
+      "name": "Villains by Nev.",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2797acc1378664eadc816eeaf6304cd7.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x37f640ca7beeb56368e471b84542804140b0f3c4",
+      "nftType": "UNKNOWN",
+      "name": "Based Ape Neon Gang",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/dda4a8bc7f787f18dd6bf52fd10e8e51.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb04da46f1250f78ded38bf7971c81cec1ba58e3b",
+      "nftType": "UNKNOWN",
+      "name": "CowPunks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/64f5dd9d1860435dac4448c3e59f3ea2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x13e09ef7046442b67dd45a4fa4ca61feb2eb30aa",
+      "nftType": "UNKNOWN",
+      "name": "Bucked Blown",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/e6419a4cdcbd83ebe423dc73f2d51ca5.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd4c5292b9689238f0a51c8505b1d1d6714ce95a0",
+      "nftType": "UNKNOWN",
+      "name": "Based OnChain Dinos",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b98cd6c531176eab0e50d7ae8e8d76e6.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc16706ae5eed1805990d92241add1662724e50f2",
+      "nftType": "UNKNOWN",
+      "name": "Based Rekt Chickens",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/4e58fcd2f91ece6ff1ca39d52e3f5890.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x44d461da8a451f05b6b75edd5c4a2d2f3c14aab4",
+      "nftType": "UNKNOWN",
+      "name": "toshi ONCHAIN SUMMER",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5b7f54da9f818c31019848597a6eeebf.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0e8e00b78fac0eab14be4ab4f8ac954d21e2076e",
+      "nftType": "UNKNOWN",
+      "name": "No-Ape",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a472a412d8aa445ce0652469c527e201.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x75f3f82281aec964c096f1caa5203724d47cf30b",
+      "nftType": "UNKNOWN",
+      "name": "Based Apes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/74d391d824bc7f4e9c7e68d21a4bd227.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x685f63d7137eabf05a6eba528f25d850f1eca496",
+      "nftType": "UNKNOWN",
+      "name": "CityVerse Tycoon Buildings",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f42126773639c51127677f2020aaf870.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2a408bc1edf1f98d7cf2f1cc6d315303eae22f10",
+      "nftType": "UNKNOWN",
+      "name": "BASED PIXELS By Tristan Rettich",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2ae81d3f55f12a19327bbe91ebc07315.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2a20fbcf095eb347eda8c107bc3ddff165e0f22b",
+      "nftType": "UNKNOWN",
+      "name": "MicroMigos",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2cc7e1d162dd22930705ea7f3a1cb38b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc559a56bd9c2c789aa0e464d54f611436a109e5e",
+      "nftType": "UNKNOWN",
+      "name": "Swisstronik Hegel NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0c07f9bfc23bbdaf25590bc12f6eacf2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xef9fc64fd8f19b1039a2fd33e5c5829564e7d18d",
+      "nftType": "UNKNOWN",
+      "name": "fruggerz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1601a62714ceeb5a2419d668294ec481.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x931f3a41078725e85c8fc0bf8204f277d3ccbd11",
+      "nftType": "UNKNOWN",
+      "name": "Based Opepens",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/82557a522d07e61e1f17c20666664e01.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x011dc14a7b13147570e64b11a05a414df1aa8d15",
+      "nftType": "UNKNOWN",
+      "name": "Juicy Pass: Juicy Adventure",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/84d5e2d37e64e4380d05c025ec6bc2d2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf12064a4d0baadeadd96e3724479de918aea9068",
+      "nftType": "UNKNOWN",
+      "name": "Mochi Circle",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6f080f3cc05de85abe379ba3506e57dc.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x616a7241b5ee65d9be08de24a1c9c55d268de093",
+      "nftType": "UNKNOWN",
+      "name": "Get Based \"Based Summer\" Poster",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ab93bda5ee44c0e330286093cf53e200.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1b9ac8580d2e81d7322f163362831448e7fcad1b",
+      "nftType": "UNKNOWN",
+      "name": "Team Liquid Onchain Summer Premiere Series",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8657cb3773e7fc8d4b15bcd85bdbde64.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf5c64b48ee8ec26659662622bf0f55e8beb52580",
+      "nftType": "UNKNOWN",
+      "name": "dgns",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/90dd99f525060ba91a47a602b72977e7.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3c5b57c48a575bc21f2dbcd047bf08fa10c8dba5",
+      "nftType": "UNKNOWN",
+      "name": "Creature Cubes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1575d4eac35162e05319fd5ec9c607c3.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x55022626befa2675fe197b39c85b615acb7813d3",
+      "nftType": "UNKNOWN",
+      "name": "Building Blocks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cd420c9c91a2c2c1df9f1c7096615fb9.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8177b34687bc8b99c205e533ae7dd7c6c9d07a66",
+      "nftType": "UNKNOWN",
+      "name": "Higher.",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1f39e3bd52f0a71b1d049e3956b4ad08.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbb56a9359df63014b3347585565d6f80ac6305fd",
+      "nftType": "UNKNOWN",
+      "name": "VRNouns",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/a357f210141e5376f5685a7237c7349d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x86fa79a760405c0038c69c23b7c880bbf02dd87a",
+      "nftType": "UNKNOWN",
+      "name": "odegen*",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3acb40e71d9b9f99238794f777f19223.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1961a23409ca59eedca6a99c97e4087dad752486",
+      "nftType": "UNKNOWN",
+      "name": "Base_TokenLockupPlans-Do not trade. Not designed for trading on OpenSea or other NFT platforms.",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbf57d0535e10e7033447174404b9bed3d9ef4c88",
+      "nftType": "UNKNOWN",
+      "name": "Based Nouns",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/24cf5b0e8ad39e2367b3837746bba88e.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x36361bc2e4d376120b958432204bde7f24ab9471",
+      "nftType": "UNKNOWN",
+      "name": "Boredcaster",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5df35e72b4cdfe3f1f39440a06d5646d.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf78e138bc270b81c7fd3aea1807b38e051b62c06",
+      "nftType": "UNKNOWN",
+      "name": "the anomaly collective",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f7a13959ea888db8e5d9c0d934788919.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd69292884a6ed7c115c13d769edc7197e5b9bd09",
+      "nftType": "UNKNOWN",
+      "name": "Ethereals",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/33813f3c5ccbe8c8f401ff3220e0a793.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb682ba897e343cf9965f146878ff40722c5c642b",
+      "nftType": "UNKNOWN",
+      "name": "UNIOVERSE HEROES",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/207516fa87598364768429c56e8c2761.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe7fdeec5f93a70db69f7f9b87ebb421713a0f661",
+      "nftType": "UNKNOWN",
+      "name": "Pixel Baby Ape",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f38a86ce256018827df55444e948c276.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2d7ca40749c2641ce0654ca1a99f0f47fe283869",
+      "nftType": "UNKNOWN",
+      "name": "Based Reepz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/61b5a0b31e31e137191b50e8af990f67.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdc6b3687d5d9ada19faad9e782e3ece41e1da7ba",
+      "nftType": "UNKNOWN",
+      "name": "Dune Mint Moment X Onchain Summer",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8b810e7f0b7a1feee9e7d7330c472b15.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5ae364a2a992872aac4daf2bcddf10997bda4b04",
+      "nftType": "UNKNOWN",
+      "name": "Degen Alpha",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/81cea0d92dcce1cf750b4adcf485417a.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x31b81650997e26eb527ca6541b1433d1ef348d93",
+      "nftType": "UNKNOWN",
+      "name": "Dawn of Daylight",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a3f54fc468335bb02a8cd174fdd8de63.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbfdb5d8d1856b8617f1881fd718580256fa8cf35",
+      "nftType": "UNKNOWN",
+      "name": "Farcaster v3",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3ea55853f4f50e5dd559c7fc0ec0b59d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x26a162e3d091643d8b71a622df2953e365e0d91b",
+      "nftType": "UNKNOWN",
+      "name": "Kitoshi's World",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cfe4d834e470a34480dbede7cac9c550.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6ce45662ccb79e733e3397c32c7cbfcd020eef1a",
+      "nftType": "UNKNOWN",
+      "name": "Chimpers Cards - Arcadegen",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/956b9b1e47983d9f985365ec0c9a3e10.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x67c7187031819a83e86286a64d117305b1902eb2",
+      "nftType": "UNKNOWN",
+      "name": "ColorPunks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ea464a51caf7e0fb38582da9a3975af4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x50f2e3e59af32e376b581ac41f942eb844a37c56",
+      "nftType": "UNKNOWN",
+      "name": "Virtuals Land",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1b245e3affa04c9fbe786676f7d7b197.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa69fd28cd55cfe8c3f5bfb72550f4b7ae354d0a1",
+      "nftType": "UNKNOWN",
+      "name": "Psilly Heads",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/4e1ac5076e1eb14c1e32c5d391be406c.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0c45ca58cfa181b038e06dd65eabbd1a68d3ccf3",
+      "nftType": "UNKNOWN",
+      "name": "Onchain Summer Buildathon",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5da8bac1c87d6bfa78ef46a61a5f104d.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7c3b795e2174c5e0c4f7d563a2fb34f024c8390b",
+      "nftType": "UNKNOWN",
+      "name": "Songbirdz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/467f18243af521871580d424716ccb0a.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3e0cac996be807c461d8eaa8f03d260b6dcdfd42",
+      "nftType": "UNKNOWN",
+      "name": "Based Robots",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/4a42d62206bc24ddb6ef648a6c2d318c.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa4e13260a33060ce6afeaf2905b6c394f8836845",
+      "nftType": "UNKNOWN",
+      "name": "FAIRIES",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/870443911278e596f24efe7780cf9b54.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x26a14431ee9290d9c7c279b75fb69638d25c735a",
+      "nftType": "UNKNOWN",
+      "name": "Fermah Day 1 NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8fb4f64951c9a506c1c6bf5fc14faf5d.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xebb3c843490755a061e4a1e7c7da8033b16d07e5",
+      "nftType": "UNKNOWN",
+      "name": "Diamond Hands",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a61c8315a526c97807bdcea898fea444.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe1e715c6151a453c4ebe358110f57102c85bed95",
+      "nftType": "UNKNOWN",
+      "name": "Anime Outcasts",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0e42f4960df5a3db9d314fe1766696a3.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xedee75777e6b6c6a2e9dd68c7c1b8576c716d7c6",
+      "nftType": "UNKNOWN",
+      "name": "Custom Punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/e4398c8b48b541b6b39039e0cec6a086.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdf932d583973148870d2b266c609f14c51a884ae",
+      "nftType": "UNKNOWN",
+      "name": "Base Babyz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/183a5e1e8a91215cbd349c5f40b07ac8.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1081872b298796e9eb5d1f96f8e53c1a1baebbda",
+      "nftType": "UNKNOWN",
+      "name": "BASED SMOWLS",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/800242566d9e471eea842c36a6b30a70.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x063dee9bcd3514d369e42116c06e7bdef07cd589",
+      "nftType": "UNKNOWN",
+      "name": "Bario DMG-01",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/c0660e1d723f657111308c05a23a2302.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7bc1c072742d8391817eb4eb2317f98dc72c61db",
+      "nftType": "UNKNOWN",
+      "name": "Base Colors",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/e17940350dd96101e351496d96eb5d15.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7ead78d50314edd512168c46385629dbe961cace",
+      "nftType": "UNKNOWN",
+      "name": "Swisstronik Choco NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/406b7f00ecff06675ebd20cb5e5dcbb2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa21b1a33626eadab379c4b76edb02510b04bbbcc",
+      "nftType": "UNKNOWN",
+      "name": "megapurrs",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f0b24de6dc7ee3b5e0210e6cdbe81460.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9d42b2a07f7c6a0b0b91daecc61cadb33086dd59",
+      "nftType": "UNKNOWN",
+      "name": "It's Brett!",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7952901ade3b46166c967ffabb8f322d.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd340fda83f7e5b9634a8c51ba2b525b5faea7c81",
+      "nftType": "UNKNOWN",
+      "name": "XProtocol Genesis Pass",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9ee2d0dc1fb0642130414c636695076f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xabae101747e65f7f2e72b4e4d7a787aaa7b17cda",
+      "nftType": "UNKNOWN",
+      "name": "Base Apes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1d9b39fbd152b2b5275a679e07c3b1d3.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x73561f402cba2dbdb36fd3968948970a9a617575",
+      "nftType": "UNKNOWN",
+      "name": "Forsaken",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/50fedd5b464139be8079280a2f0345b1.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdc1c20df3f8ededf1466399c5d5d17d864bd3f0f",
+      "nftType": "UNKNOWN",
+      "name": "Bario Punks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ad11ee581e7e8b9214c4c5ec4c966d4f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xad20382061158d1a82e6663a2a6a99318b8a5acf",
+      "nftType": "UNKNOWN",
+      "name": "Based OG",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/75ff7d5638a745a543538bb0b0862e6a.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8a2e6797d5930527272642a41f36cedc84a3935e",
+      "nftType": "UNKNOWN",
+      "name": "Rio Art Residency",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/dd05387e4a4f4d9df6d6330b119b59b8.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbef37ed93cf0768a3fb3c370e2b09516bfa699b7",
+      "nftType": "UNKNOWN",
+      "name": "PEPIX",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/fbcb02a992dfa1fc3c5751bef2f55ef7.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x75fb8aa8865bd75a77a827107266da97ecbde4a4",
+      "nftType": "UNKNOWN",
+      "name": "Base Pass",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9d47a4c514ea2602b55643d97b886ec9.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc79a8a83e873540d76f26067a5bcbcfa47c7d237",
+      "nftType": "UNKNOWN",
+      "name": "the Giza Pyramid Complex",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/862151931a7254af13d754803b1f9930.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x338c686291c616797727518028905b526973f8a2",
+      "nftType": "UNKNOWN",
+      "name": "Virgin League",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/2f385909ff3b6f29d81a88c870f616f6.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf352b358e9fcd543132ae98cb1447ca2bc443d98",
+      "nftType": "UNKNOWN",
+      "name": "Base Brigade",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7c6056b9a7db0ce6d479dfdd4acf3b55.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa7052294a4065390f9777b51eaf9e12d355cbfe8",
+      "nftType": "UNKNOWN",
+      "name": "PIXELPEPEN",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8a771cf0dc97fd38661fd0ff52211f05.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x83fd365803fd926e5a35b0d449524ea9c978a40d",
+      "nftType": "UNKNOWN",
+      "name": "ChiliBangs",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a9364b60c0b14219c387299e8a0053fc.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xce42ede8f02d70f43c496260a539cb9de55a9188",
+      "nftType": "UNKNOWN",
+      "name": "Totems by Dan Fraser",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3f7b128690ae97fc4184703595748c3c.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3757f56b25a14ed642fc8222f12e6d7f6c7177f2",
+      "nftType": "UNKNOWN",
+      "name": "based amfers",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a6a341679a8ec72ee4639be97d9cc2c0.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x257d3a1a8425eab86f6a963c87e0290119a83184",
+      "nftType": "UNKNOWN",
+      "name": "MankiBeanz",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/effc8b3a44c7f256b84941389f9b81fb.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9385d0f9633badd3d496a3d53dad305087020f37",
+      "nftType": "UNKNOWN",
+      "name": "MYSTCL Pixels",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1710e4cead0b52c60a984c6b7e88a09c.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa4f0ad1f7fb8cf643d2dfa61584ace8343be441d",
+      "nftType": "UNKNOWN",
+      "name": "Doppelgangers",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/0e81f99d32b3a2b56c1a6f935111e589.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1f7979c368c82dc647e075ffd61ed149052e3d6b",
+      "nftType": "UNKNOWN",
+      "name": "Ham Pepes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/9bcd206591a62397c4e0e5c9f5433ffb.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1639ef0c13b90eef8c70670d3876bb6319802a85",
+      "nftType": "UNKNOWN",
+      "name": "CryptoColorPunks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/739f7ec133801573dab7706b4cf7c4d4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe3c5ef27b80481518a2363406e354a9361415556",
+      "nftType": "UNKNOWN",
+      "name": "⌐◨-◨ Lil Based Nouns!",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/dc3ae9790170442148c98958e5fb8a2e.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x883c92f206f586c6bf82f58d797ebfe167495699",
+      "nftType": "UNKNOWN",
+      "name": "Pepe Journey",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a3ba0e5b900b133bbd0df3732034c8f6.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x09f09d5aecab7e903898379bab3a8addd2aba619",
+      "nftType": "UNKNOWN",
+      "name": "b l o c k b o y s",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f80ddf8ab56e3b2580a08cfc3b334a85.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb52e48048b02d5248d2fb39774a636880ec7bea6",
+      "nftType": "UNKNOWN",
+      "name": "KOMPETE Assets",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ab9833702a2f694256979a28ee37b69d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x20be3b999421a12f1247c33519874a73fce88fd1",
+      "nftType": "UNKNOWN",
+      "name": "Tiny DinoPunks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/be3ee2a1ca10cdaf0d8a8304b52770f4.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd8d59fd526e85c63cba4fdcbcc328e38d10a9468",
+      "nftType": "UNKNOWN",
+      "name": "Lil Pepen",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/63b7eea52f150609df42570f7c5fee0d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2a37b34c3faee22eb5716076dc2e5ca20963332e",
+      "nftType": "UNKNOWN",
+      "name": "THE HOOD",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ea3bbb531f002ab3f6f9e9c3669afde8.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf20a43f8396f8e28100d6d454e34483d78094c29",
+      "nftType": "UNKNOWN",
+      "name": "Larvva Lads",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6a554d169aaadd9e92143c5a1bab9a4f.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5355388324efc1faaaf80cab7ba8ec1a009cd729",
+      "nftType": "UNKNOWN",
+      "name": "based vector punks",
+      "symbol": "",
+      "logoURI": "https://raw.seadn.io/files/73983c78d09f49455693d049ee5d8c3e.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x16c29b5151ff26dbd3d42cf44c00e6d573ac1803",
+      "nftType": "UNKNOWN",
+      "name": "doominis",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/bf4f10c950716b8e1e4bf73045bdbc0d.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xce63b0a491037a6456d0ddf2aa45ecf0eec5f1b5",
+      "nftType": "UNKNOWN",
+      "name": "Toly",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/579750839e112b5f4b29ec00db3b121b.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdc50bffdc67d3657e45aa9fe0d3d426d16b33ae7",
+      "nftType": "UNKNOWN",
+      "name": "Dot Paint Cartridges",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/d87ea6795edee89c9d2695d4b4faf707.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x68653a7a1fc8ba356bffb7569a9cf73f8f6d88de",
+      "nftType": "UNKNOWN",
+      "name": "Based MEOW",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ae9a80db5e3f15a4630b6022c98334df.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbcb334c0b1ee3d5f29063b37074a683d9057764e",
+      "nftType": "UNKNOWN",
+      "name": "Based Zombies",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/42f3d955aa72e16a6c8c5b5ff4d49719.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb1756681e63adcca21da70bc1262f3f4065930d8",
+      "nftType": "UNKNOWN",
+      "name": "Summer Kevin",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/bc6af81377563d39bd4d42a8a794729d.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9d7803d8a9b10e4217e97898a16a8e1750569aed",
+      "nftType": "UNKNOWN",
+      "name": "Outlands",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/88d9686ead913397fd0ed5070bfd367b.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xae3f07b83b07df3e9ac1d8c0d376273e7bd4e797",
+      "nftType": "UNKNOWN",
+      "name": "Poncho Pals",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/8eed0c8093560d99735b3accdf1479df.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1b0d5dba993e7ace7dd0939973a6005b0043f601",
+      "nftType": "UNKNOWN",
+      "name": "Swatches Party",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/ce36f42637e55719112be643d89fa8e0.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8083e77b56dc8946ed21e54b5fc208a32804fe0b",
+      "nftType": "UNKNOWN",
+      "name": "LiveArt NFT Studio: On-Chain Coasts Trailer",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6a0b8af7cafb270c32e01a8844576a0c.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2de135729edf2b0ac03962323f8b1532d315e8ff",
+      "nftType": "UNKNOWN",
+      "name": "something",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3252f0b0f3dba9059a9f93817aac965c.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x97f59a639f146dda20f6ed60c3d3ae5cc52132c6",
+      "nftType": "UNKNOWN",
+      "name": "Rubik’s x Doodles",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4ef1ad9044f293cd07061089c013eb75c1235e41",
+      "nftType": "UNKNOWN",
+      "name": "BasedGenetics",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/1721e8dfc632c37a2b19a0f55dcfa284.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x47817d932fc68d6a345c8d7a2f94a3161822c545",
+      "nftType": "UNKNOWN",
+      "name": "BasePaint Masterpieces 2",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/79991fd7d25023ac64e8eba936c993f2.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9d7737e88c9c9a3e0db4037cc77500a751b4dd2a",
+      "nftType": "UNKNOWN",
+      "name": "Base Ahoy Yacht Club",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/42202a1c534921ed631e7e3cd8a06f74.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7860bd7386da0ed83fb939b16097cece8dc95609",
+      "nftType": "UNKNOWN",
+      "name": "Chimkens",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/3f1518c7d4a7ac96f035f73b1016d77b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x55ecb436f274f6f788076a1a5e1572ff17bd73be",
+      "nftType": "UNKNOWN",
+      "name": "Based Onchain Cubes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/a879522348baec7b10ef72ecb7608d71.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x628cb4601cb45fb4dacde367041fc49a74da8020",
+      "nftType": "UNKNOWN",
+      "name": "Caster Cats",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6a46470f73616a88f7ce6cf05b2ab385.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf0e8c4f7fe7df7da95c0720ebba28c1170291c33",
+      "nftType": "UNKNOWN",
+      "name": "Moxie Maxis",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/75ca1f18ad7fa9cf3a4cb5c163bf6b63.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc85f505b43fcbffbf7808a55bc4e8cecac18d85b",
+      "nftType": "UNKNOWN",
+      "name": "Based",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/0ed5d7b9f37589af0a0fa188361ce42e.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9f68dfd978905e6c7734b2e48f085485452afa5d",
+      "nftType": "UNKNOWN",
+      "name": "micro sappys",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f85c0744653647bfb4224f0cb984e3d1.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4c60bd32d143601a466b0309e6984d021f765060",
+      "nftType": "UNKNOWN",
+      "name": "Talentum Genesis NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6d184095b5caf223b552cbf9e045657b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe85458a0030522235a2db716bb90dacc2fca1905",
+      "nftType": "UNKNOWN",
+      "name": "Based On My Experience",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/771855282707948487e11347a8f671e1.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd68fe5b53e7e1abeb5a4d0a6660667791f39263a",
+      "nftType": "UNKNOWN",
+      "name": "BasePaint Brush",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/gcs/files/79540f2e30ce3362769825ed8bc3adeb.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb27b1369808c817d61baca58833232f97add28ea",
+      "nftType": "UNKNOWN",
+      "name": "SupaBald Jesse",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/f8d1c7d2488e07e2517e54fdb5629dd8.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6140c4d3b60dbb610d69ce787f2c904ba90f9907",
+      "nftType": "UNKNOWN",
+      "name": "Mr. Dribbles",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/4ff5d77f2ca6d1bc46e7c1432dc98386.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6e9e6eff06a84e0e094a8d9fabc90f9ba804eedc",
+      "nftType": "UNKNOWN",
+      "name": "No-Yoshiki",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/69a218033c25a40fd3e9afa4ab2abf3b.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcac0137d63b680f4e541088e172df491a09a20a2",
+      "nftType": "UNKNOWN",
+      "name": "Trailer Park DEGENS",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbf7c40864a178f05518ebc43b23bb9d161f4ef3e",
+      "nftType": "UNKNOWN",
+      "name": "ethOS Phone",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/a53c09ed87eebeddd82b06490ebfb463.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x69bf8f105cf04c0a869ceca69a5919e60aa2dfa6",
+      "nftType": "UNKNOWN",
+      "name": "Get Based by Jhekub",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/b0f23157094382f88c90695e0459f1f0.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc4b8337abf4405be90bbecb91151376715f7a303",
+      "nftType": "UNKNOWN",
+      "name": "This is R.o.b.",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/e16d46350a6c308ff28dd1a124333266.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xec8943dba48d9397a891dd13f0d9d32c4b9f2339",
+      "nftType": "UNKNOWN",
+      "name": "Pledge to Vote NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/5e4238d76f23e82a3f6bf94a057b7fa7.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x670971dcb8e1a510253511427593007e074954b7",
+      "nftType": "UNKNOWN",
+      "name": "Morpheus",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/296084f963575aed4e84198a0d704381.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8387b539e7f5c21022565782b629fb1ac3b180a9",
+      "nftType": "UNKNOWN",
+      "name": "Bakalanders",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/6d36294878bc2e987935d01895ef6e12.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf60a44920d51f4264ba0a8eb164a4bc15dc34e92",
+      "nftType": "UNKNOWN",
+      "name": "Get Based - Primitives Edition",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/cc4125ad0ef4256dc0ea776a5901a422.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd06109d804083498b0f3d0f4539725ccd76afa53",
+      "nftType": "UNKNOWN",
+      "name": "Web3 Explorer NFT",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/af6df93b920fa6d56c72d5ee5ad77524.jpg?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe19633ed8164cd0d83791b7904608a79d61362bb",
+      "nftType": "UNKNOWN",
+      "name": "Smart Foxes",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/7bff858bce7058c8119bcca47f943bee.gif?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x44dc8b118e0530dced5f2a23c784119e7e01c6ab",
+      "nftType": "UNKNOWN",
+      "name": "NeonPunks",
+      "symbol": "",
+      "logoURI": "https://i.seadn.io/s/raw/files/538d47b00f6215c6772b15743be38638.png?w=500&auto=format"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcfa2a7b08469c0183afc8756396d38e07e58f719",
+      "nftType": "UNKNOWN",
+      "name": "BONK OG Collection",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x826f758a72c709a4aaa156ee1b9a488642b003c5",
+      "nftType": "UNKNOWN",
+      "name": "Burning Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507780-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x916555cd5f02e159b84d5247f8660531a4525d2d",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507781-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x16c1bf48191dd58fb138616c36db8399d54002f3",
+      "nftType": "UNKNOWN",
+      "name": "Checks Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507782-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd031716c1844a4c44e7423e5eff7ca92b0c95372",
+      "nftType": "UNKNOWN",
+      "name": "Godly Pepes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507783-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x766d25d7005e6b690c0ab4fa1e81a2eb9b416c50",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507784-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x874ad7c13935f73c7bbe94efbd8e766de2a585eb",
+      "nftType": "UNKNOWN",
+      "name": "Stand With Crypto Supporter",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507785-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa036562aec201de2c0ca524be7925822665165ce",
+      "nftType": "UNKNOWN",
+      "name": "Fancy APE On BASE",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbf82fb702c7c5d94321049d5c70851bfd38861f0",
+      "nftType": "UNKNOWN",
+      "name": "Mannequin Boyz",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507787-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc758b1087e3970da79a84cfa2d909e5e5efbac92",
+      "nftType": "UNKNOWN",
+      "name": "Brainless Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507788-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x461911d76aadf73b7b3d034a47f472cdeb4d120c",
+      "nftType": "UNKNOWN",
+      "name": "Based Ape Kings",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x52bab6a0582df92daa2eb605c2dc7cde6398a94b",
+      "nftType": "UNKNOWN",
+      "name": "Omni Ax Adventures",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507791-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x60332ed4eec1b1498f24a95e4ed90f0cb6d7622d",
+      "nftType": "UNKNOWN",
+      "name": "Pretty On Chain",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507792-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3f2b04d6a88bb0b83b0bb964bff04c1a826e1b6e",
+      "nftType": "UNKNOWN",
+      "name": "Onchain Summer: Coinbase Weekly Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507793-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x19766e9da39ecb68b85b9b4af3b0ce4f9a4f2ecf",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507795-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9a466c55f0cfc8ea3cee03de0eb94bf35a934522",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507796-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x165865de32ba3d9552ff814c2f283964c2b61a7d",
+      "nftType": "UNKNOWN",
+      "name": "Omnichain Adventures",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507797-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbf5a89cef33db19518aadbde665edc4d67d09cd0",
+      "nftType": "UNKNOWN",
+      "name": "BASE CHESS",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507798-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x65109d69d678a3a203c8f26e9a7507aba08ea48d",
+      "nftType": "UNKNOWN",
+      "name": "LOOTaDOG Pass Card",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507799-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x895f427f461d7db2c1b0556aa930d21f9ad95792",
+      "nftType": "UNKNOWN",
+      "name": "Based Linea Punks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507800-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf7bc64f9e6c08be591e29d3e17ee99c04a74ae10",
+      "nftType": "UNKNOWN",
+      "name": "Mint x ABHS Mystery Box",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xebcec2e959bad4137925f9ddb68e163cca72242b",
+      "nftType": "UNKNOWN",
+      "name": "DackieOnBase",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507805-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd68fe5b53e7e1abeb5a4d0a6660667791f39263a",
+      "nftType": "UNKNOWN",
+      "name": "BasePaint Brush",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507806-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xea2a41c02fa86a4901826615f9796e603c6a4491",
+      "nftType": "UNKNOWN",
+      "name": "Bridge to Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507807-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7d5861cfe1c74aaa0999b7e2651bf2ebd2a62d89",
+      "nftType": "UNKNOWN",
+      "name": "Base Day One",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507809-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcfb05ab06d338fd85bbf4486e69809d96a906b77",
+      "nftType": "UNKNOWN",
+      "name": "DackieSwap Positions NFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507811-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xff58739889256b03671d287ffd62213b7f0e5332",
+      "nftType": "UNKNOWN",
+      "name": "Based Dackie",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x65b2e459f779ff4af4e4a16bc8065a0063cf8221",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507813-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0928f8bda66b305b916e1072bcb4e44b374b4cf0",
+      "nftType": "UNKNOWN",
+      "name": "The City of the Sky",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507814-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x80c7dd17b01855a6d2347444a0fcc36136a314de",
+      "nftType": "UNKNOWN",
+      "name": "SushiSwap V3 Positions NFT-V1",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507815-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe551b70e30d80f7f75b1b9a2ca2f4152d414d28f",
+      "nftType": "UNKNOWN",
+      "name": "Base Goons",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507816-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x59690b82816f7ae9a23dea538b73a3698dddbbdc",
+      "nftType": "UNKNOWN",
+      "name": "OmniRock Edicts V2",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfd4e4e38819e2db4799d0f57c70d7ac5aa71f018",
+      "nftType": "UNKNOWN",
+      "name": "OpenName(Base)",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507818-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x00008453e27e8e88f305f13cf27c30d724fdd055",
+      "nftType": "UNKNOWN",
+      "name": "mint.fun x Base Bridge Pass",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507819-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfa65fe624b0d475b92d456927f8d52f02bfbde5d",
+      "nftType": "UNKNOWN",
+      "name": "wooonen",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2cdca0a5e8c0133dc8e3677b4022817c6c7dc40b",
+      "nftType": "UNKNOWN",
+      "name": "Throne V3 Positions NFT-V1",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x23548a31f191d2619c52c79f9d7c6d50b2508d99",
+      "nftType": "UNKNOWN",
+      "name": "Earthling On Base Summer",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507831-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1ddb721bf79d3ad33fbac72e5decf2a436cb42a3",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507832-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0c664a85521d5721bca047d29238d9e2a9e9e861",
+      "nftType": "UNKNOWN",
+      "name": "KLEERUP - PARADISE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507833-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcbd95612ee3c93478822ebed5ddf29cb5c47c1f1",
+      "nftType": "UNKNOWN",
+      "name": "KusaMatrix DAO",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507834-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf882c982a95f4d3e8187efe12713835406d11840",
+      "nftType": "UNKNOWN",
+      "name": "Merkly ONFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507835-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe4c3aa3978b61431c070109629a687bc42d66d8f",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507838-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3104c9c76a361b333f7b31ba1d08dd9b6021bc5d",
+      "nftType": "UNKNOWN",
+      "name": "PiraNFT",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb794acd28d8c87bc511bce5ecd30b417606c6bba",
+      "nftType": "UNKNOWN",
+      "name": "Exploring Base World",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507840-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x32cf27f2753e90948195b64ec55c486ee640cf61",
+      "nftType": "UNKNOWN",
+      "name": "The Masterpiece Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507841-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xff7f1e0bc97e0a256a48215e17da220fd7c23064",
+      "nftType": "UNKNOWN",
+      "name": "Silvandune City",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507842-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8b2937ead425ccc91fc0ad884638dc2129c51cb2",
+      "nftType": "UNKNOWN",
+      "name": "BOYS NOIZE - ICH R U",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507844-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc85f505b43fcbffbf7808a55bc4e8cecac18d85b",
+      "nftType": "UNKNOWN",
+      "name": "Based",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507845-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7c0407ac359d783f4383b03d4f68c34b56b38e34",
+      "nftType": "UNKNOWN",
+      "name": "Onchain Summer",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507846-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x18c78a0b1fd00084c83e5b4365cddee1e6cdba84",
+      "nftType": "UNKNOWN",
+      "name": "DappGate by DappLabs",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507847-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8ea76f28dd089a2d68728dfb10dc5c9fa04ca0b8",
+      "nftType": "UNKNOWN",
+      "name": "EWCL",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507848-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x310c674aaf0b47782f6adcfbd34c075b764502e5",
+      "nftType": "UNKNOWN",
+      "name": "Basert De Niro says HUH",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507849-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x29d24b2ac84e51f842fb8c1533cd972eb83c65ce",
+      "nftType": "UNKNOWN",
+      "name": "L2Marathon",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xba5e05cb26b78eda3a2f8e3b3814726305dcac83",
+      "nftType": "UNKNOWN",
+      "name": "BasePaint",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507851-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x62dc542c2261a7dce934f1aca451e93f9fd0152d",
+      "nftType": "UNKNOWN",
+      "name": "Dackie NFT Drop on Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507852-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbe06c18ff1cceffb23e4407d857aa1a730c8ab3c",
+      "nftType": "UNKNOWN",
+      "name": "Universal Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507853-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5137eedb91a5f2cc68e86dca15ad5c2b541654f8",
+      "nftType": "UNKNOWN",
+      "name": "UltraMarathon",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507855-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9d709f2e1df1f0bdeadf6b095f97d4d4278837ed",
+      "nftType": "UNKNOWN",
+      "name": "Pixel Wags",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507857-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1fc10ef15e041c5d3c54042e52eb0c54cb9b710c",
+      "nftType": "UNKNOWN",
+      "name": "Base is for builders",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507858-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xae11a088fef575a3f83cfc8f9ff885da565a857c",
+      "nftType": "UNKNOWN",
+      "name": "Masuku Gang",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507859-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x03bff9d0cb2497338cf08a9874d5551353974319",
+      "nftType": "UNKNOWN",
+      "name": "It’s Onchain Summer 🟡 and Base is open for bridging",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb512d78dc9ada3e79743690c1349cfce12cded42",
+      "nftType": "UNKNOWN",
+      "name": "Bringing Dining Onchain with Blackbird",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507861-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf830ab0960e649051d871acac1afc6b57d18117a",
+      "nftType": "UNKNOWN",
+      "name": "Based🔵Trips Onchain🟡Summer",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507862-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xae933a1c8a89ac5eda1f99e27857924cc69935e2",
+      "nftType": "UNKNOWN",
+      "name": "MegaForce Sentinel Cards",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507864-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc9cca8e570f81a7476760279b5b19cc1130b7580",
+      "nftType": "UNKNOWN",
+      "name": "DeeKay Motion - New Era ETH",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507865-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfc4512985045bf6b872cb9d4c4bf69ac73bbfe6b",
+      "nftType": "UNKNOWN",
+      "name": "BaseMonkex",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xccbe8e9cec32299f2f571e9dbabfc209e02dcd27",
+      "nftType": "UNKNOWN",
+      "name": "Base Up",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507867-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x03a520b32c04bf3beef7beb72e919cf822ed34f1",
+      "nftType": "UNKNOWN",
+      "name": "Uniswap V3 Positions NFT-V1",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507868-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x68d905635e02a8051b5129495d55c453e7e61278",
+      "nftType": "UNKNOWN",
+      "name": "Based Very Internet Person",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507869-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5c2bfcf9c17cd53d55033769727196736cd188b3",
+      "nftType": "UNKNOWN",
+      "name": "zkMe Identity Soulbound Token",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x632e7208911238f8a36d915d6c6947d90f1a4c3d",
+      "nftType": "UNKNOWN",
+      "name": "Based Mona Lisa",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc7beb1e14fee5b4dd7579f6b98dfffab2013e371",
+      "nftType": "UNKNOWN",
+      "name": "Pixel Ape Club",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507874-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x999c518dfc6acb38ecf69f9e0a4567a44990fb3d",
+      "nftType": "UNKNOWN",
+      "name": "Base Cyber Cats",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507875-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcb4aed0f61258627ae110d5c3fc4cefbc3f96af6",
+      "nftType": "UNKNOWN",
+      "name": "LayerZero Multichain Power XL V2",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507876-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x25f834dda4a7b7910db67ca83e4653209c041305",
+      "nftType": "UNKNOWN",
+      "name": "I Was There, SZN1 - By Mintify",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507882-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7c638ddf68dd3cfa46a213f9aea1de6035e6a00a",
+      "nftType": "UNKNOWN",
+      "name": "Tyche Yield NFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507883-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6bf39aef68c3ce12c1f4fd2302c800e7d5af552b",
+      "nftType": "UNKNOWN",
+      "name": "MoonPepes",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7efa24ee5bb4864b6c9b52252b2276202ada001e",
+      "nftType": "UNKNOWN",
+      "name": "Based Very Internet Person Rebuild",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507888-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfb660fdf17cc1f51cb6cb2b9552513757162250e",
+      "nftType": "UNKNOWN",
+      "name": "BasePhunks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507889-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb3cc484a60bc300719aaefbd158a4e8e59d84555",
+      "nftType": "UNKNOWN",
+      "name": "HorizonDEX Reinvestment Token",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x336d8422532a340fa3ee11e3c5ab437c20fe8900",
+      "nftType": "UNKNOWN",
+      "name": "TribalElegance",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507893-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x836198f984431ecdc97a7549c1bd6b3cd9e7a89b",
+      "nftType": "UNKNOWN",
+      "name": "Base Domain Names",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507895-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x09ce1abaf8a4250337d26982805aa6527c4e9540",
+      "nftType": "UNKNOWN",
+      "name": "BlobStarsNFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507896-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3d77d3b161c3df3a764ce1ab42130d4febedc868",
+      "nftType": "UNKNOWN",
+      "name": "GXNG BASE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507897-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6bb1aca7b6ba1ed09d6e36650aac8c7bc36f6dc9",
+      "nftType": "UNKNOWN",
+      "name": "Bullcasso",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507898-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x97f8ab195e2c258abf2e7660331eaf8c59eaa736",
+      "nftType": "UNKNOWN",
+      "name": "Base Ape Yacht Club",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x36a358b3ba1fb368e35b71ea40c7f4ab89bfd8e1",
+      "nftType": "UNKNOWN",
+      "name": "l2telegraph.xyz",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x360ab052e8997d07dbb391b96daa3399758cab69",
+      "nftType": "UNKNOWN",
+      "name": "Onchain Summer ENERGY",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507914-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x07612359b564ae009fd4665059d6964fd6fda4a0",
+      "nftType": "UNKNOWN",
+      "name": "Based Pepe",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507917-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1db11e26562800be55e4d449401b367c84d988b4",
+      "nftType": "UNKNOWN",
+      "name": "Slingshot Onchain Summer",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507922-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd6936153faf333605fd5b4b6adf9bb74ea75498c",
+      "nftType": "UNKNOWN",
+      "name": "The End Game",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507934-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xace5602d169edeb874bfe584a651801b8ac67093",
+      "nftType": "UNKNOWN",
+      "name": "Unidentified contract",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbd9bab0a97b2cc6aa28b9c902d7c656b121d5f9f",
+      "nftType": "UNKNOWN",
+      "name": "Base Name Service",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507940-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x217ec1ac929a17481446a76ff9b95b9a64f298cf",
+      "nftType": "UNKNOWN",
+      "name": "Based Fellas",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507943-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x554ad96a676450d13c59be15c0aace90dd322885",
+      "nftType": "UNKNOWN",
+      "name": "Based Nounimals",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507944-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x13cbe64eab0424c1bcb6612bc56a30063366de40",
+      "nftType": "UNKNOWN",
+      "name": "Ape Punks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507945-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x206571b68c66e1d112b74d65695043ad2b5f95d5",
+      "nftType": "UNKNOWN",
+      "name": "Parallel Alpha [Base]",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507947-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x19c72c65835260fc92b695703949fbc916206862",
+      "nftType": "UNKNOWN",
+      "name": "Fluff Venture",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507948-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x14a725839184f879f3c09ce3d707e5a3e4c5869d",
+      "nftType": "UNKNOWN",
+      "name": "CyberSoul",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xaf54cbb57683b353110deb4c835a365033e46485",
+      "nftType": "UNKNOWN",
+      "name": "Unidentified contract",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507952-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x059132359882cb81b98a027509fc977dece9f053",
+      "nftType": "UNKNOWN",
+      "name": "GangstaVerse Lootcrates",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507954-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5ecfcd26b136bfc6b33df0478e66fefcfdfb8b71",
+      "nftType": "UNKNOWN",
+      "name": "EarthBased and Omnichained",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa92b92604484f311a00c461ec5520040b973dd1e",
+      "nftType": "UNKNOWN",
+      "name": "Base Moonpepe",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507960-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2269bceb3f4e0aa53d2fc43b1b7c5c5d13b119a5",
+      "nftType": "UNKNOWN",
+      "name": "NFTs2Me Owners",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507961-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5c53f67f56dab4e83d609c9be08c3dae31418a22",
+      "nftType": "UNKNOWN",
+      "name": "NebulaDEX Fractions",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507966-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc1e42a0c5efbf1256532ea551fb22d2f60bbd900",
+      "nftType": "UNKNOWN",
+      "name": "Beautiful Based Horizon On Earth",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507970-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x454c9ac1dfd5f0b4dd2887818be9624b26c848a4",
+      "nftType": "UNKNOWN",
+      "name": "Nouns HD",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507974-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xcf512c90887f195f64ae2d0ded42c98a5aa466fb",
+      "nftType": "UNKNOWN",
+      "name": "A PERSONAL MANIFESTO",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507983-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xdede5b84a9f2525a81899ddfecab4521078cb03d",
+      "nftType": "UNKNOWN",
+      "name": "CrossChainNFT",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf0d0df7142f60f7f3847463a509fd8969e3e3a27",
+      "nftType": "UNKNOWN",
+      "name": "tiny based frogs",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507985-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb3179b8984800219c3c72e2f57eabbcb7332ad60",
+      "nftType": "UNKNOWN",
+      "name": "ba53punk5",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507989-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc4648f3bb50746d658859e200ee439fc64620d1e",
+      "nftType": "UNKNOWN",
+      "name": "Based Onchain Summer Circle",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2507996-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb77c8dba0eafddcc3fc89330b057a08d8271f753",
+      "nftType": "UNKNOWN",
+      "name": "Base Name Service",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508003-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5519dc53d698ce6b9eefc71efc454e4b269307b9",
+      "nftType": "UNKNOWN",
+      "name": "1337 Brians",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508006-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe84f7a8ae66fb5db5fecc92a0c695c8bb336731d",
+      "nftType": "UNKNOWN",
+      "name": "Algebra Positions NFT-V1",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508015-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0ca32f1d67d9e805d752aa6250b9e37ac43d2119",
+      "nftType": "UNKNOWN",
+      "name": "Algebra Farming NFT-V2.1",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd8ec61e9efc1f1628e602f2494dfe2a89b8e037b",
+      "nftType": "UNKNOWN",
+      "name": "Base Maxi Biz",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5c7e5de60c52f824444ddbd50afea21adf6915ed",
+      "nftType": "UNKNOWN",
+      "name": "Oden Blue-Chip DAO",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508022-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfee5ae3003f18a2759ff5f270f74c2cd3c859fc0",
+      "nftType": "UNKNOWN",
+      "name": "The Cat NFT of BaseLend",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508028-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x89f72926f4fec36e8cb376e6f5b7df8e1c9a4726",
+      "nftType": "UNKNOWN",
+      "name": "Tripster Wally",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508033-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbf33e5d8d1bb7c0aa35e444cf4152b1670c6ad2f",
+      "nftType": "UNKNOWN",
+      "name": "AiDoge OG Collection",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf7c4ecad61d4b8f1fa7f764cb01dd6affae6d664",
+      "nftType": "UNKNOWN",
+      "name": "CULTURE AT PLAY: not_as_sickly",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x58e65f15abc6eb191635cdcba358ffb669eeb042",
+      "nftType": "UNKNOWN",
+      "name": "Based Birds",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508061-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd7a0cbea449d13909467bfbe63732efc728a6090",
+      "nftType": "UNKNOWN",
+      "name": "Not Based Punk",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508063-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb6ca945ed4f5b0e3c973c61aa6331a3d70bc055a",
+      "nftType": "UNKNOWN",
+      "name": "Base is open for everyone",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508074-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0c94c4d8cd13cd9dd75282f991e4fc4b4263ccfb",
+      "nftType": "UNKNOWN",
+      "name": "Apple Head",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508076-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xffe5d23016a6381aa946726b26136683052e6dc2",
+      "nftType": "UNKNOWN",
+      "name": "moonBASED",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508082-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xefc3f45706639e186f154976c97aa89afcd90f05",
+      "nftType": "UNKNOWN",
+      "name": "BABY PUNK BASE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508085-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb0a5bee83db3345d85979c011860e211eba8e8da",
+      "nftType": "UNKNOWN",
+      "name": "AiShiba OG Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508087-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x33ed5107f821bb1465da30b7dce4fb7105b0ad16",
+      "nftType": "UNKNOWN",
+      "name": "LAIDBACK LUKE - ORIGINATOR",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508102-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0d8127a01bdb311378ed32f5b81690dd917dba35",
+      "nftType": "UNKNOWN",
+      "name": "Maverick Position NFT",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb2e6dbe3188a01ed94353ce039a91dbdbb655bd0",
+      "nftType": "UNKNOWN",
+      "name": "Crypto Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508109-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x05b8ee5658f3ad6c268c08b7a70f2fb4b10cf348",
+      "nftType": "UNKNOWN",
+      "name": "DeeKay Motion - New Era BTC",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508113-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x7ab595e333fe920bcb26bb5ba2a17c5418f7dcf2",
+      "nftType": "UNKNOWN",
+      "name": "Primors",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508123-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x950100d75f0308fbd0953f25c6b108238e11321f",
+      "nftType": "UNKNOWN",
+      "name": "OmniRock Edicts",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x91f85d68b413de823684c891db515b0390a02512",
+      "nftType": "UNKNOWN",
+      "name": "veBVM",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508134-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc58817766623c97dbfa48cfe001205dfd25f544b",
+      "nftType": "UNKNOWN",
+      "name": "Base x ASCII Limited",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508135-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x84b5897a23b067d87be550e440a3436f6d149fe2",
+      "nftType": "UNKNOWN",
+      "name": "veNFT",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd685fab66c85b9c380a9b6773ef9f05dd18b544c",
+      "nftType": "UNKNOWN",
+      "name": "OoTzieS",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508150-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc16706ae5eed1805990d92241add1662724e50f2",
+      "nftType": "UNKNOWN",
+      "name": "Based Rekt Chickens",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508160-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x59897c3939fb6c254e52fcb7e6d645b86d7d73fc",
+      "nftType": "UNKNOWN",
+      "name": "New Era X",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2484da670ab8d4e49a5f8a2c9f4df5c495b76884",
+      "nftType": "UNKNOWN",
+      "name": "Base NS",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4c01df6b9be381ba2a687d0ed5c40039deeaf0a9",
+      "nftType": "UNKNOWN",
+      "name": "veArc",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x769ebc18345f9ca45c4ac62ca548ce50309dc7ba",
+      "nftType": "UNKNOWN",
+      "name": "ChimpBase",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508187-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x50e8aa83b81758afbc39b1de4cf46b3049488ffa",
+      "nftType": "UNKNOWN",
+      "name": "Base Ether Onchain Summer",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508191-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8cec17084c8792f9357607fb1723597731b59c2b",
+      "nftType": "UNKNOWN",
+      "name": "onchain hat - feeling optimistic",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508201-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x89518f11346c761c48cb7086bbd2008806f75149",
+      "nftType": "UNKNOWN",
+      "name": "Pira Passport",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508218-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe2c5b934b0a591fdc6d1a13061565198e1b93522",
+      "nftType": "UNKNOWN",
+      "name": "Z-SPHERE v0.1322",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508221-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5841dbcc2dd667292e3cf2964cb4aa3d8f875ec8",
+      "nftType": "UNKNOWN",
+      "name": "BaseforAirdrop",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508223-logo.jpeg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb93fdda0186ef2554e10fcc128b625ff0d505373",
+      "nftType": "UNKNOWN",
+      "name": "Based Crypto Apes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508235-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2497d04290c50e346a68888fde72319e2b5eab95",
+      "nftType": "UNKNOWN",
+      "name": "MusicalZombie",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508240-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8a253366e156fa6f13e6fbb9ceabef6fca8e350f",
+      "nftType": "UNKNOWN",
+      "name": "CB Eng Awards Based",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd59b47f7e70320e808586c786178940159928161",
+      "nftType": "UNKNOWN",
+      "name": "Base Apeverse",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508253-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x954e2e88bc494254f3cac4d03b482759c9de4be1",
+      "nftType": "UNKNOWN",
+      "name": "Baldbase",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508260-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x85ed8c0fb1251299a94308accb8ab6aec58bbe32",
+      "nftType": "UNKNOWN",
+      "name": "Build on the Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508264-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfd794258aec191cce5e18e44dfa129431323ce99",
+      "nftType": "UNKNOWN",
+      "name": "Base Summer Punks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508277-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb21d7fdc1b8e3cdbe2061e1f05fd094f46ef2f47",
+      "nftType": "UNKNOWN",
+      "name": "Rainbow Road",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508284-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x851f5f61f506f0bcf399c610939dd1b7ea48e09c",
+      "nftType": "UNKNOWN",
+      "name": "BASE ID",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508288-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf6f3d33901d8c676e5eb3f6ed1d2b3adf2f50560",
+      "nftType": "UNKNOWN",
+      "name": "Base Tunes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508291-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x82ed3cf9bdcfeb18344fd34d8b5c0dd356cb830f",
+      "nftType": "UNKNOWN",
+      "name": "ShibaInu OG Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508297-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb311ec23c4a7578a4c18f66774a5d7b51dd1dd07",
+      "nftType": "UNKNOWN",
+      "name": "Torn - Settlers & TornLords",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508298-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xaa424d910ada4c45463ea73a2441a0ca3a31753e",
+      "nftType": "UNKNOWN",
+      "name": "Base Onchain Summer, Introduced",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508338-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9d9c0c4e764117fccd2bc3548f0e95c806e6f996",
+      "nftType": "UNKNOWN",
+      "name": "Summer Kevin",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508360-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd4050b627fbbde9c594a748fbd7ccf3ae3810e9c",
+      "nftType": "UNKNOWN",
+      "name": "Ether Peaks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508381-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd6b708869c60662eb8b30af5f62fe9ea7c0a693e",
+      "nftType": "UNKNOWN",
+      "name": "The Billionaire Collection",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508383-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x83a4c15b08e23fe145e7ba3b42e45f180989d586",
+      "nftType": "UNKNOWN",
+      "name": "Polyhedra Early Suporter",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508384-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x513fed396e1959e8c9d739123afa41243d09f868",
+      "nftType": "UNKNOWN",
+      "name": "Based Opepen",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508386-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0c67bc3ef37d0f3f759c7db9efee8f5c6b5da022",
+      "nftType": "UNKNOWN",
+      "name": "Basedon",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508388-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x12213a4aa03e139dcd71b36bc612c7f02800b03e",
+      "nftType": "UNKNOWN",
+      "name": "Pepe Punks On Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508393-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x142660467486aaea5a491cfdd30e5f44462ba28a",
+      "nftType": "UNKNOWN",
+      "name": "Base on Fire",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508397-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc3130503616718f9d30524f37e355bc51d863cc4",
+      "nftType": "UNKNOWN",
+      "name": "Chonky Dickbutts",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508415-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x949258862e52702435bc5ca671a35287ad1bef8b",
+      "nftType": "UNKNOWN",
+      "name": "Genesis Doge",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4549b6864b3902b8ebce89b964c59d51876a91d8",
+      "nftType": "UNKNOWN",
+      "name": "Fin & Furs Unity NFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508419-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9385d0f9633badd3d496a3d53dad305087020f37",
+      "nftType": "UNKNOWN",
+      "name": "MYSTCL Pixels",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508426-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6838b2f60b0c501c5cd23b03eb845afb9e54e1ee",
+      "nftType": "UNKNOWN",
+      "name": "ColorMeNFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508428-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2461da8a14943b309b70a3778d670a0c0c92d100",
+      "nftType": "UNKNOWN",
+      "name": "rainbowmaterial on manifold BASE721",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508437-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x9f1ca9d8962b30d09f404bded769382c61ba160c",
+      "nftType": "UNKNOWN",
+      "name": "GO NFT Friends",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508441-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x060bca0ee8cc782eb79c2ce4c889db72ce390d9b",
+      "nftType": "UNKNOWN",
+      "name": "Base Apes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508446-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0008bcbc8a7fcfe46bff3a5f1f98988751cd9ec5",
+      "nftType": "UNKNOWN",
+      "name": "Usernam3",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508455-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x407c425784b4f665ecdc4164275f891b7fec0de7",
+      "nftType": "UNKNOWN",
+      "name": "Based Dump Pepe",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508456-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc93ec8d8535924adac5d22b469b92d749879b55c",
+      "nftType": "UNKNOWN",
+      "name": "KryptoEkipa Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508457-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x14c8f280d2e6b6d9fad7332c7be7f09f3d16f71d",
+      "nftType": "UNKNOWN",
+      "name": "Tabi Treasure Chest on BASE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508460-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x58c75b053f583bec56d7ec26713d2577becf8d11",
+      "nftType": "UNKNOWN",
+      "name": "FatCats Capital",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x64645c8de8fd68fa968bef59833d7434c6e4234c",
+      "nftType": "UNKNOWN",
+      "name": "Aptos Names V1",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508464-logo.svg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd7fb5244644ee706eed0208dc129ca392af4d003",
+      "nftType": "UNKNOWN",
+      "name": "PLANET ZORA-ZORB",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508471-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa056fd3c9d2462a5397bf87f70424f2327f34e5a",
+      "nftType": "UNKNOWN",
+      "name": "Mystery Base for Fun",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe8fd31c83cb730dcfe08a101dc54617e06564124",
+      "nftType": "UNKNOWN",
+      "name": "Base ENS",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd2e777f84b70977c7670d57c8dedbd6fc908a915",
+      "nftType": "UNKNOWN",
+      "name": "Red Monster",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508498-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3a0384f6784f3f15f004382713669f3cade04f2a",
+      "nftType": "UNKNOWN",
+      "name": "Fractal BASE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508501-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfc558443ddf413a16c0be340137e145765d9adb4",
+      "nftType": "UNKNOWN",
+      "name": "Nansen 2 Early Access",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508502-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x5e330912a43fcb9c6f976685cd8a56728634648a",
+      "nftType": "UNKNOWN",
+      "name": "KAZO Pill",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508511-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc512f71b658c1614364e9ead386bc2e059714f63",
+      "nftType": "UNKNOWN",
+      "name": "The Goobergs",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x84f2e4a3875a5f94f1cbbeebeeb1f130b6db85b9",
+      "nftType": "UNKNOWN",
+      "name": "BaseSelfie",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508524-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x586abe893dd5cdf614d45d1060fc8bd5b3f3e033",
+      "nftType": "UNKNOWN",
+      "name": "CocoTheCornCob",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508528-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x47e01cfd17e65f9d6a2a10918a3cb3bc86e6d731",
+      "nftType": "UNKNOWN",
+      "name": "Bored Base Ape Kiings",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb60a0843ff64ae8f4f9efada4a1c957ed354a23d",
+      "nftType": "UNKNOWN",
+      "name": "Debank family on Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508578-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa3341a3dac5685d83729de35e43d3e8e587c3257",
+      "nftType": "UNKNOWN",
+      "name": "Based Apes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508580-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x735564d0e9e3a17aac487dde99823ee8abb0de42",
+      "nftType": "UNKNOWN",
+      "name": "Akamigos",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508596-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa51983c4d5db8110d67d268cb498ec6ee8774411",
+      "nftType": "UNKNOWN",
+      "name": "xBEG - Exclusive NTT on BASE",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508623-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x12c637cf3ed3ad2916a781eabff6d21702a9b7ed",
+      "nftType": "UNKNOWN",
+      "name": "Wild Pepe",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x2806388d30aab02b7e9283e671f91d9640b4dc6b",
+      "nftType": "UNKNOWN",
+      "name": "Based Oozaru",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508640-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa71e7fd6dd7a6308d27e0d6717b7c15e9d24af90",
+      "nftType": "UNKNOWN",
+      "name": "Sadie",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508643-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x4b665de71d9d33c5f748b85f323b5860b685d223",
+      "nftType": "UNKNOWN",
+      "name": "Ice cream girl",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508657-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb85e26ddda761f0cce12d73437249624e3f9fe2d",
+      "nftType": "UNKNOWN",
+      "name": "Grupo Abeja",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508671-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8ad0142e8cb3f74c065d9dce14813537b435f552",
+      "nftType": "UNKNOWN",
+      "name": "based degENS",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508681-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfa1f514f691dde1a9677e059d6786594fb5a69c7",
+      "nftType": "UNKNOWN",
+      "name": "BasenPunkz",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508689-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xfb019ec15dabeb24cb084e71f60358e032b1451c",
+      "nftType": "UNKNOWN",
+      "name": "Basebird",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508702-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb2a44e5e643445a7e105248fb306db29289c87d2",
+      "nftType": "UNKNOWN",
+      "name": "Based wooonen",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb999ec5e57000540cbf821addbc69c37bf506f9f",
+      "nftType": "UNKNOWN",
+      "name": "A Paragon",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbbc2ec8cdd3a79bba759e13b8285baa6312b9895",
+      "nftType": "UNKNOWN",
+      "name": "Dackie Mainnet",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508789-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x06276679757e3cc906383fd581e8dbe9b961da90",
+      "nftType": "UNKNOWN",
+      "name": "Crypto Tini Tunkz",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508798-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x197685dee6fe2f2fa4a661cc7e70eb8041180bf9",
+      "nftType": "UNKNOWN",
+      "name": "Based Squiggles",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508804-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe1c69e3c75a7a0de2bf5c0fce9138cdfa02a3f2a",
+      "nftType": "UNKNOWN",
+      "name": "Linea Name Service",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb1ff838216fa2bee1a7160e6a80279805b4c3595",
+      "nftType": "UNKNOWN",
+      "name": "Based Dog",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508821-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xaafbf7b46828ab87f0f94b8ed65fcf604c8234ae",
+      "nftType": "UNKNOWN",
+      "name": "unknown",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508826-logo.jpeg"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x55ecb436f274f6f788076a1a5e1572ff17bd73be",
+      "nftType": "UNKNOWN",
+      "name": "Based Onchain Cubes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508889-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x19c8207e131b1466352b05a48e0603245c6fec0e",
+      "nftType": "UNKNOWN",
+      "name": "🔵 BASE Airdrop Strategy : using Arbitrum Criteria",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1d334e0bd12e25888ffe581e904964e12f3ebbe0",
+      "nftType": "UNKNOWN",
+      "name": "ALLYOUNEED",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508891-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x141587fb45c59db7ce7be3ab055f8b37c96e8092",
+      "nftType": "UNKNOWN",
+      "name": "CAMO BASE ZORB",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508905-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc8b679f76cd6ad985c39d64f6aff5d305e0a84e6",
+      "nftType": "UNKNOWN",
+      "name": "BASE AI FUTURE GITCOIN",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508908-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x33dd7cc9c4fa7b9d1f8772a9690f3bf34d68f3e6",
+      "nftType": "UNKNOWN",
+      "name": "Unidentified contract",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x342f294dbebef754740f076505db0cc6d515f0b6",
+      "nftType": "UNKNOWN",
+      "name": "LeetSwap Base Adopter",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508936-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x00ef6ecac676d3cc158def4a8d028ad7aa35c767",
+      "nftType": "UNKNOWN",
+      "name": "Base Domains",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508937-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xd294b6a6ba955c9950851f8c64a89c61b02ecd70",
+      "nftType": "UNKNOWN",
+      "name": "Based Flow",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508964-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8a048a9dfa5d5455afce281472d0a9535a882142",
+      "nftType": "UNKNOWN",
+      "name": "Blue Base",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508966-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6987c53b895637c75047d2edd3ec999366478e6e",
+      "nftType": "UNKNOWN",
+      "name": "Ostrich Fragments",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2508972-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x110de362cc436d7f54210f96b8c7652c2617887d",
+      "nftType": "UNKNOWN",
+      "name": "iZiSwap Liquidity NFT",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc1379fa4975675c03d4dc65dbe6aa78e8bfa58fd",
+      "nftType": "UNKNOWN",
+      "name": "onchain hat - summertime blue",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509018-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe47b05f2026a82048caaecf5cae58e5aae2405ea",
+      "nftType": "UNKNOWN",
+      "name": "Merkly com",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x79950b3623407fd4e127d9c27c08341a2714b655",
+      "nftType": "UNKNOWN",
+      "name": "FrogiezOnBase",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509038-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf8ca8a10be7a638cfaa35fe09911f88e04e1feeb",
+      "nftType": "UNKNOWN",
+      "name": "Base Shining Girl",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509100-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x3e73ba2e994d4e8c2a86fc95beaa8171b94c40fc",
+      "nftType": "UNKNOWN",
+      "name": "Awesome Base Apes",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509133-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc763bb6584cb1e36a88b9a64ce934a0e30c72cd1",
+      "nftType": "UNKNOWN",
+      "name": "Based Goons",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509153-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb946e8e0d5adbad0bda10dd42a666c16a2c73cc2",
+      "nftType": "UNKNOWN",
+      "name": "Basedede",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509159-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x1946dcbc5613a199cb31bbfb0e17854f8cc51026",
+      "nftType": "UNKNOWN",
+      "name": "Base early testers",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2509205-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xefc0d4ad40a9a57015385ef82da64be3e8c7b054",
+      "nftType": "UNKNOWN",
+      "name": "base test nft 721",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc9d128f88a8d97342a37680f0ce0f34598f289d0",
+      "nftType": "UNKNOWN",
+      "name": "1,000 True Fans",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2556778-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x44c035c45e164b37991fe29061d7828f20ebf3cb",
+      "nftType": "UNKNOWN",
+      "name": "BABY SKELETON",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2557224-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x8b559fba48051ca930a646493ca3fcf1c7fe1bf9",
+      "nftType": "UNKNOWN",
+      "name": "P3P3 The Club",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2558979-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xc5b835bd38ce57960d817162ee682836da489feb",
+      "nftType": "UNKNOWN",
+      "name": "Leave No Trace by Jessica Yatrofsky",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2559805-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x549e67f9ab2e870e3ba57e7ef9f56bbf82f8f493",
+      "nftType": "UNKNOWN",
+      "name": "Crypto Hunter",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583277-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x27dac2f25edb24c75cd1781e68b0358c91a9765a",
+      "nftType": "UNKNOWN",
+      "name": "BasePunk \"EXCLUSIVE AIRDROP\" NFT",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583278-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb9ae609280f020e996f936dd062b66b84e9e7424",
+      "nftType": "UNKNOWN",
+      "name": "Parallel Walking Antenna Robot",
+      "symbol": "",
+      "logoURI": "https://example.com/default-nft-logo.png"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xf05ff3689a635d13d005a54c56a3e85a183516b5",
+      "nftType": "UNKNOWN",
+      "name": "Atsuland Base Edition",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583280-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xae431537c1c774fb6c385db67d47dd6bfbe547b6",
+      "nftType": "UNKNOWN",
+      "name": "Based Doodle Punks",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583284-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xb26803943f2241640909116927fe0ea850403a92",
+      "nftType": "UNKNOWN",
+      "name": "Pixel Pins",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583285-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xe8a6bebe5e5b9eda078ade3df5764b9ff4a5dfa9",
+      "nftType": "UNKNOWN",
+      "name": "Virtual Maze",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583286-logo-v2-webp.gif"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xbfdb5d8d1856b8617f1881fd718580256fa8cf35",
+      "nftType": "UNKNOWN",
+      "name": "Farcaster v3",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583287-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0x6b009dc3a4b7fd894d355b9719068f75d7296b98",
+      "nftType": "UNKNOWN",
+      "name": "Base Floki 🛡",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583289-logo.webp"
+    },
+    {
+      "chainId": 8453,
+      "address": "0xa17c574ab5c2eb04556d9fd7d2b3da22452fabcb",
+      "nftType": "UNKNOWN",
+      "name": "Mission Web 3",
+      "symbol": "",
+      "logoURI": "https://static.coinall.ltd/cdn/nft/files/collection/2583290-logo.png"
+    }
+  ]
+}

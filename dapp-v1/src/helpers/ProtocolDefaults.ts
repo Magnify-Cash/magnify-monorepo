@@ -41,7 +41,9 @@ const nftListUrlsMap = {
   1: [
     "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json",
   ],
-  8453: [],
+  8453: import.meta.env.DEV
+    ? ["http://localhost:5173/tokenlists/nftsBaseMainnet.json"]
+    : ["https://app.magnify.cash/tokenlists/nftsBaseMainnet.json"],
   84532: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/nftsBaseSepolia.json"]
     : ["https://early.magnify.cash/tokenlists/nftsBaseSepolia.json"],
