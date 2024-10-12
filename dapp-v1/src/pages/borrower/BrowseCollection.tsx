@@ -256,7 +256,7 @@ const renderLendingDesks = ({
         setLoadingToastId(null);
         addToast(
           "Transaction Successful",
-          <TransactionDetails transactionHash={approvalData!} />,
+          <TransactionDetails transactionHash={approveErc721TransactionData!} />,
           "success",
         );
       }

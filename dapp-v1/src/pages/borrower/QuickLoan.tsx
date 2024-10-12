@@ -417,7 +417,7 @@ export const QuickLoan = (props: any) => {
         setLoadingToastId(null);
         addToast(
           "Transaction Successful",
-          <TransactionDetails transactionHash={approvalData!} />,
+          <TransactionDetails transactionHash={approveErc721TransactionData!} />,
           "success",
         );
       }
