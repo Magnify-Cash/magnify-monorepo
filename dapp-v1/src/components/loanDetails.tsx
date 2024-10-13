@@ -13,11 +13,12 @@ import {
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useChainId, useEnsName, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
 import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
+import { getBlockExplorerURL, getTokenListUrls } from "@/helpers/ProtocolDefaults";
 
 interface LoanDetailsProps {
   loan: Loan;
@@ -41,6 +42,7 @@ const LoanDetails = ({
   wagmi hooks
   */
   const chainId = useChainId();
+  const explorer = getBlockExplorerURL(chainId);
   const { address } = useAccount();
 
   /*
@@ -52,6 +54,50 @@ const LoanDetails = ({
   //checked state for the checkbox on resolve loan modal
   const [checkedResolveLoan, setCheckedResolveLoan] = useState(false);
 
+  const [loanNFTCollectionName, setLoanNFTCollectionName] = useState<string>("");
+
+    useEffect(() => {
+    async function fetchNFTData() {
+      const urls = getTokenListUrls(chainId, true, false) || [];
+      try {
+        const responses = await Promise.all(
+          urls.map(async (url) => {
+            const response = await fetch(url);
+            return response.json();
+          })
+        );
+
+        const jsonData = responses.map((response) => response);
+        const combinedLists = jsonData.flatMap((parentObj) => {
+          return parentObj.nfts.map((nft: any) => ({
+            provider: {
+              keywords: parentObj.keywords,
+              logoURI: parentObj.logoURI,
+              name: parentObj.name,
+              timestamp: parentObj.timestamp,
+              version: parentObj.version,
+            },
+            nft,
+          }));
+        });
+
+        const matchingNFT = combinedLists.find(
+          (item) => item.nft.address.toLowerCase() === loan?.nftCollection.id.toLowerCase()
+        );
+
+        if (matchingNFT) {
+          setLoanNFTCollectionName(matchingNFT.nft.name);
+        } else {
+          setLoanNFTCollectionName(`${loan?.nftCollection.id} #${loan?.nftId}`);
+        }
+      } catch (error) {
+        console.error("Error fetching NFT data:", error);
+        setLoanNFTCollectionName(`${loan?.nftCollection.id} #${loan?.nftId}`);
+      }
+    }
+
+    fetchNFTData();
+  }, [chainId, loan?.nftCollection.id, loan?.nftId]);
   //reset the form when the make payment modal is closed
   const resetForm = () => {
     setPayBackAmount("0");
@@ -585,7 +631,13 @@ const LoanDetails = ({
             ) : null}
           </div>
           <div className="h5 text-center mt-3 mb-0">
-            {loan?.nftCollection.id} #{loan?.nftId}
+            <a href={`${explorer}/nft/${loan?.nftCollection.id}/${loan?.nftId}`} target="_blank" rel="noopener noreferrer">
+              {loanNFTCollectionName ?
+                `${loanNFTCollectionName} #${loan?.nftId.length > 10 ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}` : loan?.nftId}` :
+                `${loan?.nftCollection.id} #${loan?.nftId.length > 10 ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}` : loan?.nftId}`
+              }
+            </a>
+
           </div>
           <div className="container-fluid g-0 mt-4">
             <div className="row g-3">
