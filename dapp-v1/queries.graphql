@@ -170,6 +170,7 @@ query BrowseCollection($nftCollectionId: String, $after: String) {
           maxInterest
           minDuration
           maxDuration
+          nftCollectionIsErc1155
         }
       }
     }
@@ -205,6 +206,7 @@ query QuickLoan($erc20Id: String!, $nftCollectionId: String!, $after: String) {
           maxDuration
           minInterest
           maxInterest
+          nftCollectionIsErc1155
           nftCollection {
             id
           }

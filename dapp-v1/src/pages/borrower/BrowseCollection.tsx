@@ -14,8 +14,10 @@ import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
 import {
   magnifyCashV1Address,
   useReadErc721GetApproved,
+  useReadErc1155IsApprovedForAll,
   useSimulateMagnifyCashV1InitializeNewLoan,
   useWriteErc721Approve,
+  useWriteErc1155SetApprovalForAll,
   useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
@@ -192,20 +194,49 @@ const renderLendingDesks = ({
     error: approveErc721Error,
   } = useWriteErc721Approve();
 
+  //Initialize Approve Erc1155 Hook
+  const {
+    data: approveErc1155TransactionData,
+    writeContractAsync: approveErc1155,
+    error: approveErc1155Error,
+  } = useWriteErc1155SetApprovalForAll();
+
   //Fetch Approval Data for the NFT
   const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
     {
       address: nft?.address as `0x${string}`,
       args: [BigInt(nftId || "0")],
+      query: {
+        enabled:
+          !!nft?.address &&
+          !!address &&
+          !!chainId &&
+          !selectedLoanConfig?.nftCollectionIsErc1155,
+      },
     },
   );
+  // Fetch Approval Data for the NFT
+  const { data: erc1155ApprovalData, refetch: refetchErc1155ApprovalData } =
+    useReadErc1155IsApprovedForAll({
+      address: nft?.address as `0x${string}`,
+      args: [address as `0x${string}`, magnifyCashV1Address[chainId] as `0x${string}`],
+      query: {
+        enabled:
+          !!nft?.address &&
+          !!address &&
+          !!chainId &&
+          selectedLoanConfig?.nftCollectionIsErc1155,
+      },
+    });
 
   const {
     isLoading: approveIsConfirming,
     isSuccess: approveIsConfirmed,
     error: approveConfirmError,
   } = useWaitForTransactionReceipt({
-    hash: approveErc721TransactionData as `0x${string}`,
+    hash: selectedLoanConfig?.nftCollectionIsErc1155
+      ? approveErc1155TransactionData
+      : approveErc721TransactionData,
   });
 
   useEffect(() => {
@@ -224,6 +255,23 @@ const renderLendingDesks = ({
       }
       setApprovalIsLoading(false);
     }
+
+    if (approveErc1155Error) {
+      console.log("approveErc1155Error", approveErc1155Error);
+      console.error(approveErc1155Error);
+
+      if (loadingToastId) {
+        closeToast(loadingToastId);
+        setLoadingToastId(null);
+        addToast(
+          "Transaction Failed",
+          <ErrorDetails error={approveErc1155Error.message} />,
+          "error",
+        );
+      }
+      setApprovalIsLoading(false);
+    }
+
     if (approveConfirmError) {
       console.log("approveConfirmError", approveConfirmError);
       console.error(approveConfirmError);
@@ -264,6 +312,7 @@ const renderLendingDesks = ({
     }
   }, [
     approveErc721Error,
+    approveErc1155Error,
     approveConfirmError,
     approveIsConfirming,
     approveIsConfirmed,
@@ -280,6 +329,14 @@ const renderLendingDesks = ({
       setChecked(false);
     }
   }, [nftId, approvalData]);
+
+  useEffect(() => {
+    if (erc1155ApprovalData) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+  }, [nftId, erc1155ApprovalData]);
 
   // Initialize New Loan Hook
   const {
@@ -392,6 +449,20 @@ const renderLendingDesks = ({
       args: [magnifyCashV1Address[chainId], BigInt(nftId || "0")],
     });
   }
+
+  async function approveERC1155TokenTransfer() {
+    if (checked) {
+      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
+      return;
+    }
+    setApprovalIsLoading(true);
+
+    await approveErc1155({
+      address: nft?.address as `0x${string}`,
+      args: [magnifyCashV1Address[chainId] as `0x${string}`, true],
+    });
+  }
+
   // Modal submit
   async function requestLoan(index: number) {
     const form = document.getElementById(`quickLoanForm${index}`) as HTMLFormElement;
@@ -478,7 +549,9 @@ const renderLendingDesks = ({
                   newLoanIsLoading,
                   newLoanConfigIsLoading,
                   checked,
-                  onCheck: approveERC721TokenTransfer,
+                  onCheck: selectedLoanConfig?.nftCollectionIsErc1155
+                    ? approveERC1155TokenTransfer
+                    : approveERC721TokenTransfer,
                   nft,
                   duration,
                   setDuration,
