@@ -1,5 +1,6 @@
 import { Blockies, PopupTransaction } from "@/components";
 import { useToastContext } from "@/helpers/CreateToast";
+import { getBlockExplorerURL, getTokenListUrls } from "@/helpers/ProtocolDefaults";
 import { calculateTimeInfo, formatTimeInfo, fromWei, toWei } from "@/helpers/utils";
 import {
   magnifyCashV1Address,
@@ -13,12 +14,11 @@ import {
 } from "@/wagmi-generated";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useAccount, useChainId, useEnsName, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useChainId, useWaitForTransactionReceipt } from "wagmi";
 import type { Loan } from "../../.graphclient";
 import ErrorDetails from "./ErrorDetails";
 import { Spinner } from "./LoadingIndicator";
 import TransactionDetails from "./TransactionDetails";
-import { getBlockExplorerURL, getTokenListUrls } from "@/helpers/ProtocolDefaults";
 
 interface LoanDetailsProps {
   loan: Loan;
@@ -56,7 +56,7 @@ const LoanDetails = ({
 
   const [loanNFTCollectionName, setLoanNFTCollectionName] = useState<string>("");
 
-    useEffect(() => {
+  useEffect(() => {
     async function fetchNFTData() {
       const urls = getTokenListUrls(chainId, true, false) || [];
       try {
@@ -64,7 +64,7 @@ const LoanDetails = ({
           urls.map(async (url) => {
             const response = await fetch(url);
             return response.json();
-          })
+          }),
         );
 
         const jsonData = responses.map((response) => response);
@@ -82,13 +82,12 @@ const LoanDetails = ({
         });
 
         const matchingNFT = combinedLists.find(
-          (item) => item.nft.address.toLowerCase() === loan?.nftCollection.id.toLowerCase()
+          (item) =>
+            item.nft.address.toLowerCase() === loan?.nftCollection.id.toLowerCase(),
         );
 
         if (matchingNFT) {
           setLoanNFTCollectionName(matchingNFT.nft.name);
-        } else {
-          setLoanNFTCollectionName(`${loan?.nftCollection.id} #${loan?.nftId}`);
         }
       } catch (error) {
         console.error("Error fetching NFT data:", error);
@@ -631,13 +630,23 @@ const LoanDetails = ({
             ) : null}
           </div>
           <div className="h5 text-center mt-3 mb-0">
-            <a href={`${explorer}/nft/${loan?.nftCollection.id}/${loan?.nftId}`} target="_blank" rel="noopener noreferrer">
-              {loanNFTCollectionName ?
-                `${loanNFTCollectionName} #${loan?.nftId.length > 10 ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}` : loan?.nftId}` :
-                `${loan?.nftCollection.id} #${loan?.nftId.length > 10 ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}` : loan?.nftId}`
-              }
+            <a
+              href={`${explorer}/nft/${loan?.nftCollection.id}/${loan?.nftId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {loanNFTCollectionName
+                ? `${loanNFTCollectionName} #${
+                    loan?.nftId.length > 10
+                      ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}`
+                      : loan?.nftId
+                  }`
+                : `${loan?.nftCollection.id} #${
+                    loan?.nftId.length > 10
+                      ? `${loan?.nftId.slice(0, 4)}...${loan?.nftId.slice(-4)}`
+                      : loan?.nftId
+                  }`}
             </a>
-
           </div>
           <div className="container-fluid g-0 mt-4">
             <div className="row g-3">
