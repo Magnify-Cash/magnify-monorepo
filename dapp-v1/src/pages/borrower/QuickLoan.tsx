@@ -12,11 +12,9 @@ import { calculateLoanInterest } from "@/helpers/LoanInterest";
 import { formatAddress } from "@/helpers/formatAddress";
 import { useCustomWatchContractEvent } from "@/helpers/useCustomHooks";
 import { type WalletNft, fromWei, getWalletNfts, toWei } from "@/helpers/utils";
+import { useLoanApproval } from "@/hooks/useLoanApproval";
 import {
-  magnifyCashV1Address,
-  useReadErc721GetApproved,
   useSimulateMagnifyCashV1InitializeNewLoan,
-  useWriteErc721Approve,
   useWriteMagnifyCashV1InitializeNewLoan,
 } from "@/wagmi-generated";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
@@ -312,12 +310,10 @@ export const QuickLoan = (props: any) => {
   const [nft, setNft] = useState<INft>();
   const [duration, setDuration] = useState<number>();
   const [amount, setAmount] = useState<number>();
-  const [checked, setChecked] = useState(false);
   const resetForm = () => {
     setNftId(undefined);
     setDuration(undefined);
     setAmount(undefined);
-    setChecked(false);
     _setSelectedLendingDesk(undefined);
     //This resets the styling of lending desk selection form
     const button = document.querySelector(
@@ -333,7 +329,6 @@ export const QuickLoan = (props: any) => {
   */
   const { addToast, closeToast } = useToastContext();
   const [loadingToastId, setLoadingToastId] = useState<number | null>(null);
-  const [approvalIsLoading, setApprovalIsLoading] = useState<boolean>(false);
   const [newLoanIsLoading, setNewLoanIsLoading] = useState<boolean>(false);
 
   /*
@@ -352,94 +347,19 @@ export const QuickLoan = (props: any) => {
     },
   });
 
-  //Initialize Approve Erc721 Hook
+  // Loan Approval Hook
   const {
-    data: approveErc721TransactionData,
-    writeContractAsync: approveErc721,
-    error: approveErc721Error,
-  } = useWriteErc721Approve();
-  const { data: approvalData, refetch: refetchApprovalData } = useReadErc721GetApproved(
-    {
-      address: nftCollection?.nft.address as `0x${string}`,
-      args: [BigInt(nftId || "0")],
-    },
+    approveERC721TokenTransfer,
+    approveERC1155TokenTransfer,
+    approvalIsLoading,
+    checked,
+    refetchErc721ApprovalData,
+    refetchErc1155ApprovalData,
+  } = useLoanApproval(
+    nft,
+    nftId,
+    selectedLendingDesk?.loanConfig?.nftCollectionIsErc1155,
   );
-  const {
-    isLoading: approveIsConfirming,
-    isSuccess: approveIsConfirmed,
-    error: approveConfirmError,
-  } = useWaitForTransactionReceipt({
-    hash: approveErc721TransactionData as `0x${string}`,
-  });
-  useEffect(() => {
-    if (approveErc721Error) {
-      console.log("approveErc721Error", approveErc721Error);
-      console.error(approveErc721Error);
-      if (loadingToastId) {
-        closeToast(loadingToastId);
-        setLoadingToastId(null);
-      }
-      addToast(
-        "Transaction Failed",
-        <ErrorDetails error={approveErc721Error.message} />,
-        "error",
-      );
-      setApprovalIsLoading(false);
-    }
-    if (approveConfirmError) {
-      console.log("approveConfirmError", approveConfirmError);
-      console.error(approveConfirmError);
-      if (loadingToastId) {
-        closeToast(loadingToastId);
-        setLoadingToastId(null);
-        addToast(
-          "Transaction Failed",
-          <ErrorDetails error={approveConfirmError.message} />,
-          "error",
-        );
-      }
-      setApprovalIsLoading(false);
-    }
-    if (approveIsConfirming) {
-      const id = addToast(
-        "Transaction Pending",
-        "Please wait for the transaction to be confirmed.",
-        "loading",
-      );
-      if (id) {
-        setLoadingToastId(id);
-      }
-    }
-    if (approveIsConfirmed) {
-      refetchApprovalData();
-      if (loadingToastId) {
-        closeToast(loadingToastId);
-        setLoadingToastId(null);
-        addToast(
-          "Transaction Successful",
-          <TransactionDetails transactionHash={approveErc721TransactionData!} />,
-          "success",
-        );
-      }
-      setApprovalIsLoading(false);
-    }
-  }, [
-    approveErc721Error,
-    approveConfirmError,
-    approveIsConfirming,
-    approveIsConfirmed,
-  ]);
-  useEffect(() => {
-    if (!approvalData) {
-      setChecked(false);
-      return;
-    }
-    if (approvalData.toLowerCase() === magnifyCashV1Address[chainId]?.toLowerCase()) {
-      setChecked(true);
-    } else {
-      setChecked(false);
-    }
-  }, [nftId, approvalData]);
 
   const {
     data: newLoanConfig,
@@ -532,23 +452,10 @@ export const QuickLoan = (props: any) => {
           "success",
         );
       }
-      refetchApprovalData();
+      refetchErc721ApprovalData();
+      refetchErc1155ApprovalData();
     }
   }, [newLoanWriteError, newLoanConfirmError, newLoanIsConfirming, newLoanIsConfirmed]);
-
-  // Checkbox click function
-  async function approveERC721TokenTransfer() {
-    if (checked) {
-      addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
-      return;
-    }
-    setApprovalIsLoading(true);
-
-    await approveErc721({
-      address: nftCollection?.nft.address as `0x${string}`,
-      args: [magnifyCashV1Address[chainId], BigInt(nftId || "0")],
-    });
-  }
 
   // Modal submit
   async function requestLoan() {
@@ -706,7 +613,9 @@ export const QuickLoan = (props: any) => {
               btnClass: "btn btn-primary btn-lg py-3 px-5 rounded-pill w-100 d-block",
               disabled: !token || !nftCollection || !selectedLendingDesk,
               checked,
-              onCheck: approveERC721TokenTransfer,
+              onCheck: selectedLendingDesk?.loanConfig?.nftCollectionIsErc1155
+                ? approveERC1155TokenTransfer
+                : approveERC721TokenTransfer,
               onSubmit: requestLoan,
               onModalClose: resetForm,
               nft,
