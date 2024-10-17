@@ -128,6 +128,16 @@ const renderLendingDesks = ({
     }
   }, [items, loading, error]);
 
+  // This useEffect hook automatically loads more lending desks when:
+  // 1. The current number of lending desks is less than 3
+  // 2. There are more lending desks available to load
+  // 3. No loading operation is currently in progress
+  useEffect(() => {
+    if (flatResult.length < 3 && hasNextPage && !loading) {
+      loadMore();
+    }
+  }, [flatResult, hasNextPage, loading]);
+
   return (
     <div>
       {flatResult.length > 0 ? (
