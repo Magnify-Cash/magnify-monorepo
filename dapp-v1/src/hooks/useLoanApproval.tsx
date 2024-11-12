@@ -189,7 +189,7 @@ export const useLoanApproval = (
   }, [nftId, erc1155ApprovalData]);
 
   // Checkbox click function
-  const handleApproval = async (approveFunction: Function) => {
+  const handleApproval = async (approveFunction: (args: any) => Promise<any>) => {
     if (checked) {
       addToast("Warning", <ErrorDetails error={"already approved"} />, "warning");
       return;

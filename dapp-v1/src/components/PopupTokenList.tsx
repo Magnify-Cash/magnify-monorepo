@@ -16,6 +16,7 @@ import {
 import { FixedSizeList } from "react-window";
 import { isAddress } from "viem";
 import { useChainId } from "wagmi";
+import { Blockies } from "./Blockies";
 
 /*
 Component Props
@@ -282,13 +283,23 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                             data={item}
                             className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                           >
-                            <img
-                              className="d-block w-auto me-2 rounded"
-                              src={item.token.logoURI}
-                              alt={`${item.token.name} Logo`}
-                              height="32px"
-                              width="32px"
-                            />
+                            {item.token.logoURI ? (
+                              <img
+                                className="d-block w-auto me-2 rounded"
+                                src={item.token.logoURI}
+                                alt={`${item.token.name} Logo`}
+                                height="32px"
+                                width="32px"
+                              />
+                            ) : (
+                              <div
+                                className="d-block me-2 rounded"
+                                style={{ height: "32px", width: "32px" }}
+                              >
+                                {" "}
+                                <Blockies seed={item.token?.address} size={8} />
+                              </div>
+                            )}
                             <div className="text-start w-100">
                               <div>{item.token.name}</div>
                               <div className="text-body-secondary fw-normal d-flex">
@@ -331,13 +342,23 @@ export const PopupTokenList = (props: PopupTokenListProps) => {
                             data={item}
                             className="btn d-flex align-items-center justify-content-start w-100 p-2 border-0 rounded-0 focus-ring"
                           >
-                            <img
-                              className="d-block w-auto me-2 rounded"
-                              src={item.nft.logoURI}
-                              alt={`${item.nft.name} Logo`}
-                              height="32px"
-                              width="32px"
-                            />
+                            {item.nft.logoURI ? (
+                              <img
+                                className="d-block w-auto me-2 rounded"
+                                src={item.nft.logoURI}
+                                alt={`${item.nft.name} Logo`}
+                                height="32px"
+                                width="32px"
+                              />
+                            ) : (
+                              <div
+                                className="d-block me-2 rounded"
+                                style={{ height: "32px", width: "32px" }}
+                              >
+                                {" "}
+                                <Blockies seed={item.nft?.address} size={8} />
+                              </div>
+                            )}
                             <div className="text-start">
                               <div>{item.nft.name}</div>
                               <div className="text-body-secondary fw-normal d-flex">
