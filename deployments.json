@@ -1,14 +1,14 @@
 {
   "magnifyCash": {
-    "address": "0x9C8D226016492a8fE6531Fe1409aD79099Dd0729",
-    "startBlock": 20974284
+    "address": "0x781EBE3865b0911D6989854dCD29DF3cd81168eB",
+    "startBlock": 18220396
   },
   "obligationNotes": {
-    "address": "0x22c2CA6181241e5e7Dd4F0548631Bdb3481274a2",
-    "startBlock": 20974278
+    "address": "0x71DA932ccdA723BA3ab730C976bC66DaAF9C598c",
+    "startBlock": 18220390
   },
   "lendingKeys": {
-    "address": "0xB64105EB7CD38bCCE999DA4f38a98015736DCE2E",
-    "startBlock": 20974281
+    "address": "0x7F7c5328621965608d0a6a95a6C33461Ef3FDb24",
+    "startBlock": 18220393
   }
 }

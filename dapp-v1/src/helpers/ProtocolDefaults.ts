@@ -7,14 +7,15 @@ export const MAGNIFY_CASH_GOERLI_GRAPH: string =
 export const MAGNIFY_CASH_MUMBAI_GRAPH: string =
   "https://api.studio.thegraph.com/query/44194/nftyfinance-mumbai/0.0.7";
 export const MAGNIFY_CASH_BASE_SEPOLIA_GRAPH: string =
-  "https://api.ghostlogs.xyz/gg/pub/d94bdadc-4cf4-44a1-9888-c8be5ab887fc/ghostgraph";
+  "https://api.ghostlogs.xyz/gg/pub/24120150-bc10-4648-a801-1488ec815517/ghostgraph";
 export const MAGNIFY_CASH_BASE_MAINNET_GRAPH: string =
   "https://api.ghostlogs.xyz/gg/pub/8bf67182-75f2-41e8-ae10-bd4d26d9c91e/ghostgraph";
 export const MAGNIFY_CASH_SEPOLIA_GRAPH: string =
   "https://api.thegraph.com/subgraphs/name/crypto-rizzo/nftyfinance-sepolia";
 export const MAGNIFY_CASH_HARDHAT_GRAPH: string =
   "http://localhost:8000/subgraphs/name/magnify-local";
-export const getProtocolAddress = (chainId: any) => magnifyCashV1Address[chainId];
+export const getProtocolAddress = (chainId: any) =>
+  magnifyCashV1Address[chainId];
 export const getProtocolChain = (chainId: any) => chainId;
 export const getProtocolGraphUrl = (chainId: any) => {
   switch (chainId) {
@@ -39,7 +40,7 @@ export const getProtocolGraphUrl = (chainId: any) => {
 
 const nftListUrlsMap = {
   1: [
-    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json",
+    "https://raw.githubusercontent.com/magnify-cash/nft-lists/master/test/schema/bigexample.nftlist.json"
   ],
   8453: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/nftsBaseMainnet.json"]
@@ -47,7 +48,7 @@ const nftListUrlsMap = {
   84532: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/nftsBaseSepolia.json"]
     : ["https://early.magnify.cash/tokenlists/nftsBaseSepolia.json"],
-  31337: ["http://localhost:5173/tokenlists/nfts.json"],
+  31337: ["http://localhost:5173/tokenlists/nfts.json"]
 };
 
 const tokenListUrlsMap = {
@@ -56,13 +57,13 @@ const tokenListUrlsMap = {
   84532: import.meta.env.DEV
     ? ["http://localhost:5173/tokenlists/tokensBaseSepolia.json"]
     : ["https://early.magnify.cash/tokenlists/tokensBaseSepolia.json"],
-  31337: ["http://localhost:5173/tokenlists/tokens.json"],
+  31337: ["http://localhost:5173/tokenlists/tokens.json"]
 };
 
 export function getTokenListUrls(
   chainId: number,
   isNft: boolean | undefined,
-  isToken: boolean | undefined,
+  isToken: boolean | undefined
 ): string[] | undefined {
   if (isNft) {
     return nftListUrlsMap[chainId];
