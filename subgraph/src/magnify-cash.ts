@@ -31,7 +31,7 @@ import { Address, BigInt, store } from "@graphprotocol/graph-ts";
 // Lending desk related events
 
 export function handleNewLendingDeskInitialized(
-  event: NewLendingDeskInitialized
+  event: NewLendingDeskInitialized,
 ): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
@@ -88,7 +88,7 @@ export function handleNewLendingDeskInitialized(
 
     // Create NftCollectionErc20 instance
     const nftCollectionErc20 = new NftCollectionErc20(
-      loanConfigStruct.nftCollection.toHex() + "-" + event.params.erc20.toHex()
+      loanConfigStruct.nftCollection.toHex() + "-" + event.params.erc20.toHex(),
     );
     nftCollectionErc20.nftCollection = loanConfigStruct.nftCollection.toHex();
     nftCollectionErc20.erc20 = event.params.erc20.toHex();
@@ -97,13 +97,13 @@ export function handleNewLendingDeskInitialized(
 
   // Increment LendingDesk count
   protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   protocolInfo.save();
 }
 
 export function handleLendingDeskLoanConfigsSet(
-  event: LendingDeskLoanConfigsSet
+  event: LendingDeskLoanConfigsSet,
 ): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
@@ -115,7 +115,7 @@ export function handleLendingDeskLoanConfigsSet(
     const loanConfig = new LoanConfig(
       event.params.lendingDeskId.toString() +
         "-" +
-        loanConfigStruct.nftCollection.toHex()
+        loanConfigStruct.nftCollection.toHex(),
     );
 
     loanConfig.active = true;
@@ -131,7 +131,7 @@ export function handleLendingDeskLoanConfigsSet(
     loanConfig.save();
 
     let nftCollection = NftCollection.load(
-      loanConfigStruct.nftCollection.toHex()
+      loanConfigStruct.nftCollection.toHex(),
     );
     if (!nftCollection) {
       // Create NftCollection instance
@@ -140,7 +140,7 @@ export function handleLendingDeskLoanConfigsSet(
 
       // Increment NftCollection count
       protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.plus(
-        BigInt.fromI32(1)
+        BigInt.fromI32(1),
       );
       protocolInfo.save();
     } else {
@@ -154,7 +154,7 @@ export function handleLendingDeskLoanConfigsSet(
       nftCollection.activeLoanConfigsCount = BigInt.fromU64(
         nftCollection.loanConfigs
           .load()
-          .filter((loanConfig) => loanConfig.active).length
+          .filter((loanConfig) => loanConfig.active).length,
       );
     }
     nftCollection.save();
@@ -162,7 +162,7 @@ export function handleLendingDeskLoanConfigsSet(
 }
 
 export function handleLendingDeskLoanConfigRemoved(
-  event: LendingDeskLoanConfigRemoved
+  event: LendingDeskLoanConfigRemoved,
 ): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
@@ -175,7 +175,7 @@ export function handleLendingDeskLoanConfigRemoved(
     "LoanConfig",
     event.params.lendingDeskId.toString() +
       "-" +
-      event.params.nftCollection.toHex()
+      event.params.nftCollection.toHex(),
   );
 
   // Update nftCollection's activeLoanConfigsCount
@@ -185,14 +185,14 @@ export function handleLendingDeskLoanConfigRemoved(
 
   if (nftCollection.activeLoanConfigsCount.lt(BigInt.fromI32(1))) {
     protocolInfo.nftCollectionsCount = protocolInfo.nftCollectionsCount.minus(
-      BigInt.fromI32(1)
+      BigInt.fromI32(1),
     );
     protocolInfo.save();
   }
 }
 
 export function handleLendingDeskLiquidityDeposited(
-  event: LendingDeskLiquidityDeposited
+  event: LendingDeskLiquidityDeposited,
 ): void {
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
@@ -202,7 +202,7 @@ export function handleLendingDeskLiquidityDeposited(
 }
 
 export function handleLendingDeskLiquidityWithdrawn(
-  event: LendingDeskLiquidityWithdrawn
+  event: LendingDeskLiquidityWithdrawn,
 ): void {
   const lendingDesk = LendingDesk.load(event.params.lendingDeskId.toString());
   if (!lendingDesk) return;
@@ -226,7 +226,7 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
   if (event.params.freeze) {
     lendingDesk.status = "Frozen";
     protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.minus(
-      BigInt.fromI32(1)
+      BigInt.fromI32(1),
     );
 
     const loanConfigs = lendingDesk.loanConfigs.load();
@@ -251,12 +251,12 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
     // If there was only 1 active lending desk for this ERC20 before, decrement erc20sCount
     if (activeLendingDesksCount == 1)
       protocolInfo.erc20sCount = protocolInfo.erc20sCount.minus(
-        BigInt.fromI32(1)
+        BigInt.fromI32(1),
       );
   } else {
     lendingDesk.status = "Active";
     protocolInfo.lendingDesksCount = protocolInfo.lendingDesksCount.plus(
-      BigInt.fromI32(1)
+      BigInt.fromI32(1),
     );
 
     const loanConfigs = lendingDesk.loanConfigs.load();
@@ -284,7 +284,7 @@ export function handleLendingDeskStateSet(event: LendingDeskStateSet): void {
     // If there were no active lending desks for this ERC20 before, increment erc20sCount
     if (!activeLendingDesksCount)
       protocolInfo.erc20sCount = protocolInfo.erc20sCount.plus(
-        BigInt.fromI32(1)
+        BigInt.fromI32(1),
       );
   }
 
@@ -345,17 +345,17 @@ export function handleNewLoanInitialized(event: NewLoanInitialized): void {
   // Update lending desk stats
   lendingDesk.loansCount = lendingDesk.loansCount.plus(BigInt.fromI32(1));
   lendingDesk.netLiquidityIssued = lendingDesk.netLiquidityIssued.plus(
-    event.params.amount
+    event.params.amount,
   );
   lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.plus(
-    event.params.amount
+    event.params.amount,
   );
   lendingDesk.balance = lendingDesk.balance.minus(event.params.amount);
   lendingDesk.save();
 }
 
 export function handleDefaultedLoanLiquidated(
-  event: DefaultedLoanLiquidated
+  event: DefaultedLoanLiquidated,
 ): void {
   // Load entities
   const loan = Loan.load(event.params.loanId.toString());
@@ -372,20 +372,20 @@ export function handleDefaultedLoanLiquidated(
 
   // Update users' stats
   lender.loansIssuedDefaultedCount = lender.loansIssuedDefaultedCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   lender.save();
   borrower.loansTakenDefaultedCount = borrower.loansTakenDefaultedCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   borrower.save();
 
   // Update lending desk stats
   lendingDesk.loansDefaultedCount = lendingDesk.loansDefaultedCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.minus(
-    loan.amount.minus(loan.amountPaidBack)
+    loan.amount.minus(loan.amountPaidBack),
   );
   lendingDesk.save();
 }
@@ -407,23 +407,23 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
 
   // Update lender stats
   lender.loansIssuedResolvedCount = lender.loansIssuedResolvedCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   lender.save();
   borrower.loansTakenResolvedCount = borrower.loansTakenResolvedCount.plus(
-    BigInt.fromI32(1)
+    BigInt.fromI32(1),
   );
   borrower.save();
 
   // Update lending desk stats
-  if (event.params.resolved){
+  if (event.params.resolved) {
     lendingDesk.loansResolvedCount = lendingDesk.loansResolvedCount.plus(
-      BigInt.fromI32(1)
-    )
+      BigInt.fromI32(1),
+    );
   }
   lendingDesk.balance = lendingDesk.balance.plus(event.params.amountPaid);
   lendingDesk.amountBorrowed = lendingDesk.amountBorrowed.minus(
-    event.params.amountPaid
+    event.params.amountPaid,
   );
   lendingDesk.save();
 }
@@ -431,7 +431,7 @@ export function handleLoanPaymentMade(event: LoanPaymentMade): void {
 // Protocol level parameters related events
 
 export function handleLoanOriginationFeeSet(
-  event: LoanOriginationFeeSet
+  event: LoanOriginationFeeSet,
 ): void {
   const protocolInfo = ProtocolInfo.load("0");
   if (!protocolInfo) return;
