@@ -44,5 +44,19 @@
       "address": "0x00cB7654463392E0E430699A607D07eAD5C04246",
       "startBlock": 9062854
     }
+  },
+  "worldchain-mainnet": {
+    "MagnifyCash": {
+      "address": "0x781EBE3865b0911D6989854dCD29DF3cd81168eB",
+      "startBlock": 7601876
+    },
+    "ObligationNotes": {
+      "address": "0x71DA932ccdA723BA3ab730C976bC66DaAF9C598c",
+      "startBlock": 7601869
+    },
+    "LendingKeys": {
+      "address": "0x7F7c5328621965608d0a6a95a6C33461Ef3FDb24",
+      "startBlock": 7601872
+    }
   }
 }

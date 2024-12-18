@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: MagnifyCash
-    network: base-sepolia
+    network: worldchain-mainnet
     source:
       abi: MagnifyCash
-      address: "0x9d77E621be4aF95A83c4334e7B51e4440dC2Ed0f"
-      startBlock: 9062856
+      address: "0x781EBE3865b0911D6989854dCD29DF3cd81168eB"
+      startBlock: 7601876
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -58,11 +58,11 @@ dataSources:
       file: ./src/magnify-cash.ts
   - kind: ethereum/contract
     name: LendingKeys
-    network: base-sepolia
+    network: worldchain-mainnet
     source:
       abi: LendingKeys
-      address: "0x00cB7654463392E0E430699A607D07eAD5C04246"
-      startBlock: 9062854
+      address: "0x7F7c5328621965608d0a6a95a6C33461Ef3FDb24"
+      startBlock: 7601872
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -78,11 +78,11 @@ dataSources:
       file: ./src/lending-keys.ts
   - kind: ethereum/contract
     name: ObligationNotes
-    network: base-sepolia
+    network: worldchain-mainnet
     source:
       abi: ObligationNotes
-      address: "0xB9c25987c5Fa19214b27743C22480FEa2734b88c"
-      startBlock: 9062851
+      address: "0x71DA932ccdA723BA3ab730C976bC66DaAF9C598c"
+      startBlock: 7601869
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
