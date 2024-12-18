@@ -12,6 +12,7 @@
     "deploy:baseSepolia": "yarn build && yarn hardhat deploy_mainnet --network baseSepolia",
     "deploy:base": "yarn build && yarn hardhat deploy_mainnet --network base",
     "deploy:mainnet": "yarn build && yarn hardhat deploy_mainnet --network mainnet",
+    "deploy:worldchain": "yarn build && yarn hardhat deploy_mainnet --network worldchain",
     "mythril": "myth analyze contracts/contracts/MagnifyCashV1.sol  --solc-json ./solc.json",
     "slither": "yarn hardhat clean && yarn hardhat compile && slither . --checklist --show-ignored-findings",
     "fuzz": "echidna ./test/GuardianAudits/fuzz/EchidnaRouter.sol --contract EchidnaRouter --config config.yaml",

@@ -59,6 +59,10 @@ const config: HardhatUserConfig = {
     base: {
       url: "https://mainnet.base.org",
       accounts: [process.env.PRIVATE_KEY]
+    },
+    worldchain: {
+      url: "https://worldchain-mainnet.g.alchemy.com/public",
+      accounts: [process.env.PRIVATE_KEY]
     }
   },
   etherscan: {
@@ -75,8 +79,19 @@ const config: HardhatUserConfig = {
      */
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY,
-      base: process.env.BASE_API_KEY
-    }
+      base: process.env.BASE_API_KEY,
+      worldchain: process.env.WORLD_API_KEY
+    },
+    customChains: [
+      {
+        network: "worldchain",
+        chainId: 480,
+        urls: {
+          apiURL: "https://api.worldscan.org/api",
+          browserURL: "https://worldscan.org/"
+        }
+      }
+    ]
   }
 };
 
