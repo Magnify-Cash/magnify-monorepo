@@ -20,7 +20,7 @@ const config: HardhatUserConfig = {
     coinmarketcap: process.env.CMC_KEY,
     showTimeSpent: true,
     excludeContracts: ["contracts/test"],
-    onlyCalledMethods: false,
+    onlyCalledMethods: false
   },
   solidity: {
     version: "0.8.22",
@@ -28,36 +28,36 @@ const config: HardhatUserConfig = {
       viaIR: true,
       optimizer: {
         enabled: true,
-        runs: 1000000,
-      },
-    },
+        runs: 1000000
+      }
+    }
   },
   networks: {
     hardhat: {
-      allowUnlimitedContractSize: true,
+      allowUnlimitedContractSize: true
     },
     goerli: {
       url: "https://goerli.infura.io/v3/" + process.env.INFURA_API_KEY,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY]
     },
     mumbai: {
       url: "https://polygon-mumbai.infura.io/v3/" + process.env.INFURA_API_KEY,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY]
     },
     mainnet: {
       url: "https://mainnet.infura.io/v3/" + process.env.INFURA_API_KEY,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY]
     },
     sepolia: {
       url: "https://sepolia.infura.io/v3/" + process.env.INFURA_API_KEY,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY]
     },
     baseSepolia: {
-      url: 'https://sepolia.base.org',
+      url: "https://sepolia.base.org",
       accounts: [process.env.PRIVATE_KEY]
     },
     base: {
-      url: 'https://mainnet.base.org',
+      url: "https://mainnet.base.org",
       accounts: [process.env.PRIVATE_KEY]
     }
   },
@@ -74,9 +74,10 @@ const config: HardhatUserConfig = {
      * https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-etherscan#multiple-api-keys-and-alternative-block-explorers.
      */
     apiKey: {
-      mainnet: process.env.ETHERSCAN_API_KEY
+      mainnet: process.env.ETHERSCAN_API_KEY,
+      base: process.env.BASE_API_KEY
     }
   }
-  };
+};
 
 export default config;
