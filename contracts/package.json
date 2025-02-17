@@ -38,7 +38,7 @@
     "ethers": "^6.9.0",
     "hardhat": "^2.19.2",
     "hardhat-contract-sizer": "^2.10.0",
-    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-gas-reporter": "^2.2.2",
     "hardhat-tracer": "^2.7.0",
     "solady": "^0.0.168",
     "solidity-coverage": "^0.8.5",
