@@ -40,7 +40,7 @@
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.9",
     "hardhat-tracer": "^2.7.0",
-    "solady": "^0.0.168",
+    "solady": "^0.1.17",
     "solidity-coverage": "^0.8.5",
     "typechain": "^8.3.2"
   }
