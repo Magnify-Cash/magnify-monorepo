@@ -18,7 +18,7 @@
     "@magnify-cash/nft-lists": "0.0.1",
     "@tanstack/react-query": "5.56.2",
     "@uniswap/token-lists": "1.0.0-beta.34",
-    "alchemy-sdk": "3.4.1",
+    "alchemy-sdk": "3.5.8",
     "connectkit": "1.8.2",
     "graphql": "16.9.0",
     "react": "18.3.1",
