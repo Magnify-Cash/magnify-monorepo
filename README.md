@@ -1,19 +1,31 @@
 # Magnify Cash V1 Monorepo
-Welcome to Magnify Cash V1! This repository serves as the central hub for various subprojects that collectively constitute the Magnify Cash protocol. If you wish to learn more about the contracts, protocol design, and other related aspects, please navigate to the [`/contracts`](contracts/docs/README.md) directory.
 
-## Repo Structure
+Welcome to Magnify Cash V1! This repository is the central hub for the Magnify Cash protocol, an innovative system for NFT-collateralized lending and borrowing of ERC20 tokens. It utilizes a novel AMM-style architecture called "LAMM" (Lending Automated Market Maker) for its lending markets.
 
-This monorepo utilizes [yarn workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/) to manage dependencies across subprojects seamlessly. To get started, simply run `yarn install` from the root directory, and it will automatically handle all the dependencies for the subprojects.
+The protocol aims to provide a simple yet powerful DeFi primitive where any NFT can be lent against any fungible token, with customizable lending parameters like duration, interest, and loan value. All core components like liquidity, credit, and debit positions are tokenized to foster composability and future development.
 
-Currently, the monorepo comprises the following four subprojects:
+A 2% loan origination fee is levied on all loans, distributed among a protocol insurance fund, NFT royalty payouts, and protocol revenue.
 
-1. **contracts**: This section contains the smart contracts that form the backbone of the Magnify Cash protocol. For in-depth details, please refer to the [`/contracts`](contracts/docs/README.md) directory.
+For a deep dive into the smart contracts, protocol design, and specific mechanisms, please refer to the [contracts README](contracts/README.md).
 
-2. **subgraph**: Here, you can find the code responsible for managing the subgraph of the Magnify Cash protocol. (You may include additional context or purpose of the subgraph here.)
+## Repository Structure
 
-3. **faucet**: The faucet subproject deals with setting up and managing the faucet service. (Feel free to elaborate further on the functionality of the faucet if needed.)
+This monorepo uses [Yarn Workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/) to manage dependencies across its subprojects. Run `yarn install` from the root directory to install all necessary dependencies.
 
-4. **dapp**: The dapp subproject encompasses the decentralized application (dApp) for Magnify Cash. (Provide more information on the features and functionalities of the dApp as necessary.)
+The monorepo includes the following key subprojects:
+
+1.  **`contracts`**: Contains all the Solidity smart contracts that form the core of the Magnify Cash protocol. This includes:
+    *   `MagnifyCashV1.sol`: The main protocol module.
+    *   `MagnifyCashERC721.sol`: An abstract ERC721 contract with built-in roles.
+    *   `MagnifyLendingKeysV1.sol`: The NFT representing ownership of lending desks.
+    *   `MagnifyObligationNotesV1.sol`: The NFT tokenizing a borrower's loan obligation.
+    Detailed documentation can be found in the [`contracts/README.md`](contracts/README.md).
+
+2.  **`subgraph`**: Implements [The Graph](https://thegraph.com/) protocol to index and query data from the Magnify Cash smart contracts. This provides an efficient way for the dApp and other services to access on-chain data.
+
+3.  **`faucet`**: A Vite and React-based web application that serves as a token faucet. It allows users to obtain test versions of ERC20 tokens and potentially NFTs for use on testnet environments while interacting with the Magnify Cash protocol. It utilizes `wagmi` and `ConnectKit` for blockchain interactions.
+
+4.  **`dapp-v1`**: The primary decentralized application (dApp) providing the user interface for interacting with the Magnify Cash protocol. Users can create lending desks, borrow, lend, and manage their positions through this interface. It is built using Vite, React, `wagmi`, and `ConnectKit`.
 
 ## Local Development Setup
 
@@ -119,3 +131,13 @@ ETHERSCAN_API_KEY
 ## Running Tests
 
 To run all smart contract tests, execute `yarn contracts test`.
+
+## Contributing
+
+Contributions to Magnify Cash are welcome! If you're interested in contributing, please check out the open issues on GitHub. For major changes, please open an issue first to discuss what you would like to change.
+
+Ensure your contributions adhere to the project's coding standards and include tests where applicable.
+
+## Support
+
+If you have any questions, encounter issues, or need support regarding this repository or the Magnify Cash protocol, please feel free to reach out via email to: [ty@siestamarkets.com](mailto:ty@siestamarkets.com).
